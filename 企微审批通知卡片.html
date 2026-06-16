@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>企微审批通知卡片 - 需求文档配图</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; background: #f0f0f0; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; gap: 50px; }
+
+        .page-title { font-size: 18px; color: #333; font-weight: 600; }
+        .page-desc { font-size: 13px; color: #999; margin-top: -30px; }
+
+        .card-group { display: flex; gap: 40px; align-items: flex-start; flex-wrap: wrap; justify-content: center; }
+        .card-wrapper { display: flex; flex-direction: column; align-items: center; }
+        .card-wrapper .state-label { font-size: 13px; color: #666; margin-bottom: 10px; font-weight: 500; }
+
+        /* 模拟聊天气泡容器 */
+        .chat-bubble { width: 360px; }
+
+        /* ===== 企微卡片消息样式 ===== */
+        .wx-card {
+            background: #fff;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,.06);
+            border-left: 4px solid #2e7cff;
+        }
+        .wx-card.status-pending { border-left-color: #faad14; }
+        .wx-card.status-approved { border-left-color: #52c41a; }
+        .wx-card.status-rejected { border-left-color: #ff4d4f; }
+
+        /* 标题区 */
+        .wx-card-title-bar {
+            padding: 12px 14px 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .wx-card-title-bar .status-dot {
+            width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+        }
+        .status-pending .status-dot { background: #faad14; }
+        .status-approved .status-dot { background: #52c41a; }
+        .status-rejected .status-dot { background: #ff4d4f; }
+
+        .wx-card-title-bar .card-title {
+            font-size: 15px; font-weight: 600; color: #333; flex: 1;
+        }
+        .wx-card-title-bar .status-text {
+            font-size: 12px; padding: 2px 8px; border-radius: 10px; font-weight: 500;
+        }
+        .status-pending .status-text { background: #fffbe6; color: #d48806; }
+        .status-approved .status-text { background: #f6ffed; color: #389e0d; }
+        .status-rejected .status-text { background: #fff1f0; color: #cf1322; }
+
+        /* 内容区 */
+        .wx-card-content { padding: 0 14px 10px; }
+
+        .wx-field { display: flex; line-height: 1.8; font-size: 13px; }
+        .wx-field .f-label { color: #999; flex-shrink: 0; min-width: 72px; }
+        .wx-field .f-value { color: #333; flex: 1; word-break: break-all; }
+        .wx-field .f-value.link { color: #2e7cff; }
+
+        .wx-divider { border: none; border-top: 1px dashed #eee; margin: 6px 0; }
+
+        /* 多行文本块 */
+        .wx-field.block { flex-direction: column; }
+        .wx-field.block .f-value {
+            margin-top: 4px; padding: 8px 10px; background: #f7f8fa;
+            border-radius: 4px; font-size: 12px; color: #555; line-height: 1.7;
+        }
+        .wx-field.block.reject-reason .f-value {
+            background: #fff8f7; color: #8c3a2a;
+        }
+
+        /* 底部按钮区 */
+        .wx-card-actions {
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+        }
+        .wx-card-actions .act-btn {
+            flex: 1; text-align: center; padding: 10px 0;
+            font-size: 13px; color: #2e7cff; cursor: pointer;
+            transition: background 0.15s; text-decoration: none;
+        }
+        .wx-card-actions .act-btn:hover { background: #f5f8ff; }
+        .wx-card-actions .act-btn:not(:last-child) { border-right: 1px solid #f0f0f0; }
+
+        /* 卡片下方来源标识 */
+        .wx-card-source {
+            padding: 6px 14px; font-size: 11px; color: #bbb;
+            display: flex; align-items: center; gap: 4px;
+        }
+        .wx-card-source::before {
+            content: ''; width: 14px; height: 14px; border-radius: 3px;
+            background: #2e7cff; display: inline-block; opacity: 0.15;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-title">企微审批通知卡片设计</div>
+    <div class="page-desc">仅特殊流程申请触发企微卡片通知，标准流程无需审批</div>
+
+    <div class="card-group">
+
+        <!-- ====== 待审批 ====== -->
+        <div class="card-wrapper">
+            <div class="state-label">待审批状态</div>
+            <div class="chat-bubble">
+                <div class="wx-card status-pending">
+                    <div class="wx-card-title-bar">
+                        <span class="status-dot"></span>
+                        <span class="card-title">特殊授权审批通知</span>
+                        <span class="status-text">待审批</span>
+                    </div>
+                    <div class="wx-card-content">
+                        <div class="wx-field"><span class="f-label">审批单号</span><span class="f-value link">SP-20200604002</span></div>
+                        <div class="wx-field"><span class="f-label">申请类型</span><span class="f-value">商务</span></div>
+                        <div class="wx-field"><span class="f-label">产品线</span><span class="f-value">HCI</span></div>
+                        <div class="wx-field"><span class="f-label">客户名称</span><span class="f-value">XX科技有限公司</span></div>
+                        <div class="wx-field"><span class="f-label">设备ID</span><span class="f-value">A1B2C3D4E5</span></div>
+                        <div class="wx-field"><span class="f-label">软件版本</span><span class="f-value">HCI-8.8.1+VKEY</span></div>
+                        <hr class="wx-divider">
+                        <div class="wx-field"><span class="f-label">申请原因</span><span class="f-value">客户POC测试延期，需续开授权</span></div>
+                        <div class="wx-field"><span class="f-label">已测试时长</span><span class="f-value">30天</span></div>
+                        <div class="wx-field"><span class="f-label">已续开次数</span><span class="f-value">1次</span></div>
+                        <div class="wx-field"><span class="f-label">本次时长</span><span class="f-value">15天</span></div>
+                        <hr class="wx-divider">
+                        <div class="wx-field block">
+                            <span class="f-label">具体授权需求</span>
+                            <span class="f-value">需特定版本8.8.1授权，含计算虚拟化模块</span>
+                        </div>
+                        <hr class="wx-divider">
+                        <div class="wx-field"><span class="f-label">申请人</span><span class="f-value">钱金城94903</span></div>
+                        <div class="wx-field"><span class="f-label">申请时间</span><span class="f-value">2020-06-04 10:15:29</span></div>
+                    </div>
+                    <div class="wx-card-actions">
+                        <a class="act-btn" href="#">查看详情</a>
+                    </div>
+                    <div class="wx-card-source">测试设备授权平台</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====== 已通过 ====== -->
+        <div class="card-wrapper">
+            <div class="state-label">审批通过状态</div>
+            <div class="chat-bubble">
+                <div class="wx-card status-approved">
+                    <div class="wx-card-title-bar">
+                        <span class="status-dot"></span>
+                        <span class="card-title">特殊授权审批通知</span>
+                        <span class="status-text">已通过</span>
+                    </div>
+                    <div class="wx-card-content">
+                        <div class="wx-field"><span class="f-label">审批单号</span><span class="f-value link">SP-20200604002</span></div>
+                        <div class="wx-field"><span class="f-label">申请类型</span><span class="f-value">商务</span></div>
+                        <div class="wx-field"><span class="f-label">产品线</span><span class="f-value">HCI</span></div>
+                        <div class="wx-field"><span class="f-label">客户名称</span><span class="f-value">XX科技有限公司</span></div>
+                        <div class="wx-field"><span class="f-label">设备ID</span><span class="f-value">A1B2C3D4E5</span></div>
+                        <div class="wx-field"><span class="f-label">软件版本</span><span class="f-value">HCI-8.8.1+VKEY</span></div>
+                        <hr class="wx-divider">
+                        <div class="wx-field"><span class="f-label">申请原因</span><span class="f-value">客户POC测试延期，需续开授权</span></div>
+                        <div class="wx-field"><span class="f-label">已测试时长</span><span class="f-value">30天</span></div>
+                        <div class="wx-field"><span class="f-label">已续开次数</span><span class="f-value">1次</span></div>
+                        <div class="wx-field"><span class="f-label">本次时长</span><span class="f-value">15天</span></div>
+                        <hr class="wx-divider">
+                        <div class="wx-field"><span class="f-label">云授权ID</span><span class="f-value link">2289D81E2C3EC83EA9</span></div>
+                        <div class="wx-field"><span class="f-label">激活地址</span><span class="f-value link">点击激活授权 →</span></div>
+                        <hr class="wx-divider">
+                        <div class="wx-field"><span class="f-label">审批人</span><span class="f-value">张三</span></div>
+                        <div class="wx-field"><span class="f-label">审批时间</span><span class="f-value">2020-06-04 14:30:00</span></div>
+                        <div class="wx-field"><span class="f-label">申请人</span><span class="f-value">钱金城94903</span></div>
+                        <div class="wx-field"><span class="f-label">申请时间</span><span class="f-value">2020-06-04 10:15:29</span></div>
+                    </div>
+                    <div class="wx-card-actions">
+                        <a class="act-btn" href="#">查看详情</a>
+                        <a class="act-btn" href="#" style="color: #52c41a; font-weight: 600;">去激活</a>
+                    </div>
+                    <div class="wx-card-source">测试设备授权平台</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ====== 已驳回 ====== -->
+        <div class="card-wrapper">
+            <div class="state-label">审批驳回状态</div>
+            <div class="chat-bubble">
+                <div class="wx-card status-rejected">
+                    <div class="wx-card-title-bar">
+                        <span class="status-dot"></span>
+                        <span class="card-title">特殊授权审批通知</span>
+                        <span class="status-text">已驳回</span>
+                    </div>
+                    <div class="wx-card-content">
+                        <div class="wx-field"><span class="f-label">审批单号</span><span class="f-value link">SP-20200604002</span></div>
+                        <div class="wx-field"><span class="f-label">申请类型</span><span class="f-value">商务</span></div>
+                        <div class="wx-field"><span class="f-label">产品线</span><span class="f-value">HCI</span></div>
+                        <div class="wx-field"><span class="f-label">客户名称</span><span class="f-value">XX科技有限公司</span></div>
+                        <div class="wx-field"><span class="f-label">设备ID</span><span class="f-value">A1B2C3D4E5</span></div>
+                        <div class="wx-field"><span class="f-label">软件版本</span><span class="f-value">HCI-8.8.1+VKEY</span></div>
+                        <hr class="wx-divider">
+                        <div class="wx-field"><span class="f-label">申请原因</span><span class="f-value">客户POC测试延期，需续开授权</span></div>
+                        <div class="wx-field"><span class="f-label">已测试时长</span><span class="f-value">30天</span></div>
+                        <div class="wx-field"><span class="f-label">已续开次数</span><span class="f-value">1次</span></div>
+                        <div class="wx-field"><span class="f-label">本次时长</span><span class="f-value">15天</span></div>
+                        <hr class="wx-divider">
+                        <div class="wx-field block reject-reason">
+                            <span class="f-label">驳回原因</span>
+                            <span class="f-value">已续开次数过多，请确认客户是否有采购意向后再申请</span>
+                        </div>
+                        <hr class="wx-divider">
+                        <div class="wx-field"><span class="f-label">审批人</span><span class="f-value">张三</span></div>
+                        <div class="wx-field"><span class="f-label">审批时间</span><span class="f-value">2020-06-04 14:30:00</span></div>
+                        <div class="wx-field"><span class="f-label">申请人</span><span class="f-value">钱金城94903</span></div>
+                        <div class="wx-field"><span class="f-label">申请时间</span><span class="f-value">2020-06-04 10:15:29</span></div>
+                    </div>
+                    <div class="wx-card-actions">
+                        <a class="act-btn" href="#">查看详情</a>
+                    </div>
+                    <div class="wx-card-source">测试设备授权平台</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

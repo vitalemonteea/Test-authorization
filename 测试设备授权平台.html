@@ -1,0 +1,1785 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>首页--测试设备授权平台</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <style>
+        /* 全局重置 */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body, html { height: 100%; font-family: "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 14px; color: #333; }
+        a { text-decoration: none; color: #333; }
+        a:hover { text-decoration: none; }
+        ul, li { list-style: none; }
+        input, select, button { font-family: inherit; font-size: 14px; }
+
+        /* 布局容器 */
+        .layui-layout-admin { position: relative; height: 100%; }
+        .layui-layout-admin .layui-header { position: fixed; top: 0; left: 0; right: 0; z-index: 2000; }
+        .layui-layout-admin .layui-side { position: fixed; top: 50px; bottom: 0; left: 0; width: 200px; z-index: 1000; overflow: hidden; }
+        .layui-layout-admin .layui-body { position: fixed; top: 50px; bottom: 44px; left: 200px; right: 0; overflow: hidden; background: #fff; }
+        .layui-layout-admin .layui-footer { position: fixed; bottom: 0; left: 200px; right: 0; height: 44px; z-index: 999; }
+
+        /* 顶部Header */
+        .header { height: 50px; background-color: #0687E5; }
+        .layui-main { position: relative; margin: 0; height: 100%; }
+        .logo { color: #fff; float: left; line-height: 50px; font-size: 18px; padding: 0 25px; text-align: center; }
+        .logo:hover { color: #fff; }
+
+        /* 顶部菜单 */
+        .topLevelMenus { float: left; height: 50px; }
+        .topLevelMenus li { float: left; line-height: 50px; position: relative; }
+        .topLevelMenus li a { display: block; padding: 0 20px; color: #fff; line-height: 50px; }
+        .topLevelMenus li.layui-this { background-color: rgba(0,0,0,0.1); }
+
+        /* 顶部右侧菜单 */
+        .top_menu { position: absolute; right: 0; top: 0; height: 50px; }
+        .top_menu li { float: left; position: relative; line-height: 50px; }
+        .top_menu li > a { display: block; padding: 0 20px; color: #fff; line-height: 50px; }
+        .top_menu li .layui-nav-child { display: none; position: absolute; top: 50px; right: 0; min-width: 100px; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,.15); border-radius: 2px; z-index: 99999; }
+        .top_menu li:hover .layui-nav-child { display: block; }
+        .top_menu li .layui-nav-child dd a { display: block; padding: 8px 20px; color: #333; line-height: 30px; }
+        .top_menu li .layui-nav-child dd a:hover { background-color: #0050cb; color: #fff; }
+        .userAvatar { width: 35px; height: 35px; border-radius: 50%; vertical-align: middle; margin-right: 5px; background: #ccc; display: inline-block; }
+        .adminName { margin-left: 5px; }
+        .header-link { float: right; margin-right: 200px; line-height: 50px; }
+        .header-link a { color: #fff; }
+        .header-link a:hover { color: #eee; }
+
+        /* 左侧边栏 */
+        .layui-side { border-right: 1px solid #ccc; background: #fff; }
+        .user-photo { width: 200px; height: 140px; padding: 15px 0 5px; border-bottom: 1px solid #ccc; text-align: center; }
+        .user-photo .img { display: block; width: 80px; height: 80px; margin: 0 auto 10px; }
+        .user-photo .img .avatar-placeholder { display: block; width: 100%; height: 100%; border-radius: 50%; border: 1px solid #44576b; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .user-photo p { font-size: 12px; color: #000; white-space: nowrap; overflow: hidden; text-align: center; line-height: 25px; }
+
+        /* 左侧导航菜单 */
+        .navBar { overflow-y: auto; }
+        .navBar ul { padding: 0; }
+        .navBar ul li { position: relative; }
+        .navBar ul li a { display: block; padding: 10px 20px; color: #333; line-height: 20px; transition: all 0.2s; }
+        .navBar ul li a:hover { background: #eee; }
+        .navBar ul li.layui-this > a { background: #0050cb; color: #fff; }
+        .navBar ul li a cite { font-style: normal; margin-left: 5px; }
+
+        /* 主内容区 */
+        .layui-body { border-top: 0; }
+        #top_tabs_box { padding-right: 138px; height: 40px; border-bottom: 1px solid #e2e2e2; position: relative; }
+        #top_tabs { position: absolute; left: 0; height: 40px; white-space: nowrap; border-bottom: none; }
+        #top_tabs li { display: inline-block; padding: 0 15px; line-height: 40px; cursor: pointer; border-right: 1px solid #e2e2e2; position: relative; }
+        #top_tabs li.layui-this { background-color: #eee; color: #000; }
+        #top_tabs li cite { font-style: normal; padding-left: 5px; }
+        .tab-close { margin-left: 8px; cursor: pointer; font-size: 12px; }
+
+        /* 页面操作下拉 */
+        .closeBox { position: absolute; right: 0; top: 0; background-color: #fff; border-left: 1px solid #e2e2e2; border-bottom: 1px solid #e2e2e2; line-height: 40px; padding: 0 15px; }
+        .closeBox a { color: #000; }
+
+        /* 内容区域 */
+        .content-body { position: absolute; top: 41px; bottom: 0; left: 0; right: 0; overflow-y: auto; padding: 12px 200px; background: #fff; }
+
+        /* 表单样式 */
+        .layui-form-item { margin-bottom: 15px; clear: both; overflow: visible; display: flex; align-items: flex-start; max-width: 900px; margin-left: auto; margin-right: auto; }
+        .layui-form-label { display: block; width: 150px; flex-shrink: 0; padding: 9px 0 9px 15px; font-weight: 500; line-height: 20px; text-align: left; color: #424656; }
+        .layui-input-block { flex: 1; min-height: 38px; min-width: 0; position: relative; }
+        .layui-input { width: 100%; max-width: 300px; height: 40px; line-height: 40px; border: 1px solid #e5eeff; background-color: #fff; border-radius: 8px; padding: 0 12px; outline: none; transition: all 0.15s; }
+        .layui-input:hover { border-color: #c2c6d8; background: #fff; }
+        .layui-input:focus { border-color: #0050cb; background: #fff; box-shadow: 0 0 0 3px rgba(0,80,203,.08); }
+
+        /* 下拉选择框 */
+        .layui-select-box { position: relative; max-width: 300px; }
+        .layui-select { width: 100%; height: 40px; line-height: 40px; border: 1px solid #e5eeff; background-color: #fff; border-radius: 8px; padding: 0 12px; outline: none; appearance: none; -webkit-appearance: none; -moz-appearance: none; cursor: pointer; padding-right: 30px; transition: all 0.15s; }
+        .layui-select:hover { border-color: #c2c6d8; background: #fff; }
+        .layui-select:focus { border-color: #0050cb; background: #fff; box-shadow: 0 0 0 3px rgba(0,80,203,.08); }
+        .layui-edge { position: absolute; right: 12px; top: 50%; margin-top: -3px; width: 0; height: 0; border-style: solid; border-width: 6px 6px 0 6px; border-color: #8b92a5 transparent transparent transparent; pointer-events: none; }
+
+        /* 按钮 */
+        .layui-btn { display: inline-flex; align-items: center; justify-content: center; height: 40px; padding: 0 24px; background-color: #0050cb; color: #fff; white-space: nowrap; text-align: center; font-size: 14px; font-weight: 500; border: none; border-radius: 10px; cursor: pointer; transition: all 0.2s; }
+        .layui-btn:hover { opacity: 0.9; box-shadow: 0 2px 8px rgba(0,80,203,.25); }
+        .layui-btn-primary { background-color: #eff4ff; color: #0050cb; border: none; }
+        .layui-btn-primary:hover { background: #dae1ff; box-shadow: none; color: #0050cb; }
+
+
+        /* 表单辅助 */
+        .font-acloud { color: #999; display: block; margin-bottom: 3px; font-size: 12px; }
+        .top-red { color: red; font-size: 11px; }
+        .userHobby { margin-top: 8px; padding-top: 8px; border-top: 1px dashed #e6e6e6; }
+        .userHobby-title { font-size: 12px; color: #bbb; margin-bottom: 6px; }
+
+        /* 底部 */
+        .footer { text-align: center; line-height: 44px; background: #fff; border-left: 1px solid #ccc; border-top: 1px solid #e2e2e2; }
+
+        /* 客户搜索下拉 */
+        .search-select-box { position: relative; max-width: 300px; }
+        .search-dropdown { display: none; position: absolute; top: 40px; left: 0; right: 0; background: #fff; border: 1px solid #e6e6e6; border-radius: 2px; box-shadow: 0 2px 10px rgba(0,0,0,.12); z-index: 9999; max-height: 300px; overflow-y: auto; }
+        .search-dropdown.show { display: block; }
+        .search-dropdown .search-item { padding: 9px 15px; cursor: pointer; border-bottom: 1px solid #f6f6f6; line-height: 24px; display: flex; justify-content: space-between; align-items: center; }
+        .search-dropdown .search-item:hover { background-color: #0050cb; color: #fff; }
+        .search-dropdown .search-item .item-left { display: flex; align-items: center; flex: 1; min-width: 0; }
+        .search-dropdown .search-item .item-name { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .search-dropdown .search-item .item-id { font-size: 12px; color: #999; margin-left: 10px; flex-shrink: 0; }
+        .search-dropdown .search-item:hover .item-id { color: #ddd; }
+        .search-dropdown .search-item .item-badge { display: inline-block; padding: 1px 8px; border-radius: 3px; font-size: 11px; font-weight: 600; line-height: 20px; flex-shrink: 0; margin-left: 12px; }
+        .search-dropdown .search-item .item-badge.ka { background: #fff3e0; color: #e65100; border: 1px solid #ffcc80; }
+        .search-dropdown .search-item .item-badge.normal { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+        .search-dropdown .search-item:hover .item-badge.ka { background: rgba(255,243,224,0.3); border-color: rgba(255,204,128,0.5); }
+        .search-dropdown .search-item:hover .item-badge.normal { background: rgba(232,245,233,0.3); border-color: rgba(165,214,167,0.5); }
+        .customer-info-display { margin-top: 8px; font-size: 13px; color: #666; line-height: 28px; background: #f8f8f8; padding: 5px 12px; border-radius: 2px; display: none; }
+        .customer-info-display.show { display: block; }
+        .customer-info-display span { color: #333; font-weight: 500; }
+        .customer-type-badge { display: inline-block; padding: 1px 8px; border-radius: 3px; font-size: 11px; font-weight: 600; margin-left: 10px; vertical-align: middle; line-height: 20px; }
+        .customer-type-badge.ka { background: #fff3e0; color: #e65100; border: 1px solid #ffcc80; }
+        .customer-type-badge.normal { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+
+        /* 统一授权日期栏 */
+        .unified-date-bar { display: flex; align-items: center; gap: 12px; background: #eff4ff; border: none; border-radius: 10px; padding: 14px 18px; margin-bottom: 15px; margin-left: 15px; margin-right: 20px; max-width: 900px; margin-left: auto; margin-right: auto; }
+        .unified-date-bar .bar-label { font-weight: 600; font-size: 14px; color: #333; white-space: nowrap; }
+        .unified-date-bar .layui-input { width: 180px; flex: none; }
+        .unified-date-bar .apply-date-btn { height: 34px; line-height: 34px; padding: 0 18px; background-color: #0050cb; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500; white-space: nowrap; transition: opacity 0.2s; }
+        .unified-date-bar .apply-date-btn:hover { opacity: 0.85; }
+        .unified-date-bar .apply-date-btn:disabled { background: #aaa; cursor: not-allowed; }
+        .unified-date-bar .bar-hint { font-size: 12px; color: #999; flex: 1; }
+        .sync-toast { position: fixed; top: 60px; right: 20px; background: #4CAF50; color: #fff; padding: 10px 20px; border-radius: 4px; font-size: 14px; z-index: 99999; display: none; box-shadow: 0 2px 8px rgba(0,0,0,.2); }
+
+        /* 特殊流程表单 */
+        .special-form-section { background: #f8f9ff; border-radius: 12px; margin-bottom: 14px; padding: 18px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.06); max-width: 900px; margin-left: auto; margin-right: auto; }
+        .special-form-section .section-title { font-size: 15px; font-weight: 600; color: #1a1a2e; padding: 0 0 12px; border-bottom: 1px solid #eff4ff; margin-bottom: 16px; }
+        .required-mark { color: #ba1a1a; margin-right: 3px; }
+
+        /* 硬件信息文件上传区 */
+        #hwInfoSection .layui-form-label { padding-top: 10px; }
+        .hw-upload-area { display: flex; align-items: center; gap: 10px; min-height: 40px; }
+        .hw-upload-area input[type="file"] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+        .hw-file-info { display: flex; align-items: center; width: 300px; height: 40px; border: 1px solid #e5eeff; border-radius: 8px; padding: 0 12px; background: #fff; transition: border-color 0.15s; box-sizing: border-box; }
+        .hw-file-info:hover { border-color: #c2c6d8; }
+        .hw-file-info.has-file { border-color: #0050cb; }
+        .hw-file-info .hw-file-name { font-size: 13px; color: #424656; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; min-width: 0; }
+        .hw-file-info .hw-file-name.empty { color: #999; font-style: italic; }
+        .hw-file-info .hw-file-meta { font-size: 11px; color: #8b92a5; margin-left: 6px; white-space: nowrap; flex-shrink: 0; }
+        .hw-file-info .hw-file-clear { display: none; align-items: center; justify-content: center; width: 20px; height: 20px; margin-left: 6px; border: none; background: #e8ecf0; border-radius: 50%; font-size: 13px; line-height: 1; color: #8b92a5; cursor: pointer; flex-shrink: 0; transition: all 0.15s; }
+        .hw-file-info .hw-file-clear:hover { background: #dae1ff; color: #0050cb; }
+        .hw-file-info.has-file .hw-file-clear { display: inline-flex; }
+        .hw-upload-btn { display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 18px; background-color: #0050cb; color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; transition: all 0.2s; flex-shrink: 0; }
+        .hw-upload-btn:hover { opacity: 0.9; box-shadow: 0 2px 8px rgba(0,80,203,.25); }
+        .hw-upload-btn .upload-icon { font-size: 15px; line-height: 1; }
+        .hw-upload-result { font-size: 12px; display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; border-radius: 16px; font-weight: 500; height: 40px; box-sizing: border-box; }
+        .hw-upload-result:empty { display: none; }
+        .hw-upload-result.pass { color: #2e7d32; background: #e8f5e9; }
+        .hw-upload-result.fail { color: #c62828; background: #ffebee; }
+
+
+        /* ===== 模块样式 - MD3 风格 ===== */
+        .module-item { background: #f8f9ff; border-radius: 12px; margin-bottom: 12px; border: none; overflow: hidden; transition: opacity 0.3s, box-shadow 0.2s; box-shadow: 0 1px 4px rgba(0,0,0,.06), 0 0 1px rgba(0,0,0,.04); max-width: 900px; margin-left: auto; margin-right: auto; }
+        .module-item:hover { box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+        .module-item.disabled { opacity: 0.45; }
+        .module-item.disabled .module-body { display: none; }
+        .module-head { display: flex; align-items: center; padding: 14px 22px; gap: 12px; cursor: pointer; user-select: none; }
+        .module-head:hover { background: #f0f3ff; }
+        .module-name { font-size: 15px; font-weight: 600; color: #1a1a2e; flex: 1; }
+        .module-count { font-size: 12px; color: #8b92a5; }
+        .module-status { font-size: 11px; padding: 3px 12px; border-radius: 16px; font-weight: 500; }
+        .module-status.on { background: #0050cb; color: #fff; }
+        .module-status.off { background: #e8ecf0; color: #8b92a5; }
+        .module-chevron { font-size: 10px; color: #c2c6d8; transition: transform 0.2s; display: inline-block; }
+        .module-chevron.collapsed { transform: rotate(-90deg); }
+        .module-body { border-top: 1px solid #eff4ff; padding: 14px 22px; }
+        .module-body.hidden { display: none; }
+
+        /* Toggle Switch */
+        .toggle-switch { position: relative; width: 40px; height: 22px; border-radius: 11px; background: #0050cb; cursor: pointer; flex-shrink: 0; transition: background 0.2s; }
+        .toggle-switch.active { background: #0050cb; }
+        .toggle-switch:not(.active) { background: #c2c6d8; }
+        .toggle-switch::after { content: ''; position: absolute; top: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,.15); }
+        .toggle-switch.active::after { left: 21px; }
+        .toggle-switch:not(.active)::after { left: 3px; }
+
+        /* 双栏网格 */
+        .module-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 24px; }
+        .grid-field { display: flex; align-items: center; padding: 6px 0; gap: 8px; }
+        .grid-field .gf-label { font-size: 14px; color: #424656; flex-shrink: 0; font-weight: 500; width: 120px; line-height: 1.4; }
+        .grid-field .gf-val { flex-shrink: 0; }
+        .grid-field .gf-val input { width: 100%; max-width: 180px; height: 38px; border: 1px solid #e5eeff; border-radius: 8px; padding: 0 12px; font-size: 14px; background: #fff; outline: none; transition: all 0.15s; }
+        .grid-field .gf-val input:hover { border-color: #c2c6d8; }
+        .grid-field .gf-val input:focus { border-color: #0050cb; background: #fff; box-shadow: 0 0 0 3px rgba(0,80,203,.08); }
+        .grid-field .gf-hint { font-size: 12px; color: #ba1a1a; flex-shrink: 0; }
+
+        /* 功能开关 pill */
+        .module-features { padding: 8px 0; margin-top: 4px; border-top: 1px solid #eff4ff; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .module-features .fl { font-size: 14px; color: #424656; font-weight: 500; }
+        .feat-pill { padding: 5px 14px; border-radius: 16px; font-size: 12px; cursor: pointer; transition: all 0.2s; user-select: none; display: inline-block; border: none; }
+        .feat-pill.on { background: #dae1ff; color: #0050cb; }
+        .feat-pill.off { background: #e8ecf0; color: #8b92a5; }
+        .feat-pill:hover { transform: translateY(-1px); box-shadow: 0 2px 6px rgba(0,0,0,.06); }
+
+        /* 全局操作栏 */
+        .module-toolbar { display: flex; align-items: center; padding: 10px 0; margin-bottom: 8px; border-bottom: 1px solid #eff4ff; max-width: 900px; margin-left: auto; margin-right: auto; }
+        .module-toolbar-title { font-size: 15px; font-weight: 600; color: #1a1a2e; flex: 1; }
+        .toolbar-btn { height: 28px; line-height: 26px; padding: 0 12px; background: #eff4ff; color: #0050cb; border: none; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 500; margin-left: 8px; transition: all 0.2s; }
+        .toolbar-btn:hover { background: #dae1ff; }
+
+        /* 右侧导航 - MD3 风格 */
+        .module-nav { position: fixed; top: 100px; right: 12px; width: 168px; background: #fff; border-radius: 12px; padding: 10px 6px; max-height: calc(100vh - 160px); overflow-y: auto; z-index: 100; box-shadow: 0 2px 12px rgba(0,0,0,.08); border: none; }
+        .module-nav-title { padding: 4px 10px 10px; font-size: 13px; font-weight: 600; color: #1a1a2e; letter-spacing: 0; text-transform: none; }
+        .module-nav-item { display: flex; align-items: center; padding: 8px 10px; font-size: 13px; color: #424656; cursor: pointer; transition: all 0.15s; border-radius: 8px; margin-bottom: 2px; border-left: none; }
+        .module-nav-item:hover { background: #eff4ff; color: #0050cb; }
+        .module-nav-item.active { color: #fff; font-weight: 600; background: #0050cb; }
+
+        /* XaaS 表单样式 */
+        .required-star { color: #c62828; margin-left: 2px; }
+        .xaas-product-list { border: 1px solid #e6e6e6; border-radius: 4px; max-width: 600px; overflow: hidden; }
+        .xaas-product-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-bottom: 1px solid #f0f0f0; }
+        .xaas-product-item:last-child { border-bottom: none; }
+        .xaas-product-check { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; font-weight: 500; }
+        .xaas-product-check input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: #0891b2; }
+        .xaas-product-desc { font-size: 13px; color: #999; }
+        .xaas-product-desc.xaas-need-spec { color: #aaa; font-style: italic; }
+        .xaas-product-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+        .xaas-spec-btn { padding: 2px 10px; font-size: 12px; border: 1px solid #0891b2; color: #0891b2; background: #fff; border-radius: 4px; cursor: pointer; white-space: nowrap; }
+        .xaas-spec-btn:hover { background: #0891b2; color: #fff; }
+        .xaas-spec-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; display: none; justify-content: center; align-items: center; }
+        .xaas-spec-modal-overlay.show { display: flex; }
+        .xaas-spec-modal { background: #fff; border-radius: 10px; padding: 24px; min-width: 420px; max-width: 520px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+        .xaas-spec-modal-title { font-size: 16px; font-weight: 600; margin-bottom: 20px; color: #333; }
+        .xaas-spec-modal .spec-field { margin-bottom: 14px; }
+        .xaas-spec-modal .spec-field label { display: block; font-size: 13px; color: #666; margin-bottom: 4px; }
+        .xaas-spec-modal .spec-field input, .xaas-spec-modal .spec-field select { width: 100%; height: 36px; padding: 0 10px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 13px; box-sizing: border-box; }
+        .xaas-spec-modal-btns { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+        .xaas-spec-modal-btns button { padding: 6px 20px; border-radius: 6px; font-size: 13px; cursor: pointer; }
+        .xaas-spec-modal-btns .spec-cancel { border: 1px solid #d9d9d9; background: #fff; color: #666; }
+        .xaas-spec-modal-btns .spec-confirm { border: none; background: #0891b2; color: #fff; }
+        .xaas-spec-modal-btns .spec-confirm:hover { background: #0e7490; }
+        .xaas-extend-section { border: 1px solid #e6e6e6; border-radius: 8px; padding: 12px 16px; max-width: 500px; }
+        .xaas-extend-check { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; }
+        .xaas-extend-check input[type="checkbox"] { width: 16px; height: 16px; accent-color: #0891b2; cursor: pointer; }
+        .xaas-extend-tip-icon { color: #e65100; cursor: help; font-size: 14px; }
+        .xaas-extend-date-area { margin-top: 10px; }
+        .xaas-extend-hint { font-size: 12px; color: #e65100; margin-top: 8px; }
+        .xaas-extend-warn { font-size: 12px; color: #e65100; margin-top: 4px; }
+
+        /* 字段备注 Tooltip */
+        .field-tooltip { position: relative; display: inline-flex; align-items: center; margin-left: 4px; vertical-align: middle; }
+        .tooltip-icon { width: 16px; height: 16px; display: inline-flex; align-items: center; justify-content: center; color: #f59e0b; cursor: help; font-size: 14px; }
+        .tooltip-popup { display: none; position: absolute; left: 24px; top: -8px; width: 360px; background: #1f2937; color: #f3f4f6; border-radius: 8px; padding: 14px 16px; font-size: 13px; line-height: 1.7; z-index: 9999; box-shadow: 0 4px 16px rgba(0,0,0,.25); }
+        .tooltip-popup::before { content: ''; position: absolute; left: -6px; top: 12px; width: 0; height: 0; border-top: 6px solid transparent; border-bottom: 6px solid transparent; border-right: 6px solid #1f2937; }
+        .tooltip-popup .tooltip-title { font-weight: 600; color: #fff; margin-bottom: 8px; font-size: 13px; }
+        .tooltip-popup .tooltip-section { margin-bottom: 6px; }
+        .tooltip-popup .tooltip-label { color: #9ca3af; font-size: 12px; }
+        .tooltip-popup .tooltip-copy { position: absolute; top: 10px; right: 12px; background: transparent; border: 1px solid #4b5563; color: #9ca3af; font-size: 11px; padding: 2px 8px; border-radius: 4px; cursor: pointer; }
+        .tooltip-popup .tooltip-copy:hover { background: #374151; color: #fff; }
+        .field-tooltip:hover .tooltip-popup { display: block; }
+    </style>
+</head>
+<body>
+    <div class="layui-layout layui-layout-admin">
+        <!-- 顶部 -->
+        <div class="layui-header header">
+            <div class="layui-main">
+                <a href="javascript:;" class="logo">测试设备授权平台</a>
+                <ul class="topLevelMenus">
+                    <li class="layui-this"><a href="javascript:;">授权管理</a></li>
+                </ul>
+                <span class="header-link"><a href="javascript:;">操作手册</a></span>
+                <ul class="top_menu">
+                    <li>
+                        <a href="javascript:;">
+                            <span class="userAvatar"></span>
+                            <cite class="adminName">钱金城94903</cite>
+                        </a>
+                        <dl class="layui-nav-child">
+                            <dd><a href="javascript:;">退出</a></dd>
+                        </dl>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 左侧导航 -->
+        <div class="layui-side">
+            <div class="user-photo">
+                <a class="img"><span class="avatar-placeholder"></span></a>
+                <p>你好！<span class="userName">钱金城94903</span>, 欢迎登录</p>
+            </div>
+            <div class="navBar" id="navBar">
+                <ul>
+                    <li><a href="javascript:;"><cite>后台首页</cite></a></li>
+                    <li class="layui-this" data-tab="hardware"><a href="javascript:;"><cite>申请硬件授权</cite></a></li>
+                    <li data-tab="xaas"><a href="javascript:;"><cite>申请XaaS授权</cite></a></li>
+                    <li><a href="javascript:;"><cite>授权记录</cite></a></li>
+                    <li><a href="javascript:;"><cite>安全&amp;云计算产品线授权申请接口人</cite></a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 右侧内容 -->
+        <div class="layui-body">
+            <div id="top_tabs_box">
+                <ul id="top_tabs">
+                    <li><cite>后台首页</cite></li>
+                    <li class="layui-this" data-tab="hardware"><cite>申请硬件授权</cite><span class="tab-close">&times;</span></li>
+                    <li data-tab="xaas"><cite>申请XaaS授权</cite><span class="tab-close">&times;</span></li>
+                </ul>
+                <div class="closeBox">
+                    <a href="javascript:;">页面操作 ▾</a>
+                </div>
+            </div>
+            <div class="content-body" id="contentBody">
+                <!-- 硬件授权表单 -->
+                <div id="content-hardware">
+                <form class="layui-form" id="formsn">
+                    <input type="hidden" id="request_origin" name="request_origin" value="1">
+
+                    <div class="special-form-section">
+                        <div class="section-title">基本信息</div>
+                    <div id="section-basic">
+                    <!-- 产品线 -->
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">产品线</label>
+                        <div class="layui-input-block">
+                            <div class="layui-select-box">
+                                <select class="layui-select" name="plname" id="plname">
+                                    <option value="27">aBDI</option>
+                                    <option value="1">AC</option>
+                                    <option value="7">AD</option>
+                                    <option value="46">ADESK</option>
+                                    <option value="139">ADM</option>
+                                    <option value="161">aES</option>
+                                    <option value="21">AF</option>
+                                    <option value="169">AGENT_BASE</option>
+                                    <option value="163">APEX</option>
+                                    <option value="20">aTrust</option>
+                                    <option value="111">BBC</option>
+                                    <option value="36">CyberCommand</option>
+                                    <option value="24">DMP</option>
+                                    <option value="159">DSP</option>
+                                    <option value="11">EDR</option>
+                                    <option value="38">EDS</option>
+                                    <option value="45" selected>HCI</option>
+                                    <option value="149">IAM</option>
+                                    <option value="109">Logger</option>
+                                    <option value="133">NDR</option>
+                                    <option value="22">NGAF</option>
+                                    <option value="101">NGSOC</option>
+                                    <option value="31">NovaCommand</option>
+                                    <option value="35">NovaSensor</option>
+                                    <option value="165">SASE</option>
+                                    <option value="19">SCP</option>
+                                    <option value="115">SDW-R</option>
+                                    <option value="153">SEPTP</option>
+                                    <option value="167">SF-FastGPT</option>
+                                    <option value="147">SIEP</option>
+                                    <option value="10">SIP</option>
+                                    <option value="151">SIR</option>
+                                    <option value="105">SSL</option>
+                                    <option value="28">STA</option>
+                                    <option value="157">VPN（aTrust-1000-VPN）</option>
+                                    <option value="125">WAF</option>
+                                    <option value="6">WOC</option>
+                                    <option value="141">XDR</option>
+                                    <option value="117">云镜</option>
+                                    <option value="168">保护AI</option>
+                                    <option value="127">信服云工具</option>
+                                    <option value="41">独立在线授权</option>
+                                    <option value="44">统一在线授权</option>
+                                </select>
+                                <i class="layui-edge"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 版本 -->
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">版本</label>
+                        <div class="layui-input-block">
+                            <div class="layui-select-box">
+                                <select class="layui-select" name="cloudVersion" id="cloudVersion">
+                                    <option value="6.8.1_1" selected>HCI-6.8.1-VKEY</option>
+                                    <option value="6.8.1">HCI-6.8.1-VKEY-ARM</option>
+                                    <option value="6.8.1_3">HCI-6.8.1EN-VKEY</option>
+                                    <option value="6.8.1_2">HCI-6.8.1EN-VKEY-ARM</option>
+                                    <option value="3.0.1">HCI-ARM3.0.1-VKEY 涉密</option>
+                                    <option value="HCI6.1.0EN-VKEY">HCI6.1.0EN-VKEY</option>
+                                    <option value="HCI6.2.60EN-VKEY">HCI6.2.60EN-VKEY</option>
+                                    <option value="HCI6.3.0EN-VKEY">HCI6.3.0EN-VKEY</option>
+                                    <option value="HCI6.3.20EN-UKEY">HCI6.3.20EN-UKEY</option>
+                                    <option value="HCI6.3.20EN-VKEY">HCI6.3.20EN-VKEY</option>
+                                    <option value="HCI6.7.0EN-UKEY">HCI6.7.0EN-UKEY</option>
+                                    <option value="HCI6.7.0EN-VKEY">HCI6.7.0EN-VKEY</option>
+                                    <option value="6.8.0">HCI6.8.0_VKEY</option>
+                                    <option value="HCI6.8.0EN_VKEY">HCI6.8.0EN_VKEY</option>
+                                    <option value="HCI6.8.0EN-UKEY">HCI6.8.0EN-UKEY</option>
+                                    <option value="HCI6.9.0EN-UKEY">HCI690/691/6100 英文USB-KEY</option>
+                                    <option value="6.9.0">HCI690/691/6100中文免KEY</option>
+                                    <option value="6.9.0_2">HCI690/691/6100英文免KEY</option>
+                                    <option value="3.0.1sCloud1">sCloud3.0.1-VKEY 涉密</option>
+                                    <option value="6.8.1sCloud1">sCloud6.8.1-VKEY</option>
+                                    <option value="6.9.0_1">sCloud690/691/6100 中文ARM免KEY</option>
+                                    <option value="6.9.0sCloud1">sCloud690/691/6100 中文C86免KEY</option>
+                                    <option value="HCI6.9.0EN-UKEYARM">sCloud690/691/6100 英文ARM USB-KEY</option>
+                                    <option value="6.9.0_3">sCloud690/691/6100 英文ARM免KEY</option>
+                                    <option value="6.9.0sCloud1_1">sCloud690/691/6100 英文C86免KEY</option>
+                                    <option value="sCloud6.9.0EN-UKEY">sCloud690/691/6100英文C86USB-KEY</option>
+                                </select>
+                                <i class="layui-edge"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 区域 -->
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">区域</label>
+                        <div class="layui-input-block">
+                            <div class="layui-select-box">
+                                <select class="layui-select" id="area" name="area">
+                                    <option value="">请选择区域</option>
+                                    <option value="EMEA(中东/非洲/欧洲)">EMEA(中东/非洲/欧洲)</option>
+                                    <option value="SEA东南亚">SEA东南亚</option>
+                                    <option value="上海区" selected>上海区</option>
+                                    <option value="东北区">东北区</option>
+                                    <option value="云贵区">云贵区</option>
+                                    <option value="全球交付支持中心">全球交付支持中心</option>
+                                    <option value="北京区">北京区</option>
+                                    <option value="医疗事业部">医疗事业部</option>
+                                    <option value="华北区">华北区</option>
+                                    <option value="华南区">华南区</option>
+                                    <option value="四川区">四川区</option>
+                                    <option value="天津区">天津区</option>
+                                    <option value="安徽区">安徽区</option>
+                                    <option value="山东区">山东区</option>
+                                    <option value="广东区">广东区</option>
+                                    <option value="战略渠道部">战略渠道部</option>
+                                    <option value="政府事业部">政府事业部</option>
+                                    <option value="新疆区">新疆区</option>
+                                    <option value="欧美">欧美</option>
+                                    <option value="江苏区">江苏区</option>
+                                    <option value="江西区">江西区</option>
+                                    <option value="河北区">河北区</option>
+                                    <option value="河南区">河南区</option>
+                                    <option value="浙江区">浙江区</option>
+                                    <option value="深圳区">深圳区</option>
+                                    <option value="湖北区">湖北区</option>
+                                    <option value="湖南区">湖南区</option>
+                                    <option value="福建区">福建区</option>
+                                    <option value="行业总部">行业总部</option>
+                                    <option value="西北区">西北区</option>
+                                    <option value="运营商教育事业部">运营商教育事业部</option>
+                                    <option value="重庆区">重庆区</option>
+                                    <option value="金融事业部">金融事业部</option>
+                                    <option value="陕西区">陕西区</option>
+                                </select>
+                                <i class="layui-edge"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 办事处 -->
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">办事处</label>
+                        <div class="layui-input-block">
+                            <div class="layui-select-box">
+                                <select class="layui-select" name="office" id="office">
+                                    <option value="上海办" selected>上海办</option>
+                                </select>
+                                <i class="layui-edge"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 接收邮箱 -->
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">接收邮箱</label>
+                        <div class="layui-input-block">
+                            <input type="text" id="userEmail" name="userEmail" placeholder="请填写正确邮箱，以免邮件发送失败" class="layui-input">
+                        </div>
+                    </div>
+
+                    <!-- 客户信息 -->
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">客户信息</label>
+                        <div class="layui-input-block">
+                            <div class="search-select-box">
+                                <input type="text" id="customerSearch" placeholder="请输入客户名称或ID搜索" class="layui-input" autocomplete="off">
+                                <div class="search-dropdown" id="customerDropdown"></div>
+                            </div>
+                            <div class="customer-info-display" id="customerInfoDisplay">
+                                客户名称：<span id="selectedCustomerName">-</span>
+                                <span style="margin-left:20px;">客户ID：<span id="selectedCustomerId">-</span></span>
+                                <span class="customer-type-badge" id="customerTypeBadge" style="display:none;"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 申请类型 -->
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">申请类型</label>
+                        <div class="layui-input-block">
+                            <div class="layui-select-box">
+                                <select class="layui-select" name="planDevType" id="planDevType">
+                                    <option value="">请选择...</option>
+                                    <option value="1" selected>新设备授权(硬件借测+软件授权一并申请)</option>
+                                    <option value="2">软件续期授权(仅续期软件授权，无需硬件借测)</option>
+                                </select>
+                                <i class="layui-edge"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 设备ID -->
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">设备ID</label>
+                        <div class="layui-input-block">
+                            <input type="text" id="devIdNew" name="devIdNew" class="layui-input" value="">
+                        </div>
+                    </div>
+
+                    <!-- 硬件信息文件 -->
+                    <div class="layui-form-item" id="hwInfoSection" style="align-items: center;">
+                        <label class="layui-form-label">硬件信息文件</label>
+                        <div class="layui-input-block">
+                            <div class="hw-upload-area">
+                                <input type="file" id="hwFileInput" accept=".info">
+                                <div class="hw-file-info" id="hwFileInfo">
+                                    <span class="hw-file-name empty" id="hwFileName">未选择文件（支持 .info 格式）</span>
+                                    <span class="hw-file-meta" id="hwFileMeta"></span>
+                                    <span class="hw-file-clear" id="hwFileClear" title="删除文件">&times;</span>
+                                </div>
+                                <label class="hw-upload-btn" for="hwFileInput"><span class="upload-icon">&#8679;</span> 上传文件</label>
+                                <div class="hw-upload-result" id="hwUploadResult"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    </div>
+                    </div>
+
+                    <!-- ===== 动态授权配置区 ===== -->
+                    <div id="content">
+                        <!-- 统一授权日期栏 -->
+                        <div class="unified-date-bar">
+                            <span class="bar-label">统一授权日期</span>
+                            <input type="date" id="unifiedDate" class="layui-input" value="">
+                            <button type="button" class="apply-date-btn" id="applyDateBtn" disabled>应用到所有模块</button>
+                            <span class="bar-hint">选择日期后点击右侧按钮，将日期统一设置到所有授权模块的日期字段中</span>
+                        </div>
+                        <!-- 全局操作栏 -->
+                        <div class="module-toolbar">
+                            <span class="module-toolbar-title">授权模块配置</span>
+                            <button type="button" class="toolbar-btn" id="expandAll">全部展开</button>
+                            <button type="button" class="toolbar-btn" id="collapseAll">全部折叠</button>
+                        </div>
+
+                        <!-- 1. 计算虚拟化 -->
+                        <div class="module-item" id="module-aSV" data-module="计算虚拟化">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-aSV"></div>
+                                <span class="module-name">计算虚拟化</span>
+                                <span class="module-count">3个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron">▼</span>
+                            </div>
+                            <div class="module-body">
+                                <div class="module-grid">
+                                    <div class="grid-field"><span class="gf-label">集群内物理CPU颗数限制</span><div class="gf-val"><input type="text" name="aSVhost_cpu" value="8"></div><span class="gf-hint">最大20</span></div>
+                                    <div class="grid-field"><span class="gf-label">升级授权</span><div class="gf-val"><input type="text" name="aSVupgrade_auth" value="2026-07-04"></div></div>
+                                    <div class="grid-field"><span class="gf-label">使用授权</span><div class="gf-val"><input type="text" name="aSVuse_auth" value="2026-07-04"></div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2. 桌面虚拟化 -->
+                        <div class="module-item" id="module-aDESK" data-module="桌面虚拟化">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-aDESK"></div>
+                                <span class="module-name">桌面虚拟化</span>
+                                <span class="module-count">7个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron collapsed">▼</span>
+                            </div>
+                            <div class="module-body hidden">
+                                <div class="module-grid">
+                                    <div class="grid-field"><span class="gf-label">GPU虚拟机最大CPU核数</span><div class="gf-val"><input type="text" name="aDESKvm3d_cpu_limit" value="64"></div></div>
+                                    <div class="grid-field"><span class="gf-label">GPU虚拟机最大内存(GB)</span><div class="gf-val"><input type="text" name="aDESKvm3d_mem_limit" value="64"></div></div>
+                                    <div class="grid-field"><span class="gf-label">虚拟机最大CPU核数</span><div class="gf-val"><input type="text" name="aDESKvm2d_cpu_limit" value="32"></div></div>
+                                    <div class="grid-field"><span class="gf-label">虚拟机最大内存(GB)</span><div class="gf-val"><input type="text" name="aDESKvm2d_mem_limit" value="64"></div></div>
+                                    <div class="grid-field"><span class="gf-label">集群内物理CPU颗数限制</span><div class="gf-val"><input type="text" name="aDESKhost_cpu" value="8"></div><span class="gf-hint">最大20</span></div>
+                                    <div class="grid-field"><span class="gf-label">升级授权</span><div class="gf-val"><input type="text" name="aDESKupgrade_auth" value="2026-07-04"></div></div>
+                                    <div class="grid-field"><span class="gf-label">软件到期时间</span><div class="gf-val"><input type="text" name="aDESKuse_auth" value="2026-07-04"></div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3. 网络虚拟化 -->
+                        <div class="module-item" id="module-aNET" data-module="网络虚拟化">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-aNET"></div>
+                                <span class="module-name">网络虚拟化</span>
+                                <span class="module-count">4个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron collapsed">▼</span>
+                            </div>
+                            <div class="module-body hidden">
+                                <div class="module-grid">
+                                    <div class="grid-field"><span class="gf-label">CPU颗数</span><div class="gf-val"><input type="text" name="aNETanet_cpu" value="8"></div><span class="gf-hint">最大20</span></div>
+                                    <div class="grid-field"><span class="gf-label">使用授权结束时间</span><div class="gf-val"><input type="text" name="aNETend_time" value="2026-07-04"></div></div>
+                                </div>
+                                <div class="module-features">
+                                    <span class="fl">功能：</span>
+                                    <span class="feat-pill on">✓ 监控中心</span>
+                                    <span class="feat-pill on">✓ 分布式防火墙</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5. 下一代防火墙 -->
+                        <div class="module-item" id="module-NGAF" data-module="下一代防火墙">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-NGAF"></div>
+                                <span class="module-name">下一代防火墙</span>
+                                <span class="module-count">15个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron collapsed">▼</span>
+                            </div>
+                            <div class="module-body hidden">
+                                <div class="module-grid">
+                                    <div class="grid-field"><span class="gf-label">1.6Gbps带宽</span><div class="gf-val"><input type="text" name="NGAFaf_bandwidth_1.6G" value="10"></div></div>
+                                    <div class="grid-field"><span class="gf-label">800Mbps带宽</span><div class="gf-val"><input type="text" name="NGAFaf_bandwidth_800M" value="10"></div></div>
+                                    <div class="grid-field"><span class="gf-label">400Mbps带宽</span><div class="gf-val"><input type="text" name="NGAFaf_bandwidth_400M" value="10"></div></div>
+                                    <div class="grid-field"><span class="gf-label">200Mbps带宽</span><div class="gf-val"><input type="text" name="NGAFaf_bandwidth_200M" value="10"></div></div>
+                                    <div class="grid-field"><span class="gf-label">100Mbps带宽</span><div class="gf-val"><input type="text" name="NGAFaf_bandwidth_100M" value="10"></div></div>
+                                    <div class="grid-field"><span class="gf-label">SSL VPN用户数</span><div class="gf-val"><input type="text" name="NGAFaf_ssl_vpn" value="100"></div></div>
+                                    <div class="grid-field"><span class="gf-label">网站篡改防护数</span><div class="gf-val"><input type="text" name="NGAFaf_tamper" value="100"></div></div>
+                                    <div class="grid-field"><span class="gf-label">物联网安全功能</span><div class="gf-val"><input type="text" name="NGAFaf_iot" value="100"></div></div>
+                                    <div class="grid-field"><span class="gf-label">云蜜罐订阅服务</span><div class="gf-val"><input type="text" name="NGAFaf_honeypot" value="100"></div></div>
+                                    <div class="grid-field"><span class="gf-label">SOFAST优化&BEST选路</span><div class="gf-val"><input type="text" name="NGAFaf_sofast_best" value="100"></div></div>
+                                    <div class="grid-field"><span class="gf-label">线路数</span><div class="gf-val"><input type="text" name="NGAFaf_line" value="100"></div></div>
+                                    <div class="grid-field"><span class="gf-label">移动用户数</span><div class="gf-val"><input type="text" name="NGAFaf_users" value="100"></div></div>
+                                    <div class="grid-field"><span class="gf-label">分支数</span><div class="gf-val"><input type="text" name="NGAFaf_branch" value="100"></div></div>
+                                    <div class="grid-field"><span class="gf-label">服务到期时间</span><div class="gf-val"><input type="text" name="NGAF_service_time" value="2026-07-04"></div></div>
+                                    <div class="grid-field"><span class="gf-label">软件到期时间</span><div class="gf-val"><input type="text" name="NGAF_soft_time" value="2026-07-04"></div></div>
+                                </div>
+                                <div class="module-features">
+                                    <span class="fl">功能：</span>
+                                    <span class="feat-pill on">✓ 门户网站保护订阅服务</span>
+                                    <span class="feat-pill on">✓ 云脑-云鉴未知威胁和杀毒订阅服务</span>
+                                    <span class="feat-pill on">✓ 云脑-云智最新威胁防御规则库订阅服务</span>
+                                    <span class="feat-pill on">✓ 应用识别库</span>
+                                    <span class="feat-pill on">✓ URL库</span>
+                                    <span class="feat-pill on">✓ 数据泄密防护库</span>
+                                    <span class="feat-pill on">✓ 僵尸网络识别库</span>
+                                    <span class="feat-pill on">✓ 杀毒引擎更新</span>
+                                    <span class="feat-pill on">✓ WEB应用防护库</span>
+                                    <span class="feat-pill on">✓ IPS漏洞特征识别库</span>
+                                    <span class="feat-pill on">✓ 软件升级</span>
+                                    <span class="feat-pill on">✓ 增强功能开通</span>
+                                    <span class="feat-pill on">✓ 实时漏洞分析</span>
+                                    <span class="feat-pill on">✓ 僵尸网络</span>
+                                    <span class="feat-pill off">× 数据泄密防护</span>
+                                    <span class="feat-pill on">✓ WEB过滤</span>
+                                    <span class="feat-pill on">✓ 应用控制</span>
+                                    <span class="feat-pill on">✓ 流量控制</span>
+                                    <span class="feat-pill off">× WEB应用防护</span>
+                                    <span class="feat-pill on">✓ 网关杀毒功能开通</span>
+                                    <span class="feat-pill on">✓ IPS</span>
+                                    <span class="feat-pill on">✓ IPSec VPN</span>
+                                    <span class="feat-pill off">× 跨运营商</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 6. 应用交付 -->
+                        <div class="module-item" id="module-AD" data-module="应用交付">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-AD"></div>
+                                <span class="module-name">应用交付</span>
+                                <span class="module-count">7个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron collapsed">▼</span>
+                            </div>
+                            <div class="module-body hidden">
+                                <div class="module-grid">
+                                    <div class="grid-field"><span class="gf-label">5Gbps带宽</span><div class="gf-val"><input type="text" name="ADad_5Gbps_performance" value="10"></div></div>
+                                    <div class="grid-field"><span class="gf-label">3Gbps带宽</span><div class="gf-val"><input type="text" name="ADad_3Gbps_performance" value="10"></div></div>
+                                    <div class="grid-field"><span class="gf-label">1Gbps带宽</span><div class="gf-val"><input type="text" name="ADad_1Gbps_performance" value="10"></div></div>
+                                    <div class="grid-field"><span class="gf-label">500Mbps带宽</span><div class="gf-val"><input type="text" name="ADad_500Mbps_performance" value="10"></div></div>
+                                    <div class="grid-field"><span class="gf-label">基本模块(链路数量)</span><div class="gf-val"><input type="text" name="ADad_basic_module" value="100"></div></div>
+                                    <div class="grid-field"><span class="gf-label">服务到期时间</span><div class="gf-val"><input type="text" name="AD_service_time" value="2026-07-04"></div></div>
+                                    <div class="grid-field"><span class="gf-label">软件到期时间</span><div class="gf-val"><input type="text" name="AD_soft_time" value="2026-07-04"></div></div>
+                                </div>
+                                <div class="module-features">
+                                    <span class="fl">功能：</span>
+                                    <span class="feat-pill off">× 智能DNS</span>
+                                    <span class="feat-pill off">× HTTP缓存</span>
+                                    <span class="feat-pill off">× TCP单边加速</span>
+                                    <span class="feat-pill off">× SSL卸载</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 7. 上网行为管理 -->
+                        <div class="module-item" id="module-AC" data-module="上网行为管理">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-AC"></div>
+                                <span class="module-name">上网行为管理</span>
+                                <span class="module-count">14个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron collapsed">▼</span>
+                            </div>
+                            <div class="module-body hidden">
+                                <div class="module-grid">
+                                    <div class="grid-field"><span class="gf-label">2Gbps带宽</span><div class="gf-val"><input type="text" name="ACvAC-2000" value="10"></div></div>
+                                    <div class="grid-field"><span class="gf-label">1Gbps带宽</span><div class="gf-val"><input type="text" name="ACvAC-1000" value="10"></div></div>
+                                    <div class="grid-field"><span class="gf-label">700Mbps带宽</span><div class="gf-val"><input type="text" name="ACvAC-700" value="10"></div></div>
+                                    <div class="grid-field"><span class="gf-label">500Mbps带宽</span><div class="gf-val"><input type="text" name="ACvAC-500" value="10"></div></div>
+                                    <div class="grid-field"><span class="gf-label">300Mbps带宽</span><div class="gf-val"><input type="text" name="ACvAC-300" value="10"></div></div>
+                                    <div class="grid-field"><span class="gf-label">200Mbps带宽</span><div class="gf-val"><input type="text" name="ACvAC-200" value="10"></div></div>
+                                    <div class="grid-field"><span class="gf-label">100Mbps带宽</span><div class="gf-val"><input type="text" name="ACvAC-100" value="10"></div></div>
+                                    <div class="grid-field"><span class="gf-label">50Mbps带宽</span><div class="gf-val"><input type="text" name="ACvAC-50" value="10"></div></div>
+                                    <div class="grid-field"><span class="gf-label">线路数</span><div class="gf-val"><input type="text" name="ACac_lines" value="100"></div></div>
+                                    <div class="grid-field"><span class="gf-label">移动用户数</span><div class="gf-val"><input type="text" name="ACac_users" value="100"></div></div>
+                                    <div class="grid-field"><span class="gf-label">支持AP数</span><div class="gf-val"><input type="text" name="ACac_wireless_ap" value="100"></div></div>
+                                    <div class="grid-field"><span class="gf-label">分支数</span><div class="gf-val"><input type="text" name="ACac_branch" value="100"></div></div>
+                                    <div class="grid-field"><span class="gf-label">服务到期时间</span><div class="gf-val"><input type="text" name="AC_service_time" value="2026-07-04"></div></div>
+                                    <div class="grid-field"><span class="gf-label">软件到期时间</span><div class="gf-val"><input type="text" name="AC_soft_time" value="2026-07-04"></div></div>
+                                </div>
+                                <div class="module-features">
+                                    <span class="fl">功能：</span>
+                                    <span class="feat-pill off">× 防泄密外发审计序列号</span>
+                                    <span class="feat-pill off">× 上网代理</span>
+                                    <span class="feat-pill on">✓ 终端接入安全序列号</span>
+                                    <span class="feat-pill on">✓ 无线管理</span>
+                                    <span class="feat-pill off">× 软件升级</span>
+                                    <span class="feat-pill off">× 应用识别/URL库更新序列号</span>
+                                    <span class="feat-pill off">× 网关杀毒</span>
+                                    <span class="feat-pill on">✓ SSL内容识别</span>
+                                    <span class="feat-pill off">× 日志中心DKey查询</span>
+                                    <span class="feat-pill off">× 个人通信内容审计</span>
+                                    <span class="feat-pill off">× 内容审计</span>
+                                    <span class="feat-pill on">✓ 行为审计</span>
+                                    <span class="feat-pill off">× VPN配置</span>
+                                    <span class="feat-pill off">× 跨运营商</span>
+                                    <span class="feat-pill off">× 网安</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 8. 移动办公 -->
+                        <div class="module-item" id="module-SSL" data-module="移动办公">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-SSL"></div>
+                                <span class="module-name">移动办公</span>
+                                <span class="module-count">16个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron collapsed">▼</span>
+                            </div>
+                            <div class="module-body hidden">
+                                <div class="module-grid">
+                                    <div class="grid-field"><span class="gf-label">vSSL-1200</span><div class="gf-val"><input type="text" name="SSLvSSL-1200" value="10"></div></div>
+                                    <div class="grid-field"><span class="gf-label">vSSL-1000</span><div class="gf-val"><input type="text" name="SSLvSSL-1000" value="10"></div></div>
+                                    <div class="grid-field"><span class="gf-label">vSSL-800</span><div class="gf-val"><input type="text" name="SSLvSSL-800" value="10"></div></div>
+                                    <div class="grid-field"><span class="gf-label">vSSL-400</span><div class="gf-val"><input type="text" name="SSLvSSL-400" value="10"></div></div>
+                                    <div class="grid-field"><span class="gf-label">vSSL-200</span><div class="gf-val"><input type="text" name="SSLvSSL-200" value="10"></div></div>
+                                    <div class="grid-field"><span class="gf-label">vSSL-100</span><div class="gf-val"><input type="text" name="SSLvSSL-100" value="10"></div></div>
+                                    <div class="grid-field"><span class="gf-label">EMM行为管控专版授权数</span><div class="gf-val"><input type="text" name="SSLssl_emmbcuser" value="100"></div></div>
+                                    <div class="grid-field"><span class="gf-label">EMM高级版授权数</span><div class="gf-val"><input type="text" name="SSLssl_emmsenioruser" value="100"></div></div>
+                                    <div class="grid-field"><span class="gf-label">EMM标准版授权数</span><div class="gf-val"><input type="text" name="SSLssl_emmordinaryuser" value="100"></div></div>
+                                    <div class="grid-field"><span class="gf-label">EMM基础版授权数</span><div class="gf-val"><input type="text" name="SSLssl_emmbasicuser" value="100"></div></div>
+                                    <div class="grid-field"><span class="gf-label">远程应用用户数</span><div class="gf-val"><input type="text" name="SSLssl_remoteappuser" value="100"></div></div>
+                                    <div class="grid-field"><span class="gf-label">移动用户总数</span><div class="gf-val"><input type="text" name="SSLssl_ssl_vpn" value="100"></div></div>
+                                    <div class="grid-field"><span class="gf-label">分支机构数</span><div class="gf-val"><input type="text" name="SSLssl_branch" value="100"></div></div>
+                                    <div class="grid-field"><span class="gf-label">线路数</span><div class="gf-val"><input type="text" name="SSLssl_line" value="100"></div></div>
+                                    <div class="grid-field"><span class="gf-label">服务到期时间</span><div class="gf-val"><input type="text" name="SSL_service_time" value="2026-07-04"></div></div>
+                                    <div class="grid-field"><span class="gf-label">软件到期时间</span><div class="gf-val"><input type="text" name="SSL_soft_time" value="2026-07-04"></div></div>
+                                </div>
+                                <div class="module-features">
+                                    <span class="fl">功能：</span>
+                                    <span class="feat-pill on">✓ 单边加速</span>
+                                    <span class="feat-pill on">✓ 集群</span>
+                                    <span class="feat-pill on">✓ 流缓存</span>
+                                    <span class="feat-pill on">✓ 短信认证</span>
+                                    <span class="feat-pill on">✓ 单点登录</span>
+                                    <span class="feat-pill on">✓ 跨运营商</span>
+                                    <span class="feat-pill on">✓ 基本授权</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 9. 广域网优化 -->
+                        <div class="module-item" id="module-WOC" data-module="广域网优化">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-WOC"></div>
+                                <span class="module-name">广域网优化</span>
+                                <span class="module-count">7个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron collapsed">▼</span>
+                            </div>
+                            <div class="module-body hidden">
+                                <div class="module-grid">
+                                    <div class="grid-field"><span class="gf-label">200Mbps带宽</span><div class="gf-val"><input type="text" name="WOCwoc_standard_set_400" value="0"></div></div>
+                                    <div class="grid-field"><span class="gf-label">50Mbps带宽</span><div class="gf-val"><input type="text" name="WOCwoc_standard_set_200" value="0"></div></div>
+                                    <div class="grid-field"><span class="gf-label">25Mbps带宽</span><div class="gf-val"><input type="text" name="WOCwoc_standard_set" value="10"></div></div>
+                                    <div class="grid-field"><span class="gf-label">ipsec对接数</span><div class="gf-val"><input type="text" name="WOCwoc_ipsec_vpn" value="100"></div></div>
+                                    <div class="grid-field"><span class="gf-label">线路数</span><div class="gf-val"><input type="text" name="WOCwoc_vpn_line" value="100"></div></div>
+                                    <div class="grid-field"><span class="gf-label">服务到期时间</span><div class="gf-val"><input type="text" name="WOC_service_time" value="2026-07-04"></div></div>
+                                    <div class="grid-field"><span class="gf-label">软件到期时间</span><div class="gf-val"><input type="text" name="WOC_soft_time" value="2026-07-04"></div></div>
+                                </div>
+                                <div class="module-features">
+                                    <span class="fl">功能：</span>
+                                    <span class="feat-pill on">✓ vpn</span>
+                                    <span class="feat-pill on">✓ 应用识别库</span>
+                                    <span class="feat-pill on">✓ URL库</span>
+                                    <span class="feat-pill on">✓ 软件升级</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 10. 数据库安全审计系统 -->
+                        <div class="module-item" id="module-DAS" data-module="数据库安全审计系统">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-DAS"></div>
+                                <span class="module-name">数据库安全审计系统</span>
+                                <span class="module-count">4个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron collapsed">▼</span>
+                            </div>
+                            <div class="module-body hidden">
+                                <div class="module-grid">
+                                    <div class="grid-field"><span class="gf-label">500Mbps</span><div class="gf-val"><input type="text" name="DASvDAS-200" value="10"></div></div>
+                                    <div class="grid-field"><span class="gf-label">300Mbps</span><div class="gf-val"><input type="text" name="DASvDAS-100" value="10"></div></div>
+                                    <div class="grid-field"><span class="gf-label">服务到期时间</span><div class="gf-val"><input type="text" name="DAS_service_time" value="2026-07-04"></div></div>
+                                    <div class="grid-field"><span class="gf-label">软件到期时间</span><div class="gf-val"><input type="text" name="DAS_soft_time" value="2026-07-04"></div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 11. 安全虚拟化 -->
+                        <div class="module-item" id="module-aSEC" data-module="安全虚拟化">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-aSEC"></div>
+                                <span class="module-name">安全虚拟化</span>
+                                <span class="module-count">3个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron collapsed">▼</span>
+                            </div>
+                            <div class="module-body hidden">
+                                <div class="module-grid">
+                                    <div class="grid-field"><span class="gf-label">对接集群cpu颗数</span><div class="gf-val"><input type="text" name="aSECvcbsp_cpu_core" value="8"></div><span class="gf-hint">最大20</span></div>
+                                    <div class="grid-field"><span class="gf-label">服务到期时间</span><div class="gf-val"><input type="text" name="aSEC_service_time" value="2026-07-04"></div></div>
+                                    <div class="grid-field"><span class="gf-label">软件到期时间</span><div class="gf-val"><input type="text" name="aSEC_soft_time" value="2026-07-04"></div></div>
+                                </div>
+                                <div class="module-features">
+                                    <span class="fl">功能：</span>
+                                    <span class="feat-pill on">✓ 终端安全授权</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 12. 持续数据保护 -->
+                        <div class="module-item" id="module-CDP" data-module="持续数据保护">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-CDP"></div>
+                                <span class="module-name">持续数据保护</span>
+                                <span class="module-count">3个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron collapsed">▼</span>
+                            </div>
+                            <div class="module-body hidden">
+                                <div class="module-grid">
+                                    <div class="grid-field"><span class="gf-label">模块数</span><div class="gf-val"><input type="text" name="CDPcdp_module_count" value="1"></div><span class="gf-hint">最大1</span></div>
+                                    <div class="grid-field"><span class="gf-label">保护虚拟机数(0-10)</span><div class="gf-val"><input type="text" name="CDPprotect_vm" value="8"></div><span class="gf-hint">最大10</span></div>
+                                    <div class="grid-field"><span class="gf-label">使用授权结束时间</span><div class="gf-val"><input type="text" name="CDPend_time" value="2026-07-04"></div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 13. 异构管理 -->
+                        <div class="module-item" id="module-aHM" data-module="异构管理">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-aHM"></div>
+                                <span class="module-name">异构管理</span>
+                                <span class="module-count">2个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron collapsed">▼</span>
+                            </div>
+                            <div class="module-body hidden">
+                                <div class="module-grid">
+                                    <div class="grid-field"><span class="gf-label">VMware备份最大虚拟机数(0-10)</span><div class="gf-val"><input type="text" name="aHMvmware_backup_vm" value="8"></div><span class="gf-hint">最大10</span></div>
+                                    <div class="grid-field"><span class="gf-label">使用授权结束时间</span><div class="gf-val"><input type="text" name="aHMend_time" value="2026-07-04"></div></div>
+                                </div>
+                                <div class="module-features">
+                                    <span class="fl">功能：</span>
+                                    <span class="feat-pill on">✓ VMware管理</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 其他配置 -->
+                        <div class="module-item" id="module-others" data-module="其他配置">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-others"></div>
+                                <span class="module-name">其他配置</span>
+                                <span class="module-count">4个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron">▼</span>
+                            </div>
+                            <div class="module-body">
+                                <div class="module-grid">
+                                    <div class="grid-field"><span class="gf-label">存储虚拟化 · CPU颗数</span><div class="gf-val"><input type="text" name="VSvs_cpu_core" value="8"></div><span class="gf-hint">最大20</span></div>
+                                    <div class="grid-field"><span class="gf-label">延伸集群 · CPU颗数</span><div class="gf-val"><input type="text" name="aSCvs_cpu" value="8"></div><span class="gf-hint">最大20</span></div>
+                                    <div class="grid-field"><span class="gf-label">显卡管理 · 到期时间</span><div class="gf-val"><input type="text" name="aGPU_soft_time" value="2026-07-04"></div></div>
+                                    <div class="grid-field"><span class="gf-label">显卡管理 · 显卡张数</span><div class="gf-val"><input type="text" name="aGPUphysical_graphics_limit" value="8"></div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- 动态授权配置区结束 -->
+
+                    <!-- 提交按钮 -->
+                    <div class="layui-form-item">
+                        <div class="layui-input-block" style="text-align: center;">
+                            <button type="button" class="layui-btn" onclick="submitStandardForm()">立即获取</button>
+                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        </div>
+                    </div>
+                </form>
+                </div>
+
+                <!-- XaaS授权表单 -->
+                <div id="content-xaas" style="display:none;">
+                    <div class="special-form-section">
+                        <div class="section-title">XaaS授权申请</div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">授权场景<span class="required-star">*</span></label>
+                            <div class="layui-input-block">
+                                <select class="layui-select" id="xaas-scene">
+                                    <option value="试用授权申请">试用授权申请</option>
+                                    <option value="试用授权资源变更">试用授权资源变更</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">客户联系人姓名<span class="required-star">*</span></label>
+                            <div class="layui-input-block">
+                                <input type="text" class="layui-input" id="xaas-contact-name" placeholder="请输入客户联系人姓名">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">客户联系人手机号<span class="required-star">*</span></label>
+                            <div class="layui-input-block">
+                                <input type="text" class="layui-input" id="xaas-contact-phone" maxlength="11" placeholder="请输入11位手机号">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">客户联系人邮箱<span class="required-star">*</span></label>
+                            <div class="layui-input-block">
+                                <input type="email" class="layui-input" id="xaas-contact-email" placeholder="请输入正确邮箱">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">客户名称<span class="required-star">*</span>
+                                <span class="field-tooltip"><span class="tooltip-icon">ⓘ</span>
+                                    <div class="tooltip-popup">
+                                        <button class="tooltip-copy" onclick="copyTooltip(this)">复制</button>
+                                        <div class="tooltip-title">客户名称 备注</div>
+                                        <div class="tooltip-section"><span class="tooltip-label">用户故事：</span>如果检测到客户输入的手机号已经注册过云图账号，则自动在主数据中匹配客户名称且不可修改；全新未注册客户需在弹出的主数据客户中选择，支持点击创建新客户。</div>
+                                        <div class="tooltip-section"><span class="tooltip-label">权限控制：</span>仅具有客户申请权限的账号可操作；自动匹配时置灰不可编辑。</div>
+                                        <div class="tooltip-section"><span class="tooltip-label">交互规则：</span>输入手机号后若已注册云图账号，系统自动匹配客户名称并置灰；若未注册，点击客户名称字段弹出客户选择框，支持搜索和新建。</div>
+                                        <div class="tooltip-section"><span class="tooltip-label">异常场景：</span>手机号格式错误时提示重新输入；网络异常时允许手动选择；主数据中无匹配时支持创建新客户。</div>
+                                    </div>
+                                </span>
+                            </label>
+                            <div class="layui-input-block">
+                                <button type="button" class="layui-btn layui-btn-primary" style="width:100%;max-width:400px;text-align:left;color:#999;">
+                                    点击选择客户，如未找到可创建新客户 <i class="layui-edge" style="float:right;margin-top:10px;"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">所属区域<span class="required-star">*</span>
+                                <span class="field-tooltip"><span class="tooltip-icon">ⓘ</span>
+                                    <div class="tooltip-popup">
+                                        <button class="tooltip-copy" onclick="copyTooltip(this)">复制</button>
+                                        <div class="tooltip-title">所属区域 备注</div>
+                                        <div class="tooltip-section"><span class="tooltip-label">用户故事：</span>选择客户所属区域，同步公司区域信息，用于客户经营平台的试用列表权限隔离和查看范围控制。</div>
+                                        <div class="tooltip-section"><span class="tooltip-label">数据定义：</span>枚举值，包括华东、华北、华南、西南、西北、华中、东北等区域。</div>
+                                        <div class="tooltip-section"><span class="tooltip-label">交互规则：</span>点击下拉框选择区域，选择后对应区域和产线的账号可在客户经营平台试用列表中查看该试用信息。</div>
+                                        <div class="tooltip-section"><span class="tooltip-label">异常场景：</span>区域数据未及时同步时可联系管理员更新；区域为空时不允许提交申请。</div>
+                                    </div>
+                                </span>
+                            </label>
+                            <div class="layui-input-block">
+                                <select class="layui-select" id="xaas-region">
+                                    <option value="">请选择区域</option>
+                                    <option value="华东区域">华东区域</option>
+                                    <option value="华北区域">华北区域</option>
+                                    <option value="华南区域">华南区域</option>
+                                    <option value="西南区域">西南区域</option>
+                                    <option value="西北区域">西北区域</option>
+                                    <option value="华中区域">华中区域</option>
+                                    <option value="东北区域">东北区域</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">订阅产品<span class="required-star">*</span>
+                                <span class="field-tooltip"><span class="tooltip-icon">ⓘ</span>
+                                    <div class="tooltip-popup">
+                                        <button class="tooltip-copy" onclick="copyTooltip(this)">复制</button>
+                                        <div class="tooltip-title">订阅产品 备注</div>
+                                        <div class="tooltip-section"><span class="tooltip-label">用户故事：</span>展示可申请的订阅产品列表，根据客户状态区分可申请范围：已试用产品显示警告仍可申请，正在试用中的产品禁止重复申请。</div>
+                                        <div class="tooltip-section"><span class="tooltip-label">交互规则：</span>勾选已试用产品时弹出提示「该客户已经试用过此产品，再次申请需通过审批流程」，勾选后下方出现「单自然年多次试用申请理由」必填字段；正在试用产品置灰不可点击。</div>
+                                        <div class="tooltip-section"><span class="tooltip-label">异常场景：</span>客户未匹配时所有产品正常可选；匹配后根据产品状态自动标记；网络异常时默认全部可选。</div>
+                                    </div>
+                                </span>
+                            </label>
+                            <div class="layui-input-block">
+                                <div class="xaas-product-list">
+                                    <div class="xaas-product-item" data-product="SaaS-XDR" data-default-desc="有效期30天，日志量2亿条">
+                                        <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="SaaS-XDR"> <span>SaaS-XDR</span></label>
+                                        <div class="xaas-product-right">
+                                            <span class="xaas-product-desc">有效期30天，日志量2亿条</span>
+                                            <button type="button" class="xaas-spec-btn" style="display:none;">修改规格</button>
+                                        </div>
+                                    </div>
+                                    <div class="xaas-product-item" data-product="NGDR" data-default-desc="有效期30天，授权PC数50个，授权服务器数50个，基础版">
+                                        <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="NGDR"> <span>NGDR</span></label>
+                                        <div class="xaas-product-right">
+                                            <span class="xaas-product-desc xaas-need-spec">请选择规格</span>
+                                            <button type="button" class="xaas-spec-btn" style="display:none;">修改规格</button>
+                                        </div>
+                                    </div>
+                                    <div class="xaas-product-item" data-product="SaaS-aES" data-default-desc="有效期30天，授权PC数50个，授权服务器数50个，探针版">
+                                        <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="SaaS-aES"> <span>SaaS-aES</span></label>
+                                        <div class="xaas-product-right">
+                                            <span class="xaas-product-desc xaas-need-spec">请选择规格</span>
+                                            <button type="button" class="xaas-spec-btn" style="display:none;">修改规格</button>
+                                        </div>
+                                    </div>
+                                    <div class="xaas-product-item" data-product="SASE-XDLP" data-default-desc="有效期30天，授权用户数50个">
+                                        <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="数据泄密分析"> <span>SASE-XDLP 数据泄密分析</span></label>
+                                        <div class="xaas-product-right">
+                                            <span class="xaas-product-desc">有效期30天，授权用户数50个</span>
+                                            <button type="button" class="xaas-spec-btn" style="display:none;">修改规格</button>
+                                        </div>
+                                    </div>
+                                    <div class="xaas-product-item" data-product="SASE-ZTNA" data-default-desc="有效期30天，授权用户数50个">
+                                        <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="零信任网络访问"> <span>SASE-ZTNA 零信任网络访问</span></label>
+                                        <div class="xaas-product-right">
+                                            <span class="xaas-product-desc">有效期30天，授权用户数50个</span>
+                                            <button type="button" class="xaas-spec-btn" style="display:none;">修改规格</button>
+                                        </div>
+                                    </div>
+                                    <div class="xaas-product-item" data-product="SASE-SWG" data-default-desc="有效期30天，用户版，用户数50个">
+                                        <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="互联网安全访问"> <span>SASE-SWG 互联网安全访问</span></label>
+                                        <div class="xaas-product-right">
+                                            <span class="xaas-product-desc xaas-need-spec">请选择规格</span>
+                                            <button type="button" class="xaas-spec-btn" style="display:none;">修改规格</button>
+                                        </div>
+                                    </div>
+                                    <div class="xaas-product-item" data-product="钓鱼邮件防护" data-default-desc="有效期30天，每日邮件数量10000封">
+                                        <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="钓鱼邮件防护 GPT"> <span>钓鱼邮件防护 GPT</span></label>
+                                        <div class="xaas-product-right">
+                                            <span class="xaas-product-desc">有效期30天，每日邮件数量10000封</span>
+                                            <button type="button" class="xaas-spec-btn" style="display:none;">修改规格</button>
+                                        </div>
+                                    </div>
+                                    <div class="xaas-product-item" data-product="云威胁情报网关">
+                                        <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="云威胁情报网关"> <span>云威胁情报网关</span></label>
+                                        <div class="xaas-product-right">
+                                            <span class="xaas-product-desc">有效期90天，不支持修改规格</span>
+                                        </div>
+                                    </div>
+                                    <div class="xaas-product-item" data-product="SASE-GA" data-default-desc="有效期15天，带宽5M">
+                                        <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="全球加速"> <span>SASE-GA 全球加速</span></label>
+                                        <div class="xaas-product-right">
+                                            <span class="xaas-product-desc">有效期15天，带宽5M</span>
+                                            <button type="button" class="xaas-spec-btn" style="display:none;">修改规格</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 场景二字段（试用授权资源变更时显示） -->
+                        <div id="xaas-scene2-fields" style="display:none;">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">关联订阅产品<span class="required-star">*</span>
+                                <span class="field-tooltip"><span class="tooltip-icon">ⓘ</span>
+                                    <div class="tooltip-popup">
+                                        <button class="tooltip-copy" onclick="copyTooltip(this)">复制</button>
+                                        <div class="tooltip-title">关联订阅产品 备注</div>
+                                        <div class="tooltip-section"><span class="tooltip-label">用户故事：</span>回显关联客户该自然年内已申请的订阅产品及原授权时间和授权数量，用户可选择需修改的产品并调整对应授权参数。</div>
+                                        <div class="tooltip-section"><span class="tooltip-label">数据定义：</span>包含产品ID、产品名称、原授权到期时间、原授权数量、规格ID。支持调整的产品：SaaS-XDR（日志量）、DR2.0（PC数/服务器数）、SaaS-aES（PC数/服务器数）、数据泄密分析（用户数）、零信任网络访问（用户数）、互联网安全访问（根据规格展示用户数/分支数）。</div>
+                                        <div class="tooltip-section"><span class="tooltip-label">交互规则：</span>选择客户后自动加载关联产品列表，用户通过勾选选择需修改的产品；勾选后展开对应调整字段，默认回显当前授权数量。</div>
+                                        <div class="tooltip-section"><span class="tooltip-label">异常场景：</span>产品数据加载失败时提示重试；调整值超出允许范围时提示限制。</div>
+                                    </div>
+                                </span>
+                            </label>
+                            <div class="layui-input-block">
+                                <div class="xaas-product-list" id="xaas-related-products">
+                                    <div class="xaas-product-item" style="color:#999;font-size:13px;">请先选择客户后加载关联产品</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        </div>
+
+                        <!-- 延长试用授权有效期（独立区域） -->
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">延长试用授权有效期</label>
+                            <div class="layui-input-block">
+                                <div class="xaas-extend-section">
+                                    <label class="xaas-extend-check">
+                                        <input type="checkbox" id="xaas-extend-check"> 延长试用授权有效期
+                                        <span class="xaas-extend-tip-icon" title="勾选并选择日期后，流程审批通过后所有订阅到期时间将统一延长至该日期">⚠</span>
+                                    </label>
+                                    <div id="xaas-extend-date-area" class="xaas-extend-date-area" style="display:none;">
+                                        <input type="date" id="xaas-extend-date-new" class="layui-input" style="width:200px;">
+                                        <p class="xaas-extend-hint">审批通过后，所有订阅到期时间将统一延长至所选日期</p>
+                                        <p class="xaas-extend-warn">⚠ 修改默认规格需要经过审批后才生效</p>
+                                        <p class="xaas-extend-warn">⚠ 支持选择规格的订阅需要同时支持选择</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <div class="layui-input-block" style="text-align: center;">
+                                <button type="button" class="layui-btn">立即获取</button>
+                                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 底部 -->
+        <div class="layui-footer footer">
+            <p>Copyright @2018 深信服科技股份有限公司 版权所有</p>
+        </div>
+    </div>
+
+    <!-- 右侧模块导航 -->
+    <div class="module-nav" id="moduleNav">
+        <div class="module-nav-title">模块导航</div>
+        <div class="module-nav-item enabled active" data-target="section-basic">基本信息</div>
+        <div class="module-nav-item enabled" data-target="module-aSV">计算虚拟化</div>
+        <div class="module-nav-item enabled" data-target="module-aDESK">桌面虚拟化</div>
+        <div class="module-nav-item enabled" data-target="module-aNET">网络虚拟化</div>
+        <div class="module-nav-item enabled" data-target="module-NGAF">下一代防火墙</div>
+        <div class="module-nav-item enabled" data-target="module-AD">应用交付</div>
+        <div class="module-nav-item enabled" data-target="module-AC">上网行为管理</div>
+        <div class="module-nav-item enabled" data-target="module-SSL">移动办公</div>
+        <div class="module-nav-item enabled" data-target="module-WOC">广域网优化</div>
+        <div class="module-nav-item enabled" data-target="module-DAS">数据库审计</div>
+        <div class="module-nav-item enabled" data-target="module-aSEC">安全虚拟化</div>
+        <div class="module-nav-item enabled" data-target="module-CDP">持续数据保护</div>
+        <div class="module-nav-item enabled" data-target="module-aHM">异构管理</div>
+        <div class="module-nav-item enabled" data-target="module-others">其他配置</div>
+    </div>
+
+    <!-- XaaS规格编辑弹窗 -->
+    <div class="xaas-spec-modal-overlay" id="xaasSpecModal">
+        <div class="xaas-spec-modal">
+            <div class="xaas-spec-modal-title" id="specModalTitle">修改规格</div>
+            <div id="specModalBody"></div>
+            <div class="xaas-spec-modal-btns">
+                <button type="button" class="spec-cancel" id="specCancelBtn">取消</button>
+                <button type="button" class="spec-confirm" id="specConfirmBtn">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 同步提示 -->
+    <div class="sync-toast" id="syncToast">✓ 已同步所有日期</div>
+
+    <script>
+    (function() {
+        // ===== Tab 切换逻辑 =====
+        var contentHardware = document.getElementById('content-hardware');
+        var contentXaas = document.getElementById('content-xaas');
+        var moduleNav = document.getElementById('moduleNav');
+
+        function switchTab(tabName) {
+            // 切换内容区域
+            contentHardware.style.display = (tabName === 'hardware') ? 'block' : 'none';
+            contentXaas.style.display = (tabName === 'xaas') ? 'block' : 'none';
+            // 切换右侧模块导航显示
+            moduleNav.style.display = (tabName === 'hardware') ? 'block' : 'none';
+            // 同步左侧导航高亮
+            document.querySelectorAll('#navBar ul li').forEach(function(li) {
+                li.classList.remove('layui-this');
+                if (li.dataset.tab === tabName) li.classList.add('layui-this');
+            });
+            // 同步顶部Tab高亮
+            document.querySelectorAll('#top_tabs li').forEach(function(li) {
+                li.classList.remove('layui-this');
+                if (li.dataset.tab === tabName) li.classList.add('layui-this');
+            });
+            // 滚动到顶部
+            document.getElementById('contentBody').scrollTop = 0;
+        }
+
+        // 左侧导航点击
+        document.querySelectorAll('#navBar ul li[data-tab]').forEach(function(li) {
+            li.addEventListener('click', function() { switchTab(this.dataset.tab); });
+        });
+        // 顶部Tab点击
+        document.querySelectorAll('#top_tabs li[data-tab]').forEach(function(li) {
+            li.addEventListener('click', function() { switchTab(this.dataset.tab); });
+        });
+
+        // ===== XaaS 授权场景切换 =====
+        var xaasScene = document.getElementById('xaas-scene');
+        var xaasScene2Fields = document.getElementById('xaas-scene2-fields');
+        if (xaasScene && xaasScene2Fields) {
+            xaasScene.addEventListener('change', function() {
+                xaasScene2Fields.style.display = (this.value === '试用授权资源变更') ? 'block' : 'none';
+            });
+        }
+
+        // ===== XaaS 产品勾选联动修改规格按钮 =====
+        var xaasSpecValues = {
+            'SaaS-XDR': { logAmount: 20000 },
+            'NGDR': { version: '基础版', pcCount: 50, serverCount: 50 },
+            'SaaS-aES': { version: '探针版', pcCount: 50, serverCount: 50 },
+            'SASE-XDLP': { userCount: 50 },
+            'SASE-ZTNA': { userCount: 50 },
+            'SASE-SWG': { swgType: '用户版', userCount: 50, branchCount: 3, bandwidth: 100 },
+            '钓鱼邮件防护': { mailCount: 10000 },
+            'SASE-GA': { bandwidth: 5 }
+        };
+        var needSpecProducts = ['NGDR', 'SaaS-aES', 'SASE-SWG'];
+
+        document.querySelectorAll('input[name="xaas-product"]').forEach(function(cb) {
+            cb.addEventListener('change', function() {
+                var item = this.closest('.xaas-product-item');
+                var product = item.dataset.product;
+                var specBtn = item.querySelector('.xaas-spec-btn');
+                var desc = item.querySelector('.xaas-product-desc');
+                if (this.checked) {
+                    if (product !== '云威胁情报网关' && specBtn) {
+                        specBtn.style.display = 'inline-block';
+                    }
+                    if (needSpecProducts.indexOf(product) > -1) {
+                        desc.classList.remove('xaas-need-spec');
+                        desc.textContent = item.dataset.defaultDesc;
+                    }
+                } else {
+                    if (specBtn) specBtn.style.display = 'none';
+                    if (needSpecProducts.indexOf(product) > -1) {
+                        desc.classList.add('xaas-need-spec');
+                        desc.textContent = '请选择规格';
+                    }
+                }
+            });
+        });
+
+        // ===== XaaS 规格编辑弹窗 =====
+        var specModal = document.getElementById('xaasSpecModal');
+        var specModalTitle = document.getElementById('specModalTitle');
+        var specModalBody = document.getElementById('specModalBody');
+        var currentSpecProduct = '';
+        var productDisplayNames = {
+            'SaaS-XDR': 'SaaS-XDR', 'NGDR': 'NGDR', 'SaaS-aES': 'SaaS-aES',
+            'SASE-XDLP': 'SASE-XDLP 数据泄密分析', 'SASE-ZTNA': 'SASE-ZTNA 零信任网络访问',
+            'SASE-SWG': 'SASE-SWG 互联网安全访问', '钓鱼邮件防护': '钓鱼邮件防护 GPT', 'SASE-GA': 'SASE-GA 全球加速'
+        };
+
+        function renderSpecFields(product) {
+            var v = xaasSpecValues[product] || {};
+            var html = '';
+            if (product === 'SaaS-XDR') {
+                html = '<div class="spec-field"><label>日志量（万条）</label><input type="number" id="spec-log" value="' + v.logAmount + '" min="1"></div>';
+            } else if (product === 'NGDR') {
+                html = '<div class="spec-field"><label>版本</label><select id="spec-version"><option' + (v.version==='基础版'?' selected':'') + '>基础版</option><option' + (v.version==='全量版'?' selected':'') + '>全量版</option></select></div>';
+                html += '<div class="spec-field"><label>授权PC数</label><input type="number" id="spec-pc" value="' + v.pcCount + '" min="1"></div>';
+                html += '<div class="spec-field"><label>授权服务器数</label><input type="number" id="spec-server" value="' + v.serverCount + '" min="1"></div>';
+            } else if (product === 'SaaS-aES') {
+                html = '<div class="spec-field"><label>版本</label><select id="spec-version"><option' + (v.version==='探针版'?' selected':'') + '>探针版</option><option' + (v.version==='全功能版'?' selected':'') + '>全功能版</option></select></div>';
+                html += '<div class="spec-field"><label>授权PC数</label><input type="number" id="spec-pc" value="' + v.pcCount + '" min="1"></div>';
+                html += '<div class="spec-field"><label>授权服务器数</label><input type="number" id="spec-server" value="' + v.serverCount + '" min="1"></div>';
+            } else if (product === 'SASE-XDLP' || product === 'SASE-ZTNA') {
+                html = '<div class="spec-field"><label>授权用户数</label><input type="number" id="spec-users" value="' + v.userCount + '" min="1"></div>';
+            } else if (product === 'SASE-SWG') {
+                html = '<div class="spec-field"><label>规格类型</label><select id="spec-swg-type"><option' + (v.swgType==='用户版'?' selected':'') + '>用户版</option><option' + (v.swgType==='分支版'?' selected':'') + '>分支版</option><option' + (v.swgType==='用户+分支版'?' selected':'') + '>用户+分支版</option></select></div>';
+                html += '<div class="spec-field" id="spec-swg-users-field"' + (v.swgType==='分支版'?' style="display:none"':'') + '><label>授权用户数</label><input type="number" id="spec-swg-users" value="' + v.userCount + '" min="1"></div>';
+                html += '<div class="spec-field" id="spec-swg-branch-field"' + (v.swgType==='用户版'?' style="display:none"':'') + '><label>分支数</label><input type="number" id="spec-swg-branch" value="' + v.branchCount + '" min="1"></div><div class="spec-field" id="spec-swg-bw-field"' + (v.swgType==='用户版'?' style="display:none"':'') + '><label>每分支带宽（M）</label><input type="number" id="spec-swg-bw" value="' + v.bandwidth + '" min="1"></div>';
+            } else if (product === '钓鱼邮件防护') {
+                html = '<div class="spec-field"><label>每日邮件数量（封）</label><input type="number" id="spec-mail" value="' + v.mailCount + '" min="1"></div>';
+            } else if (product === 'SASE-GA') {
+                html = '<div class="spec-field"><label>带宽（M）</label><input type="number" id="spec-bw" value="' + v.bandwidth + '" min="1"></div>';
+            }
+            return html;
+        }
+
+        function openSpecModal(product) {
+            currentSpecProduct = product;
+            specModalTitle.textContent = '修改规格 - ' + (productDisplayNames[product] || product);
+            specModalBody.innerHTML = renderSpecFields(product);
+            specModal.classList.add('show');
+            var swgTypeSelect = document.getElementById('spec-swg-type');
+            if (swgTypeSelect) {
+                swgTypeSelect.addEventListener('change', function() {
+                    var val = this.value;
+                    document.getElementById('spec-swg-users-field').style.display = (val === '分支版') ? 'none' : '';
+                    document.getElementById('spec-swg-branch-field').style.display = (val === '用户版') ? 'none' : '';
+                    document.getElementById('spec-swg-bw-field').style.display = (val === '用户版') ? 'none' : '';
+                });
+            }
+        }
+
+        function closeSpecModal() {
+            specModal.classList.remove('show');
+            currentSpecProduct = '';
+        }
+
+        function saveSpecValues() {
+            var p = currentSpecProduct;
+            var v = xaasSpecValues[p];
+            if (!v) return;
+            if (p === 'SaaS-XDR') {
+                v.logAmount = parseInt(document.getElementById('spec-log').value) || 20000;
+            } else if (p === 'NGDR') {
+                v.version = document.getElementById('spec-version').value;
+                v.pcCount = parseInt(document.getElementById('spec-pc').value) || 50;
+                v.serverCount = parseInt(document.getElementById('spec-server').value) || 50;
+            } else if (p === 'SaaS-aES') {
+                v.version = document.getElementById('spec-version').value;
+                v.pcCount = parseInt(document.getElementById('spec-pc').value) || 50;
+                v.serverCount = parseInt(document.getElementById('spec-server').value) || 50;
+            } else if (p === 'SASE-XDLP' || p === 'SASE-ZTNA') {
+                v.userCount = parseInt(document.getElementById('spec-users').value) || 50;
+            } else if (p === 'SASE-SWG') {
+                v.swgType = document.getElementById('spec-swg-type').value;
+                v.userCount = parseInt(document.getElementById('spec-swg-users').value) || 50;
+                v.branchCount = parseInt(document.getElementById('spec-swg-branch').value) || 3;
+                v.bandwidth = parseInt(document.getElementById('spec-swg-bw').value) || 100;
+            } else if (p === '钓鱼邮件防护') {
+                v.mailCount = parseInt(document.getElementById('spec-mail').value) || 10000;
+            } else if (p === 'SASE-GA') {
+                v.bandwidth = parseInt(document.getElementById('spec-bw').value) || 5;
+            }
+        }
+
+        function buildDescText(product) {
+            var v = xaasSpecValues[product];
+            if (!v) return '';
+            if (product === 'SaaS-XDR') return '有效期30天，日志量' + v.logAmount + '万条';
+            if (product === 'NGDR') return '有效期30天，授权PC数' + v.pcCount + '个，授权服务器数' + v.serverCount + '个，' + v.version;
+            if (product === 'SaaS-aES') return '有效期30天，授权PC数' + v.pcCount + '个，授权服务器数' + v.serverCount + '个，' + v.version;
+            if (product === 'SASE-XDLP') return '有效期30天，授权用户数' + v.userCount + '个';
+            if (product === 'SASE-ZTNA') return '有效期30天，授权用户数' + v.userCount + '个';
+            if (product === 'SASE-SWG') {
+                var t = v.swgType;
+                if (t === '用户版') return '有效期30天，用户版，用户数' + v.userCount + '个';
+                if (t === '分支版') return '有效期30天，分支版，' + v.branchCount + '条分支*' + v.bandwidth + 'M';
+                return '有效期30天，用户+分支版，用户数' + v.userCount + '个，' + v.branchCount + '条分支*' + v.bandwidth + 'M';
+            }
+            if (product === '钓鱼邮件防护') return '有效期30天，每日邮件数量' + v.mailCount + '封';
+            if (product === 'SASE-GA') return '有效期15天，带宽' + v.bandwidth + 'M';
+            return '';
+        }
+
+        document.querySelectorAll('.xaas-spec-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var item = this.closest('.xaas-product-item');
+                openSpecModal(item.dataset.product);
+            });
+        });
+
+        document.getElementById('specCancelBtn').addEventListener('click', closeSpecModal);
+        document.getElementById('specConfirmBtn').addEventListener('click', function() {
+            saveSpecValues();
+            var item = document.querySelector('.xaas-product-item[data-product="' + currentSpecProduct + '"]');
+            if (item) {
+                var desc = item.querySelector('.xaas-product-desc');
+                desc.textContent = buildDescText(currentSpecProduct);
+                desc.classList.remove('xaas-need-spec');
+            }
+            closeSpecModal();
+        });
+        specModal.addEventListener('click', function(e) {
+            if (e.target === specModal) closeSpecModal();
+        });
+
+        // ===== XaaS 延长试用授权有效期 =====
+        var extendCheck = document.getElementById('xaas-extend-check');
+        var extendDateArea = document.getElementById('xaas-extend-date-area');
+        if (extendCheck && extendDateArea) {
+            extendCheck.addEventListener('change', function() {
+                extendDateArea.style.display = this.checked ? 'block' : 'none';
+                if (!this.checked) {
+                    var dateInput = document.getElementById('xaas-extend-date-new');
+                    if (dateInput) dateInput.value = '';
+                }
+            });
+        }
+
+        // ===== 硬件信息文件上传 =====
+        // 需要上传硬件信息文件的产品线 ID
+        var hwInfoProductLines = ['45', '19']; // HCI, SCP
+        var hwInfoSection = document.getElementById('hwInfoSection');
+        var hwFileInput = document.getElementById('hwFileInput');
+        var hwUploadResult = document.getElementById('hwUploadResult');
+        var hwFileName = document.getElementById('hwFileName');
+        var hwFileInfo = document.getElementById('hwFileInfo');
+        var hwFileMeta = document.getElementById('hwFileMeta');
+
+        var hwFileClear = document.getElementById('hwFileClear');
+
+        hwFileClear.addEventListener('click', function() {
+            hwFileInput.value = '';
+            clearHwFile();
+        });
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / 1048576).toFixed(1) + ' MB';
+        }
+
+        function clearHwFile() {
+            hwFileName.textContent = '未选择文件（支持 .info 格式）';
+            hwFileName.className = 'hw-file-name empty';
+            hwFileMeta.textContent = '';
+            hwFileInfo.classList.remove('has-file');
+            hwUploadResult.textContent = '';
+            hwUploadResult.className = 'hw-upload-result';
+        }
+
+        function toggleHwInfoSection(plnameValue) {
+            if (hwInfoProductLines.indexOf(plnameValue) > -1) {
+                hwInfoSection.style.display = 'flex';
+            } else {
+                hwInfoSection.style.display = 'none';
+                hwFileInput.value = '';
+                clearHwFile();
+            }
+        }
+
+        hwFileInput.addEventListener('change', function() {
+            var file = this.files[0];
+            if (!file) {
+                clearHwFile();
+                return;
+            }
+            hwFileName.textContent = file.name;
+            hwFileName.className = 'hw-file-name';
+            hwFileMeta.textContent = formatFileSize(file.size);
+            hwFileInfo.classList.add('has-file');
+            // 格式校验
+            if (!file.name.toLowerCase().endsWith('.info')) {
+                hwUploadResult.textContent = '仅支持 .info 格式文件';
+                hwUploadResult.className = 'hw-upload-result fail';
+                return;
+            }
+            // 格式校验通过，静默通过，不显示提示
+            hwUploadResult.textContent = '';
+            hwUploadResult.className = 'hw-upload-result';
+        });
+
+        // ===== 产品线切换动态刷新模块导航 =====
+        // 各产品线对应的模块配置（仅展示部分产品线示例）
+        var productModules = {
+            '45': [ // HCI
+                { id: 'module-aSV', name: '计算虚拟化' },
+                { id: 'module-aDESK', name: '桌面虚拟化' },
+                { id: 'module-aNET', name: '网络虚拟化' },
+                { id: 'module-NGAF', name: '下一代防火墙' },
+                { id: 'module-AD', name: '应用交付' },
+                { id: 'module-AC', name: '上网行为管理' },
+                { id: 'module-SSL', name: '移动办公' },
+                { id: 'module-WOC', name: '广域网优化' },
+                { id: 'module-DAS', name: '数据库审计' },
+                { id: 'module-aSEC', name: '安全虚拟化' },
+                { id: 'module-CDP', name: '持续数据保护' },
+                { id: 'module-aHM', name: '异构管理' },
+                { id: 'module-others', name: '其他配置' }
+            ],
+            '22': [ // NGAF
+                { id: 'module-NGAF', name: '下一代防火墙' },
+                { id: 'module-AD', name: '应用交付' },
+                { id: 'module-AC', name: '上网行为管理' },
+                { id: 'module-SSL', name: '移动办公' },
+                { id: 'module-WOC', name: '广域网优化' }
+            ],
+            '1': [ // AC
+                { id: 'module-AC', name: '上网行为管理' },
+                { id: 'module-SSL', name: '移动办公' },
+                { id: 'module-WOC', name: '广域网优化' }
+            ],
+            '105': [ // SSL
+                { id: 'module-SSL', name: '移动办公' }
+            ]
+        };
+        function refreshModuleNav(plnameValue) {
+            var modules = productModules[plnameValue] || productModules['45'];
+            var navHtml = '<div class="module-nav-title">\u6a21\u5757\u5bfc\u822a</div>';
+            navHtml += '<div class="module-nav-item enabled active" data-target="section-basic">基本信息</div>';
+            modules.forEach(function(m, i) {
+                navHtml += '<div class="module-nav-item enabled" data-target="' + m.id + '">' + m.name + '</div>';
+            });
+            moduleNav.innerHTML = navHtml;
+            // 重新绑定导航点击事件
+            navItems = moduleNav.querySelectorAll('.module-nav-item');
+            navItems.forEach(function(item) {
+                item.addEventListener('click', function() {
+                    var target = document.getElementById(this.dataset.target);
+                    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    moduleNav.querySelectorAll('.module-nav-item').forEach(function(n) { n.classList.remove('active'); });
+                    this.classList.add('active');
+                });
+            });
+        }
+
+        var plnameSelect = document.getElementById('plname');
+        plnameSelect.addEventListener('change', function() {
+            refreshModuleNav(this.value);
+            toggleHwInfoSection(this.value);
+        });
+        // 初始化时根据默认产品线刷新导航和硬件信息区
+        refreshModuleNav(plnameSelect.value);
+        toggleHwInfoSection(plnameSelect.value);
+
+        // ===== 客户信息搜索 =====
+        var customers = [
+            { name: '深圳市腾讯计算机系统有限公司', id: 'C100001', type: 'KA' },
+            { name: '阿里巴巴(中国)有限公司', id: 'C100002', type: 'KA' },
+            { name: '华为技术有限公司', id: 'C100003', type: 'KA' },
+            { name: '北京百度网讯科技有限公司', id: 'C100004', type: 'normal' },
+            { name: '杭州海康威视数字技术有限公司', id: 'C100005', type: 'normal' },
+            { name: '中国工商银行股份有限公司', id: 'C100006', type: 'KA' },
+            { name: '中国建设银行股份有限公司', id: 'C100007', type: 'normal' },
+            { name: '中国移动通信集团有限公司', id: 'C100008', type: 'KA' },
+            { name: '国家电网有限公司', id: 'C100009', type: 'KA' },
+            { name: '中国石油天然气集团有限公司', id: 'C100010', type: 'KA' },
+            { name: '京东集团股份有限公司', id: 'C100011', type: 'normal' },
+            { name: '广州市政府信息中心', id: 'C100012', type: 'normal' },
+            { name: '南方电网有限责任公司', id: 'C100013', type: 'normal' },
+            { name: '中兴通讯股份有限公司', id: 'C100014', type: 'normal' },
+            { name: '浙江大学信息技术中心', id: 'C100015', type: 'normal' }
+        ];
+        var searchInput = document.getElementById('customerSearch');
+        var dropdown = document.getElementById('customerDropdown');
+        var infoDisplay = document.getElementById('customerInfoDisplay');
+        var nameSpan = document.getElementById('selectedCustomerName');
+        var idSpan = document.getElementById('selectedCustomerId');
+
+        searchInput.addEventListener('input', function() {
+            var keyword = this.value.trim().toLowerCase();
+            if (!keyword) { dropdown.classList.remove('show'); dropdown.innerHTML = ''; return; }
+            var matched = customers.filter(function(c) {
+                return c.name.toLowerCase().indexOf(keyword) > -1 || c.id.toLowerCase().indexOf(keyword) > -1;
+            }).slice(0, 10);
+            if (matched.length === 0) {
+                dropdown.innerHTML = '<div class="search-item" style="color:#999;cursor:default;">无匹配结果</div>';
+            } else {
+                dropdown.innerHTML = matched.map(function(c) {
+                    var custType = c.type || 'normal';
+                    var badgeClass = custType === 'KA' ? 'item-badge ka' : 'item-badge normal';
+                    var badgeText = custType === 'KA' ? 'KA客户' : '普通客户';
+                    return '<div class="search-item" data-name="' + c.name + '" data-id="' + c.id + '" data-type="' + custType + '"><span class="item-left"><span class="item-name">' + c.name + '</span><span class="item-id">' + c.id + '</span></span><span class="' + badgeClass + '">' + badgeText + '</span></div>';
+                }).join('');
+            }
+            dropdown.classList.add('show');
+        });
+        dropdown.addEventListener('click', function(e) {
+            var item = e.target.closest('.search-item');
+            if (item && item.dataset.name) {
+                searchInput.value = item.dataset.name;
+                nameSpan.textContent = item.dataset.name;
+                idSpan.textContent = item.dataset.id;
+                // 客户类别标识
+                var custType = item.dataset.type || 'normal';
+                var badge = document.getElementById('customerTypeBadge');
+                if (custType === 'KA') {
+                    badge.textContent = 'KA客户';
+                    badge.className = 'customer-type-badge ka';
+                } else {
+                    badge.textContent = '普通客户';
+                    badge.className = 'customer-type-badge normal';
+                }
+                badge.style.display = 'inline-block';
+                infoDisplay.classList.add('show');
+                dropdown.classList.remove('show');
+            }
+        });
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.search-select-box')) dropdown.classList.remove('show');
+        });
+
+        // ===== 模块交互 =====
+        var cards = document.querySelectorAll('.module-item');
+        var navItems = document.querySelectorAll('.module-nav-item');
+        var contentBody = document.getElementById('contentBody');
+
+        // Toggle Switch - 启用/禁用模块
+        document.querySelectorAll('.toggle-switch').forEach(function(sw) {
+            sw.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var card = this.closest('.module-item');
+                if (!card) return;
+                var cardId = card.id;
+                this.classList.toggle('active');
+                var isActive = this.classList.contains('active');
+                if (isActive) {
+                    card.classList.remove('disabled');
+                    // 更新状态标签
+                    var status = card.querySelector('.module-status');
+                    if (status) { status.className = 'module-status on'; status.textContent = '已启用'; }
+                } else {
+                    card.classList.add('disabled');
+                    card.querySelector('.module-body').classList.add('hidden');
+                    card.querySelector('.module-chevron').classList.add('collapsed');
+                    var status = card.querySelector('.module-status');
+                    if (status) { status.className = 'module-status off'; status.textContent = '已禁用'; }
+                }
+                // 同步导航状态
+                var navItem = document.querySelector('.module-nav-item[data-target="' + cardId + '"]');
+                if (navItem) {
+                    if (isActive) { navItem.classList.add('enabled'); }
+                    else { navItem.classList.remove('enabled'); }
+                }
+            });
+        });
+
+        // 折叠/展开 - 点击模块头部
+        document.querySelectorAll('.module-head').forEach(function(header) {
+            header.addEventListener('click', function(e) {
+                if (e.target.closest('.toggle-switch')) return;
+                var card = this.closest('.module-item');
+                if (card.classList.contains('disabled')) return;
+                var body = card.querySelector('.module-body');
+                var icon = card.querySelector('.module-chevron');
+                body.classList.toggle('hidden');
+                icon.classList.toggle('collapsed');
+            });
+        });
+
+        // 全部展开/全部折叠
+        document.getElementById('expandAll').addEventListener('click', function() {
+            cards.forEach(function(card) {
+                if (!card.classList.contains('disabled')) {
+                    card.querySelector('.module-body').classList.remove('hidden');
+                    card.querySelector('.module-chevron').classList.remove('collapsed');
+                }
+            });
+        });
+        document.getElementById('collapseAll').addEventListener('click', function() {
+            cards.forEach(function(card) {
+                card.querySelector('.module-body').classList.add('hidden');
+                card.querySelector('.module-chevron').classList.add('collapsed');
+            });
+        });
+
+        // 锚点导航 - 点击跳转
+        navItems.forEach(function(item) {
+            item.addEventListener('click', function() {
+                var targetId = this.dataset.target;
+                var target = document.getElementById(targetId);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    navItems.forEach(function(n) { n.classList.remove('active'); });
+                    this.classList.add('active');
+                }
+            });
+        });
+
+        // 滚动监听 - 高亮当前可视模块
+        var basicSection = document.getElementById('section-basic');
+        contentBody.addEventListener('scroll', function() {
+            var scrollTop = contentBody.scrollTop;
+            var currentActive = null;
+            // 检测基本信息区域
+            if (basicSection) {
+                var basicTop = basicSection.offsetTop - contentBody.offsetTop;
+                if (basicTop - scrollTop <= 100) {
+                    currentActive = 'section-basic';
+                }
+            }
+            // 检测各模块
+            cards.forEach(function(card) {
+                var offsetTop = card.offsetTop - contentBody.offsetTop;
+                if (offsetTop - scrollTop <= 100) {
+                    currentActive = card.id;
+                }
+            });
+            if (currentActive) {
+                navItems.forEach(function(n) {
+                    n.classList.toggle('active', n.dataset.target === currentActive);
+                });
+            }
+        });
+
+        // ===== 统一授权日期功能 =====
+        function isDateInput(input) {
+            var name = input.name || '';
+            return name.indexOf('time') > -1 || name.indexOf('auth') > -1 || name.indexOf('end_time') > -1;
+        }
+        function getAllDateInputs() {
+            var allInputs = document.querySelectorAll('#content .gf-val input, #content input.layui-input');
+            var dateInputs = [];
+            for (var i = 0; i < allInputs.length; i++) {
+                if (isDateInput(allInputs[i])) dateInputs.push(allInputs[i]);
+            }
+            return dateInputs;
+        }
+        var unifiedDateInput = document.getElementById('unifiedDate');
+        var applyDateBtn = document.getElementById('applyDateBtn');
+        // 监听日期选择，选择后启用按钮
+        unifiedDateInput.addEventListener('change', function() {
+            var val = this.value.trim();
+            applyDateBtn.disabled = !val;
+        });
+        // 初始化时检查是否有默认值
+        applyDateBtn.disabled = !unifiedDateInput.value.trim();
+        applyDateBtn.addEventListener('click', function() {
+            var dateVal = unifiedDateInput.value.trim();
+            if (!dateVal) return;
+            var allDates = getAllDateInputs();
+            allDates.forEach(function(d) { d.value = dateVal; });
+            var toast = document.getElementById('syncToast');
+            toast.textContent = '✓ 已将 ' + dateVal + ' 应用到所有模块（共 ' + allDates.length + ' 个日期字段）';
+            toast.style.display = 'block';
+            setTimeout(function() { toast.style.display = 'none'; }, 2500);
+        });
+    })();
+
+    // Tooltip 复制功能
+    function copyTooltip(btn) {
+        var popup = btn.closest('.tooltip-popup');
+        var text = popup.innerText.replace('复制', '').trim();
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(text).then(function() {
+                btn.textContent = '已复制';
+                setTimeout(function() { btn.textContent = '复制'; }, 1500);
+            });
+        } else {
+            var ta = document.createElement('textarea');
+            ta.value = text; document.body.appendChild(ta);
+            ta.select(); document.execCommand('copy');
+            document.body.removeChild(ta);
+            btn.textContent = '已复制';
+            setTimeout(function() { btn.textContent = '复制'; }, 1500);
+        }
+    }
+
+    // 提交表单（模拟）
+    function submitStandardForm() {
+        var mockId = 'AUTH-' + Date.now().toString().slice(-8);
+        alert('表单已提交，ID: ' + mockId);
+    }
+    </script>
+</body>
+</html>

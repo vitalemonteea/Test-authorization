@@ -1,0 +1,184 @@
+
+$(function(){
+	//刷新验证码
+	$('#imgcode').click(function(){
+		this.src = base_url + 'login/code/'+ Math.random();
+    });
+    $('#devId').blur(function(){
+        $('#devId').val(($('#devId').val()).toUpperCase()); //转成大写
+    })
+});
+
+function getVal(ele){
+	console.log(ele.context.id);
+	var userName = $('#'+ele.context.id).val();
+	if(userName!='' && userName.length>=2){
+		$.ajax({
+			url : base_url + 'sysParam/getUserInfo',
+			type: 'post',
+			data: {username:userName},
+			dataType: 'json',
+			success: function(result){
+				if(result){
+					$('#'+ele.context.id).autocomplete({
+						source:result
+					});
+					fireKeyEvent(document.getElementById(ele.context.id), 'keydown', 40)
+				}
+
+			}
+		})
+	}
+}
+
+function chkVal(e){
+	var userName = $(e).val();
+	var reg1 = /[a-zA-Z]\d{5}|\d{5}/;	//正则匹配工号
+	var reg2 = /^[\u4e00-\u9fa5]+$/;	//正则匹配中文
+	var reg3 = /^[0-9]*$/;	//正则匹配数字
+	var workNo="";
+	var workNoNum="";
+	if(userName.match(/[a-zA-Z]\d{5}|\d{5}/)){
+		workNo = userName.match(/[a-zA-Z]\d{5}|\d{5}/)[0];	//姓名
+		workNoNum = workNo.slice(-5);	//纯数字工号
+	}
+	var workName = userName.match(/^((?![a-zA-Z]\d{5}|\d{5}).)*/)[0];	//姓名
+	if(!reg3.test(workNoNum) || workNo.length<5 || !reg2.test(workName)){
+		$(e).val('');
+	}else{
+		$('#workno').val(workNo);
+	}
+}
+
+function fireKeyEvent(el, evtType, keyCode){  
+    var doc = el.ownerDocument,  
+        win = doc.defaultView || doc.parentWindow,  
+        evtObj;  
+    if(doc.createEvent){  
+        if(win.KeyEvent) {  
+            evtObj = doc.createEvent('KeyEvents');
+			console.log(evtObj)
+            evtObj.initKeyEvent( evtType, true, true, win, false, false, false, false, keyCode, 0 );  
+        }  
+        else {  
+            evtObj = doc.createEvent('UIEvents');  
+            Object.defineProperty(evtObj, 'keyCode', {  
+                get : function() { return this.keyCodeVal; }  
+            });       
+            Object.defineProperty(evtObj, 'which', {  
+                get : function() { return this.keyCodeVal; }  
+            });  
+            evtObj.initUIEvent( evtType, true, true, win, 1 );  
+            evtObj.keyCodeVal = keyCode;  
+            if (evtObj.keyCode !== keyCode) {  
+                console.log("keyCode " + evtObj.keyCode + " 和 (" + evtObj.which + ") 不匹配");  
+            }  
+        }  
+        el.dispatchEvent(evtObj);  
+    }   
+    else if(doc.createEventObject){  
+        evtObj = doc.createEventObject();  
+        evtObj.keyCode = keyCode;  
+        el.fireEvent('on' + evtType, evtObj);  
+    }  
+}
+function loadPlnameSelect(){
+    $.ajax({
+        url: base_url + 'sysParam/getPlnameList',
+        type: 'get',
+        dataType: 'json',
+        success: function(r){
+            var role = $(".plname");
+            var option = '';
+            for(var i=0;i<r.length;i++){
+                option += "<option value="+r[i].plid+">"+r[i].plname+"</option>";
+            }
+            role.append(option);
+            // form.render("select");
+        }
+    })
+}
+
+function open_add(width, height, msg, url) {
+	var w = ($(window).width() * 0.7);
+	var h = ($(window).height() * 0.9);
+	if (width) {
+		w = width;
+	}
+	if (height) {
+		h = height;
+	}
+	layer.open({
+		type: 2,
+		title: msg,
+		maxmin: true,
+		area: [w + 'px', h + 'px'],
+		content: url
+		// end: function () {
+		// 	table.reload('test', {
+		// 		page: {
+		// 			curr: 1 //重新从第 1 页开始
+		// 		}
+		// 	});
+		// }
+	});
+}
+
+//窗口关闭
+function open_close() {
+	var index = parent.layer.getFrameIndex(window.name); //获取窗口索引
+	parent.layer.close(index);  // 关闭当前layer层
+}
+
+//获取url参数
+function getQueryVariable(variable) {
+	var query = window.location.search.substring(1);
+	var vars = query.split("&");
+	for (var i = 0; i < vars.length; i++) {
+		var pair = vars[i].split("=");
+		if (pair[0] == variable) {
+			return pair[1];
+		}
+	}
+	return (false);
+}
+
+function ajax_http(url, data, success, type = 'POST') {
+	$.ajax({
+		type: type,
+		url: url,
+		data: data,
+		dataType: 'json',
+		success: function (_result) {
+			success ? success(_result) : '';
+		},
+		error: function () {
+		}
+	});
+}
+
+function base64_decode(input) { // 解码，配合decodeURIComponent使用
+	var base64EncodeChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+	var output = "";
+	var chr1, chr2, chr3;
+	var enc1, enc2, enc3, enc4;
+	var i = 0;
+	input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+	while (i < input.length) {
+		enc1 = base64EncodeChars.indexOf(input.charAt(i++));
+		enc2 = base64EncodeChars.indexOf(input.charAt(i++));
+		enc3 = base64EncodeChars.indexOf(input.charAt(i++));
+		enc4 = base64EncodeChars.indexOf(input.charAt(i++));
+		chr1 = (enc1 << 2) | (enc2 >> 4);
+		chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+		chr3 = ((enc3 & 3) << 6) | enc4;
+		output = output + String.fromCharCode(chr1);
+		if (enc3 != 64) {
+			output = output + String.fromCharCode(chr2);
+		}
+		if (enc4 != 64) {
+			output = output + String.fromCharCode(chr3);
+		}
+	}
+	return utf8_decode(output);
+}
