@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -296,6 +296,50 @@
         .layui-textarea { width: 100%; max-width: 400px; min-height: 100px; border: 1px solid #e5eeff; border-radius: 8px; padding: 10px 12px; font-size: 14px; font-family: inherit; outline: none; resize: vertical; transition: all 0.15s; box-sizing: border-box; }
         .layui-textarea:hover { border-color: #c2c6d8; }
         .layui-textarea:focus { border-color: #0050cb; box-shadow: 0 0 0 3px rgba(0,80,203,.08); }
+        /* ===== 响应式适配 ===== */
+        @media screen and (max-width: 1400px) {
+            .module-nav { display: none; }
+        }
+
+        @media screen and (max-width: 1366px) {
+            .content-body { padding: 12px 40px; }
+        }
+
+        @media screen and (max-width: 1100px) {
+            .content-body { padding: 12px 24px; }
+            .layui-form-label { width: 120px; }
+            .grid-field .gf-label { width: 90px; }
+            .unified-date-bar .layui-input { width: 150px; }
+            .hw-file-info { width: 240px; }
+        }
+
+        @media screen and (max-width: 768px) {
+            .content-body { padding: 12px 16px; }
+            .layui-form-label { width: 100px; font-size: 13px; padding: 9px 0 9px 8px; }
+            .layui-input, .layui-select-box { max-width: 100%; }
+            .unified-date-bar { flex-wrap: wrap; gap: 8px; padding: 12px 14px; }
+            .unified-date-bar .layui-input { width: 100%; }
+            .unified-date-bar .bar-hint { flex: none; width: 100%; order: 10; }
+            .unified-date-bar .date-limit-hint { order: -1; }
+            .module-grid { grid-template-columns: 1fr; }
+            .module-head { padding: 12px 14px; }
+            .module-body { padding: 12px 14px; }
+            .hw-upload-area { flex-wrap: wrap; }
+            .hw-file-info { width: 100%; }
+            .special-form-section { padding: 14px 16px; }
+            .grid-field { flex-wrap: wrap; gap: 4px; }
+            .grid-field .gf-label { width: auto; }
+            .renewal-summary-grid { grid-template-columns: 1fr; }
+            .xaas-product-list { max-width: 100%; }
+        }
+
+        @media screen and (max-width: 480px) {
+            .layui-form-item { flex-direction: column; }
+            .layui-form-label { width: 100%; padding-left: 0; padding-bottom: 4px; }
+            .layui-btn { width: 100%; justify-content: center; }
+            .unified-date-bar .apply-date-btn { width: 100%; justify-content: center; }
+            .hw-upload-btn { width: 100%; justify-content: center; }
+        }
     </style>
 </head>
 <body>
@@ -369,11 +413,18 @@
                             <div class="layui-select-box">
                                 <select class="layui-select" name="planDevType" id="planDevType">
                                     <option value="" selected>请选择申请场景</option>
-                                    <option value="1">借测硬件和申请软件测试授权（首次申请）</option>
-                                    <option value="2">软件部署申请测试授权（首次申请）</option>
-                                    <option value="3">续期授权（常规续期与超规续期统一入口）</option>
-                                    <option value="4">超期扩容授权申请</option>
-                                    <option value="5">销售设备申请延长授权</option>
+                                    <optgroup label="硬件&amp;服务器 — POC类型">
+                                        <option value="1">借测硬件同时测试授权(首次申请)</option>
+                                        <option value="2">测试授权申请延长授权</option>
+                                        <option value="3">测试授权增开模块授权</option>
+                                        <option value="4">测试授权扩容加点授权</option>
+                                        <option value="5">销售设备增开新模块测试授权</option>
+                                        <option value="6">软件授权</option>
+                                    </optgroup>
+                                    <optgroup label="商务类">
+                                        <option value="7">销售授权扩容测试授权</option>
+                                        <option value="8">销售设备申请延长授权</option>
+                                    </optgroup>
                                 </select>
                                 <i class="layui-edge"></i>
                             </div>
@@ -632,6 +683,59 @@
                                 <span class="customer-type-badge" id="customerTypeBadge" style="display:none;"></span>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- 设备SN（value=1时显示） -->
+                    <div class="layui-form-item" id="devSnFormItem" style="display:none;">
+                        <label class="layui-form-label">设备SN<span class="required-mark">*</span></label>
+                        <div class="layui-input-block">
+                            <input type="text" id="devSnNew" name="devSnNew" class="layui-input" placeholder="请输入设备序列号" value="">
+                        </div>
+                    </div>
+
+                    <!-- 借测信息区域（value=1时显示） -->
+                    <div id="borrowTestFields" style="display:none;">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">借测单号<span class="required-mark">*</span></label>
+                        <div class="layui-input-block">
+                            <input type="text" id="btNo" name="btNo" class="layui-input" placeholder="请输入借测单号（订单号）">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">借测使用人<span class="required-mark">*</span></label>
+                        <div class="layui-input-block">
+                            <input type="text" id="btUser" name="btUser" class="layui-input" placeholder="请输入借测使用人">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">借测状态<span class="required-mark">*</span></label>
+                        <div class="layui-input-block">
+                            <div class="layui-select-box">
+                                <select class="layui-select" id="btStatus" name="btStatus">
+                                    <option value="">请选择借测状态</option>
+                                    <option value="办事处借测">办事处借测</option>
+                                    <option value="渠道借测">渠道借测</option>
+                                    <option value="自用测试">自用测试</option>
+                                </select>
+                                <i class="layui-edge"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">借测类型<span class="required-mark">*</span></label>
+                        <div class="layui-input-block">
+                            <div class="layui-select-box">
+                                <select class="layui-select" id="btType" name="btType">
+                                    <option value="">请选择借测类型</option>
+                                    <option value="POC测试">POC测试</option>
+                                    <option value="项目测试">项目测试</option>
+                                    <option value="演示测试">演示测试</option>
+                                    <option value="培训测试">培训测试</option>
+                                </select>
+                                <i class="layui-edge"></i>
+                            </div>
+                        </div>
+                    </div>
                     </div>
 
                     <!-- 设备ID -->
@@ -1038,6 +1142,57 @@
                                     <div class="grid-field"><span class="gf-label">延伸集群 · CPU颗数</span><div class="gf-val"><input type="text" name="aSCvs_cpu" value="8"></div><span class="gf-hint">最大20</span></div>
                                     <div class="grid-field"><span class="gf-label">显卡管理 · 到期时间</span><div class="gf-val"><input type="text" name="aGPU_soft_time" value="2026-07-04"></div></div>
                                     <div class="grid-field"><span class="gf-label">显卡管理 · 显卡张数</span><div class="gf-val"><input type="text" name="aGPUphysical_graphics_limit" value="8"></div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 简化模块演示（仅功能开关，无参数） -->
+                        <div class="section-title" style="margin-top:24px;font-size:13px;color:#666;opacity:0.7;">以下为简化模块示例（仅开关，无参数）</div>
+
+                        <div class="module-item" id="module-demo1" data-module="日志审计">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-demo1"></div>
+                                <span class="module-name">日志审计</span>
+                                <span class="module-count">0个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron">▼</span>
+                            </div>
+                            <div class="module-body hidden">
+                                <div class="module-features">
+                                    <span class="fl">功能：</span>
+                                    <span class="feat-pill on">✓ Syslog日志采集</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="module-item" id="module-demo2" data-module="威胁情报">
+                            <div class="module-head">
+                                <div class="toggle-switch" data-target="module-demo2"></div>
+                                <span class="module-name">威胁情报</span>
+                                <span class="module-count">0个参数</span>
+                                <span class="module-status off">已禁用</span>
+                                <span class="module-chevron">▼</span>
+                            </div>
+                            <div class="module-body hidden">
+                                <div class="module-features">
+                                    <span class="fl">功能：</span>
+                                    <span class="feat-pill on">✓ 威胁情报实时查询</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="module-item" id="module-demo3" data-module="文件沙箱">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-demo3"></div>
+                                <span class="module-name">文件沙箱</span>
+                                <span class="module-count">0个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron">▼</span>
+                            </div>
+                            <div class="module-body hidden">
+                                <div class="module-features">
+                                    <span class="fl">功能：</span>
+                                    <span class="feat-pill on">✓ 恶意文件静态检测</span>
                                 </div>
                             </div>
                         </div>
@@ -1545,12 +1700,14 @@
             });
         }
 
-        // ===== 申请类型切换（续期授权场景） =====
+        // ===== 申请类型切换（三种场景差异化） =====
         var planDevTypeSelect = document.getElementById('planDevType');
         var renewalSection = document.getElementById('renewal-section');
         var overlimitFields = document.getElementById('overlimit-fields');
         var deviceIdFormItem = document.getElementById('deviceIdFormItem');
         var devIdInput = document.getElementById('devIdNew');
+        var devSnFormItem = document.getElementById('devSnFormItem');
+        var borrowTestFields = document.getElementById('borrowTestFields');
         var renewalDeviceIdInput = document.getElementById('renewalDeviceId');
         var renewalTypeInput = document.getElementById('renewalType');
         var renewalSummary = document.getElementById('renewalSummary');
@@ -1630,18 +1787,129 @@
             if (cloudVersionSelect) cloudVersionSelect.selectedIndex = 0;
         }
 
+        // 重置借测字段
+        function resetBorrowTestFields() {
+            var snInput = document.getElementById('devSnNew');
+            if (snInput) snInput.value = '';
+            var btNoInput = document.getElementById('btNo');
+            if (btNoInput) btNoInput.value = '';
+            var btUserInput = document.getElementById('btUser');
+            if (btUserInput) btUserInput.value = '';
+            var btStatusSelect = document.getElementById('btStatus');
+            if (btStatusSelect) btStatusSelect.selectedIndex = 0;
+            var btTypeSelect = document.getElementById('btType');
+            if (btTypeSelect) btTypeSelect.selectedIndex = 0;
+        }
+        // ===== SN自动关联检测借测信息 =====
+        var mockBtDatabase = [
+            { snPrefix: 'SN-2024001', btNo: 'BT20240615001', btUser: '张三', btStatus: '办事处借测', btType: 'POC测试' },
+            { snPrefix: 'SN-2024002', btNo: 'BT20240615002', btUser: '李四', btStatus: '渠道借测', btType: '项目测试' },
+            { snPrefix: 'SN-TEST-001', btNo: 'BT20240615003', btUser: '王五', btStatus: '自用测试', btType: '演示测试' },
+            { snPrefix: 'SN-TEST-002', btNo: 'BT20240615004', btUser: '赵六', btStatus: '办事处借测', btType: '培训测试' },
+            { snPrefix: 'SN-DEMO-', btNo: 'BT20240615005', btUser: '孙七', btStatus: '渠道借测', btType: 'POC测试' }
+        ];
+
+        function clearBtInputData() {
+            var btNoInput = document.getElementById('btNo');
+            if (btNoInput) btNoInput.value = '';
+            var btUserInput = document.getElementById('btUser');
+            if (btUserInput) btUserInput.value = '';
+            var btStatusSelect = document.getElementById('btStatus');
+            if (btStatusSelect) btStatusSelect.selectedIndex = 0;
+            var btTypeSelect = document.getElementById('btType');
+            if (btTypeSelect) btTypeSelect.selectedIndex = 0;
+        }
+
+        function simulateFetchBtDataBySn(sn) {
+            var trimmedSn = (sn || '').trim();
+            if (!trimmedSn) return null;
+            for (var i = 0; i < mockBtDatabase.length; i++) {
+                var entry = mockBtDatabase[i];
+                if (trimmedSn.indexOf(entry.snPrefix) === 0 || trimmedSn === entry.snPrefix) {
+                    return {
+                        btNo: entry.btNo,
+                        btUser: entry.btUser,
+                        btStatus: entry.btStatus,
+                        btType: entry.btType
+                    };
+                }
+            }
+            return null;
+        }
+
+        (function() {
+            var devSnInput = document.getElementById('devSnNew');
+            if (!devSnInput) return;
+            devSnInput.addEventListener('blur', function() {
+                var sn = this.value.trim();
+                var planDevType = document.getElementById('planDevType').value;
+                if (planDevType !== '1') return;
+                if (!sn) {
+                    clearBtInputData();
+                    return;
+                }
+                var result = simulateFetchBtDataBySn(sn);
+                if (result) {
+                    var btNoInput = document.getElementById('btNo');
+                    if (btNoInput) btNoInput.value = result.btNo;
+                    var btUserInput = document.getElementById('btUser');
+                    if (btUserInput) btUserInput.value = result.btUser;
+                    var btStatusSelect = document.getElementById('btStatus');
+                    if (btStatusSelect) btStatusSelect.value = result.btStatus;
+                    var btTypeSelect = document.getElementById('btType');
+                    if (btTypeSelect) btTypeSelect.value = result.btType;
+                } else {
+                    clearBtInputData();
+                    var toast = document.getElementById('syncToast');
+                    if (toast) {
+                        toast.textContent = '\u26a0 \u672a\u627e\u5230\u8be5SN\u5bf9\u5e94\u7684\u501f\u6d4b\u4fe1\u606f\uff0c\u8bf7\u624b\u52a8\u586b\u5199';
+                        toast.style.background = '#ff9800';
+                        toast.style.display = 'block';
+                        setTimeout(function() { toast.style.display = 'none'; toast.style.background = '#4CAF50'; }, 3000);
+                    }
+                }
+            });
+        })();
+
+
         planDevTypeSelect.addEventListener('change', function() {
-            var isRenewal = (this.value === '3');
-            if (isRenewal) {
+            var val = this.value;
+
+            if (val === '1') {
+                // 借测硬件和申请软件测试授权（首次申请）
+                devSnFormItem.style.display = 'flex';
+                borrowTestFields.style.display = 'block';
+                deviceIdFormItem.style.display = 'flex';
+                renewalSection.style.display = 'none';
+                toggleHwInfoSection(plnameSelect.value);
+                resetRenewalState();
+            } else if (val === '2') {
+                // 软件部署申请测试授权（首次申请）
+                devSnFormItem.style.display = 'none';
+                borrowTestFields.style.display = 'none';
+                deviceIdFormItem.style.display = 'flex';
+                renewalSection.style.display = 'none';
+                toggleHwInfoSection(plnameSelect.value);
+                resetRenewalState();
+                resetBorrowTestFields();
+            } else if (val === '3') {
+                // 续期授权（常规续期与超规续期统一入口）
+                devSnFormItem.style.display = 'none';
+                borrowTestFields.style.display = 'none';
                 hwInfoSection.style.display = 'none';
                 renewalSection.style.display = 'block';
                 deviceIdFormItem.style.display = 'none';
+                resetBorrowTestFields();
             } else {
-                renewalSection.style.display = 'none';
+                // 未选择
+                devSnFormItem.style.display = 'none';
+                borrowTestFields.style.display = 'none';
                 deviceIdFormItem.style.display = 'flex';
+                renewalSection.style.display = 'none';
                 toggleHwInfoSection(plnameSelect.value);
+                resetRenewalState();
+                resetBorrowTestFields();
             }
-            resetRenewalState();
         });
 
         // ===== 续期 Tab 切换 =====
@@ -1896,9 +2164,12 @@
 
         document.getElementById('formsn').addEventListener('reset', function() {
             setTimeout(function() {
+                devSnFormItem.style.display = 'none';
+                borrowTestFields.style.display = 'none';
                 renewalSection.style.display = 'none';
                 deviceIdFormItem.style.display = 'flex';
                 resetRenewalState();
+                resetBorrowTestFields();
                 refreshModuleNav(plnameSelect.value);
                 toggleHwInfoSection(plnameSelect.value);
             }, 0);
@@ -1994,8 +2265,8 @@
                     if (status) { status.className = 'module-status on'; status.textContent = '已启用'; }
                 } else {
                     card.classList.add('disabled');
-                    card.querySelector('.module-body').classList.add('hidden');
-                    card.querySelector('.module-chevron').classList.add('collapsed');
+                    var mb = card.querySelector('.module-body'); if (mb) { mb.classList.add('hidden'); }
+                    var mc = card.querySelector('.module-chevron'); if (mc) { mc.classList.add('collapsed'); }
                     var status = card.querySelector('.module-status');
                     if (status) { status.className = 'module-status off'; status.textContent = '已禁用'; }
                 }
@@ -2016,8 +2287,9 @@
                 if (card.classList.contains('disabled')) return;
                 var body = card.querySelector('.module-body');
                 var icon = card.querySelector('.module-chevron');
+                if (!body) { return; }
                 body.classList.toggle('hidden');
-                icon.classList.toggle('collapsed');
+                if (icon) { icon.classList.toggle('collapsed'); }
             });
         });
 
@@ -2025,8 +2297,8 @@
         document.getElementById('expandAll').addEventListener('click', function() {
             cards.forEach(function(card) {
                 if (!card.classList.contains('disabled')) {
-                    card.querySelector('.module-body').classList.remove('hidden');
-                    card.querySelector('.module-chevron').classList.remove('collapsed');
+                    var mb = card.querySelector('.module-body'); if (mb) { mb.classList.remove('hidden'); }
+                    var mc = card.querySelector('.module-chevron'); if (mc) { mc.classList.remove('collapsed'); }
                 }
             });
         });
@@ -2194,6 +2466,7 @@
         }
 
         if (planDevType === '3') {
+            // 续期授权校验
             if (!renewalDeviceId || !renewalType) {
                 alert('请先上传 .info 文件或输入网关 ID 并完成检测');
                 return;
@@ -2202,7 +2475,54 @@
                 alert('超规续期需要填写申请原因');
                 return;
             }
+        } else if (planDevType === '1') {
+            // 借测硬件+软件校验：SN + 借测4字段 + 设备ID + 硬件文件
+            var devSnInput = document.getElementById('devSnNew');
+            if (devSnInput && !devSnInput.value.trim()) {
+                alert('请填写设备SN');
+                return;
+            }
+            var btNoInput = document.getElementById('btNo');
+            if (btNoInput && !btNoInput.value.trim()) {
+                alert('请填写借测单号');
+                return;
+            }
+            var btUserInput = document.getElementById('btUser');
+            if (btUserInput && !btUserInput.value.trim()) {
+                alert('请填写借测使用人');
+                return;
+            }
+            var btStatusSelect = document.getElementById('btStatus');
+            if (btStatusSelect && !btStatusSelect.value) {
+                alert('请选择借测状态');
+                return;
+            }
+            var btTypeSelect = document.getElementById('btType');
+            if (btTypeSelect && !btTypeSelect.value) {
+                alert('请选择借测类型');
+                return;
+            }
+            if (devIdInput && devIdInput.offsetParent !== null && !devIdInput.value.trim()) {
+                alert('请填写设备ID');
+                return;
+            }
+            if (hwInfoSection && hwInfoSection.style.display !== 'none') {
+                var hwFile = hwFileInput.files[0];
+                if (!hwFile) {
+                    hwUploadResult.textContent = '请上传硬件信息文件';
+                    hwUploadResult.className = 'hw-upload-result fail';
+                    alert('请上传硬件信息文件');
+                    return;
+                }
+                if (!hwFile.name.toLowerCase().endsWith('.info')) {
+                    hwUploadResult.textContent = '仅支持 .info 格式文件';
+                    hwUploadResult.className = 'hw-upload-result fail';
+                    alert('硬件信息文件仅支持 .info 格式');
+                    return;
+                }
+            }
         } else {
+            // value=2 或其他：设备ID + 硬件文件
             if (devIdInput && devIdInput.offsetParent !== null && !devIdInput.value.trim()) {
                 alert('请填写设备ID');
                 return;
@@ -2230,3 +2550,6 @@
     </script>
 </body>
 </html>
+
+
+
