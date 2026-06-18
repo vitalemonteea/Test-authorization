@@ -6,6 +6,7 @@
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
     <style>
         /* 全局重置 */
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -90,10 +91,62 @@
 
         /* 下拉选择框 */
         .layui-select-box { position: relative; max-width: 300px; }
-        .layui-select { width: 100%; height: 40px; line-height: 40px; border: 1px solid #e5eeff; background-color: #fff; border-radius: 8px; padding: 0 12px; outline: none; appearance: none; -webkit-appearance: none; -moz-appearance: none; cursor: pointer; padding-right: 30px; transition: all 0.15s; }
-        .layui-select:hover { border-color: #c2c6d8; background: #fff; }
-        .layui-select:focus { border-color: #0050cb; background: #fff; box-shadow: 0 0 0 3px rgba(0,80,203,.08); }
-        .layui-edge { position: absolute; right: 12px; top: 50%; margin-top: -3px; width: 0; height: 0; border-style: solid; border-width: 6px 6px 0 6px; border-color: #8b92a5 transparent transparent transparent; pointer-events: none; }
+        .layui-select {
+            width: 100%; height: 40px; line-height: 40px;
+            border: 1px solid #c2c6d8; background-color: #fff;
+            border-radius: 8px; padding: 0 36px 0 12px;
+            outline: none; appearance: none; -webkit-appearance: none; -moz-appearance: none;
+            cursor: pointer; transition: all 0.2s;
+            font-size: 14px; color: #0b1c30;
+        }
+        .layui-select:hover { border-color: #0050cb; }
+        .layui-select:focus { border: 2px solid #0050cb; box-shadow: 0 0 0 3px #b3c5ff; padding-left: 11px; }
+        .layui-select option { padding: 8px 12px; font-size: 14px; }
+        .layui-select optgroup { font-weight: 500; color: #0b1c30; font-size: 14px; }
+        .layui-select-box > .layui-edge {
+            position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+            width: auto; height: auto; border: none;
+            pointer-events: none; font-family: 'Material Symbols Outlined'; font-size: 22px; color: #424656;
+        }
+        .layui-select-box > .layui-edge::before { content: 'arrow_drop_down'; }
+
+        /* 自定义下拉组件 */
+        .custom-select { position: relative; max-width: 300px; }
+        .custom-select-trigger {
+            width: 100%; height: 40px;
+            background: #fff; border: 1px solid #c2c6d8; border-radius: 8px;
+            padding: 0 12px; display: flex; align-items: center; justify-content: space-between;
+            cursor: pointer; transition: all 0.2s; outline: none; font-family: inherit;
+        }
+        .custom-select-trigger:hover { border-color: #0050cb; }
+        .custom-select.open .custom-select-trigger {
+            border: 2px solid #0050cb; box-shadow: 0 0 0 3px #b3c5ff; padding: 0 11px;
+        }
+        .custom-select-value {
+            font-size: 14px; color: #424656; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; text-align: left;
+        }
+        .custom-select-value.has-value { color: #0b1c30; }
+        .custom-select-arrow { font-size: 22px; color: #424656; transition: transform 0.2s; }
+        .custom-select.open .custom-select-arrow { transform: rotate(180deg); color: #0050cb; }
+        .custom-select-dropdown {
+            display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+            background: #fff; border: 1px solid #c2c6d8; border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.02);
+            z-index: 1000; overflow: hidden;
+        }
+        .custom-select.open .custom-select-dropdown { display: block; }
+        .custom-select-list { list-style: none; padding: 4px 0; margin: 0; max-height: 320px; overflow-y: auto; }
+        .custom-select-group-label {
+            padding: 8px 12px; font-size: 14px; font-weight: 500; color: #0b1c30; cursor: default; margin-top: 4px;
+        }
+        .custom-select-group-label:first-child { margin-top: 0; }
+        .custom-select-option {
+            padding: 8px 12px 8px 24px; font-size: 14px; color: #424656; cursor: pointer; transition: all 0.15s;
+        }
+        .custom-select-option:hover { background: #eff4ff; color: #0050cb; }
+        .custom-select-option.selected {
+            background: #e5eeff; color: #0050cb; font-weight: 500; border-left: 2px solid #0050cb; padding-left: 22px;
+        }
 
         /* 按钮 */
         .layui-btn { display: inline-flex; align-items: center; justify-content: center; height: 40px; padding: 0 24px; background-color: #0066ff; color: #fff; white-space: nowrap; text-align: center; font-size: 14px; font-weight: 500; border: 1px solid #0066ff; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
@@ -293,20 +346,60 @@
         .renewal-summary-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 12px; }
         .renewal-summary-item span { display: block; color: #6b7280; font-size: 12px; line-height: 18px; }
         .renewal-summary-item strong { display: block; color: inherit; font-size: 13px; line-height: 20px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        /* ===== 已有授权展示区 ===== */
+        .existing-auth-section { display: none; margin: 8px 0 4px; }
+        .existing-auth-section.show { display: block; }
+        .ea-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .ea-title { font-size: 14px; font-weight: 600; color: #1a2b4a; }
+        .ea-tab-bar { display: flex; gap: 0; border: 1px solid #e5eeff; border-radius: 6px; overflow: hidden; margin-bottom: 10px; width: fit-content; }
+        .ea-tab { padding: 6px 16px; font-size: 13px; color: #5f6b7a; cursor: pointer; background: #f7f9fc; border-right: 1px solid #e5eeff; transition: all .15s; user-select: none; }
+        .ea-tab:last-child { border-right: none; }
+        .ea-tab.active { background: #0050cb; color: #fff; }
+        .ea-tab:hover:not(.active) { background: #eef2fa; }
+        .ea-query-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+        .ea-query-row input { flex: 1; max-width: 320px; height: 36px; padding: 0 12px; border: 1px solid #e5eeff; border-radius: 6px; font-size: 13px; outline: none; }
+        .ea-query-row input:focus { border-color: #0050cb; box-shadow: 0 0 0 2px rgba(0,80,203,.08); }
+        .ea-query-btn { padding: 6px 18px; background: #0050cb; color: #fff; border: none; border-radius: 6px; font-size: 13px; cursor: pointer; white-space: nowrap; }
+        .ea-query-btn:hover { background: #003fa3; }
+        .ea-result-card { border: 1px solid #e5eeff; border-radius: 8px; background: #f7f9fc; padding: 12px 14px; margin-top: 6px; }
+        .ea-result-card.found { border-color: #a5d6a7; background: #f1f8f2; }
+        .ea-result-card.not-found { border-color: #ffcc80; background: #fff8ed; }
+        .ea-result-device { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 13px; color: #1a2b4a; }
+        .ea-result-device strong { color: #0050cb; }
+        .ea-module-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 6px; }
+        .ea-module-table th { text-align: left; padding: 6px 8px; background: #e8edf5; color: #5f6b7a; font-weight: 600; border-bottom: 1px solid #d8e0ec; }
+        .ea-module-table td { padding: 6px 8px; border-bottom: 1px solid #eef2f7; color: #1a2b4a; }
+        .ea-module-table tr:last-child td { border-bottom: none; }
+        .ea-status-badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; }
+        .ea-status-badge.active { background: #e8f5e9; color: #2e7d32; }
+        .ea-status-badge.expired { background: #fce4ec; color: #c62828; }
+        .ea-hint { font-size: 12px; color: #999; margin-top: 4px; }
+        .ea-upload-area { margin-top: 8px; }
         .layui-textarea { width: 100%; max-width: 400px; min-height: 100px; border: 1px solid #e5eeff; border-radius: 8px; padding: 10px 12px; font-size: 14px; font-family: inherit; outline: none; resize: vertical; transition: all 0.15s; box-sizing: border-box; }
         .layui-textarea:hover { border-color: #c2c6d8; }
         .layui-textarea:focus { border-color: #0050cb; box-shadow: 0 0 0 3px rgba(0,80,203,.08); }
         /* ===== 响应式适配 ===== */
-        @media screen and (max-width: 1400px) {
-            .module-nav { display: none; }
+        @media screen and (max-width: 1520px) {
+            .content-body { padding: 12px 220px 12px 40px; }
+            .special-form-section,
+            .module-item,
+            .module-toolbar,
+            .unified-date-bar,
+            .layui-form-item {
+                max-width: min(900px, 100%);
+            }
         }
 
         @media screen and (max-width: 1366px) {
-            .content-body { padding: 12px 40px; }
+            .content-body { padding: 12px 196px 12px 28px; }
+            .module-nav { right: 8px; width: 156px; top: 90px; max-height: calc(100vh - 150px); padding: 8px 5px; }
+            .module-nav-title { padding: 4px 8px 8px; }
+            .module-nav-item { padding: 7px 8px; font-size: 12px; }
         }
 
         @media screen and (max-width: 1100px) {
-            .content-body { padding: 12px 24px; }
+            .content-body { padding: 12px 166px 12px 18px; }
+            .module-nav { width: 138px; }
             .layui-form-label { width: 120px; }
             .grid-field .gf-label { width: 90px; }
             .unified-date-bar .layui-input { width: 150px; }
@@ -314,7 +407,11 @@
         }
 
         @media screen and (max-width: 768px) {
-            .content-body { padding: 12px 16px; }
+            .layui-layout-admin .layui-side { display: none; }
+            .layui-layout-admin .layui-body { left: 0; }
+            .layui-layout-admin .layui-footer { left: 0; }
+            .module-nav { right: 6px; width: 126px; top: 88px; }
+            .content-body { padding: 12px 142px 12px 14px; }
             .layui-form-label { width: 100px; font-size: 13px; padding: 9px 0 9px 8px; }
             .layui-input, .layui-select-box { max-width: 100%; }
             .unified-date-bar { flex-wrap: wrap; gap: 8px; padding: 12px 14px; }
@@ -406,27 +503,61 @@
                     <div class="special-form-section">
                         <div class="section-title">基本信息</div>
                     <div id="section-basic">
+                    <!-- 授权场景 -->
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">授权场景</label>
+                        <div class="layui-input-block">
+                            <div class="custom-select" data-select-id="authScene">
+                                <select class="layui-select" id="authScene" name="authScene" style="display:none;">
+                                    <option value="" selected>请选择授权场景</option>
+                                    <option value="1">开通测试授权(无授权/授权过期申请)</option>
+                                    <option value="2">授权资源调整(授权有效期内调整)</option>
+                                    <option value="3">销售设备增开新模块测试授权</option>
+                                    <option value="5">销售授权扩容测试授权</option>
+                                    <option value="6">销售设备申请延长授权</option>
+                                </select>
+                                <button type="button" class="custom-select-trigger">
+                                    <span class="custom-select-value">请选择授权场景</span>
+                                    <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                </button>
+                                <div class="custom-select-dropdown">
+                                    <ul class="custom-select-list">
+                                        <li class="custom-select-option selected" data-value="">请选择授权场景</li>
+                                        <li class="custom-select-group-label">开通测试授权</li>
+                                        <li class="custom-select-option" data-value="1">开通测试授权(无授权/授权过期申请)</li>
+                                        <li class="custom-select-group-label">授权资源调整</li>
+                                        <li class="custom-select-option" data-value="2">授权资源调整(授权有效期内调整)</li>
+                                        <li class="custom-select-group-label">商务类</li>
+                                        <li class="custom-select-option" data-value="3">销售设备增开新模块测试授权</li>
+                                        <li class="custom-select-option" data-value="5">销售授权扩容测试授权</li>
+                                        <li class="custom-select-option" data-value="6">销售设备申请延长授权</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- 申请类型 -->
                     <div class="layui-form-item">
                         <label class="layui-form-label">申请类型</label>
                         <div class="layui-input-block">
-                            <div class="layui-select-box">
-                                <select class="layui-select" name="planDevType" id="planDevType">
-                                    <option value="" selected>请选择申请场景</option>
-                                    <optgroup label="硬件&amp;服务器 — POC类型">
-                                        <option value="1">借测硬件同时测试授权(首次申请)</option>
-                                        <option value="2">测试授权申请延长授权</option>
-                                        <option value="3">测试授权增开模块授权</option>
-                                        <option value="4">测试授权扩容加点授权</option>
-                                        <option value="5">销售设备增开新模块测试授权</option>
-                                        <option value="6">软件授权</option>
-                                    </optgroup>
-                                    <optgroup label="商务类">
-                                        <option value="7">销售授权扩容测试授权</option>
-                                        <option value="8">销售设备申请延长授权</option>
-                                    </optgroup>
+                            <div class="custom-select" data-select-id="planDevType">
+                                <select class="layui-select" name="planDevType" id="planDevType" style="display:none;">
+                                    <option value="">请选择...</option>
+                                    <option value="1">新设备授权(硬件借测+软件授权一并申请)</option>
+                                    <option value="2">软件续期授权(仅续期软件授权，无需硬件借测)</option>
                                 </select>
-                                <i class="layui-edge"></i>
+                                <button type="button" class="custom-select-trigger">
+                                    <span class="custom-select-value">请选择...</span>
+                                    <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                </button>
+                                <div class="custom-select-dropdown">
+                                    <ul class="custom-select-list">
+                                        <li class="custom-select-option selected" data-value="">请选择...</li>
+                                        <li class="custom-select-option" data-value="1">新设备授权(硬件借测+软件授权一并申请)</li>
+                                        <li class="custom-select-option" data-value="2">软件续期授权(仅续期软件授权，无需硬件借测)</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -512,8 +643,8 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">产品线</label>
                         <div class="layui-input-block">
-                            <div class="layui-select-box">
-                                <select class="layui-select" name="plname" id="plname">
+                            <div class="custom-select" data-select-id="plname">
+                                <select class="layui-select" name="plname" id="plname" style="display:none;">
                                     <option value="27">aBDI</option>
                                     <option value="1">AC</option>
                                     <option value="7">AD</option>
@@ -558,7 +689,57 @@
                                     <option value="41">独立在线授权</option>
                                     <option value="44">统一在线授权</option>
                                 </select>
-                                <i class="layui-edge"></i>
+                                <button type="button" class="custom-select-trigger">
+                                    <span class="custom-select-value">aBDI</span>
+                                    <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                </button>
+                                <div class="custom-select-dropdown">
+                                    <ul class="custom-select-list">
+                                        <li class="custom-select-option selected" data-value="27">aBDI</li>
+                                        <li class="custom-select-option" data-value="1">AC</li>
+                                        <li class="custom-select-option" data-value="7">AD</li>
+                                        <li class="custom-select-option" data-value="46">ADESK</li>
+                                        <li class="custom-select-option" data-value="139">ADM</li>
+                                        <li class="custom-select-option" data-value="161">aES</li>
+                                        <li class="custom-select-option" data-value="21">AF</li>
+                                        <li class="custom-select-option" data-value="169">AGENT_BASE</li>
+                                        <li class="custom-select-option" data-value="163">APEX</li>
+                                        <li class="custom-select-option" data-value="20">aTrust</li>
+                                        <li class="custom-select-option" data-value="111">BBC</li>
+                                        <li class="custom-select-option" data-value="36">CyberCommand</li>
+                                        <li class="custom-select-option" data-value="24">DMP</li>
+                                        <li class="custom-select-option" data-value="159">DSP</li>
+                                        <li class="custom-select-option" data-value="11">EDR</li>
+                                        <li class="custom-select-option" data-value="38">EDS</li>
+                                        <li class="custom-select-option" data-value="45">HCI</li>
+                                        <li class="custom-select-option" data-value="149">IAM</li>
+                                        <li class="custom-select-option" data-value="109">Logger</li>
+                                        <li class="custom-select-option" data-value="133">NDR</li>
+                                        <li class="custom-select-option" data-value="22">NGAF</li>
+                                        <li class="custom-select-option" data-value="101">NGSOC</li>
+                                        <li class="custom-select-option" data-value="31">NovaCommand</li>
+                                        <li class="custom-select-option" data-value="35">NovaSensor</li>
+                                        <li class="custom-select-option" data-value="165">SASE</li>
+                                        <li class="custom-select-option" data-value="19">SCP</li>
+                                        <li class="custom-select-option" data-value="115">SDW-R</li>
+                                        <li class="custom-select-option" data-value="153">SEPTP</li>
+                                        <li class="custom-select-option" data-value="167">SF-FastGPT</li>
+                                        <li class="custom-select-option" data-value="147">SIEP</li>
+                                        <li class="custom-select-option" data-value="10">SIP</li>
+                                        <li class="custom-select-option" data-value="151">SIR</li>
+                                        <li class="custom-select-option" data-value="105">SSL</li>
+                                        <li class="custom-select-option" data-value="28">STA</li>
+                                        <li class="custom-select-option" data-value="157">VPN（aTrust-1000-VPN）</li>
+                                        <li class="custom-select-option" data-value="125">WAF</li>
+                                        <li class="custom-select-option" data-value="6">WOC</li>
+                                        <li class="custom-select-option" data-value="141">XDR</li>
+                                        <li class="custom-select-option" data-value="117">云镜</li>
+                                        <li class="custom-select-option" data-value="168">保护AI</li>
+                                        <li class="custom-select-option" data-value="127">信服云工具</li>
+                                        <li class="custom-select-option" data-value="41">独立在线授权</li>
+                                        <li class="custom-select-option" data-value="44">统一在线授权</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -567,8 +748,8 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">版本</label>
                         <div class="layui-input-block">
-                            <div class="layui-select-box">
-                                <select class="layui-select" name="cloudVersion" id="cloudVersion">
+                            <div class="custom-select" data-select-id="cloudVersion">
+                                <select class="layui-select" name="cloudVersion" id="cloudVersion" style="display:none;">
                                     <option value="6.8.1_1" selected>HCI-6.8.1-VKEY</option>
                                     <option value="6.8.1">HCI-6.8.1-VKEY-ARM</option>
                                     <option value="6.8.1_3">HCI-6.8.1EN-VKEY</option>
@@ -596,7 +777,40 @@
                                     <option value="6.9.0sCloud1_1">sCloud690/691/6100 英文C86免KEY</option>
                                     <option value="sCloud6.9.0EN-UKEY">sCloud690/691/6100英文C86USB-KEY</option>
                                 </select>
-                                <i class="layui-edge"></i>
+                                <button type="button" class="custom-select-trigger">
+                                    <span class="custom-select-value">HCI-6.8.1-VKEY</span>
+                                    <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                </button>
+                                <div class="custom-select-dropdown">
+                                    <ul class="custom-select-list">
+                                        <li class="custom-select-option selected" data-value="6.8.1_1">HCI-6.8.1-VKEY</li>
+                                        <li class="custom-select-option" data-value="6.8.1">HCI-6.8.1-VKEY-ARM</li>
+                                        <li class="custom-select-option" data-value="6.8.1_3">HCI-6.8.1EN-VKEY</li>
+                                        <li class="custom-select-option" data-value="6.8.1_2">HCI-6.8.1EN-VKEY-ARM</li>
+                                        <li class="custom-select-option" data-value="3.0.1">HCI-ARM3.0.1-VKEY 涉密</li>
+                                        <li class="custom-select-option" data-value="HCI6.1.0EN-VKEY">HCI6.1.0EN-VKEY</li>
+                                        <li class="custom-select-option" data-value="HCI6.2.60EN-VKEY">HCI6.2.60EN-VKEY</li>
+                                        <li class="custom-select-option" data-value="HCI6.3.0EN-VKEY">HCI6.3.0EN-VKEY</li>
+                                        <li class="custom-select-option" data-value="HCI6.3.20EN-UKEY">HCI6.3.20EN-UKEY</li>
+                                        <li class="custom-select-option" data-value="HCI6.3.20EN-VKEY">HCI6.3.20EN-VKEY</li>
+                                        <li class="custom-select-option" data-value="HCI6.7.0EN-UKEY">HCI6.7.0EN-UKEY</li>
+                                        <li class="custom-select-option" data-value="HCI6.7.0EN-VKEY">HCI6.7.0EN-VKEY</li>
+                                        <li class="custom-select-option" data-value="6.8.0">HCI6.8.0_VKEY</li>
+                                        <li class="custom-select-option" data-value="HCI6.8.0EN_VKEY">HCI6.8.0EN_VKEY</li>
+                                        <li class="custom-select-option" data-value="HCI6.8.0EN-UKEY">HCI6.8.0EN-UKEY</li>
+                                        <li class="custom-select-option" data-value="HCI6.9.0EN-UKEY">HCI690/691/6100 英文USB-KEY</li>
+                                        <li class="custom-select-option" data-value="6.9.0">HCI690/691/6100中文免KEY</li>
+                                        <li class="custom-select-option" data-value="6.9.0_2">HCI690/691/6100英文免KEY</li>
+                                        <li class="custom-select-option" data-value="3.0.1sCloud1">sCloud3.0.1-VKEY 涉密</li>
+                                        <li class="custom-select-option" data-value="6.8.1sCloud1">sCloud6.8.1-VKEY</li>
+                                        <li class="custom-select-option" data-value="6.9.0_1">sCloud690/691/6100 中文ARM免KEY</li>
+                                        <li class="custom-select-option" data-value="6.9.0sCloud1">sCloud690/691/6100 中文C86免KEY</li>
+                                        <li class="custom-select-option" data-value="HCI6.9.0EN-UKEYARM">sCloud690/691/6100 英文ARM USB-KEY</li>
+                                        <li class="custom-select-option" data-value="6.9.0_3">sCloud690/691/6100 英文ARM免KEY</li>
+                                        <li class="custom-select-option" data-value="6.9.0sCloud1_1">sCloud690/691/6100 英文C86免KEY</li>
+                                        <li class="custom-select-option" data-value="sCloud6.9.0EN-UKEY">sCloud690/691/6100英文C86USB-KEY</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -605,8 +819,8 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">区域</label>
                         <div class="layui-input-block">
-                            <div class="layui-select-box">
-                                <select class="layui-select" id="area" name="area">
+                            <div class="custom-select" data-select-id="area">
+                                <select class="layui-select" id="area" name="area" style="display:none;">
                                     <option value="">请选择区域</option>
                                     <option value="EMEA(中东/非洲/欧洲)">EMEA(中东/非洲/欧洲)</option>
                                     <option value="SEA东南亚">SEA东南亚</option>
@@ -643,7 +857,49 @@
                                     <option value="金融事业部">金融事业部</option>
                                     <option value="陕西区">陕西区</option>
                                 </select>
-                                <i class="layui-edge"></i>
+                                <button type="button" class="custom-select-trigger">
+                                    <span class="custom-select-value">请选择区域</span>
+                                    <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                </button>
+                                <div class="custom-select-dropdown">
+                                    <ul class="custom-select-list">
+                                        <li class="custom-select-option selected" data-value="">请选择区域</li>
+                                        <li class="custom-select-option" data-value="EMEA(中东/非洲/欧洲)">EMEA(中东/非洲/欧洲)</li>
+                                        <li class="custom-select-option" data-value="SEA东南亚">SEA东南亚</li>
+                                        <li class="custom-select-option" data-value="上海区">上海区</li>
+                                        <li class="custom-select-option" data-value="东北区">东北区</li>
+                                        <li class="custom-select-option" data-value="云贵区">云贵区</li>
+                                        <li class="custom-select-option" data-value="全球交付支持中心">全球交付支持中心</li>
+                                        <li class="custom-select-option" data-value="北京区">北京区</li>
+                                        <li class="custom-select-option" data-value="医疗事业部">医疗事业部</li>
+                                        <li class="custom-select-option" data-value="华北区">华北区</li>
+                                        <li class="custom-select-option" data-value="华南区">华南区</li>
+                                        <li class="custom-select-option" data-value="四川区">四川区</li>
+                                        <li class="custom-select-option" data-value="天津区">天津区</li>
+                                        <li class="custom-select-option" data-value="安徽区">安徽区</li>
+                                        <li class="custom-select-option" data-value="山东区">山东区</li>
+                                        <li class="custom-select-option" data-value="广东区">广东区</li>
+                                        <li class="custom-select-option" data-value="战略渠道部">战略渠道部</li>
+                                        <li class="custom-select-option" data-value="政府事业部">政府事业部</li>
+                                        <li class="custom-select-option" data-value="新疆区">新疆区</li>
+                                        <li class="custom-select-option" data-value="欧美">欧美</li>
+                                        <li class="custom-select-option" data-value="江苏区">江苏区</li>
+                                        <li class="custom-select-option" data-value="江西区">江西区</li>
+                                        <li class="custom-select-option" data-value="河北区">河北区</li>
+                                        <li class="custom-select-option" data-value="河南区">河南区</li>
+                                        <li class="custom-select-option" data-value="浙江区">浙江区</li>
+                                        <li class="custom-select-option" data-value="深圳区">深圳区</li>
+                                        <li class="custom-select-option" data-value="湖北区">湖北区</li>
+                                        <li class="custom-select-option" data-value="湖南区">湖南区</li>
+                                        <li class="custom-select-option" data-value="福建区">福建区</li>
+                                        <li class="custom-select-option" data-value="行业总部">行业总部</li>
+                                        <li class="custom-select-option" data-value="西北区">西北区</li>
+                                        <li class="custom-select-option" data-value="运营商教育事业部">运营商教育事业部</li>
+                                        <li class="custom-select-option" data-value="重庆区">重庆区</li>
+                                        <li class="custom-select-option" data-value="金融事业部">金融事业部</li>
+                                        <li class="custom-select-option" data-value="陕西区">陕西区</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -652,11 +908,19 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">办事处</label>
                         <div class="layui-input-block">
-                            <div class="layui-select-box">
-                                <select class="layui-select" name="office" id="office">
+                            <div class="custom-select" data-select-id="office">
+                                <select class="layui-select" name="office" id="office" style="display:none;">
                                     <option value="上海办" selected>上海办</option>
                                 </select>
-                                <i class="layui-edge"></i>
+                                <button type="button" class="custom-select-trigger">
+                                    <span class="custom-select-value has-value">上海办</span>
+                                    <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                </button>
+                                <div class="custom-select-dropdown">
+                                    <ul class="custom-select-list">
+                                        <li class="custom-select-option selected" data-value="上海办">上海办</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -685,7 +949,7 @@
                         </div>
                     </div>
 
-                    <!-- 设备SN（value=1时显示） -->
+                    <!-- 设备SN（申请类型=硬件时显示） -->
                     <div class="layui-form-item" id="devSnFormItem" style="display:none;">
                         <label class="layui-form-label">设备SN<span class="required-mark">*</span></label>
                         <div class="layui-input-block">
@@ -710,29 +974,52 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">借测状态<span class="required-mark">*</span></label>
                         <div class="layui-input-block">
-                            <div class="layui-select-box">
-                                <select class="layui-select" id="btStatus" name="btStatus">
+                            <div class="custom-select" data-select-id="btStatus">
+                                <select class="layui-select" id="btStatus" name="btStatus" style="display:none;">
                                     <option value="">请选择借测状态</option>
                                     <option value="办事处借测">办事处借测</option>
                                     <option value="渠道借测">渠道借测</option>
                                     <option value="自用测试">自用测试</option>
                                 </select>
-                                <i class="layui-edge"></i>
+                                <button type="button" class="custom-select-trigger">
+                                    <span class="custom-select-value">请选择借测状态</span>
+                                    <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                </button>
+                                <div class="custom-select-dropdown">
+                                    <ul class="custom-select-list">
+                                        <li class="custom-select-option selected" data-value="">请选择借测状态</li>
+                                        <li class="custom-select-option" data-value="办事处借测">办事处借测</li>
+                                        <li class="custom-select-option" data-value="渠道借测">渠道借测</li>
+                                        <li class="custom-select-option" data-value="自用测试">自用测试</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="layui-form-item">
                         <label class="layui-form-label">借测类型<span class="required-mark">*</span></label>
                         <div class="layui-input-block">
-                            <div class="layui-select-box">
-                                <select class="layui-select" id="btType" name="btType">
+                            <div class="custom-select" data-select-id="btType">
+                                <select class="layui-select" id="btType" name="btType" style="display:none;">
                                     <option value="">请选择借测类型</option>
                                     <option value="POC测试">POC测试</option>
                                     <option value="项目测试">项目测试</option>
                                     <option value="演示测试">演示测试</option>
                                     <option value="培训测试">培训测试</option>
                                 </select>
-                                <i class="layui-edge"></i>
+                                <button type="button" class="custom-select-trigger">
+                                    <span class="custom-select-value">请选择借测类型</span>
+                                    <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                </button>
+                                <div class="custom-select-dropdown">
+                                    <ul class="custom-select-list">
+                                        <li class="custom-select-option selected" data-value="">请选择借测类型</li>
+                                        <li class="custom-select-option" data-value="POC测试">POC测试</li>
+                                        <li class="custom-select-option" data-value="项目测试">项目测试</li>
+                                        <li class="custom-select-option" data-value="演示测试">演示测试</li>
+                                        <li class="custom-select-option" data-value="培训测试">培训测试</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -743,6 +1030,61 @@
                         <label class="layui-form-label">设备ID</label>
                         <div class="layui-input-block">
                             <input type="text" id="devIdNew" name="devIdNew" class="layui-input" value="">
+                        </div>
+                    </div>
+
+                    <!-- ===== 已有授权展示区（场景二/三时显示） ===== -->
+                    <div class="existing-auth-section" id="existingAuthSection">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">当前授权信息</label>
+                            <div class="layui-input-block">
+                                <div class="ea-tab-bar" id="eaTabBar">
+                                    <span class="ea-tab active" data-ea-tab="device-id">设备ID查询</span>
+                                    <span class="ea-tab" data-ea-tab="sn">SN查询</span>
+                                    <span class="ea-tab" data-ea-tab="upload">上传 .info 文件</span>
+                                </div>
+                                <!-- 设备ID查询面板 -->
+                                <div class="ea-panel" id="eaPanelDeviceId">
+                                    <div class="ea-query-row">
+                                        <input type="text" id="eaQueryDevId" placeholder="请输入设备ID查询当前授权">
+                                        <button type="button" class="ea-query-btn" id="eaBtnQueryDevId">查询</button>
+                                    </div>
+                                </div>
+                                <!-- SN查询面板 -->
+                                <div class="ea-panel" id="eaPanelSn" style="display:none;">
+                                    <div class="ea-query-row">
+                                        <input type="text" id="eaQuerySn" placeholder="请输入设备SN查询当前授权">
+                                        <button type="button" class="ea-query-btn" id="eaBtnQuerySn">查询</button>
+                                    </div>
+                                </div>
+                                <!-- 上传.info文件面板 -->
+                                <div class="ea-panel" id="eaPanelUpload" style="display:none;">
+                                    <div class="ea-upload-area">
+                                        <div class="hw-upload-area">
+                                            <input type="file" id="eaFileInput" accept=".info">
+                                            <div class="hw-file-info" id="eaFileInfo">
+                                                <span class="hw-file-name empty" id="eaFileName">未选择文件（支持 .info 格式）</span>
+                                                <span class="hw-file-meta" id="eaFileMeta"></span>
+                                                <span class="hw-file-clear" id="eaFileClear" title="删除文件">&times;</span>
+                                            </div>
+                                            <label class="hw-upload-btn" for="eaFileInput"><span class="upload-icon">&#8679;</span> 上传文件</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- 查询结果区域 -->
+                                <div id="eaResultArea" style="display:none;">
+                                    <div class="ea-result-card" id="eaResultCard">
+                                        <div class="ea-result-device" id="eaResultDevice"></div>
+                                        <table class="ea-module-table" id="eaModuleTable">
+                                            <thead>
+                                                <tr><th>模块名称</th><th>授权状态</th><th>到期时间</th></tr>
+                                            </thead>
+                                            <tbody id="eaModuleTbody"></tbody>
+                                        </table>
+                                    </div>
+                                    <div class="ea-hint" id="eaHint"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -1218,10 +1560,22 @@
                         <div class="layui-form-item">
                             <label class="layui-form-label">授权场景<span class="required-star">*</span></label>
                             <div class="layui-input-block">
-                                <select class="layui-select" id="xaas-scene">
-                                    <option value="试用授权申请">试用授权申请</option>
-                                    <option value="试用授权资源变更">试用授权资源变更</option>
-                                </select>
+                                <div class="custom-select" data-select-id="xaas-scene">
+                                    <select class="layui-select" id="xaas-scene" style="display:none;">
+                                        <option value="试用授权申请">试用授权申请</option>
+                                        <option value="试用授权资源变更">试用授权资源变更</option>
+                                    </select>
+                                    <button type="button" class="custom-select-trigger">
+                                        <span class="custom-select-value has-value">试用授权申请</span>
+                                        <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                    </button>
+                                    <div class="custom-select-dropdown">
+                                        <ul class="custom-select-list">
+                                            <li class="custom-select-option selected" data-value="试用授权申请">试用授权申请</li>
+                                            <li class="custom-select-option" data-value="试用授权资源变更">试用授权资源变更</li>
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -1280,16 +1634,34 @@
                                 </span>
                             </label>
                             <div class="layui-input-block">
-                                <select class="layui-select" id="xaas-region">
-                                    <option value="">请选择区域</option>
-                                    <option value="华东区域">华东区域</option>
-                                    <option value="华北区域">华北区域</option>
-                                    <option value="华南区域">华南区域</option>
-                                    <option value="西南区域">西南区域</option>
-                                    <option value="西北区域">西北区域</option>
-                                    <option value="华中区域">华中区域</option>
-                                    <option value="东北区域">东北区域</option>
-                                </select>
+                                <div class="custom-select" data-select-id="xaas-region">
+                                    <select class="layui-select" id="xaas-region" style="display:none;">
+                                        <option value="">请选择区域</option>
+                                        <option value="华东区域">华东区域</option>
+                                        <option value="华北区域">华北区域</option>
+                                        <option value="华南区域">华南区域</option>
+                                        <option value="西南区域">西南区域</option>
+                                        <option value="西北区域">西北区域</option>
+                                        <option value="华中区域">华中区域</option>
+                                        <option value="东北区域">东北区域</option>
+                                    </select>
+                                    <button type="button" class="custom-select-trigger">
+                                        <span class="custom-select-value">请选择区域</span>
+                                        <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                    </button>
+                                    <div class="custom-select-dropdown">
+                                        <ul class="custom-select-list">
+                                            <li class="custom-select-option selected" data-value="">请选择区域</li>
+                                            <li class="custom-select-option" data-value="华东区域">华东区域</li>
+                                            <li class="custom-select-option" data-value="华北区域">华北区域</li>
+                                            <li class="custom-select-option" data-value="华南区域">华南区域</li>
+                                            <li class="custom-select-option" data-value="西南区域">西南区域</li>
+                                            <li class="custom-select-option" data-value="西北区域">西北区域</li>
+                                            <li class="custom-select-option" data-value="华中区域">华中区域</li>
+                                            <li class="custom-select-option" data-value="东北区域">东北区域</li>
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -1783,8 +2155,7 @@
             document.getElementById('overlimitReason').value = '';
             clearRenewalDetection();
             // 重置版本字段回默认值
-            var cloudVersionSelect = document.getElementById('cloudVersion');
-            if (cloudVersionSelect) cloudVersionSelect.selectedIndex = 0;
+            setCustomSelectValue('cloudVersion', '6.8.1_1');
         }
 
         // 重置借测字段
@@ -1795,10 +2166,8 @@
             if (btNoInput) btNoInput.value = '';
             var btUserInput = document.getElementById('btUser');
             if (btUserInput) btUserInput.value = '';
-            var btStatusSelect = document.getElementById('btStatus');
-            if (btStatusSelect) btStatusSelect.selectedIndex = 0;
-            var btTypeSelect = document.getElementById('btType');
-            if (btTypeSelect) btTypeSelect.selectedIndex = 0;
+            setCustomSelectValue('btStatus', '');
+            setCustomSelectValue('btType', '');
         }
         // ===== SN自动关联检测借测信息 =====
         var mockBtDatabase = [
@@ -1814,10 +2183,8 @@
             if (btNoInput) btNoInput.value = '';
             var btUserInput = document.getElementById('btUser');
             if (btUserInput) btUserInput.value = '';
-            var btStatusSelect = document.getElementById('btStatus');
-            if (btStatusSelect) btStatusSelect.selectedIndex = 0;
-            var btTypeSelect = document.getElementById('btType');
-            if (btTypeSelect) btTypeSelect.selectedIndex = 0;
+            setCustomSelectValue('btStatus', '');
+            setCustomSelectValue('btType', '');
         }
 
         function simulateFetchBtDataBySn(sn) {
@@ -1843,72 +2210,293 @@
             devSnInput.addEventListener('blur', function() {
                 var sn = this.value.trim();
                 var planDevType = document.getElementById('planDevType').value;
-                if (planDevType !== '1') return;
-                if (!sn) {
-                    clearBtInputData();
-                    return;
-                }
-                var result = simulateFetchBtDataBySn(sn);
-                if (result) {
-                    var btNoInput = document.getElementById('btNo');
-                    if (btNoInput) btNoInput.value = result.btNo;
-                    var btUserInput = document.getElementById('btUser');
-                    if (btUserInput) btUserInput.value = result.btUser;
-                    var btStatusSelect = document.getElementById('btStatus');
-                    if (btStatusSelect) btStatusSelect.value = result.btStatus;
-                    var btTypeSelect = document.getElementById('btType');
-                    if (btTypeSelect) btTypeSelect.value = result.btType;
-                } else {
-                    clearBtInputData();
-                    var toast = document.getElementById('syncToast');
-                    if (toast) {
-                        toast.textContent = '\u26a0 \u672a\u627e\u5230\u8be5SN\u5bf9\u5e94\u7684\u501f\u6d4b\u4fe1\u606f\uff0c\u8bf7\u624b\u52a8\u586b\u5199';
-                        toast.style.background = '#ff9800';
-                        toast.style.display = 'block';
-                        setTimeout(function() { toast.style.display = 'none'; toast.style.background = '#4CAF50'; }, 3000);
+                var authScene = document.getElementById('authScene').value;
+
+                if (planDevType === '1') {
+                    // 申请类型=硬件：SN失焦自动关联借测数据
+                    if (!sn) {
+                        clearBtInputData();
+                        return;
                     }
+                    var result = simulateFetchBtDataBySn(sn);
+                    if (result) {
+                        var btNoInput = document.getElementById('btNo');
+                        if (btNoInput) btNoInput.value = result.btNo;
+                        var btUserInput = document.getElementById('btUser');
+                        if (btUserInput) btUserInput.value = result.btUser;
+                        setCustomSelectValue('btStatus', result.btStatus);
+                        setCustomSelectValue('btType', result.btType);
+                    } else {
+                        clearBtInputData();
+                        var toast = document.getElementById('syncToast');
+                        if (toast) {
+                            toast.textContent = '\u26a0 \u672a\u627e\u5230\u8be5SN\u5bf9\u5e94\u7684\u501f\u6d4b\u4fe1\u606f\uff0c\u8bf7\u624b\u52a8\u586b\u5199';
+                            toast.style.background = '#ff9800';
+                            toast.style.display = 'block';
+                            setTimeout(function() { toast.style.display = 'none'; toast.style.background = '#4CAF50'; }, 3000);
+                        }
+                    }
+                } else if (authScene === '3') {
+                    // 授权场景=销售增开：SN失焦查阅销售授权记录
+                    if (!sn) {
+                        resetEaResult();
+                        return;
+                    }
+                    var authResult = simulateFetchExistingAuth(sn, 'sn');
+                    renderEaResult(authResult);
                 }
             });
         })();
 
 
+        // ===== 已有授权展示区 - 模拟数据与查询逻辑 =====
+        var mockExistingAuthDb = [
+            {
+                deviceId: 'GW-2024-001', sn: 'SN-2024001',
+                modules: [
+                    { name: '终端安全防护', status: 'active', expireDate: '2025-09-15' },
+                    { name: '网络准入控制', status: 'active', expireDate: '2025-09-15' },
+                    { name: '威胁情报', status: 'expired', expireDate: '2025-03-01' }
+                ]
+            },
+            {
+                deviceId: 'GW-2024-002', sn: 'SN-2024002',
+                modules: [
+                    { name: '终端安全防护', status: 'active', expireDate: '2026-01-20' },
+                    { name: 'EDR高级检测', status: 'active', expireDate: '2026-01-20' },
+                    { name: '漏洞管理', status: 'active', expireDate: '2026-01-20' },
+                    { name: '资产发现', status: 'expired', expireDate: '2025-06-30' }
+                ]
+            },
+            {
+                deviceId: 'GW-TEST-100', sn: 'SN-TEST-001',
+                modules: [
+                    { name: '终端安全防护', status: 'active', expireDate: '2025-12-31' }
+                ]
+            },
+            {
+                deviceId: 'GW-DEMO-001', sn: 'SN-DEMO-001',
+                modules: [
+                    { name: '终端安全防护', status: 'active', expireDate: '2026-06-01' },
+                    { name: '网络准入控制', status: 'active', expireDate: '2026-06-01' },
+                    { name: 'EDR高级检测', status: 'active', expireDate: '2026-06-01' },
+                    { name: '威胁情报', status: 'active', expireDate: '2026-06-01' },
+                    { name: '漏洞管理', status: 'active', expireDate: '2026-06-01' }
+                ]
+            }
+        ];
+
+        var existingAuthSection = document.getElementById('existingAuthSection');
+        var eaResultArea = document.getElementById('eaResultArea');
+        var eaResultCard = document.getElementById('eaResultCard');
+        var eaResultDevice = document.getElementById('eaResultDevice');
+        var eaModuleTbody = document.getElementById('eaModuleTbody');
+        var eaHint = document.getElementById('eaHint');
+        var eaQueryFound = false; // 标记是否已查询到有效数据
+
+        // EA Tab 切换
+        (function() {
+            var eaTabs = document.querySelectorAll('#eaTabBar .ea-tab');
+            var panels = { 'device-id': 'eaPanelDeviceId', 'sn': 'eaPanelSn', 'upload': 'eaPanelUpload' };
+            eaTabs.forEach(function(tab) {
+                tab.addEventListener('click', function() {
+                    eaTabs.forEach(function(t) { t.classList.remove('active'); });
+                    this.classList.add('active');
+                    var target = this.getAttribute('data-ea-tab');
+                    Object.keys(panels).forEach(function(key) {
+                        var panel = document.getElementById(panels[key]);
+                        if (panel) panel.style.display = (key === target) ? 'block' : 'none';
+                    });
+                    resetEaResult();
+                });
+            });
+        })();
+
+        function resetEaResult() {
+            eaResultArea.style.display = 'none';
+            eaResultCard.className = 'ea-result-card';
+            eaResultDevice.innerHTML = '';
+            eaModuleTbody.innerHTML = '';
+            eaHint.textContent = '';
+            eaQueryFound = false;
+        }
+
+        function resetExistingAuthSection() {
+            var eaQueryDevId = document.getElementById('eaQueryDevId');
+            if (eaQueryDevId) eaQueryDevId.value = '';
+            var eaQuerySn = document.getElementById('eaQuerySn');
+            if (eaQuerySn) eaQuerySn.value = '';
+            // 重置上传文件
+            var eaFileInput = document.getElementById('eaFileInput');
+            if (eaFileInput) eaFileInput.value = '';
+            var eaFileName = document.getElementById('eaFileName');
+            if (eaFileName) { eaFileName.textContent = '未选择文件（支持 .info 格式）'; eaFileName.className = 'hw-file-name empty'; }
+            var eaFileMeta = document.getElementById('eaFileMeta');
+            if (eaFileMeta) eaFileMeta.textContent = '';
+            // 重置Tab到第一个
+            var eaTabs = document.querySelectorAll('#eaTabBar .ea-tab');
+            eaTabs.forEach(function(t, i) { t.classList.toggle('active', i === 0); });
+            document.getElementById('eaPanelDeviceId').style.display = 'block';
+            document.getElementById('eaPanelSn').style.display = 'none';
+            document.getElementById('eaPanelUpload').style.display = 'none';
+            resetEaResult();
+        }
+
+        function simulateFetchExistingAuth(queryValue, queryType) {
+            if (!queryValue || !queryValue.trim()) return null;
+            var qv = queryValue.trim().toUpperCase();
+            for (var i = 0; i < mockExistingAuthDb.length; i++) {
+                var entry = mockExistingAuthDb[i];
+                if (queryType === 'device-id' && entry.deviceId.toUpperCase() === qv) return entry;
+                if (queryType === 'sn' && entry.sn.toUpperCase() === qv) return entry;
+                // info文件解析模拟：文件名包含deviceId或SN
+                if (queryType === 'file') {
+                    var fn = queryValue.toUpperCase();
+                    if (fn.indexOf(entry.deviceId.toUpperCase()) !== -1 || fn.indexOf(entry.sn.toUpperCase()) !== -1) return entry;
+                }
+            }
+            return null;
+        }
+
+        function renderEaResult(result) {
+            eaResultArea.style.display = 'block';
+            if (result) {
+                eaQueryFound = true;
+                eaResultCard.className = 'ea-result-card found';
+                eaResultDevice.innerHTML = '设备ID：<strong>' + result.deviceId + '</strong> SN：<strong>' + result.sn + '</strong> 已授权模块：<strong>' + result.modules.length + '</strong> 个';
+                var html = '';
+                for (var i = 0; i < result.modules.length; i++) {
+                    var m = result.modules[i];
+                    var badge = m.status === 'active' ? '<span class="ea-status-badge active">有效</span>' : '<span class="ea-status-badge expired">已过期</span>';
+                    html += '<tr><td>' + m.name + '</td><td>' + badge + '</td><td>' + m.expireDate + '</td></tr>';
+                }
+                eaModuleTbody.innerHTML = html;
+                eaHint.textContent = '以上为该设备当前授权信息，可在此基础上申请变更';
+            } else {
+                eaQueryFound = false;
+                eaResultCard.className = 'ea-result-card not-found';
+                eaResultDevice.innerHTML = '未查询到授权信息';
+                eaModuleTbody.innerHTML = '';
+                eaHint.textContent = '请确认设备ID或SN是否正确，或尝试上传 .info 文件查询';
+            }
+        }
+
+        // 设备ID查询按钮
+        document.getElementById('eaBtnQueryDevId').addEventListener('click', function() {
+            var val = document.getElementById('eaQueryDevId').value;
+            if (!val.trim()) { alert('请输入设备ID'); return; }
+            var result = simulateFetchExistingAuth(val, 'device-id');
+            renderEaResult(result);
+        });
+
+        // SN查询按钮
+        document.getElementById('eaBtnQuerySn').addEventListener('click', function() {
+            var val = document.getElementById('eaQuerySn').value;
+            if (!val.trim()) { alert('请输入设备SN'); return; }
+            var result = simulateFetchExistingAuth(val, 'sn');
+            renderEaResult(result);
+        });
+
+        // 上传.info文件解析
+        (function() {
+            var eaFileInput = document.getElementById('eaFileInput');
+            var eaFileName = document.getElementById('eaFileName');
+            var eaFileMeta = document.getElementById('eaFileMeta');
+            var eaFileClear = document.getElementById('eaFileClear');
+
+            eaFileInput.addEventListener('change', function() {
+                var file = this.files[0];
+                if (!file) return;
+                if (!file.name.toLowerCase().endsWith('.info')) {
+                    alert('仅支持 .info 格式文件');
+                    this.value = '';
+                    return;
+                }
+                eaFileName.textContent = file.name;
+                eaFileName.className = 'hw-file-name';
+                eaFileMeta.textContent = (file.size / 1024).toFixed(1) + ' KB';
+                // 模拟解析info文件获取授权信息
+                var result = simulateFetchExistingAuth(file.name, 'file');
+                renderEaResult(result);
+            });
+
+            eaFileClear.addEventListener('click', function() {
+                eaFileInput.value = '';
+                eaFileName.textContent = '未选择文件（支持 .info 格式）';
+                eaFileName.className = 'hw-file-name empty';
+                eaFileMeta.textContent = '';
+                resetEaResult();
+            });
+        })();
+
+
+        // ===== 申请类型切换（硬件/软件） =====
         planDevTypeSelect.addEventListener('change', function() {
             var val = this.value;
 
+            // 先隐藏SN和借测字段
+            devSnFormItem.style.display = 'none';
+            borrowTestFields.style.display = 'none';
+
             if (val === '1') {
-                // 借测硬件和申请软件测试授权（首次申请）
+                // 新设备授权(硬件)：显示SN+借测+设备ID+硬件文件
                 devSnFormItem.style.display = 'flex';
                 borrowTestFields.style.display = 'block';
                 deviceIdFormItem.style.display = 'flex';
-                renewalSection.style.display = 'none';
                 toggleHwInfoSection(plnameSelect.value);
+                resetBorrowTestFields();
                 resetRenewalState();
             } else if (val === '2') {
-                // 软件部署申请测试授权（首次申请）
-                devSnFormItem.style.display = 'none';
-                borrowTestFields.style.display = 'none';
+                // 软件续期授权：隐藏SN+借测，显示设备ID+硬件文件
                 deviceIdFormItem.style.display = 'flex';
-                renewalSection.style.display = 'none';
                 toggleHwInfoSection(plnameSelect.value);
+                resetBorrowTestFields();
                 resetRenewalState();
-                resetBorrowTestFields();
-            } else if (val === '3') {
-                // 续期授权（常规续期与超规续期统一入口）
-                devSnFormItem.style.display = 'none';
-                borrowTestFields.style.display = 'none';
-                hwInfoSection.style.display = 'none';
-                renewalSection.style.display = 'block';
-                deviceIdFormItem.style.display = 'none';
-                resetBorrowTestFields();
             } else {
                 // 未选择
-                devSnFormItem.style.display = 'none';
-                borrowTestFields.style.display = 'none';
                 deviceIdFormItem.style.display = 'flex';
-                renewalSection.style.display = 'none';
                 toggleHwInfoSection(plnameSelect.value);
-                resetRenewalState();
                 resetBorrowTestFields();
+                resetRenewalState();
+            }
+        });
+
+        // ===== 授权场景切换 =====
+        var authSceneSelect = document.getElementById('authScene');
+        authSceneSelect.addEventListener('change', function() {
+            var val = this.value;
+
+            // 先隐藏授权相关区域
+            existingAuthSection.classList.remove('show');
+            existingAuthSection.style.display = 'none';
+
+            if (val === '1') {
+                // 开通测试授权：无特殊字段控制
+                resetExistingAuthSection();
+            } else if (val === '2') {
+                // 授权资源调整：显示已有授权展示区，隐藏硬件文件
+                existingAuthSection.style.display = 'block';
+                existingAuthSection.classList.add('show');
+                hwInfoSection.style.display = 'none';
+                resetExistingAuthSection();
+            } else if (val === '3') {
+                // 销售设备增开新模块：显示SN+已有授权展示区
+                devSnFormItem.style.display = 'flex';
+                existingAuthSection.style.display = 'block';
+                existingAuthSection.classList.add('show');
+                resetExistingAuthSection();
+            } else if (val === '5' || val === '6') {
+                // 商务类（建设中）
+                var toast = document.getElementById('syncToast');
+                if (toast) {
+                    toast.textContent = '该场景正在建设中，敬请期待';
+                    toast.style.background = '#ff9800';
+                    toast.style.display = 'block';
+                    setTimeout(function() { toast.style.display = 'none'; toast.style.background = '#4CAF50'; }, 3000);
+                }
+            } else {
+                // 未选择
+                resetExistingAuthSection();
             }
         });
 
@@ -1957,10 +2545,7 @@
                 isOverlimit: detectedOverlimit
             });
             // 自动填充版本号（模拟历史借测数据查询）
-            var cloudVersionSelect = document.getElementById('cloudVersion');
-            if (cloudVersionSelect && cloudVersionSelect.options.length > 0) {
-                cloudVersionSelect.selectedIndex = 0;
-            }
+            setCustomSelectValue('cloudVersion', '6.8.1_1');
         });
 
         renewalFileClear.addEventListener('click', function() {
@@ -1999,10 +2584,7 @@
                 isOverlimit: detectedOverlimit
             });
             // 自动填充版本号（模拟历史借测数据查询）
-            var cloudVersionSelect = document.getElementById('cloudVersion');
-            if (cloudVersionSelect && cloudVersionSelect.options.length > 0) {
-                cloudVersionSelect.selectedIndex = 0;
-            }
+            setCustomSelectValue('cloudVersion', '6.8.1_1');
         });
 
         // ===== 超规附件上传 =====
@@ -2130,6 +2712,34 @@
                 { id: 'module-SSL', name: '移动办公' }
             ]
         };
+        function getModuleNavOffset() {
+            return 12;
+        }
+
+        function getOffsetTopWithin(target, container) {
+            var top = 0;
+            var node = target;
+            while (node && node !== container) {
+                top += node.offsetTop || 0;
+                node = node.offsetParent;
+            }
+            return top;
+        }
+
+        function scrollToModuleTarget(targetId) {
+            var target = document.getElementById(targetId);
+            var scroller = document.getElementById('contentBody');
+            if (!target || !scroller) return;
+            var top = Math.max(getOffsetTopWithin(target, scroller) - getModuleNavOffset(), 0);
+            scroller.scrollTo({ top: top, behavior: 'smooth' });
+        }
+
+        function setActiveModuleNav(targetId) {
+            document.querySelectorAll('.module-nav-item').forEach(function(n) {
+                n.classList.toggle('active', n.dataset.target === targetId);
+            });
+        }
+
         function refreshModuleNav(plnameValue) {
             var modules = productModules[plnameValue] || productModules['45'];
             var navHtml = '<div class="module-nav-title">\u6a21\u5757\u5bfc\u822a</div>';
@@ -2142,21 +2752,119 @@
             navItems = moduleNav.querySelectorAll('.module-nav-item');
             navItems.forEach(function(item) {
                 item.addEventListener('click', function() {
-                    var target = document.getElementById(this.dataset.target);
-                    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    moduleNav.querySelectorAll('.module-nav-item').forEach(function(n) { n.classList.remove('active'); });
-                    this.classList.add('active');
+                    scrollToModuleTarget(this.dataset.target);
+                    setActiveModuleNav(this.dataset.target);
                 });
             });
         }
 
         var plnameSelect = document.getElementById('plname');
+
+        // ===== 自定义下拉框组件初始化 =====
+        function initCustomSelect(container) {
+            var trigger = container.querySelector('.custom-select-trigger');
+            var valueSpan = container.querySelector('.custom-select-value');
+            var options = container.querySelectorAll('.custom-select-option');
+            var hiddenSelect = document.getElementById(container.dataset.selectId);
+
+            function updateDisplay(selectedOption) {
+                valueSpan.textContent = selectedOption.textContent;
+                if (selectedOption.dataset.value) {
+                    valueSpan.classList.add('has-value');
+                } else {
+                    valueSpan.classList.remove('has-value');
+                }
+                options.forEach(function(opt) { opt.classList.remove('selected'); });
+                selectedOption.classList.add('selected');
+                if (hiddenSelect) {
+                    hiddenSelect.value = selectedOption.dataset.value;
+                    hiddenSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+            }
+
+            // 读取隐藏select的当前选中值，同步到视觉层
+            if (hiddenSelect) {
+                var currentVal = hiddenSelect.value;
+                var selectedOpt = null;
+                options.forEach(function(opt) {
+                    if (opt.dataset.value === currentVal) selectedOpt = opt;
+                });
+                if (selectedOpt) {
+                    options.forEach(function(opt) { opt.classList.remove('selected'); });
+                    selectedOpt.classList.add('selected');
+                    valueSpan.textContent = selectedOpt.textContent;
+                    if (currentVal) valueSpan.classList.add('has-value');
+                }
+            }
+
+            trigger.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var isOpen = container.classList.contains('open');
+                document.querySelectorAll('.custom-select.open').forEach(function(cs) { cs.classList.remove('open'); });
+                if (!isOpen) {
+                    container.classList.add('open');
+                    var sel = container.querySelector('.custom-select-option.selected');
+                    if (sel) sel.scrollIntoView({ block: 'nearest' });
+                }
+            });
+
+            options.forEach(function(option) {
+                option.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    updateDisplay(this);
+                    container.classList.remove('open');
+                });
+            });
+
+            container._resetToDefault = function() {
+                options.forEach(function(opt) { opt.classList.remove('selected'); });
+                options[0].classList.add('selected');
+                valueSpan.textContent = options[0].textContent;
+                if (options[0].dataset.value) {
+                    valueSpan.classList.add('has-value');
+                } else {
+                    valueSpan.classList.remove('has-value');
+                }
+                if (hiddenSelect) hiddenSelect.value = options[0].dataset.value;
+            };
+
+            container._setValue = function(val) {
+                var target = null;
+                options.forEach(function(opt) {
+                    if (opt.dataset.value === val) target = opt;
+                });
+                if (target) {
+                    options.forEach(function(opt) { opt.classList.remove('selected'); });
+                    target.classList.add('selected');
+                    valueSpan.textContent = target.textContent;
+                    if (val) valueSpan.classList.add('has-value');
+                    else valueSpan.classList.remove('has-value');
+                    if (hiddenSelect) hiddenSelect.value = val;
+                }
+            };
+        }
+
+        // 编程式设置自定义下拉框值（不触发change事件）
+        function setCustomSelectValue(selectId, value) {
+            var container = document.querySelector('[data-select-id="' + selectId + '"]');
+            if (container && container._setValue) {
+                container._setValue(value);
+            }
+        }
+
+        // 初始化所有自定义下拉框
+        document.querySelectorAll('.custom-select').forEach(function(cs) {
+            initCustomSelect(cs);
+        });
+
+        // 全局点击关闭自定义下拉框
+        document.addEventListener('click', function() {
+            document.querySelectorAll('.custom-select.open').forEach(function(cs) { cs.classList.remove('open'); });
+        });
+
         plnameSelect.addEventListener('change', function() {
             refreshModuleNav(this.value);
-            // 续期模式下，hwInfoSection 由 renewal-section 替代，不由产品线控制
-            if (planDevTypeSelect.value !== '3') {
-                toggleHwInfoSection(this.value);
-            }
+            toggleHwInfoSection(this.value);
         });
         // 初始化时根据默认产品线刷新导航和硬件信息区
         refreshModuleNav(plnameSelect.value);
@@ -2166,10 +2874,17 @@
             setTimeout(function() {
                 devSnFormItem.style.display = 'none';
                 borrowTestFields.style.display = 'none';
+                existingAuthSection.style.display = 'none';
+                existingAuthSection.classList.remove('show');
                 renewalSection.style.display = 'none';
                 deviceIdFormItem.style.display = 'flex';
+                // 重置所有自定义下拉框
+                document.querySelectorAll('.custom-select').forEach(function(cs) {
+                    if (cs._resetToDefault) cs._resetToDefault();
+                });
                 resetRenewalState();
                 resetBorrowTestFields();
+                resetExistingAuthSection();
                 refreshModuleNav(plnameSelect.value);
                 toggleHwInfoSection(plnameSelect.value);
             }, 0);
@@ -2313,12 +3028,8 @@
         navItems.forEach(function(item) {
             item.addEventListener('click', function() {
                 var targetId = this.dataset.target;
-                var target = document.getElementById(targetId);
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    navItems.forEach(function(n) { n.classList.remove('active'); });
-                    this.classList.add('active');
-                }
+                scrollToModuleTarget(targetId);
+                setActiveModuleNav(targetId);
             });
         });
 
@@ -2342,9 +3053,7 @@
                 }
             });
             if (currentActive) {
-                navItems.forEach(function(n) {
-                    n.classList.toggle('active', n.dataset.target === currentActive);
-                });
+                setActiveModuleNav(currentActive);
             }
         });
 
@@ -2451,32 +3160,58 @@
 
     // 提交表单（模拟）
     function submitStandardForm() {
+        var authScene = document.getElementById('authScene').value;
         var planDevType = document.getElementById('planDevType').value;
         var devIdInput = document.getElementById('devIdNew');
         var hwInfoSection = document.getElementById('hwInfoSection');
         var hwFileInput = document.getElementById('hwFileInput');
         var hwUploadResult = document.getElementById('hwUploadResult');
-        var renewalDeviceId = document.getElementById('renewalDeviceId').value.trim();
-        var renewalType = document.getElementById('renewalType').value;
-        var overlimitReason = document.getElementById('overlimitReason').value.trim();
 
-        if (!planDevType) {
-            alert('请选择申请场景');
+        // 授权场景必选
+        if (!authScene) {
+            alert('请选择授权场景');
             return;
         }
 
-        if (planDevType === '3') {
-            // 续期授权校验
-            if (!renewalDeviceId || !renewalType) {
-                alert('请先上传 .info 文件或输入网关 ID 并完成检测');
+        // 商务类拦截
+        if (authScene === '5' || authScene === '6') {
+            alert('该场景正在建设中，敬请期待');
+            return;
+        }
+
+        // 申请类型必选
+        if (!planDevType) {
+            alert('请选择申请类型');
+            return;
+        }
+
+        // 授权场景=2（授权资源调整）：必须查询到已有授权数据
+        if (authScene === '2') {
+            if (!eaQueryFound) {
+                alert('请先查询设备当前授权信息（通过设备ID、SN或上传.info文件）');
                 return;
             }
-            if (renewalType === 'overlimit' && !overlimitReason) {
-                alert('超规续期需要填写申请原因');
+        }
+
+        // 授权场景=3（销售增开）：SN + 设备ID + 已有授权查询结果
+        if (authScene === '3') {
+            var devSnInput = document.getElementById('devSnNew');
+            if (devSnInput && !devSnInput.value.trim()) {
+                alert('请填写设备SN');
                 return;
             }
-        } else if (planDevType === '1') {
-            // 借测硬件+软件校验：SN + 借测4字段 + 设备ID + 硬件文件
+            if (devIdInput && devIdInput.offsetParent !== null && !devIdInput.value.trim()) {
+                alert('请填写设备ID');
+                return;
+            }
+            if (!eaQueryFound) {
+                alert('请先通过SN查询该设备的销售授权记录');
+                return;
+            }
+        }
+
+        // 申请类型=1（硬件）：校验SN + 借测4字段
+        if (planDevType === '1') {
             var devSnInput = document.getElementById('devSnNew');
             if (devSnInput && !devSnInput.value.trim()) {
                 alert('请填写设备SN');
@@ -2502,45 +3237,26 @@
                 alert('请选择借测类型');
                 return;
             }
-            if (devIdInput && devIdInput.offsetParent !== null && !devIdInput.value.trim()) {
-                alert('请填写设备ID');
+        }
+
+        // 公共校验：设备ID + 硬件文件
+        if (devIdInput && devIdInput.offsetParent !== null && !devIdInput.value.trim()) {
+            alert('请填写设备ID');
+            return;
+        }
+        if (hwInfoSection && hwInfoSection.style.display !== 'none') {
+            var hwFile = hwFileInput.files[0];
+            if (!hwFile) {
+                hwUploadResult.textContent = '请上传硬件信息文件';
+                hwUploadResult.className = 'hw-upload-result fail';
+                alert('请上传硬件信息文件');
                 return;
             }
-            if (hwInfoSection && hwInfoSection.style.display !== 'none') {
-                var hwFile = hwFileInput.files[0];
-                if (!hwFile) {
-                    hwUploadResult.textContent = '请上传硬件信息文件';
-                    hwUploadResult.className = 'hw-upload-result fail';
-                    alert('请上传硬件信息文件');
-                    return;
-                }
-                if (!hwFile.name.toLowerCase().endsWith('.info')) {
-                    hwUploadResult.textContent = '仅支持 .info 格式文件';
-                    hwUploadResult.className = 'hw-upload-result fail';
-                    alert('硬件信息文件仅支持 .info 格式');
-                    return;
-                }
-            }
-        } else {
-            // value=2 或其他：设备ID + 硬件文件
-            if (devIdInput && devIdInput.offsetParent !== null && !devIdInput.value.trim()) {
-                alert('请填写设备ID');
+            if (!hwFile.name.toLowerCase().endsWith('.info')) {
+                hwUploadResult.textContent = '仅支持 .info 格式文件';
+                hwUploadResult.className = 'hw-upload-result fail';
+                alert('硬件信息文件仅支持 .info 格式');
                 return;
-            }
-            if (hwInfoSection && hwInfoSection.style.display !== 'none') {
-                var hwFile = hwFileInput.files[0];
-                if (!hwFile) {
-                    hwUploadResult.textContent = '请上传硬件信息文件';
-                    hwUploadResult.className = 'hw-upload-result fail';
-                    alert('请上传硬件信息文件');
-                    return;
-                }
-                if (!hwFile.name.toLowerCase().endsWith('.info')) {
-                    hwUploadResult.textContent = '仅支持 .info 格式文件';
-                    hwUploadResult.className = 'hw-upload-result fail';
-                    alert('硬件信息文件仅支持 .info 格式');
-                    return;
-                }
             }
         }
 
