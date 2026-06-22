@@ -324,6 +324,12 @@
         .xaas-extend-date-area { margin-top: 10px; }
         .xaas-extend-hint { font-size: 12px; color: #e65100; margin-top: 8px; }
         .xaas-extend-warn { font-size: 12px; color: #e65100; margin-top: 4px; }
+        /* 申请理由区域 */
+        .xaas-apply-reason-area { width: 100%; max-width: 500px; }
+        .xaas-apply-reason-area textarea { width: 100%; min-height: 80px; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; font-family: inherit; resize: vertical; outline: none; transition: border-color 0.15s, box-shadow 0.15s; }
+        .xaas-apply-reason-area textarea:focus { border-color: #0891b2; box-shadow: 0 0 0 3px rgba(8,145,178,0.1); }
+        .xaas-apply-reason-area .reason-label { font-size: 13px; color: #374151; margin-bottom: 6px; display: block; }
+        .xaas-apply-reason-area .required-star { color: #c62828; }
 
         /* 产品族样式 */
         .xaas-family-list { border: 1px solid #d1d5db; border-radius: 8px; width: 100%; background: #fff; overflow: hidden; }
@@ -551,7 +557,7 @@
             <div class="navBar" id="navBar">
                 <ul>
                     <li><a href="javascript:;"><cite>后台首页</cite></a></li>
-                    <li class="layui-this" data-tab="hardware"><a href="javascript:;"><cite>申请硬件授权</cite></a></li>
+                    <li class="layui-this" data-tab="hardware"><a href="javascript:;"><cite>申请产品授权</cite></a></li>
                     <li data-tab="xaas"><a href="javascript:;"><cite>申请XaaS授权</cite></a></li>
                     <li><a href="javascript:;"><cite>授权记录</cite></a></li>
                     <li><a href="javascript:;"><cite>安全&amp;云计算产品线授权申请接口人</cite></a></li>
@@ -564,7 +570,7 @@
             <div id="top_tabs_box">
                 <ul id="top_tabs">
                     <li><cite>后台首页</cite></li>
-                    <li class="layui-this" data-tab="hardware"><cite>申请硬件授权</cite><span class="tab-close">&times;</span></li>
+                    <li class="layui-this" data-tab="hardware"><cite>申请产品授权</cite><span class="tab-close">&times;</span></li>
                     <li data-tab="xaas"><cite>申请XaaS授权</cite><span class="tab-close">&times;</span></li>
                 </ul>
                 <div class="closeBox">
@@ -572,7 +578,7 @@
                 </div>
             </div>
             <div class="content-body" id="contentBody">
-                <!-- 硬件授权表单 -->
+                <!-- 产品授权表单 -->
                 <div id="content-hardware">
                 <form class="layui-form" id="formsn">
                     <input type="hidden" id="request_origin" name="request_origin" value="1">
@@ -2039,6 +2045,17 @@
                             </div>
                         </div>
 
+                        <!-- 申请理由（勾选延长有效期或修改规格时显示） -->
+                        <div class="layui-form-item" id="xaas-apply-reason-item">
+                            <label class="layui-form-label">申请理由<span class="required-star">*</span></label>
+                            <div class="layui-input-block">
+                                <div class="xaas-apply-reason-area">
+                                    <label class="reason-label">请描述本次申请的具体原因 <span class="required-star">*</span></label>
+                                    <textarea id="xaas-apply-reason-input" placeholder="请描述申请原因，如：客户需要延长试用周期进行深度测试..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="layui-form-item">
                             <div class="layui-input-block" style="text-align: center;">
                                 <button type="button" class="layui-btn">立即获取</button>
@@ -2552,6 +2569,42 @@
                     var dateInput = document.getElementById('xaas-extend-date-new');
                     if (dateInput) dateInput.value = '';
                 }
+                updateXaasApplyReason();
+            });
+        }
+
+        // ===== XaaS 申请理由显隐控制 =====
+        var xaasApplyReasonArea = document.getElementById('xaas-apply-reason-item');
+        var xaasApplyReasonInput = document.getElementById('xaas-apply-reason-input');
+        function updateXaasApplyReason() {
+            if (!xaasApplyReasonArea || !xaasApplyReasonInput) return;
+            var extendChecked = extendCheck && extendCheck.checked;
+            var specActive = document.querySelectorAll('.xaas-spec-btn.active').length > 0;
+            var shouldShow = extendChecked || specActive;
+            xaasApplyReasonArea.style.display = shouldShow ? '' : 'none';
+            if (!shouldShow) xaasApplyReasonInput.value = '';
+        }
+        // 监听修改规格按钮状态变化来更新申请理由
+        document.querySelectorAll('.xaas-spec-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                // 延迟执行，等按钮active状态切换完成后
+                setTimeout(updateXaasApplyReason, 50);
+            });
+        });
+        // 点击外部关闭规格配置时也更新
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.xaas-inline-spec-area') && !e.target.closest('.xaas-spec-btn')) {
+                setTimeout(updateXaasApplyReason, 50);
+            }
+        });
+        // 初始化隐藏
+        if (xaasApplyReasonArea) xaasApplyReasonArea.style.display = 'none';
+        // 重置按钮点击时隐藏申请理由
+        var xaasResetBtn = document.querySelector('#content-xaas .layui-btn-primary');
+        if (xaasResetBtn) {
+            xaasResetBtn.addEventListener('click', function() {
+                if (xaasApplyReasonArea) xaasApplyReasonArea.style.display = 'none';
+                if (xaasApplyReasonInput) xaasApplyReasonInput.value = '';
             });
         }
 
@@ -3447,7 +3500,7 @@
             if (!e.target.closest('.search-select-box')) dropdown.classList.remove('show');
         });
 
-        // 硬件授权页创建新客户弹窗
+        // 产品授权页创建新客户弹窗
         function openHwCreateCustomerDialog() {
             layer.open({
                 type: 1,
