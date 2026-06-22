@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -6,6 +6,7 @@
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
     <style>
         /* 全局重置 */
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -88,12 +89,74 @@
         .layui-input:hover { border-color: #c2c6d8; background: #fff; }
         .layui-input:focus { border-color: #0050cb; background: #fff; box-shadow: 0 0 0 3px rgba(0,80,203,.08); }
 
+        /* XaaS 表单样式 - 与硬件授权视觉统一 */
+        #content-xaas .special-form-section { background: #f8f9ff; border: none; border-radius: 12px; padding: 18px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.06); max-width: 900px; overflow: visible; }
+        #content-xaas .special-form-section .section-title { font-size: 15px; font-weight: 600; color: #1a1a2e; padding: 0 0 12px; border-bottom: 1px solid #eff4ff; margin-bottom: 16px; background: transparent; }
+        #content-xaas .layui-form-item { display: flex; align-items: flex-start; max-width: 900px; min-height: auto; margin: 0 auto 15px; }
+        #content-xaas .layui-form-label { width: 150px; flex-shrink: 0; padding: 9px 0 9px 15px; font-weight: 500; line-height: 20px; text-align: left; color: #424656; }
+        #content-xaas .layui-input-block { flex: 1; min-height: 38px; min-width: 0; position: relative; padding: 0; }
+        #content-xaas .layui-input,
+        #content-xaas .layui-select,
+        #content-xaas .custom-select-trigger { height: 40px; max-width: 300px; border-radius: 8px; }
+
         /* 下拉选择框 */
         .layui-select-box { position: relative; max-width: 300px; }
-        .layui-select { width: 100%; height: 40px; line-height: 40px; border: 1px solid #e5eeff; background-color: #fff; border-radius: 8px; padding: 0 12px; outline: none; appearance: none; -webkit-appearance: none; -moz-appearance: none; cursor: pointer; padding-right: 30px; transition: all 0.15s; }
-        .layui-select:hover { border-color: #c2c6d8; background: #fff; }
-        .layui-select:focus { border-color: #0050cb; background: #fff; box-shadow: 0 0 0 3px rgba(0,80,203,.08); }
-        .layui-edge { position: absolute; right: 12px; top: 50%; margin-top: -3px; width: 0; height: 0; border-style: solid; border-width: 6px 6px 0 6px; border-color: #8b92a5 transparent transparent transparent; pointer-events: none; }
+        .layui-select {
+            width: 100%; height: 40px; line-height: 40px;
+            border: 1px solid #c2c6d8; background-color: #fff;
+            border-radius: 8px; padding: 0 36px 0 12px;
+            outline: none; appearance: none; -webkit-appearance: none; -moz-appearance: none;
+            cursor: pointer; transition: all 0.2s;
+            font-size: 14px; color: #0b1c30;
+        }
+        .layui-select:hover { border-color: #0050cb; }
+        .layui-select:focus { border: 2px solid #0050cb; box-shadow: 0 0 0 3px #b3c5ff; padding-left: 11px; }
+        .layui-select option { padding: 8px 12px; font-size: 14px; }
+        .layui-select optgroup { font-weight: 500; color: #0b1c30; font-size: 14px; }
+        .layui-select-box > .layui-edge {
+            position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+            width: auto; height: auto; border: none;
+            pointer-events: none; font-family: 'Material Symbols Outlined'; font-size: 22px; color: #424656;
+        }
+        .layui-select-box > .layui-edge::before { content: 'arrow_drop_down'; }
+
+        /* 自定义下拉组件 */
+        .custom-select { position: relative; max-width: 300px; }
+        .custom-select-trigger {
+            width: 100%; height: 40px;
+            background: #fff; border: 1px solid #c2c6d8; border-radius: 8px;
+            padding: 0 12px; display: flex; align-items: center; justify-content: space-between;
+            cursor: pointer; transition: all 0.2s; outline: none; font-family: inherit;
+        }
+        .custom-select-trigger:hover { border-color: #0050cb; }
+        .custom-select.open .custom-select-trigger {
+            border: 2px solid #0050cb; box-shadow: 0 0 0 3px #b3c5ff; padding: 0 11px;
+        }
+        .custom-select-value {
+            font-size: 14px; color: #424656; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; text-align: left;
+        }
+        .custom-select-value.has-value { color: #0b1c30; }
+        .custom-select-arrow { font-size: 22px; color: #424656; transition: transform 0.2s; }
+        .custom-select.open .custom-select-arrow { transform: rotate(180deg); color: #0050cb; }
+        .custom-select-dropdown {
+            display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+            background: #fff; border: 1px solid #c2c6d8; border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.02);
+            z-index: 1000; overflow: hidden;
+        }
+        .custom-select.open .custom-select-dropdown { display: block; }
+        .custom-select-list { list-style: none; padding: 4px 0; margin: 0; max-height: 320px; overflow-y: auto; }
+        .custom-select-group-label {
+            padding: 8px 12px; font-size: 14px; font-weight: 500; color: #0b1c30; cursor: default; margin-top: 4px;
+        }
+        .custom-select-group-label:first-child { margin-top: 0; }
+        .custom-select-option {
+            padding: 8px 12px 8px 24px; font-size: 14px; color: #424656; cursor: pointer; transition: all 0.15s; white-space: nowrap;
+        }
+        .custom-select-option:hover { background: #eff4ff; color: #0050cb; }
+        .custom-select-option.selected {
+            background: #e5eeff; color: #0050cb; font-weight: 500; border-left: 2px solid #0050cb; padding-left: 22px;
+        }
 
         /* 按钮 */
         .layui-btn { display: inline-flex; align-items: center; justify-content: center; height: 40px; padding: 0 24px; background-color: #0050cb; color: #fff; white-space: nowrap; text-align: center; font-size: 14px; font-weight: 500; border: none; border-radius: 10px; cursor: pointer; transition: all 0.2s; }
@@ -116,16 +179,16 @@
         .search-dropdown { display: none; position: absolute; top: 40px; left: 0; right: 0; background: #fff; border: 1px solid #e6e6e6; border-radius: 2px; box-shadow: 0 2px 10px rgba(0,0,0,.12); z-index: 9999; max-height: 300px; overflow-y: auto; }
         .search-dropdown.show { display: block; }
         .search-dropdown .search-item { padding: 9px 15px; cursor: pointer; border-bottom: 1px solid #f6f6f6; line-height: 24px; display: flex; justify-content: space-between; align-items: center; }
-        .search-dropdown .search-item:hover { background-color: #0050cb; color: #fff; }
+        .search-dropdown .search-item:hover { background-color: #eff4ff; color: #0050cb; }
         .search-dropdown .search-item .item-left { display: flex; align-items: center; flex: 1; min-width: 0; }
         .search-dropdown .search-item .item-name { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .search-dropdown .search-item .item-id { font-size: 12px; color: #999; margin-left: 10px; flex-shrink: 0; }
-        .search-dropdown .search-item:hover .item-id { color: #ddd; }
+        .search-dropdown .search-item:hover .item-id { color: #6b7280; }
         .search-dropdown .search-item .item-badge { display: inline-block; padding: 1px 8px; border-radius: 3px; font-size: 11px; font-weight: 600; line-height: 20px; flex-shrink: 0; margin-left: 12px; }
         .search-dropdown .search-item .item-badge.ka { background: #fff3e0; color: #e65100; border: 1px solid #ffcc80; }
         .search-dropdown .search-item .item-badge.normal { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
-        .search-dropdown .search-item:hover .item-badge.ka { background: rgba(255,243,224,0.3); border-color: rgba(255,204,128,0.5); }
-        .search-dropdown .search-item:hover .item-badge.normal { background: rgba(232,245,233,0.3); border-color: rgba(165,214,167,0.5); }
+        .search-dropdown .search-item:hover .item-badge.ka { background: #fff3e0; border-color: #ffcc80; }
+        .search-dropdown .search-item:hover .item-badge.normal { background: #e8f5e9; border-color: #a5d6a7; }
         .customer-info-display { margin-top: 8px; font-size: 13px; color: #666; line-height: 28px; background: #f8f8f8; padding: 5px 12px; border-radius: 2px; display: none; }
         .customer-info-display.show { display: block; }
         .customer-info-display span { color: #333; font-weight: 500; }
@@ -166,6 +229,7 @@
         .hw-file-info.has-file .hw-file-clear { display: inline-flex; }
         .hw-upload-btn { display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 18px; background-color: #0050cb; color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; transition: all 0.2s; flex-shrink: 0; }
         .hw-upload-btn:hover { opacity: 0.9; box-shadow: 0 2px 8px rgba(0,80,203,.25); }
+        .xaas-extra-field .hw-upload-btn { display: inline-flex; align-items: center; justify-content: center; color: #fff; }
         .hw-upload-btn .upload-icon { font-size: 15px; line-height: 1; }
         .hw-upload-result { font-size: 12px; display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; border-radius: 16px; font-weight: 500; height: 40px; box-sizing: border-box; }
         .hw-upload-result:empty { display: none; }
@@ -231,35 +295,129 @@
 
         /* XaaS 表单样式 */
         .required-star { color: #c62828; margin-left: 2px; }
-        .xaas-product-list { border: 1px solid #e6e6e6; border-radius: 4px; max-width: 600px; overflow: hidden; }
-        .xaas-product-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-bottom: 1px solid #f0f0f0; }
-        .xaas-product-item:last-child { border-bottom: none; }
-        .xaas-product-check { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; font-weight: 500; }
-        .xaas-product-check input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: #0891b2; }
-        .xaas-product-desc { font-size: 13px; color: #999; }
-        .xaas-product-desc.xaas-need-spec { color: #aaa; font-style: italic; }
+        .xaas-product-list { border: 1px solid #d1d5db; border-radius: 8px; max-width: 600px; overflow: hidden; }
+        .xaas-product-item { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; padding: 8px 12px; border-radius: 8px; transition: background 0.15s; }
+        .xaas-product-item:hover { background: #f9fafb; }
+        .xaas-product-item.selected { background: #eff4ff; }
+        .xaas-product-item.selected:hover { background: #dae1ff; }
+        .xaas-product-item.disabled { background: #f7f7f7; opacity: .55; }
+        .xaas-product-item.disabled .xaas-product-check { cursor: not-allowed; }
+        .xaas-product-check { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; font-weight: 500; color: #1f2937; min-width: 0; flex: 1; }
+        .xaas-product-check input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: #0050cb; }
+        .xaas-product-desc { font-size: 13px; color: #6b7280; max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .xaas-product-desc.xaas-need-spec { color: #9ca3af; font-style: italic; }
         .xaas-product-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-        .xaas-spec-btn { padding: 2px 10px; font-size: 12px; border: 1px solid #0891b2; color: #0891b2; background: #fff; border-radius: 4px; cursor: pointer; white-space: nowrap; }
-        .xaas-spec-btn:hover { background: #0891b2; color: #fff; }
+        .xaas-spec-btn { display: inline-flex; align-items: center; gap: 4px; height: 32px; padding: 0 12px; font-size: 13px; border: 1px solid #c2c6d8; color: #424656; background: #fff; border-radius: 6px; cursor: pointer; white-space: nowrap; transition: all 0.15s; }
+        .xaas-spec-btn:hover { border-color: #9ca3af; background: #f9fafb; }
+        .xaas-spec-btn.active { border-color: #0050cb; color: #fff; background: #0050cb; }
+        .xaas-spec-btn.active:hover { background: #003fa3; border-color: #003fa3; color: #fff; }
+        #content-xaas .xaas-version-picker .custom-select-trigger { height: 32px; border-radius: 6px; padding: 0 8px; }
+        #content-xaas .xaas-version-picker .custom-select-value { font-size: 13px; }
+        #content-xaas .xaas-version-picker .custom-select-arrow { font-size: 20px; }
         .xaas-spec-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; display: none; justify-content: center; align-items: center; }
         .xaas-spec-modal-overlay.show { display: flex; }
-        .xaas-spec-modal { background: #fff; border-radius: 10px; padding: 24px; min-width: 420px; max-width: 520px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+        .xaas-spec-modal { background: #fff; border-radius: 12px; padding: 24px; min-width: 420px; max-width: 520px; box-shadow: 0 8px 32px rgba(0,0,0,0.12); }
         .xaas-spec-modal-title { font-size: 16px; font-weight: 600; margin-bottom: 20px; color: #333; }
         .xaas-spec-modal .spec-field { margin-bottom: 14px; }
         .xaas-spec-modal .spec-field label { display: block; font-size: 13px; color: #666; margin-bottom: 4px; }
-        .xaas-spec-modal .spec-field input, .xaas-spec-modal .spec-field select { width: 100%; height: 36px; padding: 0 10px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 13px; box-sizing: border-box; }
+        .xaas-spec-modal .spec-field input, .xaas-spec-modal .spec-field select { width: 100%; height: 40px; padding: 0 12px; border: 1px solid #c2c6d8; border-radius: 8px; font-size: 14px; box-sizing: border-box; transition: all 0.15s; }
+        .xaas-spec-modal .spec-field input:hover, .xaas-spec-modal .spec-field select:hover { border-color: #0050cb; }
+        .xaas-spec-modal .spec-field input:focus, .xaas-spec-modal .spec-field select:focus { border: 2px solid #0050cb; box-shadow: 0 0 0 3px #b3c5ff; padding-left: 11px; }
         .xaas-spec-modal-btns { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
         .xaas-spec-modal-btns button { padding: 6px 20px; border-radius: 6px; font-size: 13px; cursor: pointer; }
-        .xaas-spec-modal-btns .spec-cancel { border: 1px solid #d9d9d9; background: #fff; color: #666; }
-        .xaas-spec-modal-btns .spec-confirm { border: none; background: #0891b2; color: #fff; }
-        .xaas-spec-modal-btns .spec-confirm:hover { background: #0e7490; }
-        .xaas-extend-section { border: 1px solid #e6e6e6; border-radius: 8px; padding: 12px 16px; max-width: 500px; }
+        .xaas-spec-modal-btns .spec-cancel { border: 1px solid #c2c6d8; background: #fff; color: #424656; border-radius: 8px; }
+        .xaas-spec-modal-btns .spec-cancel:hover { background: #eff4ff; }
+        .xaas-spec-modal-btns .spec-confirm { border: none; background: #0050cb; color: #fff; border-radius: 8px; }
+        .xaas-spec-modal-btns .spec-confirm:hover { background: #003fa3; }
+        .xaas-extend-section { border: 1px solid #d1d5db; border-radius: 8px; padding: 14px 18px; width: 100%; background: #fff; }
         .xaas-extend-check { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; }
-        .xaas-extend-check input[type="checkbox"] { width: 16px; height: 16px; accent-color: #0891b2; cursor: pointer; }
+        .xaas-extend-check input[type="checkbox"] { width: 16px; height: 16px; accent-color: #0050cb; cursor: pointer; }
         .xaas-extend-tip-icon { color: #e65100; cursor: help; font-size: 14px; }
         .xaas-extend-date-area { margin-top: 10px; }
         .xaas-extend-hint { font-size: 12px; color: #e65100; margin-top: 8px; }
         .xaas-extend-warn { font-size: 12px; color: #e65100; margin-top: 4px; }
+        .xaas-form-wide { max-width: 760px; }
+        .xaas-industry-row { display: flex; gap: 12px; max-width: 520px; }
+        .xaas-industry-row select { flex: 1; min-width: 0; }
+        .xaas-industry-row .custom-select { flex: 1; min-width: 0; max-width: none; }
+        .xaas-family-list { border: 1px solid #d1d5db; border-radius: 8px; width: 100%; background: #fff; overflow: hidden; }
+        .xaas-family { border-bottom: 1px solid #e5e7eb; }
+        .xaas-family:last-child { border-bottom: none; }
+        .xaas-family-head { display: flex; align-items: center; gap: 8px; width: 100%; padding: 10px 14px; background: #f9fafb; border: none; cursor: pointer; font-size: 14px; font-weight: 500; color: #374151; text-align: left; transition: background 0.15s; }
+        .xaas-family-head:hover { background: #f3f4f6; }
+        .xaas-family-arrow { width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 11px; transition: transform 0.2s; flex-shrink: 0; }
+        .xaas-family.collapsed .xaas-family-arrow { transform: rotate(-90deg); }
+        .xaas-family.collapsed .xaas-family-body { display: none; }
+        .xaas-family-count { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; background: #e5eeff; color: #0050cb; font-size: 12px; line-height: 20px; text-align: center; font-weight: 500; }
+        .xaas-family-body { padding: 4px 6px; }
+        .xaas-inline-select { height: 32px; min-width: 132px; padding: 0 28px 0 10px; border: 1px solid #c2c6d8; border-radius: 6px; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24'%3E%3Cpath fill='%23424656' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E") no-repeat right 6px center; background-size: 18px; color: #424656; font-size: 13px; outline: none; cursor: pointer; transition: all 0.15s; -webkit-appearance: none; -moz-appearance: none; appearance: none; }
+        .xaas-inline-select:hover { border-color: #0050cb; }
+        .xaas-inline-select:focus { border: 2px solid #0050cb; box-shadow: 0 0 0 3px #b3c5ff; }
+        .xaas-product-warn { display: none; flex: 0 0 100%; margin: 2px 0 0 28px; color: #e65100; font-size: 12px; line-height: 18px; }
+        .xaas-product-warn.show { display: block; }
+        .xaas-extra-panel { display: none; width: 100%; border: 1px solid #fde68a; border-radius: 8px; background: #fffbeb; overflow: hidden; }
+        .xaas-extra-panel.show { display: block; }
+        .xaas-extra-title { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid #fde68a; background: #fef3c7; color: #92400e; font-size: 14px; font-weight: 600; }
+        .xaas-extra-body { padding: 0; }
+        .xaas-extra-grid { display: block; }
+        .xaas-extra-field { display: flex; align-items: flex-start; min-height: 44px; padding: 8px 14px; border-bottom: 1px solid #f0f2f5; box-sizing: border-box; }
+        .xaas-extra-field.full { flex-wrap: nowrap; align-items: center; }
+        .xaas-extra-field.full.xaas-extra-field-longlabel { flex-wrap: wrap; }
+        .xaas-extra-field label { display: block; flex: 0 0 150px; width: 150px; padding: 9px 15px 9px 0; margin: 0; color: #424656; font-size: 14px; font-weight: 500; line-height: 20px; text-align: left; box-sizing: border-box; white-space: normal; word-break: break-word; }
+        .xaas-extra-field > select,
+        .xaas-extra-field > input,
+        .xaas-extra-field > textarea,
+        .xaas-extra-field > .xaas-chip-group,
+        .xaas-extra-field > .xaas-reference-link,
+        .xaas-extra-field > .custom-select { flex: 1; min-width: 0; max-width: none; }
+        .xaas-extra-field select,
+        .xaas-extra-field input,
+        .xaas-extra-field textarea { width: 100%; border: 1px solid #c2c6d8; border-radius: 8px; background: #fff; font-size: 14px; outline: none; box-sizing: border-box; transition: all 0.15s; }
+        .xaas-extra-field select,
+        .xaas-extra-field input { height: 40px; padding: 0 12px; }
+        .xaas-extra-field textarea { min-height: 76px; padding: 8px 12px; resize: vertical; }
+        .xaas-extra-field select:hover,
+        .xaas-extra-field input:hover,
+        .xaas-extra-field textarea:hover { border-color: #0050cb; }
+        .xaas-extra-field select:focus,
+        .xaas-extra-field input:focus,
+        .xaas-extra-field textarea:focus { border: 2px solid #0050cb; box-shadow: 0 0 0 3px #b3c5ff; padding-left: 11px; }
+        .xaas-chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
+        .xaas-chip { height: 32px; padding: 0 14px; border: 1px solid #c2c6d8; border-radius: 8px; background: #fff; color: #424656; cursor: pointer; transition: all 0.15s; font-size: 13px; outline: none; }
+        .xaas-chip:hover { border-color: #0050cb; color: #0050cb; background: #eff4ff; }
+        .xaas-chip.active { border-color: #0050cb; background: #0050cb; color: #fff; font-weight: 500; }
+        .xaas-chip.active:hover { background: #003fa3; border-color: #003fa3; }
+        .xaas-extra-field .xaas-counter { flex: 0 0 auto; margin: 4px 0 0 0; color: #8b92a5; font-size: 12px; text-align: right; }
+        .xaas-counter { margin-top: 4px; color: #8b92a5; font-size: 12px; text-align: right; }
+        .xaas-reference-link { display: inline-flex; align-items: center; gap: 6px; color: #0050cb; font-size: 13px; text-decoration: none; }
+        .xaas-reference-link:hover { color: #003fa3; }
+        .xaas-extra-field .xaas-file-hint { flex: 0 0 auto; margin: 4px 0 0 0; }
+        .xaas-file-hint { margin-top: 4px; color: #8b92a5; font-size: 12px; }
+        .xaas-template-link { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px 4px 8px; border: 1px solid #f59e0b; border-radius: 6px; color: #b45309; font-size: 13px; text-decoration: none; background: #fff; transition: background 0.15s; cursor: pointer; }
+        .xaas-template-link:hover { background: #fef3c7; }
+        .xaas-template-link .tmpl-icon { font-size: 16px; line-height: 1; flex-shrink: 0; }
+        .xaas-file-upload-row { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+        .xaas-form-actions { text-align: center; padding-top: 8px; }
+
+        /* SaaS-XDR 内联规格展开区 */
+        .xaas-inline-spec-area { display: none; margin: 8px 0 0 28px; padding: 12px; border: 1px solid #fde68a; border-radius: 8px; background: #fffbeb; }
+        .xaas-inline-spec-area.show { display: block; }
+        .xaas-inline-spec-area .spec-warn { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; color: #b45309; font-size: 12px; }
+        .xaas-inline-spec-area .spec-field-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+        .xaas-inline-spec-area .spec-field-row label { font-size: 13px; color: #6b7280; white-space: nowrap; }
+        .xaas-inline-spec-area .spec-field-row input { width: 112px; height: 32px; padding: 0 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; outline: none; }
+        .xaas-inline-spec-area .spec-field-row input:focus { border-color: #f59e0b; box-shadow: 0 0 0 3px #fef3c7; }
+        .xaas-inline-spec-area .spec-field-row .spec-unit { font-size: 13px; color: #9ca3af; }
+        .xaas-inline-spec-area .spec-modules-label { font-size: 13px; color: #374151; margin-bottom: 8px; padding-top: 4px; border-top: 1px solid #fde68a; }
+        .xaas-spec-btn::before { content: '⚙'; font-size: 13px; line-height: 1; }
+        #content-xaas .extra-panel-item > .layui-form-label { width: 150px; white-space: nowrap; }
+
+        /* 额外信息卡片并排布局 */
+        .extra-panels-row { display: flex; flex-direction: column; gap: 16px; max-width: 900px; margin: 0 auto 15px; padding-left: 150px; align-items: flex-start; box-sizing: border-box; }
+        .extra-panels-row .extra-panel-card { width: 100%; min-width: 0; border: 1px solid #fde68a; border-radius: 8px; background: #fffbeb; overflow: hidden; }
+        .extra-panels-row .extra-panel-card .xaas-extra-body { padding: 0; }
+        .extra-panels-row .extra-panel-card .xaas-extra-field { padding: 8px 14px; border-bottom: 1px solid #f0f2f5; box-sizing: border-box; }
+        .extra-panels-row .extra-panel-card .xaas-extra-field:last-child { border-bottom: none; }
 
         /* 字段备注 Tooltip */
         .field-tooltip { position: relative; display: inline-flex; align-items: center; margin-left: 4px; vertical-align: middle; }
@@ -340,8 +498,8 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">产品线</label>
                         <div class="layui-input-block">
-                            <div class="layui-select-box">
-                                <select class="layui-select" name="plname" id="plname">
+                            <div class="custom-select" data-select-id="plname">
+                                <select class="layui-select" name="plname" id="plname" style="display:none;">
                                     <option value="27">aBDI</option>
                                     <option value="1">AC</option>
                                     <option value="7">AD</option>
@@ -386,7 +544,57 @@
                                     <option value="41">独立在线授权</option>
                                     <option value="44">统一在线授权</option>
                                 </select>
-                                <i class="layui-edge"></i>
+                                <button type="button" class="custom-select-trigger">
+                                    <span class="custom-select-value">aBDI</span>
+                                    <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                </button>
+                                <div class="custom-select-dropdown">
+                                    <ul class="custom-select-list">
+                                        <li class="custom-select-option selected" data-value="27">aBDI</li>
+                                        <li class="custom-select-option" data-value="1">AC</li>
+                                        <li class="custom-select-option" data-value="7">AD</li>
+                                        <li class="custom-select-option" data-value="46">ADESK</li>
+                                        <li class="custom-select-option" data-value="139">ADM</li>
+                                        <li class="custom-select-option" data-value="161">aES</li>
+                                        <li class="custom-select-option" data-value="21">AF</li>
+                                        <li class="custom-select-option" data-value="169">AGENT_BASE</li>
+                                        <li class="custom-select-option" data-value="163">APEX</li>
+                                        <li class="custom-select-option" data-value="20">aTrust</li>
+                                        <li class="custom-select-option" data-value="111">BBC</li>
+                                        <li class="custom-select-option" data-value="36">CyberCommand</li>
+                                        <li class="custom-select-option" data-value="24">DMP</li>
+                                        <li class="custom-select-option" data-value="159">DSP</li>
+                                        <li class="custom-select-option" data-value="11">EDR</li>
+                                        <li class="custom-select-option" data-value="38">EDS</li>
+                                        <li class="custom-select-option" data-value="45">HCI</li>
+                                        <li class="custom-select-option" data-value="149">IAM</li>
+                                        <li class="custom-select-option" data-value="109">Logger</li>
+                                        <li class="custom-select-option" data-value="133">NDR</li>
+                                        <li class="custom-select-option" data-value="22">NGAF</li>
+                                        <li class="custom-select-option" data-value="101">NGSOC</li>
+                                        <li class="custom-select-option" data-value="31">NovaCommand</li>
+                                        <li class="custom-select-option" data-value="35">NovaSensor</li>
+                                        <li class="custom-select-option" data-value="165">SASE</li>
+                                        <li class="custom-select-option" data-value="19">SCP</li>
+                                        <li class="custom-select-option" data-value="115">SDW-R</li>
+                                        <li class="custom-select-option" data-value="153">SEPTP</li>
+                                        <li class="custom-select-option" data-value="167">SF-FastGPT</li>
+                                        <li class="custom-select-option" data-value="147">SIEP</li>
+                                        <li class="custom-select-option" data-value="10">SIP</li>
+                                        <li class="custom-select-option" data-value="151">SIR</li>
+                                        <li class="custom-select-option" data-value="105">SSL</li>
+                                        <li class="custom-select-option" data-value="28">STA</li>
+                                        <li class="custom-select-option" data-value="157">VPN（aTrust-1000-VPN）</li>
+                                        <li class="custom-select-option" data-value="125">WAF</li>
+                                        <li class="custom-select-option" data-value="6">WOC</li>
+                                        <li class="custom-select-option" data-value="141">XDR</li>
+                                        <li class="custom-select-option" data-value="117">云镜</li>
+                                        <li class="custom-select-option" data-value="168">保护AI</li>
+                                        <li class="custom-select-option" data-value="127">信服云工具</li>
+                                        <li class="custom-select-option" data-value="41">独立在线授权</li>
+                                        <li class="custom-select-option" data-value="44">统一在线授权</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -395,8 +603,8 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">版本</label>
                         <div class="layui-input-block">
-                            <div class="layui-select-box">
-                                <select class="layui-select" name="cloudVersion" id="cloudVersion">
+                            <div class="custom-select" data-select-id="cloudVersion">
+                                <select class="layui-select" name="cloudVersion" id="cloudVersion" style="display:none;">
                                     <option value="6.8.1_1" selected>HCI-6.8.1-VKEY</option>
                                     <option value="6.8.1">HCI-6.8.1-VKEY-ARM</option>
                                     <option value="6.8.1_3">HCI-6.8.1EN-VKEY</option>
@@ -424,7 +632,40 @@
                                     <option value="6.9.0sCloud1_1">sCloud690/691/6100 英文C86免KEY</option>
                                     <option value="sCloud6.9.0EN-UKEY">sCloud690/691/6100英文C86USB-KEY</option>
                                 </select>
-                                <i class="layui-edge"></i>
+                                <button type="button" class="custom-select-trigger">
+                                    <span class="custom-select-value">HCI-6.8.1-VKEY</span>
+                                    <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                </button>
+                                <div class="custom-select-dropdown">
+                                    <ul class="custom-select-list">
+                                        <li class="custom-select-option selected" data-value="6.8.1_1">HCI-6.8.1-VKEY</li>
+                                        <li class="custom-select-option" data-value="6.8.1">HCI-6.8.1-VKEY-ARM</li>
+                                        <li class="custom-select-option" data-value="6.8.1_3">HCI-6.8.1EN-VKEY</li>
+                                        <li class="custom-select-option" data-value="6.8.1_2">HCI-6.8.1EN-VKEY-ARM</li>
+                                        <li class="custom-select-option" data-value="3.0.1">HCI-ARM3.0.1-VKEY 涉密</li>
+                                        <li class="custom-select-option" data-value="HCI6.1.0EN-VKEY">HCI6.1.0EN-VKEY</li>
+                                        <li class="custom-select-option" data-value="HCI6.2.60EN-VKEY">HCI6.2.60EN-VKEY</li>
+                                        <li class="custom-select-option" data-value="HCI6.3.0EN-VKEY">HCI6.3.0EN-VKEY</li>
+                                        <li class="custom-select-option" data-value="HCI6.3.20EN-UKEY">HCI6.3.20EN-UKEY</li>
+                                        <li class="custom-select-option" data-value="HCI6.3.20EN-VKEY">HCI6.3.20EN-VKEY</li>
+                                        <li class="custom-select-option" data-value="HCI6.7.0EN-UKEY">HCI6.7.0EN-UKEY</li>
+                                        <li class="custom-select-option" data-value="HCI6.7.0EN-VKEY">HCI6.7.0EN-VKEY</li>
+                                        <li class="custom-select-option" data-value="6.8.0">HCI6.8.0_VKEY</li>
+                                        <li class="custom-select-option" data-value="HCI6.8.0EN_VKEY">HCI6.8.0EN_VKEY</li>
+                                        <li class="custom-select-option" data-value="HCI6.8.0EN-UKEY">HCI6.8.0EN-UKEY</li>
+                                        <li class="custom-select-option" data-value="HCI6.9.0EN-UKEY">HCI690/691/6100 英文USB-KEY</li>
+                                        <li class="custom-select-option" data-value="6.9.0">HCI690/691/6100中文免KEY</li>
+                                        <li class="custom-select-option" data-value="6.9.0_2">HCI690/691/6100英文免KEY</li>
+                                        <li class="custom-select-option" data-value="3.0.1sCloud1">sCloud3.0.1-VKEY 涉密</li>
+                                        <li class="custom-select-option" data-value="6.8.1sCloud1">sCloud6.8.1-VKEY</li>
+                                        <li class="custom-select-option" data-value="6.9.0_1">sCloud690/691/6100 中文ARM免KEY</li>
+                                        <li class="custom-select-option" data-value="6.9.0sCloud1">sCloud690/691/6100 中文C86免KEY</li>
+                                        <li class="custom-select-option" data-value="HCI6.9.0EN-UKEYARM">sCloud690/691/6100 英文ARM USB-KEY</li>
+                                        <li class="custom-select-option" data-value="6.9.0_3">sCloud690/691/6100 英文ARM免KEY</li>
+                                        <li class="custom-select-option" data-value="6.9.0sCloud1_1">sCloud690/691/6100 英文C86免KEY</li>
+                                        <li class="custom-select-option" data-value="sCloud6.9.0EN-UKEY">sCloud690/691/6100英文C86USB-KEY</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -433,8 +674,8 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">区域</label>
                         <div class="layui-input-block">
-                            <div class="layui-select-box">
-                                <select class="layui-select" id="area" name="area">
+                            <div class="custom-select" data-select-id="area">
+                                <select class="layui-select" id="area" name="area" style="display:none;">
                                     <option value="">请选择区域</option>
                                     <option value="EMEA(中东/非洲/欧洲)">EMEA(中东/非洲/欧洲)</option>
                                     <option value="SEA东南亚">SEA东南亚</option>
@@ -471,7 +712,49 @@
                                     <option value="金融事业部">金融事业部</option>
                                     <option value="陕西区">陕西区</option>
                                 </select>
-                                <i class="layui-edge"></i>
+                                <button type="button" class="custom-select-trigger">
+                                    <span class="custom-select-value">请选择区域</span>
+                                    <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                </button>
+                                <div class="custom-select-dropdown">
+                                    <ul class="custom-select-list">
+                                        <li class="custom-select-option" data-value="">请选择区域</li>
+                                        <li class="custom-select-option" data-value="EMEA(中东/非洲/欧洲)">EMEA(中东/非洲/欧洲)</li>
+                                        <li class="custom-select-option" data-value="SEA东南亚">SEA东南亚</li>
+                                        <li class="custom-select-option" data-value="上海区">上海区</li>
+                                        <li class="custom-select-option" data-value="东北区">东北区</li>
+                                        <li class="custom-select-option" data-value="云贵区">云贵区</li>
+                                        <li class="custom-select-option" data-value="全球交付支持中心">全球交付支持中心</li>
+                                        <li class="custom-select-option" data-value="北京区">北京区</li>
+                                        <li class="custom-select-option" data-value="医疗事业部">医疗事业部</li>
+                                        <li class="custom-select-option" data-value="华北区">华北区</li>
+                                        <li class="custom-select-option" data-value="华南区">华南区</li>
+                                        <li class="custom-select-option" data-value="四川区">四川区</li>
+                                        <li class="custom-select-option" data-value="天津区">天津区</li>
+                                        <li class="custom-select-option" data-value="安徽区">安徽区</li>
+                                        <li class="custom-select-option" data-value="山东区">山东区</li>
+                                        <li class="custom-select-option" data-value="广东区">广东区</li>
+                                        <li class="custom-select-option" data-value="战略渠道部">战略渠道部</li>
+                                        <li class="custom-select-option" data-value="政府事业部">政府事业部</li>
+                                        <li class="custom-select-option" data-value="新疆区">新疆区</li>
+                                        <li class="custom-select-option" data-value="欧美">欧美</li>
+                                        <li class="custom-select-option" data-value="江苏区">江苏区</li>
+                                        <li class="custom-select-option" data-value="江西区">江西区</li>
+                                        <li class="custom-select-option" data-value="河北区">河北区</li>
+                                        <li class="custom-select-option" data-value="河南区">河南区</li>
+                                        <li class="custom-select-option" data-value="浙江区">浙江区</li>
+                                        <li class="custom-select-option" data-value="深圳区">深圳区</li>
+                                        <li class="custom-select-option" data-value="湖北区">湖北区</li>
+                                        <li class="custom-select-option" data-value="湖南区">湖南区</li>
+                                        <li class="custom-select-option" data-value="福建区">福建区</li>
+                                        <li class="custom-select-option" data-value="行业总部">行业总部</li>
+                                        <li class="custom-select-option" data-value="西北区">西北区</li>
+                                        <li class="custom-select-option" data-value="运营商教育事业部">运营商教育事业部</li>
+                                        <li class="custom-select-option" data-value="重庆区">重庆区</li>
+                                        <li class="custom-select-option" data-value="金融事业部">金融事业部</li>
+                                        <li class="custom-select-option" data-value="陕西区">陕西区</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -480,11 +763,19 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">办事处</label>
                         <div class="layui-input-block">
-                            <div class="layui-select-box">
-                                <select class="layui-select" name="office" id="office">
+                            <div class="custom-select" data-select-id="office">
+                                <select class="layui-select" name="office" id="office" style="display:none;">
                                     <option value="上海办" selected>上海办</option>
                                 </select>
-                                <i class="layui-edge"></i>
+                                <button type="button" class="custom-select-trigger">
+                                    <span class="custom-select-value">上海办</span>
+                                    <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                </button>
+                                <div class="custom-select-dropdown">
+                                    <ul class="custom-select-list">
+                                        <li class="custom-select-option" data-value="上海办">上海办</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -517,13 +808,23 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">申请类型</label>
                         <div class="layui-input-block">
-                            <div class="layui-select-box">
-                                <select class="layui-select" name="planDevType" id="planDevType">
+                            <div class="custom-select" data-select-id="planDevType">
+                                <select class="layui-select" name="planDevType" id="planDevType" style="display:none;">
                                     <option value="">请选择...</option>
                                     <option value="1" selected>新设备授权(硬件借测+软件授权一并申请)</option>
                                     <option value="2">软件续期授权(仅续期软件授权，无需硬件借测)</option>
                                 </select>
-                                <i class="layui-edge"></i>
+                                <button type="button" class="custom-select-trigger">
+                                    <span class="custom-select-value">请选择...</span>
+                                    <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                </button>
+                                <div class="custom-select-dropdown">
+                                    <ul class="custom-select-list">
+                                        <li class="custom-select-option selected" data-value="">请选择...</li>
+                                        <li class="custom-select-option" data-value="1">新设备授权(硬件借测+软件授权一并申请)</li>
+                                        <li class="custom-select-option" data-value="2">软件续期授权(仅续期软件授权，无需硬件借测)</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -553,29 +854,52 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">借测状态<span class="required-mark">*</span></label>
                         <div class="layui-input-block">
-                            <div class="layui-select-box">
-                                <select class="layui-select" id="btStatus" name="btStatus">
+                            <div class="custom-select" data-select-id="btStatus">
+                                <select class="layui-select" id="btStatus" name="btStatus" style="display:none;">
                                     <option value="">请选择借测状态</option>
                                     <option value="办事处借测">办事处借测</option>
                                     <option value="渠道借测">渠道借测</option>
                                     <option value="自用测试">自用测试</option>
                                 </select>
-                                <i class="layui-edge"></i>
+                                <button type="button" class="custom-select-trigger">
+                                    <span class="custom-select-value">请选择借测状态</span>
+                                    <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                </button>
+                                <div class="custom-select-dropdown">
+                                    <ul class="custom-select-list">
+                                        <li class="custom-select-option" data-value="">请选择借测状态</li>
+                                        <li class="custom-select-option" data-value="办事处借测">办事处借测</li>
+                                        <li class="custom-select-option" data-value="渠道借测">渠道借测</li>
+                                        <li class="custom-select-option" data-value="自用测试">自用测试</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="layui-form-item">
                         <label class="layui-form-label">借测类型<span class="required-mark">*</span></label>
                         <div class="layui-input-block">
-                            <div class="layui-select-box">
-                                <select class="layui-select" id="btType" name="btType">
+                            <div class="custom-select" data-select-id="btType">
+                                <select class="layui-select" id="btType" name="btType" style="display:none;">
                                     <option value="">请选择借测类型</option>
                                     <option value="POC测试">POC测试</option>
                                     <option value="项目测试">项目测试</option>
                                     <option value="演示测试">演示测试</option>
                                     <option value="培训测试">培训测试</option>
                                 </select>
-                                <i class="layui-edge"></i>
+                                <button type="button" class="custom-select-trigger">
+                                    <span class="custom-select-value">请选择借测类型</span>
+                                    <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                </button>
+                                <div class="custom-select-dropdown">
+                                    <ul class="custom-select-list">
+                                        <li class="custom-select-option" data-value="">请选择借测类型</li>
+                                        <li class="custom-select-option" data-value="POC测试">POC测试</li>
+                                        <li class="custom-select-option" data-value="项目测试">项目测试</li>
+                                        <li class="custom-select-option" data-value="演示测试">演示测试</li>
+                                        <li class="custom-select-option" data-value="培训测试">培训测试</li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1056,17 +1380,6 @@
                 <!-- XaaS授权表单 -->
                 <div id="content-xaas" style="display:none;">
                     <div class="special-form-section">
-                        <div class="section-title">XaaS授权申请</div>
-
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">授权场景<span class="required-star">*</span></label>
-                            <div class="layui-input-block">
-                                <select class="layui-select" id="xaas-scene">
-                                    <option value="试用授权申请">试用授权申请</option>
-                                    <option value="试用授权资源变更">试用授权资源变更</option>
-                                </select>
-                            </div>
-                        </div>
 
                         <div class="layui-form-item">
                             <label class="layui-form-label">客户联系人姓名<span class="required-star">*</span></label>
@@ -1074,38 +1387,107 @@
                                 <input type="text" class="layui-input" id="xaas-contact-name" placeholder="请输入客户联系人姓名">
                             </div>
                         </div>
-
+                        
                         <div class="layui-form-item">
                             <label class="layui-form-label">客户联系人手机号<span class="required-star">*</span></label>
                             <div class="layui-input-block">
                                 <input type="text" class="layui-input" id="xaas-contact-phone" maxlength="11" placeholder="请输入11位手机号">
+                                <p class="xaas-file-hint" id="xaas-phone-hint">输入手机号后模拟匹配客户名称；未匹配时可手动选择客户。</p>
                             </div>
                         </div>
-
+                        
                         <div class="layui-form-item">
                             <label class="layui-form-label">客户联系人邮箱<span class="required-star">*</span></label>
                             <div class="layui-input-block">
                                 <input type="email" class="layui-input" id="xaas-contact-email" placeholder="请输入正确邮箱">
                             </div>
                         </div>
-
+                        
                         <div class="layui-form-item">
                             <label class="layui-form-label">客户名称<span class="required-star">*</span>
                                 <span class="field-tooltip"><span class="tooltip-icon">ⓘ</span>
                                     <div class="tooltip-popup">
                                         <button class="tooltip-copy" onclick="copyTooltip(this)">复制</button>
                                         <div class="tooltip-title">客户名称 备注</div>
-                                        <div class="tooltip-section"><span class="tooltip-label">用户故事：</span>如果检测到客户输入的手机号已经注册过云图账号，则自动在主数据中匹配客户名称且不可修改；全新未注册客户需在弹出的主数据客户中选择，支持点击创建新客户。</div>
-                                        <div class="tooltip-section"><span class="tooltip-label">权限控制：</span>仅具有客户申请权限的账号可操作；自动匹配时置灰不可编辑。</div>
-                                        <div class="tooltip-section"><span class="tooltip-label">交互规则：</span>输入手机号后若已注册云图账号，系统自动匹配客户名称并置灰；若未注册，点击客户名称字段弹出客户选择框，支持搜索和新建。</div>
-                                        <div class="tooltip-section"><span class="tooltip-label">异常场景：</span>手机号格式错误时提示重新输入；网络异常时允许手动选择；主数据中无匹配时支持创建新客户。</div>
+                                        <div class="tooltip-section"><span class="tooltip-label">数据来源：</span>客户数据来自公司主数据，如果没有对应客户，请创建后选择。</div>
+                                        <div class="tooltip-section"><span class="tooltip-label">交互规则：</span>输入手机号后若已注册云图账号，系统自动匹配客户名称并置灰；若未注册，可通过搜索框选择客户或创建新客户。</div>
                                     </div>
                                 </span>
                             </label>
                             <div class="layui-input-block">
-                                <button type="button" class="layui-btn layui-btn-primary" style="width:100%;max-width:400px;text-align:left;color:#999;">
-                                    点击选择客户，如未找到可创建新客户 <i class="layui-edge" style="float:right;margin-top:10px;"></i>
-                                </button>
+                                <div class="search-select-box">
+                                    <input type="text" id="xaasCustomerSearch" placeholder="请输入客户名称或ID搜索" class="layui-input" autocomplete="off">
+                                    <div class="search-dropdown" id="xaasCustomerDropdown"></div>
+                                </div>
+                                <div class="customer-info-display" id="xaasCustomerInfoDisplay">
+                                    客户名称：<span id="xaasSelectedCustomerName">-</span>
+                                    <span style="margin-left:20px;">客户ID：<span id="xaasSelectedCustomerId">-</span></span>
+                                    <span class="customer-type-badge" id="xaasCustomerTypeBadge" style="display:none;"></span>
+                                </div>
+                                <input type="hidden" id="xaas-customer-name">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">行业<span class="required-star">*</span>
+                                <span class="field-tooltip"><span class="tooltip-icon">ⓘ</span>
+                                    <div class="tooltip-popup">
+                                        <button class="tooltip-copy" onclick="copyTooltip(this)">复制</button>
+                                        <div class="tooltip-title">行业 备注</div>
+                                        <div class="tooltip-section"><span class="tooltip-label">用户故事：</span>选择客户所属行业分类，用于客户分层管理和行业化运营分析。</div>
+                                        <div class="tooltip-section"><span class="tooltip-label">交互规则：</span>一级行业选择后，二级行业根据一级分类联动展示，提交时两级均必填。</div>
+                                    </div>
+                                </span>
+                            </label>
+                            <div class="layui-input-block">
+                                <div class="xaas-industry-row">
+                                    <div class="custom-select" data-select-id="xaas-industry-l1">
+                                        <select class="layui-select" id="xaas-industry-l1" style="display:none;">
+                                            <option value="">请选择一级行业</option>
+                                            <option value="政府">政府</option>
+                                            <option value="金融">金融</option>
+                                            <option value="教育">教育</option>
+                                            <option value="医疗">医疗</option>
+                                            <option value="互联网">互联网</option>
+                                            <option value="制造业">制造业</option>
+                                            <option value="能源">能源</option>
+                                            <option value="交通">交通</option>
+                                            <option value="运营商">运营商</option>
+                                        </select>
+                                        <button type="button" class="custom-select-trigger">
+                                            <span class="custom-select-value">请选择一级行业</span>
+                                            <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                        </button>
+                                        <div class="custom-select-dropdown">
+                                            <ul class="custom-select-list">
+                                                <li class="custom-select-option" data-value="">请选择一级行业</li>
+                                                <li class="custom-select-option" data-value="政府">政府</li>
+                                                <li class="custom-select-option" data-value="金融">金融</li>
+                                                <li class="custom-select-option" data-value="教育">教育</li>
+                                                <li class="custom-select-option" data-value="医疗">医疗</li>
+                                                <li class="custom-select-option" data-value="互联网">互联网</li>
+                                                <li class="custom-select-option" data-value="制造业">制造业</li>
+                                                <li class="custom-select-option" data-value="能源">能源</li>
+                                                <li class="custom-select-option" data-value="交通">交通</li>
+                                                <li class="custom-select-option" data-value="运营商">运营商</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="custom-select" data-select-id="xaas-industry-l2">
+                                        <select class="layui-select" id="xaas-industry-l2" style="display:none;" disabled>
+                                            <option value="">请选择二级行业</option>
+                                        </select>
+                                        <button type="button" class="custom-select-trigger">
+                                            <span class="custom-select-value">请选择二级行业</span>
+                                            <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                        </button>
+                                        <div class="custom-select-dropdown">
+                                            <ul class="custom-select-list">
+                                                <li class="custom-select-option" data-value="">请选择二级行业</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -1115,24 +1497,40 @@
                                     <div class="tooltip-popup">
                                         <button class="tooltip-copy" onclick="copyTooltip(this)">复制</button>
                                         <div class="tooltip-title">所属区域 备注</div>
-                                        <div class="tooltip-section"><span class="tooltip-label">用户故事：</span>选择客户所属区域，同步公司区域信息，用于客户经营平台的试用列表权限隔离和查看范围控制。</div>
-                                        <div class="tooltip-section"><span class="tooltip-label">数据定义：</span>枚举值，包括华东、华北、华南、西南、西北、华中、东北等区域。</div>
-                                        <div class="tooltip-section"><span class="tooltip-label">交互规则：</span>点击下拉框选择区域，选择后对应区域和产线的账号可在客户经营平台试用列表中查看该试用信息。</div>
-                                        <div class="tooltip-section"><span class="tooltip-label">异常场景：</span>区域数据未及时同步时可联系管理员更新；区域为空时不允许提交申请。</div>
+                                        <div class="tooltip-section"><span class="tooltip-label">用户故事：</span>选择客户所属区域，用于客户经营平台的试用列表权限隔离和查看范围控制。</div>
+                                        <div class="tooltip-section"><span class="tooltip-label">数据定义：</span>枚举值包括华东、华北、华南、西南、西北、华中、东北等区域。</div>
                                     </div>
                                 </span>
                             </label>
                             <div class="layui-input-block">
-                                <select class="layui-select" id="xaas-region">
-                                    <option value="">请选择区域</option>
-                                    <option value="华东区域">华东区域</option>
-                                    <option value="华北区域">华北区域</option>
-                                    <option value="华南区域">华南区域</option>
-                                    <option value="西南区域">西南区域</option>
-                                    <option value="西北区域">西北区域</option>
-                                    <option value="华中区域">华中区域</option>
-                                    <option value="东北区域">东北区域</option>
-                                </select>
+                                <div class="custom-select" data-select-id="xaas-region">
+                                    <select class="layui-select" id="xaas-region" style="display:none;">
+                                        <option value="">请选择区域</option>
+                                        <option value="华东区域">华东区域</option>
+                                        <option value="华北区域">华北区域</option>
+                                        <option value="华南区域">华南区域</option>
+                                        <option value="西南区域">西南区域</option>
+                                        <option value="西北区域">西北区域</option>
+                                        <option value="华中区域">华中区域</option>
+                                        <option value="东北区域">东北区域</option>
+                                    </select>
+                                    <button type="button" class="custom-select-trigger">
+                                        <span class="custom-select-value">请选择区域</span>
+                                        <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                    </button>
+                                    <div class="custom-select-dropdown">
+                                        <ul class="custom-select-list">
+                                            <li class="custom-select-option" data-value="">请选择区域</li>
+                                            <li class="custom-select-option" data-value="华东区域">华东区域</li>
+                                            <li class="custom-select-option" data-value="华北区域">华北区域</li>
+                                            <li class="custom-select-option" data-value="华南区域">华南区域</li>
+                                            <li class="custom-select-option" data-value="西南区域">西南区域</li>
+                                            <li class="custom-select-option" data-value="西北区域">西北区域</li>
+                                            <li class="custom-select-option" data-value="华中区域">华中区域</li>
+                                            <li class="custom-select-option" data-value="东北区域">东北区域</li>
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -1142,105 +1540,252 @@
                                     <div class="tooltip-popup">
                                         <button class="tooltip-copy" onclick="copyTooltip(this)">复制</button>
                                         <div class="tooltip-title">订阅产品 备注</div>
-                                        <div class="tooltip-section"><span class="tooltip-label">用户故事：</span>展示可申请的订阅产品列表，根据客户状态区分可申请范围：已试用产品显示警告仍可申请，正在试用中的产品禁止重复申请。</div>
-                                        <div class="tooltip-section"><span class="tooltip-label">交互规则：</span>勾选已试用产品时弹出提示「该客户已经试用过此产品，再次申请需通过审批流程」，勾选后下方出现「单自然年多次试用申请理由」必填字段；正在试用产品置灰不可点击。</div>
-                                        <div class="tooltip-section"><span class="tooltip-label">异常场景：</span>客户未匹配时所有产品正常可选；匹配后根据产品状态自动标记；网络异常时默认全部可选。</div>
+                                        <div class="tooltip-section"><span class="tooltip-label">用户故事：</span>展示可申请的订阅产品，按产品族分组；已试用产品显示警告仍可申请，正在试用中的产品禁止重复申请。</div>
+                                        <div class="tooltip-section"><span class="tooltip-label">交互规则：</span>勾选 SaaS-XDR 时展开额外信息；勾选 SASE-ZTNA 或 SASE-GA 时展开 SASE 额外信息；勾选已试用产品时需填写申请理由。</div>
                                     </div>
                                 </span>
                             </label>
                             <div class="layui-input-block">
-                                <div class="xaas-product-list">
-                                    <div class="xaas-product-item" data-product="SaaS-XDR" data-default-desc="有效期30天，日志量2亿条">
-                                        <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="SaaS-XDR"> <span>SaaS-XDR</span></label>
-                                        <div class="xaas-product-right">
-                                            <span class="xaas-product-desc">有效期30天，日志量2亿条</span>
-                                            <button type="button" class="xaas-spec-btn" style="display:none;">修改规格</button>
+                                <div class="xaas-family-list">
+                                    <div class="xaas-family">
+                                        <button type="button" class="xaas-family-head" onclick="this.closest('.xaas-family').classList.toggle('collapsed')"><span class="xaas-family-arrow">▼</span><span>XDR产品族</span><span class="xaas-family-count">1</span></button>
+                                        <div class="xaas-family-body">
+                                            <div class="xaas-product-item" data-product="SaaS-XDR" data-default-desc="有效期30天，日志量2亿条">
+                                                <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="SaaS-XDR"> <span>SaaS-XDR（含SaaS GPT）</span></label>
+                                                <div class="xaas-product-right">
+                                                    <span class="xaas-product-desc">有效期30天，日志量2亿条</span>
+                                                    <button type="button" class="xaas-spec-btn">修改规格</button>
+                                                </div>
+                                            </div>
+                                            <div class="xaas-inline-spec-area" id="xaas-xdr-inline-spec">
+                                                <div class="spec-warn">⚠ 修改默认规格需要经过审批后才生效</div>
+                                                <div class="spec-field-row">
+                                                    <label>日志量</label>
+                                                    <input type="number" id="spec-log-inline" value="200000000" min="1">
+                                                    <span class="spec-unit">条</span>
+                                                </div>
+                                                <div class="spec-modules-label">可选测试模块</div>
+                                                <div class="xaas-chip-group spec-modules">
+                                                    <button type="button" class="xaas-chip" data-value="智能对抗模块">智能对抗模块</button>
+                                                    <button type="button" class="xaas-chip" data-value="CSC模块">CSC模块</button>
+                                                    <button type="button" class="xaas-chip" data-value="钓鱼GPT模块">钓鱼GPT模块</button>
+                                                    <button type="button" class="xaas-chip" data-value="云端威胁情报模块">云端威胁情报模块</button>
+                                                    <button type="button" class="xaas-chip" data-value="自定义工单模块">自定义工单模块</button>
+                                                    <button type="button" class="xaas-chip" data-value="移动运营小助手">移动运营小助手</button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="xaas-product-item" data-product="NGDR" data-default-desc="有效期30天，授权PC数50个，授权服务器数50个，基础版">
-                                        <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="NGDR"> <span>NGDR</span></label>
-                                        <div class="xaas-product-right">
-                                            <span class="xaas-product-desc xaas-need-spec">请选择规格</span>
-                                            <button type="button" class="xaas-spec-btn" style="display:none;">修改规格</button>
+                                    <div class="xaas-family">
+                                        <button type="button" class="xaas-family-head" onclick="this.closest('.xaas-family').classList.toggle('collapsed')"><span class="xaas-family-arrow">▼</span><span>aES产品族</span><span class="xaas-family-count">2</span></button>
+                                        <div class="xaas-family-body">
+                                            <div class="xaas-product-item" data-product="NGDR">
+                                                <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="NGDR"> <span>NGDR</span></label>
+                                                <div class="xaas-product-right">
+                                                    <div class="custom-select xaas-version-picker" data-select-id="ngdr-version" style="display:none; max-width:200px;">
+                                                        <select id="ngdr-version" class="xaas-inline-select" style="display:none;" data-spec-select="version"><option value="基础版">基础版</option><option value="全量版">全量版</option></select>
+                                                        <button type="button" class="custom-select-trigger"><span class="custom-select-value has-value">基础版</span><span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span></button>
+                                                        <div class="custom-select-dropdown"><ul class="custom-select-list"><li class="custom-select-option selected" data-value="基础版">基础版</li><li class="custom-select-option" data-value="全量版">全量版</li></ul></div>
+                                                    </div>
+                                                    <button type="button" class="xaas-spec-btn">修改规格</button>
+                                                </div>
+                                            </div>
+                                            <div class="xaas-inline-spec-area" id="ngdr-inline-spec">
+                                                <div class="spec-warn">⚠ 修改默认规格需要经过审批后才生效</div>
+                                                <div style="display:flex;flex-wrap:wrap;gap:4px 20px;align-items:center;">
+                                                <div class="spec-field-row">
+                                                    <label>授权PC数</label>
+                                                    <input type="number" id="ngdr-pc" value="50" min="1">
+                                                    <span class="spec-unit">个</span>
+                                                </div>
+                                                <div class="spec-field-row">
+                                                    <label>授权服务器数</label>
+                                                    <input type="number" id="ngdr-server" value="50" min="1">
+                                                    <span class="spec-unit">个</span>
+                                                </div>
+                                                </div>
+                                            </div>
+                                            <div class="xaas-product-item" data-product="SaaS-aES">
+                                                <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="SaaS-aES"> <span>SaaS-aES</span></label>
+                                                <div class="xaas-product-right">
+                                                    <div class="custom-select xaas-version-picker" data-select-id="saes-version" style="display:none; max-width:200px;">
+                                                        <select id="saes-version" class="xaas-inline-select" style="display:none;" data-spec-select="version"><option value="探针版">探针版</option><option value="全功能版">全功能版</option></select>
+                                                        <button type="button" class="custom-select-trigger"><span class="custom-select-value has-value">探针版</span><span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span></button>
+                                                        <div class="custom-select-dropdown"><ul class="custom-select-list"><li class="custom-select-option selected" data-value="探针版">探针版</li><li class="custom-select-option" data-value="全功能版">全功能版</li></ul></div>
+                                                    </div>
+                                                    <button type="button" class="xaas-spec-btn">修改规格</button>
+                                                </div>
+                                            </div>
+                                            <div class="xaas-inline-spec-area" id="saes-inline-spec">
+                                                <div class="spec-warn">⚠ 修改默认规格需要经过审批后才生效</div>
+                                                <div style="display:flex;flex-wrap:wrap;gap:4px 20px;align-items:center;">
+                                                <div class="spec-field-row">
+                                                    <label>授权PC数</label>
+                                                    <input type="number" id="saes-pc" value="50" min="1">
+                                                    <span class="spec-unit">个</span>
+                                                </div>
+                                                <div class="spec-field-row">
+                                                    <label>授权服务器数</label>
+                                                    <input type="number" id="saes-server" value="50" min="1">
+                                                    <span class="spec-unit">个</span>
+                                                </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="xaas-product-item" data-product="SaaS-aES" data-default-desc="有效期30天，授权PC数50个，授权服务器数50个，探针版">
-                                        <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="SaaS-aES"> <span>SaaS-aES</span></label>
-                                        <div class="xaas-product-right">
-                                            <span class="xaas-product-desc xaas-need-spec">请选择规格</span>
-                                            <button type="button" class="xaas-spec-btn" style="display:none;">修改规格</button>
-                                        </div>
-                                    </div>
-                                    <div class="xaas-product-item" data-product="SASE-XDLP" data-default-desc="有效期30天，授权用户数50个">
-                                        <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="数据泄密分析"> <span>SASE-XDLP 数据泄密分析</span></label>
-                                        <div class="xaas-product-right">
-                                            <span class="xaas-product-desc">有效期30天，授权用户数50个</span>
-                                            <button type="button" class="xaas-spec-btn" style="display:none;">修改规格</button>
-                                        </div>
-                                    </div>
-                                    <div class="xaas-product-item" data-product="SASE-ZTNA" data-default-desc="有效期30天，授权用户数50个">
-                                        <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="零信任网络访问"> <span>SASE-ZTNA 零信任网络访问</span></label>
-                                        <div class="xaas-product-right">
-                                            <span class="xaas-product-desc">有效期30天，授权用户数50个</span>
-                                            <button type="button" class="xaas-spec-btn" style="display:none;">修改规格</button>
-                                        </div>
-                                    </div>
-                                    <div class="xaas-product-item" data-product="SASE-SWG" data-default-desc="有效期30天，用户版，用户数50个">
-                                        <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="互联网安全访问"> <span>SASE-SWG 互联网安全访问</span></label>
-                                        <div class="xaas-product-right">
-                                            <span class="xaas-product-desc xaas-need-spec">请选择规格</span>
-                                            <button type="button" class="xaas-spec-btn" style="display:none;">修改规格</button>
-                                        </div>
-                                    </div>
-                                    <div class="xaas-product-item" data-product="钓鱼邮件防护" data-default-desc="有效期30天，每日邮件数量10000封">
-                                        <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="钓鱼邮件防护 GPT"> <span>钓鱼邮件防护 GPT</span></label>
-                                        <div class="xaas-product-right">
-                                            <span class="xaas-product-desc">有效期30天，每日邮件数量10000封</span>
-                                            <button type="button" class="xaas-spec-btn" style="display:none;">修改规格</button>
-                                        </div>
-                                    </div>
-                                    <div class="xaas-product-item" data-product="云威胁情报网关">
-                                        <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="云威胁情报网关"> <span>云威胁情报网关</span></label>
-                                        <div class="xaas-product-right">
-                                            <span class="xaas-product-desc">有效期90天，不支持修改规格</span>
-                                        </div>
-                                    </div>
-                                    <div class="xaas-product-item" data-product="SASE-GA" data-default-desc="有效期15天，带宽5M">
-                                        <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="全球加速"> <span>SASE-GA 全球加速</span></label>
-                                        <div class="xaas-product-right">
-                                            <span class="xaas-product-desc">有效期15天，带宽5M</span>
-                                            <button type="button" class="xaas-spec-btn" style="display:none;">修改规格</button>
+                                    <div class="xaas-family">
+                                        <button type="button" class="xaas-family-head" onclick="this.closest('.xaas-family').classList.toggle('collapsed')"><span class="xaas-family-arrow">▼</span><span>SASE产品族</span><span class="xaas-family-count">6</span></button>
+                                        <div class="xaas-family-body">
+                                            <div class="xaas-product-item" data-product="SASE-XDLP" data-default-desc="有效期30天，授权用户数50个">
+                                                <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="数据泄密分析"> <span>SASE-XDLP 数据泄密分析</span></label>
+                                                <div class="xaas-product-right">
+                                                    <span class="xaas-product-desc">有效期30天，授权用户数50个</span>
+                                                    <button type="button" class="xaas-spec-btn">修改规格</button>
+                                                </div>
+                                            </div>
+                                            <div class="xaas-inline-spec-area" id="xdlp-inline-spec">
+                                                <div class="spec-warn">⚠ 修改默认规格需要经过审批后才生效</div>
+                                                <div class="spec-field-row">
+                                                    <label>授权用户数</label>
+                                                    <input type="number" id="xdlp-users" value="50" min="1">
+                                                    <span class="spec-unit">个</span>
+                                                </div>
+                                            </div>
+                                            <div class="xaas-product-item" data-product="SASE-ZTNA" data-default-desc="有效期30天，授权用户数50个" data-warn="客户已购买该产品，支持试用更多模块或扩容">
+                                                <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="零信任网络访问"> <span>SASE-ZTNA 零信任网络访问</span></label>
+                                                <div class="xaas-product-right">
+                                                    <span class="xaas-product-desc">有效期30天，授权用户数50个</span>
+                                                    <button type="button" class="xaas-spec-btn">修改规格</button>
+                                                </div>
+                                                <span class="xaas-product-warn">客户已购买该产品，支持试用更多模块或扩容</span>
+                                            </div>
+                                            <div class="xaas-inline-spec-area" id="ztna-inline-spec">
+                                                <div class="spec-warn">⚠ 修改默认规格需要经过审批后才生效</div>
+                                                <div class="spec-field-row">
+                                                    <label>授权用户数</label>
+                                                    <input type="number" id="ztna-users" value="50" min="1">
+                                                    <span class="spec-unit">个</span>
+                                                </div>
+                                            </div>
+                                            <div class="xaas-product-item" data-product="SASE-SWG" data-warn="该客户本年内已试用过该产品">
+                                                <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="互联网安全访问"> <span>SASE-SWG 互联网安全访问</span></label>
+                                                <div class="xaas-product-right">
+                                                    <div class="custom-select xaas-version-picker" data-select-id="swg-type-select" style="display:none; max-width:350px;">
+                                                        <select id="swg-type-select" class="xaas-inline-select" style="display:none;" data-spec-select="swgType">
+                                                            <option value="用户版">用户版（30天，用户数50个）</option>
+                                                            <option value="分支版">分支版（30天，分支3*100M）</option>
+                                                            <option value="用户+分支版">用户+分支版（30天，用户数50个，分支3*100M）</option>
+                                                        </select>
+                                                        <button type="button" class="custom-select-trigger"><span class="custom-select-value has-value">用户版（30天，用户数50个）</span><span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span></button>
+                                                        <div class="custom-select-dropdown"><ul class="custom-select-list"><li class="custom-select-option selected" data-value="用户版">用户版（30天，用户数50个）</li><li class="custom-select-option" data-value="分支版">分支版（30天，分支3*100M）</li><li class="custom-select-option" data-value="用户+分支版">用户+分支版（30天，用户数50个，分支3*100M）</li></ul></div>
+                                                    </div>
+                                                    <button type="button" class="xaas-spec-btn">修改规格</button>
+                                                </div>
+                                                <span class="xaas-product-warn">该客户本年内已试用过该产品</span>
+                                            </div>
+                                            <div class="xaas-inline-spec-area" id="swg-inline-spec">
+                                                <div class="spec-warn">⚠ 修改默认规格需要经过审批后才生效</div>
+                                                <div class="spec-field-row" id="swg-users-row">
+                                                    <label>授权用户数</label>
+                                                    <input type="number" id="swg-users" value="50" min="1">
+                                                    <span class="spec-unit">个</span>
+                                                </div>
+                                                <div class="spec-field-row" id="swg-branch-row" style="display:none;">
+                                                    <label>分支数</label>
+                                                    <input type="number" id="swg-branch" value="3" min="1">
+                                                    <span class="spec-unit">条</span>
+                                                </div>
+                                                <div class="spec-field-row" id="swg-bw-row" style="display:none;">
+                                                    <label>每分支带宽</label>
+                                                    <input type="number" id="swg-bw" value="100" min="1">
+                                                    <span class="spec-unit">M</span>
+                                                </div>
+                                            </div>
+                                            <div class="xaas-product-item" data-product="钓鱼邮件防护" data-default-desc="有效期30天，每日邮件数量10000封">
+                                                <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="钓鱼邮件防护 GPT"> <span>钓鱼邮件防护 GPT</span></label>
+                                                <div class="xaas-product-right">
+                                                    <span class="xaas-product-desc">有效期30天，每日邮件数量10000封</span>
+                                                    <button type="button" class="xaas-spec-btn">修改规格</button>
+                                                </div>
+                                            </div>
+                                            <div class="xaas-inline-spec-area" id="mail-inline-spec">
+                                                <div class="spec-warn">⚠ 修改默认规格需要经过审批后才生效</div>
+                                                <div class="spec-field-row">
+                                                    <label>每日邮件数量</label>
+                                                    <input type="number" id="mail-count" value="10000" min="1">
+                                                    <span class="spec-unit">封</span>
+                                                </div>
+                                            </div>
+                                            <div class="xaas-product-item" data-product="云威胁情报网关">
+                                                <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="云威胁情报网关"> <span>云威胁情报网关</span></label>
+                                                <div class="xaas-product-right">
+                                                    <span class="xaas-product-desc">有效期90天，不支持修改规格</span>
+                                                </div>
+                                            </div>
+                                            <div class="xaas-product-item" data-product="SASE-GA" data-default-desc="有效期15天，带宽5M">
+                                                <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="全球加速"> <span>SASE-GA 全球加速</span></label>
+                                                <div class="xaas-product-right">
+                                                    <span class="xaas-product-desc">有效期15天，带宽5M</span>
+                                                    <button type="button" class="xaas-spec-btn">修改规格</button>
+                                                </div>
+                                            </div>
+                                            <div class="xaas-inline-spec-area" id="ga-inline-spec">
+                                                <div class="spec-warn">⚠ 修改默认规格需要经过审批后才生效</div>
+                                                <div class="spec-field-row">
+                                                    <label>带宽</label>
+                                                    <input type="number" id="ga-bw" value="5" min="1">
+                                                    <span class="spec-unit">M</span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- 场景二字段（试用授权资源变更时显示） -->
-                        <div id="xaas-scene2-fields" style="display:none;">
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">关联订阅产品<span class="required-star">*</span>
-                                <span class="field-tooltip"><span class="tooltip-icon">ⓘ</span>
-                                    <div class="tooltip-popup">
-                                        <button class="tooltip-copy" onclick="copyTooltip(this)">复制</button>
-                                        <div class="tooltip-title">关联订阅产品 备注</div>
-                                        <div class="tooltip-section"><span class="tooltip-label">用户故事：</span>回显关联客户该自然年内已申请的订阅产品及原授权时间和授权数量，用户可选择需修改的产品并调整对应授权参数。</div>
-                                        <div class="tooltip-section"><span class="tooltip-label">数据定义：</span>包含产品ID、产品名称、原授权到期时间、原授权数量、规格ID。支持调整的产品：SaaS-XDR（日志量）、DR2.0（PC数/服务器数）、SaaS-aES（PC数/服务器数）、数据泄密分析（用户数）、零信任网络访问（用户数）、互联网安全访问（根据规格展示用户数/分支数）。</div>
-                                        <div class="tooltip-section"><span class="tooltip-label">交互规则：</span>选择客户后自动加载关联产品列表，用户通过勾选选择需修改的产品；勾选后展开对应调整字段，默认回显当前授权数量。</div>
-                                        <div class="tooltip-section"><span class="tooltip-label">异常场景：</span>产品数据加载失败时提示重试；调整值超出允许范围时提示限制。</div>
+                        <div class="extra-panels-row" id="extra-panels-row" style="display:none;">
+                          <div class="extra-panel-card" id="xaas-saas-xdr-extra-item">
+                                <div class="xaas-extra-panel" id="xaas-saas-xdr-extra" style="display:block; border:none; border-radius:0; background:transparent;">
+                                    <div class="xaas-extra-title">SaaS-XDR 试用额外信息</div>
+                                    <div class="xaas-extra-body">
+                                        <div class="xaas-extra-field full">
+                                            <label>参考文档</label>
+                                            <a class="xaas-reference-link" href="javascript:;">SAAS XDR与MSS测试授权梳理与设计优化</a>
+                                        </div>
+                                        <div class="xaas-extra-grid">
+                                            <div class="xaas-extra-field"><label>测试场景<span class="required-star">*</span></label><div class="custom-select" data-select-id="xdr-test-scenario"><select id="xdr-test-scenario" style="display:none;"><option value="">请选择</option><option value="原有NDR升级场景">原有NDR升级场景</option><option value="新建安全运营场景">新建安全运营场景</option><option value="SOC替换场景">SOC替换场景</option><option value="多分支统一管理场景">多分支统一管理场景</option></select><button type="button" class="custom-select-trigger"><span class="custom-select-value">请选择</span><span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span></button><div class="custom-select-dropdown"><ul class="custom-select-list"><li class="custom-select-option" data-value="">请选择</li><li class="custom-select-option" data-value="原有NDR升级场景">原有NDR升级场景</li><li class="custom-select-option" data-value="新建安全运营场景">新建安全运营场景</li><li class="custom-select-option" data-value="SOC替换场景">SOC替换场景</li><li class="custom-select-option" data-value="多分支统一管理场景">多分支统一管理场景</li></ul></div></div></div>
+                                            <div class="xaas-extra-field"><label>测试驱动力<span class="required-star">*</span></label><div class="custom-select" data-select-id="xdr-test-driver"><select id="xdr-test-driver" style="display:none;"><option value="">请选择</option><option value="各类安全设备告警量大且误报多，威胁运营效率低">各类安全设备告警量大且误报多，威胁运营效率低</option><option value="现有威胁运营平台不达预期想替换">现有威胁运营平台不达预期想替换</option><option value="重大安全问题，需要加强安全建设">重大安全问题，需要加强安全建设</option><option value="被监管单位通报，需要加强安全建设">被监管单位通报，需要加强安全建设</option><option value="护网重保缺少统一值守平台，值守难度大">护网重保缺少统一值守平台，值守难度大</option><option value="应对外部各类合规要求">应对外部各类合规要求</option><option value="MSS不支持接入STA/三方组件，影响服务效果">MSS不支持接入STA/三方组件，影响服务效果</option><option value="客户有创新及体现政绩的诉求">客户有创新及体现政绩的诉求</option><option value="其他">其他</option></select><button type="button" class="custom-select-trigger"><span class="custom-select-value">请选择</span><span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span></button><div class="custom-select-dropdown"><ul class="custom-select-list"><li class="custom-select-option" data-value="">请选择</li><li class="custom-select-option" data-value="各类安全设备告警量大且误报多，威胁运营效率低">各类安全设备告警量大且误报多，威胁运营效率低</li><li class="custom-select-option" data-value="现有威胁运营平台不达预期想替换">现有威胁运营平台不达预期想替换</li><li class="custom-select-option" data-value="重大安全问题，需要加强安全建设">重大安全问题，需要加强安全建设</li><li class="custom-select-option" data-value="被监管单位通报，需要加强安全建设">被监管单位通报，需要加强安全建设</li><li class="custom-select-option" data-value="护网重保缺少统一值守平台，值守难度大">护网重保缺少统一值守平台，值守难度大</li><li class="custom-select-option" data-value="应对外部各类合规要求">应对外部各类合规要求</li><li class="custom-select-option" data-value="MSS不支持接入STA/三方组件，影响服务效果">MSS不支持接入STA/三方组件，影响服务效果</li><li class="custom-select-option" data-value="客户有创新及体现政绩的诉求">客户有创新及体现政绩的诉求</li><li class="custom-select-option" data-value="其他">其他</li></ul></div></div></div>
+                                            <div class="xaas-extra-field"><label>核心需求<span class="required-star">*</span></label><div class="custom-select" data-select-id="xdr-core-need"><select id="xdr-core-need" style="display:none;"><option value="">请选择</option><option value="作为常态化威胁检测/运营中心">作为常态化威胁检测/运营中心</option><option value="作为护网重保值守平台">作为护网重保值守平台</option><option value="作为分析溯源平台">作为分析溯源平台</option><option value="满足外部的各类合规需求">满足外部的各类合规需求</option><option value="仅作为安全大屏使用">仅作为安全大屏使用</option><option value="MSS不支持接入STA/三方组件，影响服务效果">MSS不支持接入STA/三方组件，影响服务效果</option><option value="客户有创新及体现政绩的诉求">客户有创新及体现政绩的诉求</option></select><button type="button" class="custom-select-trigger"><span class="custom-select-value">请选择</span><span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span></button><div class="custom-select-dropdown"><ul class="custom-select-list"><li class="custom-select-option" data-value="">请选择</li><li class="custom-select-option" data-value="作为常态化威胁检测/运营中心">作为常态化威胁检测/运营中心</li><li class="custom-select-option" data-value="作为护网重保值守平台">作为护网重保值守平台</li><li class="custom-select-option" data-value="作为分析溯源平台">作为分析溯源平台</li><li class="custom-select-option" data-value="满足外部的各类合规需求">满足外部的各类合规需求</li><li class="custom-select-option" data-value="仅作为安全大屏使用">仅作为安全大屏使用</li><li class="custom-select-option" data-value="MSS不支持接入STA/三方组件，影响服务效果">MSS不支持接入STA/三方组件，影响服务效果</li><li class="custom-select-option" data-value="客户有创新及体现政绩的诉求">客户有创新及体现政绩的诉求</li></ul></div></div></div>
+                                            <div class="xaas-extra-field"><label>测试效果预期<span class="required-star">*</span></label><div class="custom-select" data-select-id="xdr-expected-result"><select id="xdr-expected-result" style="display:none;"><option value="">请选择</option><option value="全流量检测">全流量检测</option><option value="聚合降噪">聚合降噪</option><option value="全量高经验盘">全量高经验盘</option><option value="智能化对抗">智能化对抗</option><option value="威胁运营成果展示">威胁运营成果展示</option></select><button type="button" class="custom-select-trigger"><span class="custom-select-value">请选择</span><span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span></button><div class="custom-select-dropdown"><ul class="custom-select-list"><li class="custom-select-option" data-value="">请选择</li><li class="custom-select-option" data-value="全流量检测">全流量检测</li><li class="custom-select-option" data-value="聚合降噪">聚合降噪</li><li class="custom-select-option" data-value="全量高经验盘">全量高经验盘</li><li class="custom-select-option" data-value="智能化对抗">智能化对抗</li><li class="custom-select-option" data-value="威胁运营成果展示">威胁运营成果展示</li></ul></div></div></div>
+                                            <div class="xaas-extra-field"><label>是否PK<span class="required-star">*</span></label><div class="custom-select" data-select-id="xdr-is-pk"><select id="xdr-is-pk" style="display:none;"><option value="">请选择</option><option value="否">否</option><option value="仅MSS">仅MSS</option><option value="仅产品">仅产品</option><option value="两者都PK">两者都PK</option></select><button type="button" class="custom-select-trigger"><span class="custom-select-value">请选择</span><span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span></button><div class="custom-select-dropdown"><ul class="custom-select-list"><li class="custom-select-option" data-value="">请选择</li><li class="custom-select-option" data-value="否">否</li><li class="custom-select-option" data-value="仅MSS">仅MSS</li><li class="custom-select-option" data-value="仅产品">仅产品</li><li class="custom-select-option" data-value="两者都PK">两者都PK</li></ul></div></div></div>
+                                            <div class="xaas-extra-field" id="xdr-competitor-field" style="display:none;"><label>PK友商公司名<span class="required-star">*</span></label><input id="xdr-competitor-name" type="text" placeholder="请填写友商公司名"></div>
+                                            <div class="xaas-extra-field full"><label>客户环境信息<span class="required-star">*</span></label><input id="xdr-customer-env" type="text" placeholder="请填写客户设备情况"></div>
+                                            <div class="xaas-extra-field"><label>客户安全运营模式<span class="required-star">*</span></label><div class="custom-select" data-select-id="xdr-security-op-mode"><select id="xdr-security-op-mode" style="display:none;"><option value="">请选择</option><option value="无运营">无运营</option><option value="单点运维">单点运维</option><option value="SIP运营">SIP运营</option><option value="友商平台">友商平台</option><option value="代运营">代运营</option></select><button type="button" class="custom-select-trigger"><span class="custom-select-value">请选择</span><span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span></button><div class="custom-select-dropdown"><ul class="custom-select-list"><li class="custom-select-option" data-value="">请选择</li><li class="custom-select-option" data-value="无运营">无运营</li><li class="custom-select-option" data-value="单点运维">单点运维</li><li class="custom-select-option" data-value="SIP运营">SIP运营</li><li class="custom-select-option" data-value="友商平台">友商平台</li><li class="custom-select-option" data-value="代运营">代运营</li></ul></div></div></div>
+                                            <div class="xaas-extra-field"><label>安全人员配置<span class="required-star">*</span></label><div class="custom-select" data-select-id="xdr-security-staff"><select id="xdr-security-staff" style="display:none;"><option value="">请选择</option><option value="1个">1个</option><option value="2个">2个</option><option value="3个以上">3个以上</option><option value="渠道代维">渠道代维</option><option value="客户自己运维">客户自己运维</option></select><button type="button" class="custom-select-trigger"><span class="custom-select-value">请选择</span><span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span></button><div class="custom-select-dropdown"><ul class="custom-select-list"><li class="custom-select-option" data-value="">请选择</li><li class="custom-select-option" data-value="1个">1个</li><li class="custom-select-option" data-value="2个">2个</li><li class="custom-select-option" data-value="3个以上">3个以上</li><li class="custom-select-option" data-value="渠道代维">渠道代维</li><li class="custom-select-option" data-value="客户自己运维">客户自己运维</li></ul></div></div></div>
+                                            <div class="xaas-extra-field full"><label>深信服现有设备/组件<span class="required-star">*</span></label><div class="xaas-chip-group" id="xdr-existing-devices"><button type="button" class="xaas-chip" data-value="AF">AF</button><button type="button" class="xaas-chip" data-value="aES">aES</button><button type="button" class="xaas-chip" data-value="SIP">SIP</button><button type="button" class="xaas-chip" data-value="XDR">XDR</button><button type="button" class="xaas-chip" data-value="STA">STA</button></div></div>
+                                            <div class="xaas-extra-field full"><label>第三方设备类型及版本号<span class="required-star">*</span></label><input id="xdr-third-party-devices" type="text" placeholder="请填写第三方设备信息"></div>
+                                            <div class="xaas-extra-field"><label>预算信息<span class="required-star">*</span></label><div class="custom-select" data-select-id="xdr-budget-info"><select id="xdr-budget-info" style="display:none;"><option value="">请选择</option><option value="当年预算">当年预算</option><option value="明年预算">明年预算</option></select><button type="button" class="custom-select-trigger"><span class="custom-select-value">请选择</span><span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span></button><div class="custom-select-dropdown"><ul class="custom-select-list"><li class="custom-select-option" data-value="">请选择</li><li class="custom-select-option" data-value="当年预算">当年预算</li><li class="custom-select-option" data-value="明年预算">明年预算</li></ul></div></div></div>
+                                            <div class="xaas-extra-field"><label>安全预算区间<span class="required-star">*</span></label><div class="custom-select" data-select-id="xdr-security-budget"><select id="xdr-security-budget" style="display:none;"><option value="">请选择</option><option value="10-20W">10-20W</option><option value="20-30W">20-30W</option><option value="30-50W">30-50W</option><option value="50-80W">50-80W</option><option value="80W+">80W+</option></select><button type="button" class="custom-select-trigger"><span class="custom-select-value">请选择</span><span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span></button><div class="custom-select-dropdown"><ul class="custom-select-list"><li class="custom-select-option" data-value="">请选择</li><li class="custom-select-option" data-value="10-20W">10-20W</li><li class="custom-select-option" data-value="20-30W">20-30W</li><li class="custom-select-option" data-value="30-50W">30-50W</li><li class="custom-select-option" data-value="50-80W">50-80W</li><li class="custom-select-option" data-value="80W+">80W+</li></ul></div></div></div>
+                                            <div class="xaas-extra-field full"><label>客户信息收集表<span class="required-star">*</span></label><div><a href="javascript:;" class="xaas-template-link" title="下载模板"><span class="tmpl-icon">📄</span>客户信息收集表模版 ↓</a><div class="hw-upload-area" style="margin-top:8px;"><input type="file" id="xdr-collected-file" accept=".xlsx,.xls"><div class="hw-file-info" id="xdrFileInfo"><span class="hw-file-name empty" id="xdrFileName">未选择文件</span><span class="hw-file-meta" id="xdrFileMeta"></span><span class="hw-file-clear" id="xdrFileClear" title="删除文件">&times;</span></div><label class="hw-upload-btn" for="xdr-collected-file"><span class="upload-icon">&#8679;</span> 选择文件</label></div><p class="xaas-file-hint">仅支持 .xlsx / .xls 格式</p></div></div>
+                                        </div>
                                     </div>
-                                </span>
-                            </label>
-                            <div class="layui-input-block">
-                                <div class="xaas-product-list" id="xaas-related-products">
-                                    <div class="xaas-product-item" style="color:#999;font-size:13px;">请先选择客户后加载关联产品</div>
                                 </div>
-                            </div>
+                          </div>
+
+                          <div class="extra-panel-card" id="xaas-sase-extra-item">
+                                <div class="xaas-extra-panel" id="xaas-sase-extra" style="display:block; border:none; border-radius:0; background:transparent;">
+                                    <div class="xaas-extra-title">SASE 额外信息</div>
+                                    <div class="xaas-extra-body">
+                                        <div class="xaas-extra-grid">
+                                            <div class="xaas-extra-field full"><label>客户需求<span class="required-star">*</span></label><textarea id="sase-customer-need" maxlength="1000" placeholder="请描述客户需求"></textarea><div class="xaas-counter">0/1000</div></div>
+                                            <div class="xaas-extra-field full"><label>项目规模<span class="required-star">*</span></label><textarea id="sase-project-scale" maxlength="1000" placeholder="请描述项目规模"></textarea><div class="xaas-counter">0/1000</div></div>
+                                            <div class="xaas-extra-field full"><label>竞争对手<span class="required-star">*</span></label><textarea id="sase-competitor" maxlength="1000" placeholder="请描述竞争对手情况"></textarea><div class="xaas-counter">0/1000</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                          </div>
                         </div>
 
-                        </div>
-
-                        <!-- 延长试用授权有效期（独立区域） -->
                         <div class="layui-form-item">
                             <label class="layui-form-label">延长试用授权有效期</label>
                             <div class="layui-input-block">
@@ -1249,20 +1794,19 @@
                                         <input type="checkbox" id="xaas-extend-check"> 延长试用授权有效期
                                         <span class="xaas-extend-tip-icon" title="勾选并选择日期后，流程审批通过后所有订阅到期时间将统一延长至该日期">⚠</span>
                                     </label>
+                                    <p class="xaas-extend-hint">审批通过后，所有订阅到期时间将统一延长至所选日期</p>
                                     <div id="xaas-extend-date-area" class="xaas-extend-date-area" style="display:none;">
                                         <input type="date" id="xaas-extend-date-new" class="layui-input" style="width:200px;">
-                                        <p class="xaas-extend-hint">审批通过后，所有订阅到期时间将统一延长至所选日期</p>
                                         <p class="xaas-extend-warn">⚠ 修改默认规格需要经过审批后才生效</p>
-                                        <p class="xaas-extend-warn">⚠ 支持选择规格的订阅需要同时支持选择</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="layui-form-item">
-                            <div class="layui-input-block" style="text-align: center;">
-                                <button type="button" class="layui-btn">立即获取</button>
-                                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                            <div class="layui-input-block xaas-form-actions">
+                                <button type="button" class="layui-btn" id="xaas-submit-btn">立即获取</button>
+                                <button type="button" class="layui-btn layui-btn-primary" id="xaas-reset-btn">重置</button>
                             </div>
                         </div>
                     </div>
@@ -1313,6 +1857,108 @@
 
     <script>
     (function() {
+        // ===== 自定义下拉组件初始化 =====
+        function initCustomSelect(container) {
+            var trigger = container.querySelector('.custom-select-trigger');
+            var valueSpan = container.querySelector('.custom-select-value');
+            var options = container.querySelectorAll('.custom-select-option');
+            var hiddenSelect = document.getElementById(container.dataset.selectId);
+
+            function updateDisplay(selectedOption) {
+                valueSpan.textContent = selectedOption.textContent;
+                if (selectedOption.dataset.value) {
+                    valueSpan.classList.add('has-value');
+                } else {
+                    valueSpan.classList.remove('has-value');
+                }
+                options.forEach(function(opt) { opt.classList.remove('selected'); });
+                selectedOption.classList.add('selected');
+                if (hiddenSelect) {
+                    hiddenSelect.value = selectedOption.dataset.value;
+                    hiddenSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+            }
+
+            // 读取隐藏select的当前选中值，同步到视觉层
+            if (hiddenSelect) {
+                var currentVal = hiddenSelect.value;
+                var selectedOpt = null;
+                options.forEach(function(opt) {
+                    if (opt.dataset.value === currentVal) selectedOpt = opt;
+                });
+                if (selectedOpt) {
+                    options.forEach(function(opt) { opt.classList.remove('selected'); });
+                    selectedOpt.classList.add('selected');
+                    valueSpan.textContent = selectedOpt.textContent;
+                    if (currentVal) valueSpan.classList.add('has-value');
+                }
+            }
+
+            trigger.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var isOpen = container.classList.contains('open');
+                document.querySelectorAll('.custom-select.open').forEach(function(cs) { cs.classList.remove('open'); });
+                if (!isOpen) {
+                    container.classList.add('open');
+                    var sel = container.querySelector('.custom-select-option.selected');
+                    if (sel) sel.scrollIntoView({ block: 'nearest' });
+                }
+            });
+
+            options.forEach(function(option) {
+                option.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    updateDisplay(this);
+                    container.classList.remove('open');
+                });
+            });
+
+            container._resetToDefault = function() {
+                options.forEach(function(opt) { opt.classList.remove('selected'); });
+                options[0].classList.add('selected');
+                valueSpan.textContent = options[0].textContent;
+                if (options[0].dataset.value) {
+                    valueSpan.classList.add('has-value');
+                } else {
+                    valueSpan.classList.remove('has-value');
+                }
+                if (hiddenSelect) hiddenSelect.value = options[0].dataset.value;
+            };
+
+            container._setValue = function(val) {
+                var target = null;
+                options.forEach(function(opt) {
+                    if (opt.dataset.value === val) target = opt;
+                });
+                if (target) {
+                    options.forEach(function(opt) { opt.classList.remove('selected'); });
+                    target.classList.add('selected');
+                    valueSpan.textContent = target.textContent;
+                    if (val) valueSpan.classList.add('has-value');
+                    else valueSpan.classList.remove('has-value');
+                    if (hiddenSelect) hiddenSelect.value = val;
+                }
+            };
+        }
+
+        // 编程式设置自定义下拉框值（不触发change事件）
+        function setCustomSelectValue(selectId, value) {
+            var container = document.querySelector('[data-select-id="' + selectId + '"]');
+            if (container && container._setValue) {
+                container._setValue(value);
+            }
+        }
+
+        // 初始化所有自定义下拉框
+        document.querySelectorAll('.custom-select').forEach(function(cs) {
+            initCustomSelect(cs);
+        });
+
+        // 全局点击关闭自定义下拉框
+        document.addEventListener('click', function() {
+            document.querySelectorAll('.custom-select.open').forEach(function(cs) { cs.classList.remove('open'); });
+        });
+
         // ===== Tab 切换逻辑 =====
         var contentHardware = document.getElementById('content-hardware');
         var contentXaas = document.getElementById('content-xaas');
@@ -1347,16 +1993,38 @@
             li.addEventListener('click', function() { switchTab(this.dataset.tab); });
         });
 
-        // ===== XaaS 授权场景切换 =====
-        var xaasScene = document.getElementById('xaas-scene');
-        var xaasScene2Fields = document.getElementById('xaas-scene2-fields');
-        if (xaasScene && xaasScene2Fields) {
-            xaasScene.addEventListener('change', function() {
-                xaasScene2Fields.style.display = (this.value === '试用授权资源变更') ? 'block' : 'none';
-            });
+        // ===== XaaS 授权申请交互 =====
+        function showXaasToast(message, type) {
+            var toast = document.getElementById('syncToast');
+            if (!toast) {
+                alert(message);
+                return;
+            }
+            toast.textContent = message;
+            toast.style.background = type === 'warn' ? '#ff9800' : '#4CAF50';
+            toast.style.display = 'block';
+            setTimeout(function() {
+                toast.style.display = 'none';
+                toast.style.background = '#4CAF50';
+            }, 2500);
         }
 
-        // ===== XaaS 产品勾选联动修改规格按钮 =====
+        var mockXaasCustomers = {
+            '13800138000': { name: '腾讯科技（深圳）有限公司', contactName: '张三' },
+            '13900139000': { name: '上海某某医院', contactName: '李四' },
+            '13700137000': { name: '广州某某制造有限公司', contactName: '王五' }
+        };
+        var xaasIndustryMap = {
+            '政府': ['中央部委', '省市级政府', '区县级政府', '公检法'],
+            '金融': ['银行', '证券', '保险', '基金', '信托'],
+            '教育': ['高等院校', '职业院校', '中小学', '培训机构'],
+            '医疗': ['三甲医院', '二级医院', '基层医疗', '医疗集团'],
+            '互联网': ['平台型企业', 'SaaS企业', '电商', '游戏'],
+            '制造业': ['汽车制造', '电子制造', '机械制造', '化工'],
+            '能源': ['电力', '石油石化', '新能源', '矿业'],
+            '交通': ['航空', '铁路', '公路', '港口航运'],
+            '运营商': ['中国移动', '中国电信', '中国联通', '中国广电']
+        };
         var xaasSpecValues = {
             'SaaS-XDR': { logAmount: 20000 },
             'NGDR': { version: '基础版', pcCount: 50, serverCount: 50 },
@@ -1367,31 +2035,253 @@
             '钓鱼邮件防护': { mailCount: 10000 },
             'SASE-GA': { bandwidth: 5 }
         };
-        var needSpecProducts = ['NGDR', 'SaaS-aES', 'SASE-SWG'];
+        var inlineSpecProducts = ['NGDR', 'SaaS-aES', 'SASE-SWG'];
+        var xaasProductItems = Array.prototype.slice.call(document.querySelectorAll('.xaas-product-item'));
 
-        document.querySelectorAll('input[name="xaas-product"]').forEach(function(cb) {
-            cb.addEventListener('change', function() {
-                var item = this.closest('.xaas-product-item');
-                var product = item.dataset.product;
-                var specBtn = item.querySelector('.xaas-spec-btn');
-                var desc = item.querySelector('.xaas-product-desc');
-                if (this.checked) {
-                    if (product !== '云威胁情报网关' && specBtn) {
-                        specBtn.style.display = 'inline-block';
-                    }
-                    if (needSpecProducts.indexOf(product) > -1) {
-                        desc.classList.remove('xaas-need-spec');
-                        desc.textContent = item.dataset.defaultDesc;
-                    }
+        function setXaasCustomer(name, id, type) {
+            var hidden = document.getElementById('xaas-customer-name');
+            var searchInput = document.getElementById('xaasCustomerSearch');
+            var infoDisplay = document.getElementById('xaasCustomerInfoDisplay');
+            var nameSpan = document.getElementById('xaasSelectedCustomerName');
+            var idSpan = document.getElementById('xaasSelectedCustomerId');
+            var badge = document.getElementById('xaasCustomerTypeBadge');
+            if (hidden) hidden.value = name || '';
+            if (searchInput) searchInput.value = name || '';
+            if (name && nameSpan) {
+                nameSpan.textContent = name;
+                idSpan.textContent = id || '-';
+                var custType = type || 'normal';
+                if (custType === 'KA') {
+                    badge.textContent = 'KA客户';
+                    badge.className = 'customer-type-badge ka';
                 } else {
-                    if (specBtn) specBtn.style.display = 'none';
-                    if (needSpecProducts.indexOf(product) > -1) {
-                        desc.classList.add('xaas-need-spec');
-                        desc.textContent = '请选择规格';
-                    }
+                    badge.textContent = '普通客户';
+                    badge.className = 'customer-type-badge normal';
                 }
+                badge.style.display = 'inline-block';
+                infoDisplay.classList.add('show');
+                // 选中客户后显示产品警告提示
+                document.querySelectorAll('.xaas-product-warn').forEach(function(w) { w.classList.add('show'); });
+            } else {
+                if (infoDisplay) infoDisplay.classList.remove('show');
+                if (badge) badge.style.display = 'none';
+                // 清除客户后隐藏产品警告提示
+                document.querySelectorAll('.xaas-product-warn').forEach(function(w) { w.classList.remove('show'); });
+            }
+        }
+
+        function getSelectedXaasProducts() {
+            return xaasProductItems.filter(function(item) {
+                var cb = item.querySelector('input[name="xaas-product"]');
+                return cb && cb.checked;
+            }).map(function(item) {
+                return item.dataset.product;
             });
-        });
+        }
+
+        function refreshXaasProductItem(item) {
+            var cb = item.querySelector('input[name="xaas-product"]');
+            var product = item.dataset.product;
+            var checked = cb && cb.checked;
+            var specBtn = item.querySelector('.xaas-spec-btn');
+            var inlineSelectNative = item.querySelector('.xaas-inline-select');
+            var inlineSelectWrapper = inlineSelectNative ? inlineSelectNative.closest('.custom-select') : null;
+            var inlineSelect = inlineSelectWrapper || inlineSelectNative;
+            var desc = item.querySelector('.xaas-product-desc');
+            item.classList.toggle('selected', !!checked);
+            // 修改规格按钮始终可见，颜色由 .selected 类控制
+            if (inlineSelect) inlineSelect.style.display = checked ? 'inline-flex' : 'none';
+            // SaaS-XDR 内联规格区（由修改规格按钮控制，不自动显示）
+            if (!desc) return;
+            if (checked) {
+                desc.classList.remove('xaas-need-spec');
+                desc.textContent = buildDescText(product) || item.dataset.defaultDesc || desc.textContent;
+            } else if (inlineSpecProducts.indexOf(product) > -1) {
+                desc.classList.add('xaas-need-spec');
+                desc.textContent = '请选择规格';
+            } else {
+                desc.classList.remove('xaas-need-spec');
+                desc.textContent = item.dataset.defaultDesc || desc.textContent;
+            }
+        }
+
+        function updateXaasFamilyCounts() {
+            var families = document.querySelectorAll('.xaas-family');
+            families.forEach(function(family) {
+                var countEl = family.querySelector('.xaas-family-count');
+                var checkboxes = family.querySelectorAll('input[name="xaas-product"]:checked');
+                if (countEl) countEl.textContent = checkboxes.length;
+            });
+        }
+
+        function updateXaasExtraVisibility() {
+            var selected = getSelectedXaasProducts();
+            var hasXdr = selected.indexOf('SaaS-XDR') > -1;
+            var hasSaseExtra = selected.indexOf('SASE-ZTNA') > -1 || selected.indexOf('SASE-GA') > -1;
+            var xdrItem = document.getElementById('xaas-saas-xdr-extra-item');
+            var saseItem = document.getElementById('xaas-sase-extra-item');
+            var xdrPanel = document.getElementById('xaas-saas-xdr-extra');
+            var sasePanel = document.getElementById('xaas-sase-extra');
+            var rowEl = document.getElementById('extra-panels-row');
+            if (xdrItem) xdrItem.style.display = hasXdr ? '' : 'none';
+            if (saseItem) saseItem.style.display = hasSaseExtra ? '' : 'none';
+            if (rowEl) rowEl.style.display = (hasXdr || hasSaseExtra) ? 'flex' : 'none';
+            if (xdrPanel) xdrPanel.classList.toggle('show', hasXdr);
+            if (sasePanel) sasePanel.classList.toggle('show', hasSaseExtra);
+        }
+
+        function updateXaasInlineSpec(product, value) {
+            if (product === 'NGDR' || product === 'SaaS-aES') {
+                xaasSpecValues[product].version = value;
+            } else if (product === 'SASE-SWG') {
+                xaasSpecValues[product].swgType = value;
+                if (value === '用户版') {
+                    xaasSpecValues[product].userCount = 50;
+                    xaasSpecValues[product].branchCount = 3;
+                    xaasSpecValues[product].bandwidth = 100;
+                } else if (value === '分支版') {
+                    xaasSpecValues[product].branchCount = 3;
+                    xaasSpecValues[product].bandwidth = 100;
+                }
+            }
+            var item = document.querySelector('.xaas-product-item[data-product="' + product + '"]');
+            if (item) refreshXaasProductItem(item);
+        }
+
+        function updateXaasIndustryL2() {
+            var l1 = document.getElementById('xaas-industry-l1');
+            var l2 = document.getElementById('xaas-industry-l2');
+            if (!l1 || !l2) return;
+            var list = xaasIndustryMap[l1.value] || [];
+            l2.innerHTML = '<option value="">请选择二级行业</option>';
+            list.forEach(function(name) {
+                var option = document.createElement('option');
+                option.value = name;
+                option.textContent = name;
+                l2.appendChild(option);
+            });
+            l2.disabled = list.length === 0;
+            // 同步custom-select视觉层
+            var l2Container = document.querySelector('[data-select-id="xaas-industry-l2"]');
+            if (l2Container) {
+                var l2List = l2Container.querySelector('.custom-select-list');
+                if (l2List) {
+                    l2List.innerHTML = '<li class="custom-select-option" data-value="">请选择二级行业</li>';
+                    list.forEach(function(name) {
+                        var li = document.createElement('li');
+                        li.className = 'custom-select-option';
+                        li.dataset.value = name;
+                        li.textContent = name;
+                        l2List.appendChild(li);
+                    });
+                }
+                var l2Options = l2Container.querySelectorAll('.custom-select-option');
+                var l2ValueSpan = l2Container.querySelector('.custom-select-value');
+                var l2Trigger = l2Container.querySelector('.custom-select-trigger');
+                l2Container._resetToDefault = function() {
+                    l2Options.forEach(function(opt) { opt.classList.remove('selected'); });
+                    if (l2Options[0]) {
+                        l2Options[0].classList.add('selected');
+                        if (l2ValueSpan) l2ValueSpan.textContent = l2Options[0].textContent;
+                        if (l2ValueSpan) l2ValueSpan.classList.remove('has-value');
+                    }
+                    if (l2) l2.value = '';
+                };
+                l2Options.forEach(function(option) {
+                    option.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        l2Options.forEach(function(opt) { opt.classList.remove('selected'); });
+                        this.classList.add('selected');
+                        if (l2ValueSpan) {
+                            l2ValueSpan.textContent = this.textContent;
+                            if (this.dataset.value) l2ValueSpan.classList.add('has-value');
+                            else l2ValueSpan.classList.remove('has-value');
+                        }
+                        if (l2) {
+                            l2.value = this.dataset.value;
+                            l2.dispatchEvent(new Event('change', { bubbles: true }));
+                        }
+                        l2Container.classList.remove('open');
+                    });
+                });
+                l2Container._resetToDefault();
+            }
+        }
+
+        function getTextareaCounter(textarea) {
+            var next = textarea.nextElementSibling;
+            return next && next.classList.contains('xaas-counter') ? next : null;
+        }
+
+        function updateTextareaCounter(textarea) {
+            var counter = getTextareaCounter(textarea);
+            if (!counter) return;
+            var max = textarea.getAttribute('maxlength') || 0;
+            counter.textContent = textarea.value.length + '/' + max;
+        }
+
+        function setXaasExtendDateLimit() {
+            var dateInput = document.getElementById('xaas-extend-date-new');
+            if (!dateInput) return;
+            var today = new Date();
+            var yyyy = today.getFullYear();
+            var mm = String(today.getMonth() + 1).padStart(2, '0');
+            var dd = String(today.getDate()).padStart(2, '0');
+            dateInput.min = yyyy + '-' + mm + '-' + dd;
+            dateInput.max = '2026-12-31';
+        }
+
+        function resetXaasForm() {
+            // 重置custom-select组件
+            ['xaas-industry-l1', 'xaas-region',
+             'xdr-test-scenario', 'xdr-test-driver', 'xdr-core-need', 'xdr-expected-result', 'xdr-is-pk',
+             'xdr-security-op-mode', 'xdr-security-staff', 'xdr-budget-info', 'xdr-security-budget'].forEach(function(id) {
+                setCustomSelectValue(id, '');
+            });
+            // 重置普通input和textarea
+            ['xaas-contact-name', 'xaas-contact-phone', 'xaas-contact-email',
+             'xdr-competitor-name', 'xdr-customer-env', 'xdr-third-party-devices',
+             'sase-customer-need', 'sase-project-scale', 'sase-competitor',
+             'xaas-extend-date-new'].forEach(function(id) {
+                var el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            setXaasCustomer('', '', '');
+            updateXaasIndustryL2();
+            xaasProductItems.forEach(function(item) {
+                var cb = item.querySelector('input[name="xaas-product"]');
+                if (cb) cb.checked = false;
+                refreshXaasProductItem(item);
+            });
+            document.querySelectorAll('.xaas-chip').forEach(function(chip) { chip.classList.remove('active'); });
+            var file = document.getElementById('xdr-collected-file');
+            if (file) file.value = '';
+            // 重置所有内联规格
+            document.querySelectorAll('.xaas-inline-spec-area').forEach(function(a) { a.classList.remove('show'); });
+            var specLogInline = document.getElementById('spec-log-inline');
+            if (specLogInline) specLogInline.value = 200000000;
+            ['ngdr-pc','ngdr-server','saes-pc','saes-server','xdlp-users','ztna-users','swg-users','swg-branch','swg-bw','mail-count','ga-bw'].forEach(function(id) {
+                var el = document.getElementById(id);
+                if (el) el.value = el.id === 'mail-count' ? 10000 : (el.id === 'ga-bw' ? 5 : (el.id === 'swg-branch' ? 3 : (el.id === 'swg-bw' ? 100 : 50)));
+            });
+            xaasSpecValues['SaaS-XDR'] = { logAmount: 20000 };
+            xaasSpecValues['NGDR'] = { version: '基础版', pcCount: 50, serverCount: 50 };
+            xaasSpecValues['SaaS-aES'] = { version: '探针版', pcCount: 50, serverCount: 50 };
+            xaasSpecValues['SASE-XDLP'] = { userCount: 50 };
+            xaasSpecValues['SASE-ZTNA'] = { userCount: 50 };
+            xaasSpecValues['SASE-SWG'] = { swgType: '用户版', userCount: 50, branchCount: 3, bandwidth: 100 };
+            xaasSpecValues['钓鱼邮件防护'] = { mailCount: 10000 };
+            xaasSpecValues['SASE-GA'] = { bandwidth: 5 };
+            var extendCheckNew = document.getElementById('xaas-extend-check');
+            var extendDateAreaNew = document.getElementById('xaas-extend-date-area');
+            if (extendCheckNew) extendCheckNew.checked = false;
+            if (extendDateAreaNew) extendDateAreaNew.style.display = 'none';
+            var competitorField = document.getElementById('xdr-competitor-field');
+            if (competitorField) competitorField.style.display = 'none';
+            document.querySelectorAll('textarea[maxlength]').forEach(updateTextareaCounter);
+            updateXaasExtraVisibility();
+            updateXaasFamilyCounts();
+        }
 
         // ===== XaaS 规格编辑弹窗 =====
         var specModal = document.getElementById('xaasSpecModal');
@@ -1491,8 +2381,8 @@
             if (product === 'SASE-SWG') {
                 var t = v.swgType;
                 if (t === '用户版') return '有效期30天，用户版，用户数' + v.userCount + '个';
-                if (t === '分支版') return '有效期30天，分支版，' + v.branchCount + '条分支*' + v.bandwidth + 'M';
-                return '有效期30天，用户+分支版，用户数' + v.userCount + '个，' + v.branchCount + '条分支*' + v.bandwidth + 'M';
+                if (t === '分支版') return '有效期30天，分支版，分支' + v.branchCount + '*' + v.bandwidth + 'M';
+                return '有效期30天，用户+分支版，用户数' + v.userCount + '个，分支' + v.branchCount + '*' + v.bandwidth + 'M';
             }
             if (product === '钓鱼邮件防护') return '有效期30天，每日邮件数量' + v.mailCount + '封';
             if (product === 'SASE-GA') return '有效期15天，带宽' + v.bandwidth + 'M';
@@ -1500,10 +2390,48 @@
         }
 
         document.querySelectorAll('.xaas-spec-btn').forEach(function(btn) {
-            btn.addEventListener('click', function() {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
                 var item = this.closest('.xaas-product-item');
-                openSpecModal(item.dataset.product);
+                var product = item.dataset.product;
+                var inlineSpecId = '';
+                if (product === 'SaaS-XDR') inlineSpecId = 'xaas-xdr-inline-spec';
+                else if (product === 'NGDR') inlineSpecId = 'ngdr-inline-spec';
+                else if (product === 'SaaS-aES') inlineSpecId = 'saes-inline-spec';
+                else if (product === 'SASE-XDLP') inlineSpecId = 'xdlp-inline-spec';
+                else if (product === 'SASE-ZTNA') inlineSpecId = 'ztna-inline-spec';
+                else if (product === 'SASE-SWG') inlineSpecId = 'swg-inline-spec';
+                else if (product === '钓鱼邮件防护') inlineSpecId = 'mail-inline-spec';
+                else if (product === 'SASE-GA') inlineSpecId = 'ga-inline-spec';
+                if (inlineSpecId) {
+                    var inlineSpec = document.getElementById(inlineSpecId);
+                    var isOpen = inlineSpec && inlineSpec.classList.contains('show');
+                    // 关闭所有其他规格区并移除按钮active态
+                    document.querySelectorAll('.xaas-inline-spec-area.show').forEach(function(a) {
+                        a.classList.remove('show');
+                    });
+                    document.querySelectorAll('.xaas-spec-btn.active').forEach(function(b) {
+                        b.classList.remove('active');
+                    });
+                    // 切换当前规格区
+                    if (!isOpen && inlineSpec) {
+                        inlineSpec.classList.add('show');
+                        this.classList.add('active');
+                    }
+                }
             });
+        });
+
+        // 点击外部区域关闭规格配置卡片
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.xaas-inline-spec-area') && !e.target.closest('.xaas-spec-btn')) {
+                document.querySelectorAll('.xaas-inline-spec-area.show').forEach(function(a) {
+                    a.classList.remove('show');
+                });
+                document.querySelectorAll('.xaas-spec-btn.active').forEach(function(b) {
+                    b.classList.remove('active');
+                });
+            }
         });
 
         document.getElementById('specCancelBtn').addEventListener('click', closeSpecModal);
@@ -1515,16 +2443,204 @@
                 desc.textContent = buildDescText(currentSpecProduct);
                 desc.classList.remove('xaas-need-spec');
             }
+            // 同步 SaaS-XDR 内联规格
+            if (currentSpecProduct === 'SaaS-XDR') {
+                var logInline = document.getElementById('spec-log-inline');
+                var v = xaasSpecValues['SaaS-XDR'];
+                if (logInline && v) logInline.value = v.logAmount * 10000;
+            }
             closeSpecModal();
         });
         specModal.addEventListener('click', function(e) {
             if (e.target === specModal) closeSpecModal();
         });
 
+        xaasProductItems.forEach(function(item) {
+            var cb = item.querySelector('input[name="xaas-product"]');
+            var inlineSelectNative = item.querySelector('.xaas-inline-select');
+            if (cb) {
+                cb.addEventListener('change', function() {
+                    refreshXaasProductItem(item);
+                    updateXaasExtraVisibility();
+                    updateXaasFamilyCounts();
+                });
+                refreshXaasProductItem(item);
+            }
+            if (inlineSelectNative) {
+                inlineSelectNative.addEventListener('change', function() {
+                    updateXaasInlineSpec(item.dataset.product, this.value);
+                });
+            }
+        });
+
+        // 初始化所有产品族计数
+        updateXaasFamilyCounts();
+
+        // SaaS-XDR 内联规格：输入同步到 specValues
+        var specLogInline = document.getElementById('spec-log-inline');
+        if (specLogInline) {
+            specLogInline.addEventListener('input', function() {
+                xaasSpecValues['SaaS-XDR'].logAmount = Math.round(parseInt(this.value) / 10000) || 20000;
+                var item = document.querySelector('.xaas-product-item[data-product="SaaS-XDR"]');
+                if (item) {
+                    var desc = item.querySelector('.xaas-product-desc');
+                    if (desc) desc.textContent = buildDescText('SaaS-XDR');
+                }
+            });
+        }
+
+        // 内联规格字段：输入后同步到 specValues 和描述文字
+        function bindInlineSpecInput(id, product, fieldKey, multiplier) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            el.addEventListener('input', function() {
+                var val = parseInt(this.value) || 0;
+                if (multiplier) val = Math.round(val / multiplier);
+                if (xaasSpecValues[product]) xaasSpecValues[product][fieldKey] = val;
+                var item = document.querySelector('.xaas-product-item[data-product="' + product + '"]');
+                if (item) {
+                    var desc = item.querySelector('.xaas-product-desc');
+                    if (desc) desc.textContent = buildDescText(product) || item.dataset.defaultDesc;
+                }
+            });
+        }
+        bindInlineSpecInput('ngdr-pc', 'NGDR', 'pcCount');
+        bindInlineSpecInput('ngdr-server', 'NGDR', 'serverCount');
+        bindInlineSpecInput('saes-pc', 'SaaS-aES', 'pcCount');
+        bindInlineSpecInput('saes-server', 'SaaS-aES', 'serverCount');
+        bindInlineSpecInput('xdlp-users', 'SASE-XDLP', 'userCount');
+        bindInlineSpecInput('ztna-users', 'SASE-ZTNA', 'userCount');
+        bindInlineSpecInput('swg-users', 'SASE-SWG', 'userCount');
+        bindInlineSpecInput('swg-branch', 'SASE-SWG', 'branchCount');
+        bindInlineSpecInput('swg-bw', 'SASE-SWG', 'bandwidth');
+        bindInlineSpecInput('mail-count', '钓鱼邮件防护', 'mailCount');
+        bindInlineSpecInput('ga-bw', 'SASE-GA', 'bandwidth');
+
+        // SASE-SWG 内联选择联动：显示/隐藏内联规格中的字段
+        var swgInlineSelect = document.querySelector('.xaas-product-item[data-product="SASE-SWG"] .xaas-inline-select');
+        if (swgInlineSelect) {
+            swgInlineSelect.addEventListener('change', function() {
+                var val = this.value;
+                var usersRow = document.getElementById('swg-users-row');
+                var branchRow = document.getElementById('swg-branch-row');
+                var bwRow = document.getElementById('swg-bw-row');
+                if (usersRow) usersRow.style.display = (val === '分支版') ? 'none' : '';
+                if (branchRow) branchRow.style.display = (val === '用户版') ? 'none' : '';
+                if (bwRow) bwRow.style.display = (val === '用户版') ? 'none' : '';
+            });
+        }
+
+        var xaasPhoneInput = document.getElementById('xaas-contact-phone');
+        if (xaasPhoneInput) {
+            xaasPhoneInput.addEventListener('blur', function() {
+                var phone = this.value.trim();
+                var hint = document.getElementById('xaas-phone-hint');
+                if (!phone) {
+                    setXaasCustomer('', '', '');
+                    if (hint) hint.textContent = '输入手机号后模拟匹配客户名称；未匹配时可通过搜索选择客户。';
+                    return;
+                }
+                var customer = mockXaasCustomers[phone];
+                if (customer) {
+                    setXaasCustomer(customer.name, customer.id || 'C100000', customer.type || 'normal');
+                    var contactName = document.getElementById('xaas-contact-name');
+                    if (contactName && !contactName.value.trim()) contactName.value = customer.contactName;
+                    if (hint) hint.textContent = '已根据手机号匹配客户名称。';
+                } else {
+                    setXaasCustomer('', '', '');
+                    if (hint) hint.textContent = '未匹配到客户，请通过搜索框手动选择客户。';
+                }
+            });
+        }
+
+        // ===== XaaS 客户信息搜索 =====
+        var xaasSearchInput = document.getElementById('xaasCustomerSearch');
+        var xaasDropdown = document.getElementById('xaasCustomerDropdown');
+        if (xaasSearchInput && xaasDropdown) {
+            xaasSearchInput.addEventListener('input', function() {
+                var keyword = this.value.trim().toLowerCase();
+                if (!keyword) { xaasDropdown.classList.remove('show'); xaasDropdown.innerHTML = ''; return; }
+                var matched = customers.filter(function(c) {
+                    return c.name.toLowerCase().indexOf(keyword) > -1 || c.id.toLowerCase().indexOf(keyword) > -1;
+                }).slice(0, 10);
+                if (matched.length === 0) {
+                    xaasDropdown.innerHTML = '<div class="search-item" style="cursor:default;display:flex;justify-content:space-between;align-items:center;"><span style="color:#999;">无匹配结果</span><button type="button" class="xaas-create-cust-item" style="background:#0050cb;color:#fff;border:none;border-radius:4px;padding:4px 12px;font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0;">+ 创建新客户</button></div>';
+                } else {
+                    xaasDropdown.innerHTML = matched.map(function(c) {
+                        var custType = c.type || 'normal';
+                        var badgeClass = custType === 'KA' ? 'item-badge ka' : 'item-badge normal';
+                        var badgeText = custType === 'KA' ? 'KA客户' : '普通客户';
+                        return '<div class="search-item" data-name="' + c.name + '" data-id="' + c.id + '" data-type="' + custType + '"><span class="item-left"><span class="item-name">' + c.name + '</span><span class="item-id">' + c.id + '</span></span><span class="' + badgeClass + '">' + badgeText + '</span></div>';
+                    }).join('');
+                }
+                xaasDropdown.classList.add('show');
+            });
+            xaasDropdown.addEventListener('click', function(e) {
+                var item = e.target.closest('.search-item');
+                if (e.target.closest('.xaas-create-cust-item')) {
+                    xaasDropdown.classList.remove('show');
+                    openCreateCustomerDialog();
+                    return;
+                }
+                if (item && item.dataset.name) {
+                    setXaasCustomer(item.dataset.name, item.dataset.id, item.dataset.type);
+                    xaasDropdown.classList.remove('show');
+                }
+            });
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('#xaasCustomerSearch') && !e.target.closest('#xaasCustomerDropdown')) {
+                    xaasDropdown.classList.remove('show');
+                }
+            });
+        }
+
+        // 创建新客户弹窗（复用函数）
+        function openCreateCustomerDialog() {
+            layer.open({
+                type: 1,
+                title: '创建新客户',
+                area: ['480px', '320px'],
+                content: '<div style="padding:24px;"><div class="layui-form-item"><label class="layui-form-label">客户名称</label><div class="layui-input-block"><input type="text" class="layui-input" id="newCustName" placeholder="请输入客户名称"></div></div><div class="layui-form-item"><label class="layui-form-label">联系人</label><div class="layui-input-block"><input type="text" class="layui-input" id="newCustContact" placeholder="请输入联系人姓名"></div></div><div style="text-align:center;color:#999;font-size:12px;margin-top:12px;">原型演示：点击确认后将模拟创建客户并自动选中</div></div>',
+                btn: ['确认创建', '取消'],
+                yes: function(index) {
+                    var newName = document.getElementById('newCustName').value.trim() || '新建客户示例公司';
+                    layer.close(index);
+                    setXaasCustomer(newName, 'C' + (100020 + Math.floor(Math.random() * 100)), 'normal');
+                    layer.msg('客户创建成功，已自动选中', { icon: 1 });
+                }
+            });
+        }
+
+        var xaasIndustryL1 = document.getElementById('xaas-industry-l1');
+        if (xaasIndustryL1) xaasIndustryL1.addEventListener('change', updateXaasIndustryL2);
+
+        var xdrIsPk = document.getElementById('xdr-is-pk');
+        if (xdrIsPk) {
+            xdrIsPk.addEventListener('change', function() {
+                var field = document.getElementById('xdr-competitor-field');
+                var input = document.getElementById('xdr-competitor-name');
+                var needCompetitor = this.value && this.value !== '否';
+                if (field) field.style.display = needCompetitor ? '' : 'none';
+                if (!needCompetitor && input) input.value = '';
+            });
+        }
+
+        document.querySelectorAll('.xaas-chip').forEach(function(chip) {
+            chip.addEventListener('click', function() {
+                this.classList.toggle('active');
+            });
+        });
+
+        document.querySelectorAll('textarea[maxlength]').forEach(function(textarea) {
+            textarea.addEventListener('input', function() { updateTextareaCounter(this); });
+            updateTextareaCounter(textarea);
+        });
+
         // ===== XaaS 延长试用授权有效期 =====
         var extendCheck = document.getElementById('xaas-extend-check');
         var extendDateArea = document.getElementById('xaas-extend-date-area');
         if (extendCheck && extendDateArea) {
+            setXaasExtendDateLimit();
             extendCheck.addEventListener('change', function() {
                 extendDateArea.style.display = this.checked ? 'block' : 'none';
                 if (!this.checked) {
@@ -1533,6 +2649,94 @@
                 }
             });
         }
+
+        function hasXaasProduct(product) {
+            return getSelectedXaasProducts().indexOf(product) > -1;
+        }
+
+        function requireXaasValue(id, message) {
+            var el = document.getElementById(id);
+            if (!el || !el.value || !el.value.trim()) {
+                alert(message);
+                if (el && el.focus) el.focus();
+                return false;
+            }
+            return true;
+        }
+
+        function validateXaasForm() {
+            var selectedProducts = getSelectedXaasProducts();
+            if (selectedProducts.length === 0) {
+                alert('请选择订阅产品');
+                return false;
+            }
+            if (!requireXaasValue('xaas-contact-name', '请填写客户联系人姓名')) return false;
+            if (!/^1\d{10}$/.test((document.getElementById('xaas-contact-phone') || {}).value || '')) {
+                alert('请填写正确的客户联系人手机号');
+                return false;
+            }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((document.getElementById('xaas-contact-email') || {}).value || '')) {
+                alert('请填写正确的客户联系人邮箱');
+                return false;
+            }
+            if (!requireXaasValue('xaas-customer-name', '请选择客户名称')) return false;
+            if (!requireXaasValue('xaas-industry-l1', '请选择一级行业')) return false;
+            if (!requireXaasValue('xaas-industry-l2', '请选择二级行业')) return false;
+            if (!requireXaasValue('xaas-region', '请选择所属区域')) return false;
+
+            if (hasXaasProduct('SaaS-XDR')) {
+                if (!requireXaasValue('xdr-test-scenario', '请选择测试场景')) return false;
+                if (!requireXaasValue('xdr-test-driver', '请选择测试驱动力')) return false;
+                if (!requireXaasValue('xdr-core-need', '请选择核心需求')) return false;
+                if (!requireXaasValue('xdr-expected-result', '请选择测试效果预期')) return false;
+                if (!requireXaasValue('xdr-is-pk', '请选择是否PK')) return false;
+                var pkValue = document.getElementById('xdr-is-pk').value;
+                if (pkValue !== '否' && !requireXaasValue('xdr-competitor-name', '请填写PK友商公司名')) return false;
+                if (!requireXaasValue('xdr-customer-env', '请填写客户环境信息')) return false;
+                if (!requireXaasValue('xdr-security-op-mode', '请选择客户安全运营模式')) return false;
+                if (!requireXaasValue('xdr-security-staff', '请选择安全人员配置')) return false;
+                if (document.querySelectorAll('#xdr-existing-devices .xaas-chip.active').length === 0) {
+                    alert('请选择深信服现有设备/组件');
+                    return false;
+                }
+                if (!requireXaasValue('xdr-third-party-devices', '请填写第三方设备类型及版本号')) return false;
+                if (!requireXaasValue('xdr-budget-info', '请选择预算信息')) return false;
+                if (!requireXaasValue('xdr-security-budget', '请选择安全预算区间')) return false;
+                var xdrFile = document.getElementById('xdr-collected-file');
+                var file = xdrFile && xdrFile.files ? xdrFile.files[0] : null;
+                if (!file) {
+                    alert('请上传客户信息收集表（SFSS-MSS-X1003）');
+                    return false;
+                }
+                if (!/\.(xlsx|xls)$/i.test(file.name)) {
+                    alert('客户信息收集表仅支持 .xlsx / .xls 格式');
+                    return false;
+                }
+            }
+
+            if (hasXaasProduct('SASE-ZTNA') || hasXaasProduct('SASE-GA')) {
+                if (!requireXaasValue('sase-customer-need', '请填写客户需求')) return false;
+                if (!requireXaasValue('sase-project-scale', '请填写项目规模')) return false;
+                if (!requireXaasValue('sase-competitor', '请填写竞争对手')) return false;
+            }
+
+            var warnedSelected = false; // 申请理由字段已移除，不再校验
+
+            if (extendCheck && extendCheck.checked && !requireXaasValue('xaas-extend-date-new', '请选择延长试用授权有效期')) return false;
+            return true;
+        }
+
+        var xaasSubmitBtn = document.getElementById('xaas-submit-btn');
+        if (xaasSubmitBtn) {
+            xaasSubmitBtn.addEventListener('click', function() {
+                if (!validateXaasForm()) return;
+                alert('XaaS授权申请已提交，ID: XAAS-' + Date.now().toString().slice(-8));
+            });
+        }
+
+        var xaasResetBtn = document.getElementById('xaas-reset-btn');
+        if (xaasResetBtn) xaasResetBtn.addEventListener('click', resetXaasForm);
+        updateXaasExtraVisibility();
 
         // ===== 申请类型切换（借测硬件+软件 vs 软件部署） =====
         var planDevTypeSelect = document.getElementById('planDevType');
@@ -1547,10 +2751,8 @@
             if (btNoInput) btNoInput.value = '';
             var btUserInput = document.getElementById('btUser');
             if (btUserInput) btUserInput.value = '';
-            var btStatusSelect = document.getElementById('btStatus');
-            if (btStatusSelect) btStatusSelect.selectedIndex = 0;
-            var btTypeSelect = document.getElementById('btType');
-            if (btTypeSelect) btTypeSelect.selectedIndex = 0;
+            setCustomSelectValue('btStatus', '');
+            setCustomSelectValue('btType', '');
         }
 
         // ===== SN自动关联检测借测信息 =====
@@ -1567,10 +2769,8 @@
             if (btNoInput) btNoInput.value = '';
             var btUserInput = document.getElementById('btUser');
             if (btUserInput) btUserInput.value = '';
-            var btStatusSelect = document.getElementById('btStatus');
-            if (btStatusSelect) btStatusSelect.selectedIndex = 0;
-            var btTypeSelect = document.getElementById('btType');
-            if (btTypeSelect) btTypeSelect.selectedIndex = 0;
+            setCustomSelectValue('btStatus', '');
+            setCustomSelectValue('btType', '');
         }
 
         function simulateFetchBtDataBySn(sn) {
@@ -1608,9 +2808,9 @@
                     var btUserInput = document.getElementById('btUser');
                     if (btUserInput) btUserInput.value = result.btUser;
                     var btStatusSelect = document.getElementById('btStatus');
-                    if (btStatusSelect) btStatusSelect.value = result.btStatus;
+                    if (btStatusSelect) setCustomSelectValue('btStatus', result.btStatus);
                     var btTypeSelect = document.getElementById('btType');
-                    if (btTypeSelect) btTypeSelect.value = result.btType;
+                    if (btTypeSelect) setCustomSelectValue('btType', result.btType);
                 } else {
                     clearBtInputData();
                     var toast = document.getElementById('syncToast');
@@ -1709,6 +2909,43 @@
             hwUploadResult.className = 'hw-upload-result';
         });
 
+        // ===== XDR 客户信息收集表文件上传 =====
+        var xdrFileInput = document.getElementById('xdr-collected-file');
+        var xdrFileInfo = document.getElementById('xdrFileInfo');
+        var xdrFileName = document.getElementById('xdrFileName');
+        var xdrFileMeta = document.getElementById('xdrFileMeta');
+        var xdrFileClear = document.getElementById('xdrFileClear');
+
+        function clearXdrFile() {
+            xdrFileName.textContent = '未选择文件';
+            xdrFileName.className = 'hw-file-name empty';
+            xdrFileMeta.textContent = '';
+            xdrFileInfo.classList.remove('has-file');
+        }
+
+        if (xdrFileInput) {
+            xdrFileInput.addEventListener('change', function() {
+                var file = this.files[0];
+                if (!file) { clearXdrFile(); return; }
+                var ext = file.name.split('.').pop().toLowerCase();
+                xdrFileName.textContent = file.name;
+                xdrFileName.className = 'hw-file-name';
+                xdrFileMeta.textContent = formatFileSize(file.size);
+                xdrFileInfo.classList.add('has-file');
+                if (ext !== 'xlsx' && ext !== 'xls') {
+                    xdrFileName.style.color = '#c62828';
+                } else {
+                    xdrFileName.style.color = '';
+                }
+            });
+        }
+        if (xdrFileClear) {
+            xdrFileClear.addEventListener('click', function() {
+                if (xdrFileInput) xdrFileInput.value = '';
+                clearXdrFile();
+            });
+        }
+
         // ===== 产品线切换动态刷新模块导航 =====
         // 各产品线对应的模块配置（仅展示部分产品线示例）
         var productModules = {
@@ -1803,7 +3040,7 @@
                 return c.name.toLowerCase().indexOf(keyword) > -1 || c.id.toLowerCase().indexOf(keyword) > -1;
             }).slice(0, 10);
             if (matched.length === 0) {
-                dropdown.innerHTML = '<div class="search-item" style="color:#999;cursor:default;">无匹配结果</div>';
+                dropdown.innerHTML = '<div class="search-item" style="cursor:default;display:flex;justify-content:space-between;align-items:center;"><span style="color:#999;">无匹配结果</span><button type="button" class="hw-create-cust-item" style="background:#0050cb;color:#fff;border:none;border-radius:4px;padding:4px 12px;font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0;">+ 创建新客户</button></div>';
             } else {
                 dropdown.innerHTML = matched.map(function(c) {
                     var custType = c.type || 'normal';
@@ -1815,6 +3052,11 @@
             dropdown.classList.add('show');
         });
         dropdown.addEventListener('click', function(e) {
+            if (e.target.closest('.hw-create-cust-item')) {
+                dropdown.classList.remove('show');
+                openHwCreateCustomerDialog();
+                return;
+            }
             var item = e.target.closest('.search-item');
             if (item && item.dataset.name) {
                 searchInput.value = item.dataset.name;
@@ -1838,6 +3080,32 @@
         document.addEventListener('click', function(e) {
             if (!e.target.closest('.search-select-box')) dropdown.classList.remove('show');
         });
+
+        // 硬件授权页创建新客户弹窗
+        function openHwCreateCustomerDialog() {
+            layer.open({
+                type: 1,
+                title: '创建新客户',
+                area: ['480px', '320px'],
+                content: '<div style="padding:24px;"><div class="layui-form-item"><label class="layui-form-label">客户名称</label><div class="layui-input-block"><input type="text" class="layui-input" id="hwNewCustName" placeholder="请输入客户名称"></div></div><div class="layui-form-item"><label class="layui-form-label">联系人</label><div class="layui-input-block"><input type="text" class="layui-input" id="hwNewCustContact" placeholder="请输入联系人姓名"></div></div><div style="text-align:center;color:#999;font-size:12px;margin-top:12px;">原型演示：点击确认后将模拟创建客户并自动选中</div></div>',
+                btn: ['确认创建', '取消'],
+                yes: function(index) {
+                    var newName = document.getElementById('hwNewCustName').value.trim() || '新建客户示例公司';
+                    layer.close(index);
+                    searchInput.value = newName;
+                    nameSpan.textContent = newName;
+                    idSpan.textContent = 'C' + (100020 + Math.floor(Math.random() * 100));
+                    var badge = document.getElementById('customerTypeBadge');
+                    if (badge) {
+                        badge.textContent = '普通客户';
+                        badge.className = 'customer-type-badge normal';
+                        badge.style.display = 'inline-block';
+                    }
+                    infoDisplay.classList.add('show');
+                    layer.msg('客户创建成功，已自动选中', { icon: 1 });
+                }
+            });
+        }
 
         // ===== 模块交互 =====
         var cards = document.querySelectorAll('.module-item');
