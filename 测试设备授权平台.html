@@ -819,8 +819,8 @@
                             <div class="custom-select" data-select-id="planDevType">
                                 <select class="layui-select" name="planDevType" id="planDevType" style="display:none;">
                                     <option value="">请选择...</option>
-                                    <option value="1" selected>新设备授权(硬件借测+软件授权一并申请)</option>
-                                    <option value="2">软件续期授权(仅续期软件授权，无需硬件借测)</option>
+                                    <option value="1" selected>一体机测试（硬件借测+软件授权一并申请）</option>
+                                    <option value="2">纯软测试（仅软件授权，无硬件借测）</option>
                                 </select>
                                 <button type="button" class="custom-select-trigger">
                                     <span class="custom-select-value">请选择...</span>
@@ -829,8 +829,8 @@
                                 <div class="custom-select-dropdown">
                                     <ul class="custom-select-list">
                                         <li class="custom-select-option selected" data-value="">请选择...</li>
-                                        <li class="custom-select-option" data-value="1">新设备授权(硬件借测+软件授权一并申请)</li>
-                                        <li class="custom-select-option" data-value="2">软件续期授权(仅续期软件授权，无需硬件借测)</li>
+                                        <li class="custom-select-option" data-value="1">一体机测试（硬件借测+软件授权一并申请）</li>
+                                        <li class="custom-select-option" data-value="2">纯软测试（仅软件授权，无硬件借测）</li>
                                     </ul>
                                 </div>
                             </div>
@@ -1823,7 +1823,7 @@
 
                         <div class="layui-form-item">
                             <div class="layui-input-block xaas-form-actions">
-                                <button type="button" class="layui-btn" id="xaas-submit-btn">立即获取</button>
+                                <button type="button" class="layui-btn" id="xaas-submit-btn">提交</button>
                                 <button type="button" class="layui-btn layui-btn-primary" id="xaas-reset-btn">重置</button>
                             </div>
                         </div>
@@ -2593,7 +2593,7 @@
                         var badgeClass = custType === 'KA' ? 'item-badge ka' : 'item-badge normal';
                         var badgeText = custType === 'KA' ? 'KA客户' : '普通客户';
                         return '<div class="search-item" data-name="' + c.name + '" data-id="' + c.id + '" data-type="' + custType + '"><span class="item-left"><span class="item-name">' + c.name + '</span><span class="item-id">' + c.id + '</span></span><span class="' + badgeClass + '">' + badgeText + '</span></div>';
-                    }).join('');
+                    }).join('') + '<div class="search-item" style="cursor:default;border-top:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center;"><span style="color:#999;">没有找到需要的客户？</span><button type="button" class="xaas-create-cust-item" style="background:#0050cb;color:#fff;border:none;border-radius:4px;padding:4px 12px;font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0;">+ 创建新客户</button></div>';
                 }
                 xaasDropdown.classList.add('show');
             });
@@ -3096,7 +3096,7 @@
                     var badgeClass = custType === 'KA' ? 'item-badge ka' : 'item-badge normal';
                     var badgeText = custType === 'KA' ? 'KA客户' : '普通客户';
                     return '<div class="search-item" data-name="' + c.name + '" data-id="' + c.id + '" data-type="' + custType + '"><span class="item-left"><span class="item-name">' + c.name + '</span><span class="item-id">' + c.id + '</span></span><span class="' + badgeClass + '">' + badgeText + '</span></div>';
-                }).join('');
+                }).join('') + '<div class="search-item" style="cursor:default;border-top:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center;"><span style="color:#999;">没有找到需要的客户？</span><button type="button" class="hw-create-cust-item" style="background:#0050cb;color:#fff;border:none;border-radius:4px;padding:4px 12px;font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0;">+ 创建新客户</button></div>';
             }
             dropdown.classList.add('show');
         });
