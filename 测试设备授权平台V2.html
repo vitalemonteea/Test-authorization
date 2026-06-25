@@ -111,7 +111,7 @@
         .layui-select-box > .layui-edge::before { content: 'arrow_drop_down'; }
 
         /* 自定义下拉组件 */
-        .custom-select { position: relative; max-width: 300px; }
+        .custom-select { position: relative; width: 100%; max-width: 100%; min-width: 360px; }
         .custom-select-trigger {
             width: 100%; height: 40px;
             background: #fff; border: 1px solid #c2c6d8; border-radius: 8px;
@@ -155,6 +155,31 @@
         .layui-btn-primary { background-color: #fff; color: #0050cb; border-color: #0050cb; }
         .layui-btn-primary:hover { background: #eff4ff; box-shadow: none; color: #0050cb; }
 
+
+        /* ===== 申请类型下拉框 - 拓宽下拉面板宽度 ===== */
+.custom-select[data-select-id="planDevType"] .custom-select-dropdown {
+            min-width: 480px;
+            right: auto;
+            width: max-content;
+            max-width: 560px;
+        }
+        /* ===== 授权场景下拉框菜单面板 ===== */
+        .custom-select[data-select-id="authScene"] .custom-select-dropdown {
+            border: 1px solid rgba(194,198,216,0.2);
+            box-shadow: 0 8px 24px -4px rgba(11,28,48,0.1);
+            padding: 8px 0; background: #fff;
+        }
+        .custom-select[data-select-id="authScene"] .custom-select-group-label {
+            padding: 8px 16px 4px; font-size: 14px; font-weight: 400; color: #757575; cursor: default; line-height: 20px; border-top: 1px solid rgba(194,198,216,0.25); margin-top: 4px;
+        }
+        .custom-select[data-select-id="authScene"] .custom-select-group-label:first-child {
+            border-top: none; margin-top: 0; padding-top: 4px;
+        }
+        .custom-select[data-select-id="authScene"] .custom-select-option { padding: 8px 16px 8px 32px; font-size: 14px; color: #424656;
+            cursor: pointer; transition: all 0.15s; white-space: nowrap;
+        }
+        .custom-select[data-select-id="authScene"] .custom-select-option:hover { background: #eff4ff; color: #0050cb; }
+        .custom-select[data-select-id="authScene"] .custom-select-option.selected { background: #eff4ff; color: #0050cb; font-weight: 500; border-left: none; padding-left: 32px; }
 
         /* 表单辅助 */
         .font-acloud { color: #999; display: block; margin-bottom: 3px; font-size: 12px; }
@@ -204,6 +229,27 @@
         .special-form-section { background: #f8f9ff; border-radius: 12px; margin-bottom: 14px; padding: 18px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.06); max-width: 900px; margin-left: auto; margin-right: auto; }
         .special-form-section .section-title { font-size: 15px; font-weight: 600; color: #1a1a2e; padding: 0 0 12px; border-bottom: 1px solid #eff4ff; margin-bottom: 16px; }
         .required-mark { color: #ba1a1a; margin-right: 3px; }
+        #section-basic { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 18px; align-items: start; }
+        #section-basic > .layui-form-item,
+        #borrowTestFields > .layui-form-item,
+        #overlimit-fields > .layui-form-item,
+        #renewal-section > .layui-form-item,
+        .existing-auth-section > .layui-form-item { width: 100%; max-width: none; margin: 0; }
+        #section-basic .layui-form-label { width: 104px; padding-left: 0; padding-right: 10px; box-sizing: border-box; }
+        #section-basic .layui-input,
+        #section-basic .layui-select-box,
+        #section-basic .custom-select,
+        #section-basic .search-select-box { max-width: none; min-width: 0; width: 100%; }
+        #section-basic .custom-select-trigger { width: 100%; }
+        .basic-full,
+        #renewal-section,
+        #overlimit-fields,
+        #borrowTestFields,
+        .existing-auth-section,
+        #hwInfoSection { grid-column: 1 / -1; }
+        #borrowTestFields { display: none; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 18px; }
+        #overlimit-fields { display: none; }
+        #overlimit-fields .layui-textarea { max-width: 620px; }
 
         /* 硬件信息文件上传区 */
         #hwInfoSection .layui-form-label { padding-top: 10px; }
@@ -301,6 +347,8 @@
         .xaas-spec-btn:hover { border-color: #9ca3af; background: #f9fafb; }
         .xaas-spec-btn.active { border-color: #0050cb; color: #fff; background: #0050cb; }
         .xaas-spec-btn.active:hover { background: #003fa3; border-color: #003fa3; color: #fff; }
+        .xaas-spec-btn:disabled { opacity: 0.4; cursor: not-allowed; background: #f5f5f5; border-color: #d1d5db; color: #9ca3af; }
+        .xaas-spec-btn:disabled:hover { background: #f5f5f5; border-color: #d1d5db; color: #9ca3af; box-shadow: none; }
         .xaas-version-picker { width: 150px; }
         .xaas-version-picker .custom-select-trigger { height: 32px; border-radius: 6px; padding: 0 8px; }
         .xaas-version-picker .custom-select-value { font-size: 13px; }
@@ -498,6 +546,8 @@
             .layui-layout-admin .layui-footer { left: 0; }
             .module-nav { right: 6px; width: 126px; top: 88px; }
             .content-body { padding: 12px 142px 12px 14px; }
+            #section-basic,
+            #borrowTestFields { grid-template-columns: 1fr; }
             .layui-form-label { width: 100px; font-size: 13px; padding: 9px 0 9px 8px; }
             .layui-input, .layui-select-box { max-width: 100%; }
             .unified-date-bar { flex-wrap: wrap; gap: 8px; padding: 12px 14px; }
@@ -589,142 +639,6 @@
                     <div class="special-form-section">
                         <div class="section-title">基本信息</div>
                     <div id="section-basic">
-                    <!-- 授权场景 -->
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">授权场景</label>
-                        <div class="layui-input-block">
-                            <div class="custom-select" data-select-id="authScene">
-                                <select class="layui-select" id="authScene" name="authScene" style="display:none;">
-                                    <option value="" selected>请选择授权场景</option>
-                                    <option value="1">开通测试授权(无授权/授权过期申请)</option>
-                                    <option value="2">授权资源调整(授权有效期内调整)</option>
-                                    <option value="3">销售设备增开新模块测试授权</option>
-                                    <option value="5">销售授权扩容测试授权</option>
-                                    <option value="6">销售设备申请延长授权</option>
-                                </select>
-                                <button type="button" class="custom-select-trigger">
-                                    <span class="custom-select-value">请选择授权场景</span>
-                                    <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
-                                </button>
-                                <div class="custom-select-dropdown">
-                                    <ul class="custom-select-list">
-                                        <li class="custom-select-option selected" data-value="">请选择授权场景</li>
-                                        <li class="custom-select-group-label">开通测试授权</li>
-                                        <li class="custom-select-option" data-value="1">开通测试授权(无授权/授权过期申请)</li>
-                                        <li class="custom-select-group-label">授权资源调整</li>
-                                        <li class="custom-select-option" data-value="2">授权资源调整(授权有效期内调整)</li>
-                                        <li class="custom-select-group-label">商务类</li>
-                                        <li class="custom-select-option" data-value="3">销售设备增开新模块测试授权</li>
-                                        <li class="custom-select-option" data-value="5">销售授权扩容测试授权</li>
-                                        <li class="custom-select-option" data-value="6">销售设备申请延长授权</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 申请类型 -->
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">申请类型</label>
-                        <div class="layui-input-block">
-                            <div class="custom-select" data-select-id="planDevType">
-                                <select class="layui-select" name="planDevType" id="planDevType" style="display:none;">
-                                    <option value="">请选择...</option>
-                                    <option value="1">一体机测试（硬件借测+软件授权一并申请）</option>
-                                    <option value="2">纯软测试（仅软件授权，无硬件借测）</option>
-                                </select>
-                                <button type="button" class="custom-select-trigger">
-                                    <span class="custom-select-value">请选择...</span>
-                                    <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
-                                </button>
-                                <div class="custom-select-dropdown">
-                                    <ul class="custom-select-list">
-                                        <li class="custom-select-option selected" data-value="">请选择...</li>
-                                        <li class="custom-select-option" data-value="1">一体机测试（硬件借测+软件授权一并申请）</li>
-                                        <li class="custom-select-option" data-value="2">纯软测试（仅软件授权，无硬件借测）</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-<!-- ===== 续期授权 - 历史借测数据区域 ===== -->
-<div id="renewal-section" style="display:none;">
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">历史借测数据<span class="required-mark">*</span></label>
-                        <div class="layui-input-block">
-                            <div class="renewal-tab-bar">
-                                <span class="renewal-tab active" data-tab="info-file">上传 .info 文件</span>
-                                <span class="renewal-tab" data-tab="gateway-id">输入网关 ID</span>
-                            </div>
-                            <div class="renewal-tab-panel" id="renewal-panel-info-file">
-                                <div class="hw-upload-area">
-                                    <input type="file" id="renewalFileInput" accept=".info">
-                                    <div class="hw-file-info" id="renewalFileInfo">
-                                        <span class="hw-file-name empty" id="renewalFileName">未选择文件（支持 .info 格式）</span>
-                                        <span class="hw-file-meta" id="renewalFileMeta"></span>
-                                        <span class="hw-file-clear" id="renewalFileClear" title="删除文件">&times;</span>
-                                    </div>
-                                    <label class="hw-upload-btn" for="renewalFileInput"><span class="upload-icon">&#8679;</span> 上传文件</label>
-                                    <span class="renewal-badge" id="renewalBadgeInfo"></span>
-                                </div>
-                            </div>
-                            <div class="renewal-tab-panel" id="renewal-panel-gateway-id" style="display:none;">
-                                <div class="hw-upload-area">
-                                    <input type="text" id="gatewayIdInput" class="layui-input" placeholder="请输入网关 ID" style="max-width:300px;">
-                                    <button type="button" class="hw-upload-btn" id="gatewayDetectBtn">检测</button>
-                                    <span class="renewal-badge" id="renewalBadgeGateway"></span>
-                                </div>
-                            </div>
-                            <div class="renewal-summary" id="renewalSummary">
-                                <div class="renewal-summary-title">
-                                    <span id="renewalSummaryTitle">已识别历史借测数据</span>
-                                    <span class="renewal-summary-status" id="renewalSummaryStatus">常规续期</span>
-                                </div>
-                                <div class="renewal-summary-grid">
-                                    <div class="renewal-summary-item">
-                                        <span>设备/网关 ID</span>
-                                        <strong id="renewalSummaryDevice">-</strong>
-                                    </div>
-                                    <div class="renewal-summary-item">
-                                        <span>历史授权到期日</span>
-                                        <strong id="renewalSummaryExpire">-</strong>
-                                    </div>
-                                    <div class="renewal-summary-item">
-                                        <span>续期类型</span>
-                                        <strong id="renewalSummaryType">-</strong>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-</div>
-
-<!-- ===== 超规续期额外字段 ===== -->
-<div id="overlimit-fields" style="display:none;">
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">申请原因<span class="required-mark">*</span></label>
-                        <div class="layui-input-block">
-                            <textarea id="overlimitReason" class="layui-textarea" placeholder="请填写超规续期申请原因" rows="4"></textarea>
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">附件上传</label>
-                        <div class="layui-input-block">
-                            <div class="hw-upload-area">
-                                <input type="file" id="overlimitFileInput">
-                                <div class="hw-file-info" id="overlimitFileInfo">
-                                    <span class="hw-file-name empty" id="overlimitFileName">未选择文件（支持常见格式）</span>
-                                    <span class="hw-file-meta" id="overlimitFileMeta"></span>
-                                    <span class="hw-file-clear" id="overlimitFileClear" title="删除文件">&times;</span>
-                                </div>
-                                <label class="hw-upload-btn" for="overlimitFileInput"><span class="upload-icon">&#8679;</span> 上传附件</label>
-                            </div>
-                            <span class="font-acloud" style="margin-top:4px;">如有无法自助申请的审批附件，请在此上传</span>
-                        </div>
-                    </div>
-</div>
-
                     <!-- 产品线 -->
                     <div class="layui-form-item">
                         <label class="layui-form-label">产品线</label>
@@ -901,6 +815,140 @@
                         </div>
                     </div>
 
+                    <!-- 授权场景 -->
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">授权场景</label>
+                        <div class="layui-input-block">
+                            <div class="custom-select" data-select-id="authScene">
+                                <select class="layui-select" id="authScene" name="authScene" style="display:none;">
+                                    <option value="1" selected>开通测试授权(无授权/授权过期申请)</option>
+                                    <option value="2">授权资源调整(授权有效期内调整)</option>
+                                    <option value="3">销售设备增开新模块测试授权</option>
+                                    <option value="5">销售授权扩容测试授权</option>
+                                    <option value="6">销售设备申请延长授权</option>
+                                </select>
+                                <button type="button" class="custom-select-trigger">
+                                    <span class="custom-select-value has-value">开通测试授权(无授权/授权过期申请)</span>
+                                    <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                </button>
+                                <div class="custom-select-dropdown">
+                                    <ul class="custom-select-list">
+                                        <li class="custom-select-group-label">开通测试授权</li>
+                                        <li class="custom-select-option selected" data-value="1">开通测试授权(无授权/授权过期申请)</li>
+                                        <li class="custom-select-group-label">授权资源调整</li>
+                                        <li class="custom-select-option" data-value="2">授权资源调整(授权有效期内调整)</li>
+                                        <li class="custom-select-group-label">商务类</li>
+                                        <li class="custom-select-option" data-value="3">销售设备增开新模块测试授权</li>
+                                        <li class="custom-select-option" data-value="5">销售授权扩容测试授权</li>
+                                        <li class="custom-select-option" data-value="6">销售设备申请延长授权</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 申请类型 -->
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">申请类型</label>
+                        <div class="layui-input-block">
+                            <div class="custom-select" data-select-id="planDevType">
+                                <select class="layui-select" name="planDevType" id="planDevType" style="display:none;">
+                                    <option value="">请选择...</option>
+                                    <option value="1">硬件借测（硬件为我司借测设备，通过硬件设备开授权）</option>
+                                    <option value="2">纯软测试（硬件为客户自己服务器，通过软件开授权）</option>
+                                </select>
+                                <button type="button" class="custom-select-trigger">
+                                    <span class="custom-select-value">请选择...</span>
+                                    <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                </button>
+                                <div class="custom-select-dropdown">
+                                    <ul class="custom-select-list">
+                                        <li class="custom-select-option selected" data-value="">请选择...</li>
+                                        <li class="custom-select-option" data-value="1">硬件借测（硬件为我司借测设备，通过硬件设备开授权）</li>
+                                        <li class="custom-select-option" data-value="2">纯软测试（硬件为客户自己服务器，通过软件开授权）</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+<!-- ===== 续期授权 - 历史借测数据区域 ===== -->
+<div id="renewal-section" style="display:none;">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">历史借测数据<span class="required-mark">*</span></label>
+                        <div class="layui-input-block">
+                            <div class="renewal-tab-bar">
+                                <span class="renewal-tab active" data-tab="info-file">上传 .info 文件</span>
+                                <span class="renewal-tab" data-tab="gateway-id">输入网关 ID</span>
+                            </div>
+                            <div class="renewal-tab-panel" id="renewal-panel-info-file">
+                                <div class="hw-upload-area">
+                                    <input type="file" id="renewalFileInput" accept=".info">
+                                    <div class="hw-file-info" id="renewalFileInfo">
+                                        <span class="hw-file-name empty" id="renewalFileName">未选择文件（支持 .info 格式）</span>
+                                        <span class="hw-file-meta" id="renewalFileMeta"></span>
+                                        <span class="hw-file-clear" id="renewalFileClear" title="删除文件">&times;</span>
+                                    </div>
+                                    <label class="hw-upload-btn" for="renewalFileInput"><span class="upload-icon">&#8679;</span> 上传文件</label>
+                                    <span class="renewal-badge" id="renewalBadgeInfo"></span>
+                                </div>
+                            </div>
+                            <div class="renewal-tab-panel" id="renewal-panel-gateway-id" style="display:none;">
+                                <div class="hw-upload-area">
+                                    <input type="text" id="gatewayIdInput" class="layui-input" placeholder="请输入网关 ID" style="max-width:300px;">
+                                    <button type="button" class="hw-upload-btn" id="gatewayDetectBtn">检测</button>
+                                    <span class="renewal-badge" id="renewalBadgeGateway"></span>
+                                </div>
+                            </div>
+                            <div class="renewal-summary" id="renewalSummary">
+                                <div class="renewal-summary-title">
+                                    <span id="renewalSummaryTitle">已识别历史借测数据</span>
+                                    <span class="renewal-summary-status" id="renewalSummaryStatus">常规续期</span>
+                                </div>
+                                <div class="renewal-summary-grid">
+                                    <div class="renewal-summary-item">
+                                        <span>设备/网关 ID</span>
+                                        <strong id="renewalSummaryDevice">-</strong>
+                                    </div>
+                                    <div class="renewal-summary-item">
+                                        <span>历史授权到期日</span>
+                                        <strong id="renewalSummaryExpire">-</strong>
+                                    </div>
+                                    <div class="renewal-summary-item">
+                                        <span>续期类型</span>
+                                        <strong id="renewalSummaryType">-</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+</div>
+
+<!-- ===== 超规续期额外字段 ===== -->
+<div id="overlimit-fields" style="display:none;">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">申请原因<span class="required-mark">*</span></label>
+                        <div class="layui-input-block">
+                            <textarea id="overlimitReason" class="layui-textarea" placeholder="请填写超规续期申请原因" rows="4"></textarea>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">附件上传</label>
+                        <div class="layui-input-block">
+                            <div class="hw-upload-area">
+                                <input type="file" id="overlimitFileInput">
+                                <div class="hw-file-info" id="overlimitFileInfo">
+                                    <span class="hw-file-name empty" id="overlimitFileName">未选择文件（支持常见格式）</span>
+                                    <span class="hw-file-meta" id="overlimitFileMeta"></span>
+                                    <span class="hw-file-clear" id="overlimitFileClear" title="删除文件">&times;</span>
+                                </div>
+                                <label class="hw-upload-btn" for="overlimitFileInput"><span class="upload-icon">&#8679;</span> 上传附件</label>
+                            </div>
+                            <span class="font-acloud" style="margin-top:4px;">如有无法自助申请的审批附件，请在此上传</span>
+                        </div>
+                    </div>
+</div>
+
                     <!-- 区域 -->
                     <div class="layui-form-item">
                         <label class="layui-form-label">区域</label>
@@ -1020,7 +1068,7 @@
                     </div>
 
                     <!-- 客户信息 -->
-                    <div class="layui-form-item">
+                    <div class="layui-form-item basic-full">
                         <label class="layui-form-label">客户信息</label>
                         <div class="layui-input-block">
                             <div class="search-select-box">
@@ -1861,7 +1909,7 @@
                                         <button type="button" class="xaas-family-head" onclick="this.closest('.xaas-family').classList.toggle('collapsed')"><span class="xaas-family-arrow">▼</span><span>SASE产品族</span><span class="xaas-family-count">6</span></button>
                                         <div class="xaas-family-body">
                                             <div class="xaas-product-item" data-product="SASE-XDLP" data-default-desc="有效期30天，授权用户数50个">
-                                                <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="数据泄密分析"> <span>SASE-XDLP 数据泄密分析</span></label>
+                                                <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="数据泄密分析"> <span>XDLA</span></label>
                                                 <div class="xaas-product-right">
                                                     <span class="xaas-product-desc">有效期30天，授权用户数50个</span>
                                                     <button type="button" class="xaas-spec-btn">修改规格</button>
@@ -2181,6 +2229,7 @@
                 var inlineSelect = inlineSelectWrapper || inlineSelectNative;
                 var desc = item.querySelector('.xaas-product-desc');
                 item.classList.toggle('selected', !!this.checked);
+                if (specBtn) specBtn.disabled = !this.checked;
                 // 修改规格按钮始终可见，颜色保持不变
                 if (inlineSelect) inlineSelect.style.display = this.checked ? (inlineSelectWrapper ? 'inline-flex' : 'inline-block') : 'none';
                 // SaaS-XDR 内联规格区（由修改规格按钮控制，不自动显示）
@@ -2201,6 +2250,10 @@
                 updateXaasFamilyCounts();
                 updateXaasExtraVisibility();
             });
+        });
+        // 初始化所有修改规格按钮为禁用状态
+        document.querySelectorAll('.xaas-spec-btn').forEach(function(btn) {
+            btn.disabled = true;
         });
 
         function getSelectedXaasProducts() {
@@ -2246,7 +2299,7 @@
         var currentSpecProduct = '';
         var productDisplayNames = {
             'SaaS-XDR': 'SaaS-XDR', 'NGDR': 'NGDR', 'SaaS-aES': 'SaaS-aES',
-            'SASE-XDLP': 'SASE-XDLP 数据泄密分析', 'SASE-ZTNA': 'SASE-ZTNA 零信任网络访问',
+            'SASE-XDLP': 'XDLA', 'SASE-ZTNA': 'SASE-ZTNA 零信任网络访问',
             'SASE-SWG': 'SASE-SWG 互联网安全访问', '钓鱼邮件防护': '钓鱼邮件防护 GPT', 'SASE-GA': 'SASE-GA 全球加速'
         };
 
@@ -2977,7 +3030,7 @@
             if (val === '1') {
                 // 新设备授权(硬件)：显示SN+借测+设备ID+硬件文件
                 devSnFormItem.style.display = 'flex';
-                borrowTestFields.style.display = 'block';
+                borrowTestFields.style.display = 'grid';
                 deviceIdFormItem.style.display = 'flex';
                 toggleHwInfoSection(plnameSelect.value);
                 resetBorrowTestFields();
@@ -2995,12 +3048,16 @@
                 resetBorrowTestFields();
                 resetRenewalState();
             }
+            // 更新设备ID提示（与产品线联动）
+            updateDeviceIdHint(plnameSelect.value);
         });
 
         // ===== 授权场景切换 =====
         var authSceneSelect = document.getElementById('authScene');
         authSceneSelect.addEventListener('change', function() {
             var val = this.value;
+            // 切换授权场景时重置申请类型
+            setCustomSelectValue('planDevType', '');
 
             // 先隐藏授权相关区域
             existingAuthSection.classList.remove('show');
@@ -3296,6 +3353,30 @@
 
         var plnameSelect = document.getElementById('plname');
 
+        // 产品线设备ID配置
+        var plDeviceIdConfig = {
+            '45': { type: 'fixed', hint: '设备ID已自动生成' },
+            '41': { type: 'fixed', hint: '设备ID已自动生成' },
+            '44': { type: 'fixed', hint: '设备ID已自动生成' },
+            '_default': { type: 'soft-hard' }
+        };
+
+        function updateDeviceIdHint(plValue) {
+            var devIdInput = document.getElementById('devIdNew');
+            if (!devIdInput) return;
+            var config = plDeviceIdConfig[plValue] || plDeviceIdConfig['_default'];
+            var planDevType = document.getElementById('planDevType').value;
+            if (config.type === 'fixed') {
+                devIdInput.placeholder = config.hint;
+            } else {
+                if (planDevType === '2') {
+                    devIdInput.placeholder = '请输入客户ID / KeyId / 客户名称';
+                } else {
+                    devIdInput.placeholder = '请输入设备ID 或 KeyId';
+                }
+            }
+        }
+
         // ===== 自定义下拉框组件初始化 =====
         function initCustomSelect(container) {
             var trigger = container.querySelector('.custom-select-trigger');
@@ -3399,12 +3480,24 @@
         });
 
         plnameSelect.addEventListener('change', function() {
-            refreshModuleNav(this.value);
-            toggleHwInfoSection(this.value);
+            var plVal = this.value;
+            // 切换产品线时重置下游字段
+            setCustomSelectValue('authScene', '');
+            setCustomSelectValue('planDevType', '');
+            // 隐藏条件字段
+            devSnFormItem.style.display = 'none';
+            borrowTestFields.style.display = 'none';
+            existingAuthSection.classList.remove('show');
+            existingAuthSection.style.display = 'none';
+            // 更新设备ID提示
+            updateDeviceIdHint(plVal);
+            refreshModuleNav(plVal);
+            toggleHwInfoSection(plVal);
         });
-        // 初始化时根据默认产品线刷新导航和硬件信息区
+        // 初始化时根据默认产品线刷新导航、硬件信息区和设备ID提示
         refreshModuleNav(plnameSelect.value);
         toggleHwInfoSection(plnameSelect.value);
+        updateDeviceIdHint(plnameSelect.value);
 
         document.getElementById('formsn').addEventListener('reset', function() {
             setTimeout(function() {
@@ -3845,6 +3938,14 @@
     </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
 
 
 

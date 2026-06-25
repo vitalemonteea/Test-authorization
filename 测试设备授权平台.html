@@ -138,6 +138,15 @@
         .custom-select-value.has-value { color: #0b1c30; }
         .custom-select-arrow { font-size: 22px; color: #424656; transition: transform 0.2s; }
         .custom-select.open .custom-select-arrow { transform: rotate(180deg); color: #0050cb; }
+
+        /* ===== 申请类型下拉框 - 拓宽下拉面板宽度 ===== */
+        .custom-select[data-select-id="planDevType"] .custom-select-dropdown {
+            min-width: 480px;
+            right: auto;
+            width: max-content;
+            max-width: 560px;
+        }
+
         .custom-select-dropdown {
             display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0;
             background: #fff; border: 1px solid #c2c6d8; border-radius: 8px;
@@ -213,6 +222,9 @@
         .special-form-section { background: #f8f9ff; border-radius: 12px; margin-bottom: 14px; padding: 18px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.06); max-width: 900px; margin-left: auto; margin-right: auto; }
         .special-form-section .section-title { font-size: 15px; font-weight: 600; color: #1a1a2e; padding: 0 0 12px; border-bottom: 1px solid #eff4ff; margin-bottom: 16px; }
         .required-mark { color: #ba1a1a; margin-right: 3px; }
+        #section-basic .layui-input,
+        #section-basic .custom-select,
+        #section-basic .search-select-box { max-width: 480px; }
 
         /* 硬件信息文件上传区 */
         #hwInfoSection .layui-form-label { padding-top: 10px; }
@@ -311,6 +323,8 @@
         .xaas-spec-btn:hover { border-color: #9ca3af; background: #f9fafb; }
         .xaas-spec-btn.active { border-color: #0050cb; color: #fff; background: #0050cb; }
         .xaas-spec-btn.active:hover { background: #003fa3; border-color: #003fa3; color: #fff; }
+        .xaas-spec-btn:disabled { opacity: 0.4; cursor: not-allowed; background: #f5f5f5; border-color: #d1d5db; color: #9ca3af; }
+        .xaas-spec-btn:disabled:hover { background: #f5f5f5; border-color: #d1d5db; color: #9ca3af; box-shadow: none; }
         #content-xaas .xaas-version-picker { width: 150px; }
         #content-xaas .xaas-version-picker .custom-select-trigger { height: 32px; border-radius: 6px; padding: 0 8px; white-space: nowrap; }
         #content-xaas .xaas-version-picker .custom-select-value { font-size: 13px; white-space: nowrap; }
@@ -819,8 +833,8 @@
                             <div class="custom-select" data-select-id="planDevType">
                                 <select class="layui-select" name="planDevType" id="planDevType" style="display:none;">
                                     <option value="">请选择...</option>
-                                    <option value="1" selected>一体机测试（硬件借测+软件授权一并申请）</option>
-                                    <option value="2">纯软测试（仅软件授权，无硬件借测）</option>
+                                    <option value="1" selected>硬件借测（硬件为我司借测设备，通过硬件设备开授权）</option>
+                                    <option value="2">纯软测试（硬件为客户自己服务器，通过软件开授权）</option>
                                 </select>
                                 <button type="button" class="custom-select-trigger">
                                     <span class="custom-select-value">请选择...</span>
@@ -829,8 +843,8 @@
                                 <div class="custom-select-dropdown">
                                     <ul class="custom-select-list">
                                         <li class="custom-select-option selected" data-value="">请选择...</li>
-                                        <li class="custom-select-option" data-value="1">一体机测试（硬件借测+软件授权一并申请）</li>
-                                        <li class="custom-select-option" data-value="2">纯软测试（仅软件授权，无硬件借测）</li>
+                                        <li class="custom-select-option" data-value="1">硬件借测（硬件为我司借测设备，通过硬件设备开授权）</li>
+                                        <li class="custom-select-option" data-value="2">纯软测试（硬件为客户自己服务器，通过软件开授权）</li>
                                     </ul>
                                 </div>
                             </div>
@@ -1645,7 +1659,7 @@
                                         <button type="button" class="xaas-family-head" onclick="this.closest('.xaas-family').classList.toggle('collapsed')"><span class="xaas-family-arrow">▼</span><span>SASE产品族</span><span class="xaas-family-count">6</span></button>
                                         <div class="xaas-family-body">
                                             <div class="xaas-product-item" data-product="SASE-XDLP" data-default-desc="有效期30天，授权用户数50个">
-                                                <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="数据泄密分析"> <span>SASE-XDLP 数据泄密分析</span></label>
+                                                <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="数据泄密分析"> <span>XDLA</span></label>
                                                 <div class="xaas-product-right">
                                                     <span class="xaas-product-desc">有效期30天，授权用户数50个</span>
                                                     <button type="button" class="xaas-spec-btn">修改规格</button>
@@ -2107,6 +2121,7 @@
             var inlineSelect = inlineSelectWrapper || inlineSelectNative;
             var desc = item.querySelector('.xaas-product-desc');
             item.classList.toggle('selected', !!checked);
+            if (specBtn) specBtn.disabled = !checked;
             // 修改规格按钮始终可见，颜色由 .selected 类控制
             if (inlineSelect) inlineSelect.style.display = checked ? 'inline-flex' : 'none';
             // SaaS-XDR 内联规格区（由修改规格按钮控制，不自动显示）
@@ -2312,7 +2327,7 @@
         var currentSpecProduct = '';
         var productDisplayNames = {
             'SaaS-XDR': 'SaaS-XDR', 'NGDR': 'NGDR', 'SaaS-aES': 'SaaS-aES',
-            'SASE-XDLP': 'SASE-XDLP 数据泄密分析', 'SASE-ZTNA': 'SASE-ZTNA 零信任网络访问',
+            'SASE-XDLP': 'XDLA', 'SASE-ZTNA': 'SASE-ZTNA 零信任网络访问',
             'SASE-SWG': 'SASE-SWG 互联网安全访问', '钓鱼邮件防护': '钓鱼邮件防护 GPT', 'SASE-GA': 'SASE-GA 全球加速'
         };
 
@@ -3439,3 +3454,5 @@
     </script>
 </body>
 </html>
+
+
