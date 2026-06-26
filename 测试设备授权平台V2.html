@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+﻿﻿﻿<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -396,6 +396,9 @@
         .xaas-inline-select:focus { border: 2px solid #0050cb; box-shadow: 0 0 0 3px #b3c5ff; }
         .xaas-product-warn { display: none; flex: 0 0 100%; margin: 2px 0 0 28px; color: #e65100; font-size: 12px; line-height: 18px; }
         .xaas-product-warn.show { display: block; }
+        .xaas-product-trial-hint { display: none; flex: 0 0 100%; margin: 4px 0 0 28px; padding: 6px 10px; background: #fff8e1; border: 1px solid #ffecb3; border-radius: 6px; color: #b45309; font-size: 12px; line-height: 1.5; gap: 6px; align-items: center; }
+        .xaas-product-trial-hint.show { display: flex; }
+        .xaas-product-trial-hint .trial-icon { font-size: 14px; flex-shrink: 0; }
 
         /* SaaS-XDR 内联规格展开区 */
         .xaas-inline-spec-area { display: none; margin: 8px 0 0 28px; padding: 12px; border: 1px solid #fde68a; border-radius: 8px; background: #fffbeb; }
@@ -405,8 +408,17 @@
         .xaas-inline-spec-area .spec-field-row label { font-size: 13px; color: #6b7280; white-space: nowrap; }
         .xaas-inline-spec-area .spec-field-row input { width: 112px; height: 32px; padding: 0 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; outline: none; }
         .xaas-inline-spec-area .spec-field-row input:focus { border-color: #f59e0b; box-shadow: 0 0 0 3px #fef3c7; }
+        .spec-expiry-row { display: flex; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+        .spec-expiry-date { width: 160px; height: 32px; padding: 0 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; outline: none; }
+        .spec-expiry-date:focus { border-color: #f59e0b; box-shadow: 0 0 0 3px #fef3c7; }
+        .spec-expiry-btn { display: inline-flex; align-items: center; gap: 4px; height: 32px; padding: 0 10px; font-size: 12px; border: 1px solid #d1d5db; border-radius: 6px; background: #fff; color: #424656; cursor: pointer; white-space: nowrap; transition: all 0.15s; }
+        .spec-expiry-btn:hover:not(:disabled) { border-color: #f59e0b; background: #fffbeb; color: #b45309; }
+        .spec-expiry-btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .xaas-inline-spec-area .spec-field-row .spec-unit { font-size: 13px; color: #9ca3af; }
         .xaas-inline-spec-area .spec-modules-label { font-size: 13px; color: #374151; margin-bottom: 8px; padding-top: 4px; border-top: 1px solid #fde68a; }
+        .xaas-approval-rule-bar { display: flex; justify-content: flex-end; align-items: center; margin-bottom: 12px; }
+        .xaas-approval-rule-link { display: inline-flex; align-items: center; gap: 4px; color: #0891b2; font-size: 13px; cursor: pointer; transition: color 0.15s; }
+        .xaas-approval-rule-link:hover { color: #0e7490; }
 
         /* 额外信息面板 */
         .xaas-extra-panel { display: none; width: 100%; border: 1px solid #fde68a; border-radius: 8px; background: #fffbeb; overflow: hidden; }
@@ -564,6 +576,9 @@
             .grid-field .gf-label { width: auto; }
             .renewal-summary-grid { grid-template-columns: 1fr; }
             .xaas-product-list { max-width: 100%; }
+            .spec-expiry-row { flex-direction: column; align-items: stretch; gap: 4px; }
+            .spec-expiry-date { width: 100%; }
+            .xaas-approval-rule-bar { justify-content: flex-start; }
         }
 
         @media screen and (max-width: 480px) {
@@ -1816,7 +1831,8 @@
                                 </span>
                             </label>
                             <div class="layui-input-block">
-                                <div class="xaas-family-list">
+                                <div class="xaas-approval-rule-bar"><span class="xaas-approval-rule-link" onclick="showXaasApprovalRules()">查看审批规则</span></div>
+<div class="xaas-family-list">
                                     <div class="xaas-family">
                                         <button type="button" class="xaas-family-head" onclick="this.closest('.xaas-family').classList.toggle('collapsed')"><span class="xaas-family-arrow">▼</span><span>XDR产品族</span><span class="xaas-family-count">1</span></button>
                                         <div class="xaas-family-body">
@@ -1844,7 +1860,21 @@
                                                     <button type="button" class="xaas-chip" data-value="移动运营小助手">移动运营小助手</button>
                                                 </div>
                                             </div>
-                                        </div>
+                                        
+<div class="xaas-product-trial-hint" data-product="SaaS-XDR">
+    <span class="trial-icon">&#9888;</span>
+    <span>客户正在试用该产品，支持修改授权信息或延长有效期</span>
+</div>
+
+<div class="spec-field-row spec-expiry-row">
+    <label>授权有效期</label>
+    <input type="date" class="spec-expiry-date" data-product="SaaS-XDR" disabled>
+    <button type="button" class="spec-expiry-btn" title="仅正在试用中的客户支持调整授权有效期" disabled>&#128197; 修改授权有效期</button>
+    <span class="spec-expiry-hint" style="display:none;font-size:12px;color:#b45309;">
+        &#9888; 编辑授权有效期时，默认选中的日期为当前的授权到期时间。可选日期为授权到期时间之后，不可缩短有效期。
+    </span>
+</div>
+</div>
                                     </div>
                                     <div class="xaas-family">
                                         <button type="button" class="xaas-family-head" onclick="this.closest('.xaas-family').classList.toggle('collapsed')"><span class="xaas-family-arrow">▼</span><span>aES产品族</span><span class="xaas-family-count">2</span></button>
@@ -1903,7 +1933,35 @@
                                                     <span class="spec-unit">个</span>
                                                 </div>
                                             </div>
-                                        </div>
+                                        
+<div class="xaas-product-trial-hint" data-product="NGDR">
+    <span class="trial-icon">&#9888;</span>
+    <span>客户正在试用该产品，支持修改授权信息或延长有效期</span>
+</div>
+
+<div class="xaas-product-trial-hint" data-product="SaaS-aES">
+    <span class="trial-icon">&#9888;</span>
+    <span>客户正在试用该产品，支持修改授权信息或延长有效期</span>
+</div>
+
+<div class="spec-field-row spec-expiry-row">
+    <label>授权有效期</label>
+    <input type="date" class="spec-expiry-date" data-product="NGDR" disabled>
+    <button type="button" class="spec-expiry-btn" title="仅正在试用中的客户支持调整授权有效期" disabled>&#128197; 修改授权有效期</button>
+    <span class="spec-expiry-hint" style="display:none;font-size:12px;color:#b45309;">
+        &#9888; 编辑授权有效期时，默认选中的日期为当前的授权到期时间。可选日期为授权到期时间之后，不可缩短有效期。
+    </span>
+</div>
+
+<div class="spec-field-row spec-expiry-row">
+    <label>授权有效期</label>
+    <input type="date" class="spec-expiry-date" data-product="SaaS-aES" disabled>
+    <button type="button" class="spec-expiry-btn" title="仅正在试用中的客户支持调整授权有效期" disabled>&#128197; 修改授权有效期</button>
+    <span class="spec-expiry-hint" style="display:none;font-size:12px;color:#b45309;">
+        &#9888; 编辑授权有效期时，默认选中的日期为当前的授权到期时间。可选日期为授权到期时间之后，不可缩短有效期。
+    </span>
+</div>
+</div>
                                     </div>
                                     <div class="xaas-family">
                                         <button type="button" class="xaas-family-head" onclick="this.closest('.xaas-family').classList.toggle('collapsed')"><span class="xaas-family-arrow">▼</span><span>SASE产品族</span><span class="xaas-family-count">6</span></button>
@@ -2009,7 +2067,82 @@
                                                     <span class="spec-unit">M</span>
                                                 </div>
                                             </div>
-                                        </div>
+                                        
+<div class="xaas-product-trial-hint" data-product="SASE-XDLP">
+    <span class="trial-icon">&#9888;</span>
+    <span>客户正在试用该产品，支持修改授权信息或延长有效期</span>
+</div>
+
+<div class="xaas-product-trial-hint" data-product="SASE-ZTNA">
+    <span class="trial-icon">&#9888;</span>
+    <span>客户正在试用该产品，支持修改授权信息或延长有效期</span>
+</div>
+
+<div class="xaas-product-trial-hint" data-product="SASE-SWG">
+    <span class="trial-icon">&#9888;</span>
+    <span>客户正在试用该产品，支持修改授权信息或延长有效期</span>
+</div>
+
+<div class="xaas-product-trial-hint" data-product="SASE-GA">
+    <span class="trial-icon">&#9888;</span>
+    <span>客户正在试用该产品，支持修改授权信息或延长有效期</span>
+</div>
+
+<div class="xaas-product-trial-hint" data-product="钓鱼邮件防护">
+    <span class="trial-icon">&#9888;</span>
+    <span>客户正在试用该产品，支持修改授权信息或延长有效期</span>
+</div>
+
+<div class="xaas-product-trial-hint" data-product="云威胁情报网关">
+    <span class="trial-icon">&#9888;</span>
+    <span>客户正在试用该产品，支持修改授权信息或延长有效期</span>
+</div>
+
+<div class="spec-field-row spec-expiry-row">
+    <label>授权有效期</label>
+    <input type="date" class="spec-expiry-date" data-product="SASE-SWG" disabled>
+    <button type="button" class="spec-expiry-btn" title="仅正在试用中的客户支持调整授权有效期" disabled>&#128197; 修改授权有效期</button>
+    <span class="spec-expiry-hint" style="display:none;font-size:12px;color:#b45309;">
+        &#9888; 编辑授权有效期时，默认选中的日期为当前的授权到期时间。可选日期为授权到期时间之后，不可缩短有效期。
+    </span>
+</div>
+
+<div class="spec-field-row spec-expiry-row">
+    <label>授权有效期</label>
+    <input type="date" class="spec-expiry-date" data-product="SASE-GA" disabled>
+    <button type="button" class="spec-expiry-btn" title="仅正在试用中的客户支持调整授权有效期" disabled>&#128197; 修改授权有效期</button>
+    <span class="spec-expiry-hint" style="display:none;font-size:12px;color:#b45309;">
+        &#9888; 编辑授权有效期时，默认选中的日期为当前的授权到期时间。可选日期为授权到期时间之后，不可缩短有效期。
+    </span>
+</div>
+
+<div class="spec-field-row spec-expiry-row">
+    <label>授权有效期</label>
+    <input type="date" class="spec-expiry-date" data-product="SASE-XDLP" disabled>
+    <button type="button" class="spec-expiry-btn" title="仅正在试用中的客户支持调整授权有效期" disabled>&#128197; 修改授权有效期</button>
+    <span class="spec-expiry-hint" style="display:none;font-size:12px;color:#b45309;">
+        &#9888; 编辑授权有效期时，默认选中的日期为当前的授权到期时间。可选日期为授权到期时间之后，不可缩短有效期。
+    </span>
+</div>
+
+<div class="spec-field-row spec-expiry-row">
+    <label>授权有效期</label>
+    <input type="date" class="spec-expiry-date" data-product="SASE-ZTNA" disabled>
+    <button type="button" class="spec-expiry-btn" title="仅正在试用中的客户支持调整授权有效期" disabled>&#128197; 修改授权有效期</button>
+    <span class="spec-expiry-hint" style="display:none;font-size:12px;color:#b45309;">
+        &#9888; 编辑授权有效期时，默认选中的日期为当前的授权到期时间。可选日期为授权到期时间之后，不可缩短有效期。
+    </span>
+</div>
+
+<div class="spec-field-row spec-expiry-row">
+    <label>授权有效期</label>
+    <input type="date" class="spec-expiry-date" data-product="钓鱼邮件防护 GPT" disabled>
+    <button type="button" class="spec-expiry-btn" title="仅正在试用中的客户支持调整授权有效期" disabled>&#128197; 修改授权有效期</button>
+    <span class="spec-expiry-hint" style="display:none;font-size:12px;color:#b45309;">
+        &#9888; 编辑授权有效期时，默认选中的日期为当前的授权到期时间。可选日期为授权到期时间之后，不可缩短有效期。
+    </span>
+</div>
+</div>
                                     </div>
                                 </div>
                             </div>
@@ -2027,7 +2160,9 @@
                                             <a class="xaas-reference-link" href="javascript:;">SAAS XDR与MSS测试授权梳理与设计优化</a>
                                         </div>
                                         <div class="xaas-extra-grid">
-                                            <div class="xaas-extra-field"><label>测试场景<span class="required-star">*</span></label><div class="custom-select" data-select-id="xdr-test-scenario"><select id="xdr-test-scenario" style="display:none;"><option value="">请选择</option><option value="原有NDR升级场景">原有NDR升级场景</option><option value="新建安全运营场景">新建安全运营场景</option><option value="SOC替换场景">SOC替换场景</option><option value="多分支统一管理场景">多分支统一管理场景</option></select><button type="button" class="custom-select-trigger"><span class="custom-select-value">请选择</span><span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span></button><div class="custom-select-dropdown"><ul class="custom-select-list"><li class="custom-select-option" data-value="">请选择</li><li class="custom-select-option" data-value="原有NDR升级场景">原有NDR升级场景</li><li class="custom-select-option" data-value="新建安全运营场景">新建安全运营场景</li><li class="custom-select-option" data-value="SOC替换场景">SOC替换场景</li><li class="custom-select-option" data-value="多分支统一管理场景">多分支统一管理场景</li></ul></div></div></div>
+                                            <div class="xaas-extra-field"><label>测试场景<span class="required-star">*</span></label><div class="custom-select" data-select-id="xdr-test-scenario"><select id="xdr-test-scenario" style="display:none;"><option value="">请选择</option><option value="原有NDR升级场景">原有NDR升级场景</option><option value="新建安全运营场景">新建安全运营场景</option><option value="SOC替换场景">SOC替换场景</option><option value="多分支统一管理场景">多分支统一管理场景</option></select><button type="button" class="custom-select-trigger"><span class="custom-select-value">请选择</span><span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span></button><div class="custom-select-dropdown"><ul class="custom-select-list"><li class="custom-select-option" data-value="">请选择</li><li class="custom-select-option" data-value="原有NDR升级场景">原有NDR升级场景</li><li class="custom-select-option" data-value="新建安全运营场景">新建安全运营场景</li><li class="custom-select-option" data-value="SOC替换场景">SOC替换场景</li><li class="custom-select-option" data-value="多分支统一管理场景">多分支统一管理场景</li></ul></div></div>
+<div class="xaas-extra-field full"><label>项目预计落地时间<span class="required-star">*</span></label><input type="date" id="xdr-project-landing-date" class="layui-input" style="max-width:200px;"></div>
+</div>
                                         </div>
                                     </div>
                                 </div>
@@ -2076,23 +2211,7 @@
                         </div>
 
                         <!-- 延长试用授权有效期（独立区域） -->
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">延长试用授权有效期</label>
-                            <div class="layui-input-block">
-                                <div class="xaas-extend-section">
-                                    <label class="xaas-extend-check">
-                                        <input type="checkbox" id="xaas-extend-check"> 延长试用授权有效期
-                                        <span class="xaas-extend-tip-icon" title="勾选并选择日期后，流程审批通过后所有订阅到期时间将统一延长至该日期">⚠</span>
-                                    </label>
-                                    <div id="xaas-extend-date-area" class="xaas-extend-date-area" style="display:none;">
-                                        <input type="date" id="xaas-extend-date-new" class="layui-input" style="width:200px;">
-                                        <p class="xaas-extend-hint">审批通过后，所有订阅到期时间将统一延长至所选日期</p>
-                                        <p class="xaas-extend-warn">⚠ 修改默认规格需要经过审批后才生效</p>
-                                        <p class="xaas-extend-warn">⚠ 支持选择规格的订阅需要同时支持选择</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        
 
                         <!-- 申请理由（勾选延长有效期或修改规格时显示） -->
                         <div class="layui-form-item" id="xaas-apply-reason-item">
@@ -2218,6 +2337,60 @@
             'SASE-GA': { bandwidth: 5 }
         };
         var needSpecProducts = ['NGDR', 'SaaS-aES', 'SASE-SWG'];
+        var xaasTrialStatus = {
+            'SaaS-XDR': false,
+            'NGDR': false,
+            'SaaS-aES': false,
+            'SASE-XDLP': false,
+            'SASE-ZTNA': false,
+            'SASE-SWG': false,
+            'SASE-GA': false
+        };
+        var xaasProductExpiry = {
+            'SaaS-XDR': '2026-07-07',
+            'NGDR': '2026-07-07',
+            'SaaS-aES': '2026-07-07',
+            'SASE-XDLP': '2026-07-07',
+            'SASE-ZTNA': '2026-07-07',
+            'SASE-SWG': '2026-07-07',
+            'SASE-GA': '2026-07-07'
+        };
+
+        function updateXaasExpiryButtons() {
+            document.querySelectorAll('.spec-expiry-btn').forEach(function(btn) {
+                var dateInput = btn.closest('.spec-expiry-row').querySelector('.spec-expiry-date');
+                var product = dateInput ? dateInput.dataset.product : null;
+                var isTrial = product && xaasTrialStatus && xaasTrialStatus[product];
+                btn.disabled = !isTrial;
+                btn.title = isTrial ? '' : '仅正在试用中的客户支持调整授权有效期，请先为客户开通试用授权再提交修改授权有效期申请。';
+            });
+        }
+
+        document.querySelectorAll('.spec-expiry-btn').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var row = this.closest('.spec-expiry-row');
+                var dateInput = row.querySelector('.spec-expiry-date');
+                var hint = row.querySelector('.spec-expiry-hint');
+                var product = dateInput.dataset.product;
+                if (!product || !xaasProductExpiry) return;
+                var expiry = xaasProductExpiry[product];
+                if (expiry) {
+                    dateInput.disabled = false;
+                    dateInput.value = expiry;
+                    dateInput.min = expiry;
+                    dateInput.style.display = '';
+                    hint.style.display = '';
+                    if (typeof updateXaasApplyReason === 'function') updateXaasApplyReason();
+                }
+            });
+        });
+
+        document.addEventListener('change', function(e) {
+            if (e.target.classList.contains('spec-expiry-date') && !e.target.disabled) {
+                if (typeof updateXaasApplyReason === 'function') updateXaasApplyReason();
+            }
+        });
 
         document.querySelectorAll('input[name="xaas-product"]').forEach(function(cb) {
             cb.addEventListener('change', function() {
@@ -2248,6 +2421,13 @@
                     }
                 }
                 updateXaasFamilyCounts();
+        updateXaasExpiryButtons();
+                updateXaasExtraVisibility();
+                if (typeof xaasTrialStatus !== 'undefined' && product && xaasTrialStatus.hasOwnProperty(product)) {
+                    var hint = item.querySelector('.xaas-product-trial-hint');
+                    if (hint) hint.classList.toggle('show', xaasTrialStatus[product]);
+                }
+                if (typeof updateXaasExpiryButtons === 'function') updateXaasExpiryButtons();
                 updateXaasExtraVisibility();
             });
         });
@@ -2291,6 +2471,7 @@
 
         // 初始化产品族计数
         updateXaasFamilyCounts();
+        updateXaasExpiryButtons();
 
         // ===== XaaS 规格编辑弹窗 =====
         var specModal = document.getElementById('xaasSpecModal');
@@ -2612,28 +2793,18 @@
             document.querySelectorAll('.xaas-product-warn').forEach(function(w) { w.classList.add('show'); });
         }
 
-        // ===== XaaS 延长试用授权有效期 =====
-        var extendCheck = document.getElementById('xaas-extend-check');
-        var extendDateArea = document.getElementById('xaas-extend-date-area');
-        if (extendCheck && extendDateArea) {
-            extendCheck.addEventListener('change', function() {
-                extendDateArea.style.display = this.checked ? 'block' : 'none';
-                if (!this.checked) {
-                    var dateInput = document.getElementById('xaas-extend-date-new');
-                    if (dateInput) dateInput.value = '';
-                }
-                updateXaasApplyReason();
-            });
-        }
+
 
         // ===== XaaS 申请理由显隐控制 =====
         var xaasApplyReasonArea = document.getElementById('xaas-apply-reason-item');
         var xaasApplyReasonInput = document.getElementById('xaas-apply-reason-input');
         function updateXaasApplyReason() {
             if (!xaasApplyReasonArea || !xaasApplyReasonInput) return;
-            var extendChecked = extendCheck && extendCheck.checked;
+
             var specActive = document.querySelectorAll('.xaas-spec-btn.active').length > 0;
-            var shouldShow = extendChecked || specActive;
+            var expiryActive = Array.prototype.some.call(document.querySelectorAll('.spec-expiry-date'), function(el) { return el.value && el.value !== '' && !el.disabled; });
+            var shouldShow = expiryActive || specActive;
+            var shouldShow = expiryActive || specActive;
             xaasApplyReasonArea.style.display = shouldShow ? '' : 'none';
             if (!shouldShow) xaasApplyReasonInput.value = '';
         }
@@ -3935,9 +4106,52 @@
             }, 50);
         });
     });
-    </script>
+    
+
+        function showXaasApprovalRules() {
+            var overlay = document.createElement('div');
+            overlay.className = 'xaas-approval-overlay';
+            overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;';
+            var bg = document.createElement('div');
+            bg.style.cssText = 'position:absolute;inset:0;background:rgba(0,0,0,0.4);';
+            overlay.appendChild(bg);
+            var card = document.createElement('div');
+            card.style.cssText = 'position:relative;background:#fff;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.3);width:820px;max-width:90vw;max-height:85vh;display:flex;flex-direction:column;margin:16px;';
+            card.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid #e5e7eb;flex-shrink:0;"><div style="display:flex;align-items:center;gap:8px;"><span style="width:20px;height:20px;display:flex;align-items:center;justify-content:center;color:#374151;"><span class="material-symbols-outlined" style="font-size:18px;">info</span></span><h3 style="font-size:16px;font-weight:500;color:#1f2937;margin:0;">XaaS 授权审批规则</h3></div><button onclick="this.closest(''.xaas-approval-overlay'').remove()" style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:none;border-radius:8px;background:transparent;color:#9ca3af;cursor:pointer;font-size:18px;">&times;</button></div><div style="flex:1;overflow-y:auto;padding:20px 24px;">' +
+                '<div style="margin-bottom:24px;"><h4 style="font-size:14px;font-weight:600;color:#1f2937;margin:0 0 12px 0;display:flex;align-items:center;gap:8px;"><span style="width:6px;height:16px;background:#10b981;border-radius:999px;display:inline-block;"></span>SaaS-XDR（含SaaS-GPT）</h4>' +
+                '<div style="margin-left:14px;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;"><table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr style="background:#f9fafb;border-bottom:1px solid #e5e7eb;"><th style="text-align:left;padding:10px 16px;font-size:12px;font-weight:500;color:#6b7280;width:200px;">场景</th><th style="text-align:left;padding:10px 16px;font-size:12px;font-weight:500;color:#6b7280;">审批流程</th></tr></thead><tbody style="border-top:none;">' +
+                '<tr style="border-bottom:1px solid #f3f4f6;"><td style="padding:10px 16px;font-size:13px;color:#374151;white-space:nowrap;vertical-align:top;">新客户试用</td><td style="padding:10px 16px;font-size:13px;color:#6b7280;"><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#eff6ff;color:#2563eb;font-size:12px;">发起申请</span><span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;color:#d1d5db;margin:0 4px;"><span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#f3f4f6;color:#6b7280;font-size:12px;">对应区域所有安全运营专员/大安全主管或签</span><span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;color:#d1d5db;margin:0 4px;"><span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#f3f4f6;color:#6b7280;font-size:12px;">对应区域所有技术专员或签</span><span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;color:#d1d5db;margin:0 4px;"><span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#f0fdf4;color:#16a34a;font-size:12px;">审批通过</span></td></tr>' +
+                '<tr style="border-bottom:1px solid #f3f4f6;"><td style="padding:10px 16px;font-size:13px;color:#374151;white-space:nowrap;vertical-align:top;">存量客户延期</td><td style="padding:10px 16px;font-size:13px;color:#6b7280;"><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#eff6ff;color:#2563eb;font-size:12px;">发起申请</span><span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;color:#d1d5db;margin:0 4px;"><span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#f3f4f6;color:#6b7280;font-size:12px;">对应区域所有安全运营专员/大安全主管或签</span><span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;color:#d1d5db;margin:0 4px;"><span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#f3f4f6;color:#6b7280;font-size:12px;">海波/程峰或签</span><span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;color:#d1d5db;margin:0 4px;"><span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#f0fdf4;color:#16a34a;font-size:12px;">审批通过</span></td></tr>' +
+                '<tr style="border-bottom:1px solid #f3f4f6;"><td style="padding:10px 16px;font-size:13px;color:#374151;white-space:nowrap;vertical-align:top;">授权延期（创建时间距授权60天以内）</td><td style="padding:10px 16px;font-size:13px;color:#6b7280;"><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#eff6ff;color:#2563eb;font-size:12px;">发起申请</span><span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;color:#d1d5db;margin:0 4px;"><span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#f3f4f6;color:#6b7280;font-size:12px;">对应区域所有安全运营专员/大安全主管或签</span><span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;color:#d1d5db;margin:0 4px;"><span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#f3f4f6;color:#6b7280;font-size:12px;">海波/林硕或签</span><span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;color:#d1d5db;margin:0 4px;"><span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#f0fdf4;color:#16a34a;font-size:12px;">审批通过</span></td></tr>' +
+                '<tr style="border-bottom:1px solid #f3f4f6;"><td style="padding:10px 16px;font-size:13px;color:#374151;white-space:nowrap;vertical-align:top;">授权延期（创建时间距授权60天以上）</td><td style="padding:10px 16px;font-size:13px;color:#6b7280;"><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#eff6ff;color:#2563eb;font-size:12px;">发起申请</span><span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;color:#d1d5db;margin:0 4px;"><span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#f3f4f6;color:#6b7280;font-size:12px;">对应区域所有安全运营专员/大安全主管或签</span><span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;color:#d1d5db;margin:0 4px;"><span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#f3f4f6;color:#6b7280;font-size:12px;">海波/程峰或签</span><span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;color:#d1d5db;margin:0 4px;"><span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#f0fdf4;color:#16a34a;font-size:12px;">审批通过</span></td></tr>' +
+                '<tr><td style="padding:10px 16px;font-size:13px;color:#374151;white-space:nowrap;vertical-align:top;">新增模块且不涉及安全总监/运营专员</td><td style="padding:10px 16px;font-size:13px;color:#6b7280;"><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#eff6ff;color:#2563eb;font-size:12px;">发起申请</span><span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;color:#d1d5db;margin:0 4px;"><span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#f3f4f6;color:#6b7280;font-size:12px;">海波/林硕或签</span><span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;color:#d1d5db;margin:0 4px;"><span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#f0fdf4;color:#16a34a;font-size:12px;">审批通过</span></td></tr>' +
+                '</tbody></table></div></div>' +
+                '<div style="margin-bottom:24px;"><h4 style="font-size:14px;font-weight:600;color:#1f2937;margin:0 0 12px 0;display:flex;align-items:center;gap:8px;"><span style="width:6px;height:16px;background:#10b981;border-radius:999px;display:inline-block;"></span>NGES/SaaS-aES</h4>' +
+                '<div style="margin-left:14px;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;"><table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr style="background:#f9fafb;border-bottom:1px solid #e5e7eb;"><th style="text-align:left;padding:10px 16px;font-size:12px;font-weight:500;color:#6b7280;width:200px;">场景</th><th style="text-align:left;padding:10px 16px;font-size:12px;font-weight:500;color:#6b7280;">审批流程</th></tr></thead><tbody>' +
+                '<tr style="border-bottom:1px solid #f3f4f6;"><td style="padding:10px 16px;font-size:13px;color:#374151;white-space:nowrap;vertical-align:top;">新客户试用（客户已授权天数180+/授权XX天内不需要重走审批）</td><td style="padding:10px 16px;font-size:13px;color:#6b7280;"><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#eff6ff;color:#2563eb;font-size:12px;">发起申请</span><span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;color:#d1d5db;margin:0 4px;"><span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#f3f4f6;color:#6b7280;font-size:12px;">对应区域大安全主管</span><span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;color:#d1d5db;margin:0 4px;"><span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#f3f4f6;color:#6b7280;font-size:12px;">白雪</span><span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;color:#d1d5db;margin:0 4px;"><span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#f0fdf4;color:#16a34a;font-size:12px;">审批通过</span></td></tr>' +
+                '<tr style="border-bottom:1px solid #f3f4f6;"><td style="padding:10px 16px;font-size:13px;color:#374151;white-space:nowrap;vertical-align:top;">授权延期（授权180+/授权XX天内）</td><td style="padding:10px 16px;font-size:13px;color:#6b7280;"><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#eff6ff;color:#2563eb;font-size:12px;">发起申请</span><span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;color:#d1d5db;margin:0 4px;"><span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#f0fdf4;color:#16a34a;font-size:12px;">自动审批通过</span></td></tr>' +
+                '<tr style="border-bottom:1px solid #f3f4f6;"><td style="padding:10px 16px;font-size:13px;color:#374151;white-space:nowrap;vertical-align:top;">授权延期（授权180+/超出授权XX点）</td><td style="padding:10px 16px;font-size:13px;color:#6b7280;"><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#eff6ff;color:#2563eb;font-size:12px;">发起申请</span><span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;color:#d1d5db;margin:0 4px;"><span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#f3f4f6;color:#6b7280;font-size:12px;">对应区域大安全主管</span><span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;color:#d1d5db;margin:0 4px;"><span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#f3f4f6;color:#6b7280;font-size:12px;">白雪</span><span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;color:#d1d5db;margin:0 4px;"><span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#f0fdf4;color:#16a34a;font-size:12px;">审批通过</span></td></tr>' +
+                '<tr><td style="padding:10px 16px;font-size:13px;color:#374151;white-space:nowrap;vertical-align:top;">新增模块且不涉及大安全主管</td><td style="padding:10px 16px;font-size:13px;color:#6b7280;"><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#eff6ff;color:#2563eb;font-size:12px;">发起申请</span><span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;color:#d1d5db;margin:0 4px;"><span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#f3f4f6;color:#6b7280;font-size:12px;">白雪</span><span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;color:#d1d5db;margin:0 4px;"><span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#f0fdf4;color:#16a34a;font-size:12px;">审批通过</span></td></tr>' +
+                '</tbody></table></div></div>' +
+                '<div><h4 style="font-size:14px;font-weight:600;color:#1f2937;margin:0 0 12px 0;display:flex;align-items:center;gap:8px;"><span style="width:6px;height:16px;background:#10b981;border-radius:999px;display:inline-block;"></span>SASE</h4>' +
+                '<div style="margin-left:14px;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;"><table style="width:100%;border-collapse:collapse;font-size:13px;"><thead><tr style="background:#f9fafb;border-bottom:1px solid #e5e7eb;"><th style="text-align:left;padding:10px 16px;font-size:12px;font-weight:500;color:#6b7280;width:200px;">场景</th><th style="text-align:left;padding:10px 16px;font-size:12px;font-weight:500;color:#6b7280;">审批流程</th></tr></thead><tbody>' +
+                '<tr style="border-bottom:1px solid #f3f4f6;"><td style="padding:10px 16px;font-size:13px;color:#374151;white-space:nowrap;vertical-align:top;">SASE-ZTNA 新客户试用/存量客户延期/授权延期</td><td style="padding:10px 16px;font-size:13px;color:#6b7280;"><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#eff6ff;color:#2563eb;font-size:12px;">发起申请</span><span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;color:#d1d5db;margin:0 4px;"><span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#f3f4f6;color:#6b7280;font-size:12px;">对应区域大安全主管</span><span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;color:#d1d5db;margin:0 4px;"><span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#f3f4f6;color:#6b7280;font-size:12px;">赵泽明</span><span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;color:#d1d5db;margin:0 4px;"><span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#f0fdf4;color:#16a34a;font-size:12px;">审批通过</span></td></tr>' +
+                '<tr style="border-bottom:1px solid #f3f4f6;"><td style="padding:10px 16px;font-size:13px;color:#374151;white-space:nowrap;vertical-align:top;">SASE-GA 新客户试用/存量客户延期/授权延期</td><td style="padding:10px 16px;font-size:13px;color:#6b7280;"><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#eff6ff;color:#2563eb;font-size:12px;">发起申请</span><span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;color:#d1d5db;margin:0 4px;"><span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#f3f4f6;color:#6b7280;font-size:12px;">对应区域大安全主管</span><span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;color:#d1d5db;margin:0 4px;"><span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#f3f4f6;color:#6b7280;font-size:12px;">黄志</span><span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;color:#d1d5db;margin:0 4px;"><span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#f0fdf4;color:#16a34a;font-size:12px;">审批通过</span></td></tr>' +
+                '<tr style="border-bottom:1px solid #f3f4f6;"><td style="padding:10px 16px;font-size:13px;color:#374151;white-space:nowrap;vertical-align:top;">SASE-SWG 存量客户延期/授权延期</td><td style="padding:10px 16px;font-size:13px;color:#6b7280;"><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#eff6ff;color:#2563eb;font-size:12px;">发起申请</span><span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;color:#d1d5db;margin:0 4px;"><span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#f3f4f6;color:#6b7280;font-size:12px;">对应区域大安全主管</span><span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;color:#d1d5db;margin:0 4px;"><span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#f3f4f6;color:#6b7280;font-size:12px;">黄志</span><span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;color:#d1d5db;margin:0 4px;"><span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#f0fdf4;color:#16a34a;font-size:12px;">审批通过</span></td></tr>' +
+                '<tr style="border-bottom:1px solid #f3f4f6;"><td style="padding:10px 16px;font-size:13px;color:#374151;white-space:nowrap;vertical-align:top;">SASE-XDLA 存量客户延期/授权延期</td><td style="padding:10px 16px;font-size:13px;color:#6b7280;"><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#eff6ff;color:#2563eb;font-size:12px;">发起申请</span><span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;color:#d1d5db;margin:0 4px;"><span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#f3f4f6;color:#6b7280;font-size:12px;">对应区域大安全主管</span><span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;color:#d1d5db;margin:0 4px;"><span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#f3f4f6;color:#6b7280;font-size:12px;">赵泽明</span><span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;color:#d1d5db;margin:0 4px;"><span class="material-symbols-outlined" style="font-size:12px;">arrow_forward</span></span><span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:4px;background:#f0fdf4;color:#16a34a;font-size:12px;">审批通过</span></td></tr>' +
+                '</tbody></table></div></div></div>';
+            overlay.appendChild(card);
+            bg.addEventListener('click', function() { overlay.remove(); });
+            document.body.appendChild(overlay);
+        }
+</script>
 </body>
 </html>
+
+
+
+
+
 
 
 
