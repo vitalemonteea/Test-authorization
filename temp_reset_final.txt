@@ -1,0 +1,29 @@
+﻿function resetXaasForm() {
+            // 重置custom-select组件
+            ['xaas-industry-l1', 'xaas-region',
+             'xdr-test-scenario', 'xdr-test-driver', 'xdr-core-need', 'xdr-expected-result', 'xdr-is-pk',
+             'xdr-security-op-mode', 'xdr-security-staff', 'xdr-budget-info', 'xdr-security-budget'].forEach(function(id) {
+                setCustomSelectValue(id, '');
+            });
+            // 重置普通input和textarea
+            ['xaas-contact-name', 'xaas-contact-phone', 'xaas-contact-email',
+             'xdr-competitor-name', 'xdr-customer-env', 'xdr-third-party-devices',
+             'sase-customer-need', 'sase-project-scale', 'sase-competitor',
+             'xdr-project-landing-date'].forEach(function(id) {
+                var el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            setXaasCustomer('', '', '');
+            updateXaasIndustryL2();
+            xaasProductItems.forEach(function(item) {
+                var cb = item.querySelector('input[name="xaas-product"]');
+                if (cb) cb.checked = false;
+                refreshXaasProductItem(item);
+            
+            updateXaasExpiryButtons();
+            });
+            document.querySelectorAll('.xaas-chip').forEach(function(chip) { chip.classList.remove('active'); });
+            var file = document.getElementById('xdr-collected-file');
+            if (file) file.value = '';
+            // 重置所有内联规格
+            docume

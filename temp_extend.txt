@@ -1,0 +1,8 @@
+﻿ui-input-block">
+                                <div class="xaas-extend-section">
+                                    <label class="xaas-extend-check">
+                                        <input type="checkbox" id="xaas-extend-check"> 延长试用授权有效期
+                                        <span class="xaas-extend-tip-icon" title="勾选并选择日期后，流程审批通过后所有订阅到期时间将统一延长至该日期">⚠</span>
+                                    </label>
+                                    <p class="xaas-extend-hint">审批通过后，所有订阅到期时间将统一延长至所选日期</p>
+                                    <div id="xaas-extend-date-area" class="xaas

@@ -1,0 +1,233 @@
+﻿id="content-xaas" style="display:none;">
+                    <div class="special-form-section">
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">客户联系人姓名<span class="required-star">*</span></label>
+                            <div class="layui-input-block">
+                                <input type="text" class="layui-input" id="xaas-contact-name" placeholder="请输入客户联系人姓名">
+                            </div>
+                        </div>
+                        
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">客户联系人手机号<span class="required-star">*</span></label>
+                            <div class="layui-input-block">
+                                <input type="text" class="layui-input" id="xaas-contact-phone" maxlength="11" placeholder="请输入11位手机号">
+                                <p class="xaas-file-hint" id="xaas-phone-hint">输入手机号后模拟匹配客户名称；未匹配时可手动选择客户。</p>
+                            </div>
+                        </div>
+                        
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">客户联系人邮箱<span class="required-star">*</span></label>
+                            <div class="layui-input-block">
+                                <input type="email" class="layui-input" id="xaas-contact-email" placeholder="请输入正确邮箱">
+                            </div>
+                        </div>
+                        
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">客户名称<span class="required-star">*</span>
+                                <span class="field-tooltip"><span class="tooltip-icon">ⓘ</span>
+                                    <div class="tooltip-popup">
+                                        <button class="tooltip-copy" onclick="copyTooltip(this)">复制</button>
+                                        <div class="tooltip-title">客户名称 备注</div>
+                                        <div class="tooltip-section"><span class="tooltip-label">数据来源：</span>客户数据来自公司主数据，如果没有对应客户，请创建后选择。</div>
+                                        <div class="tooltip-section"><span class="tooltip-label">交互规则：</span>输入手机号后若已注册云图账号，系统自动匹配客户名称并置灰；若未注册，可通过搜索框选择客户或创建新客户。</div>
+                                    </div>
+                                </span>
+                            </label>
+                            <div class="layui-input-block">
+                                <div class="search-select-box">
+                                    <input type="text" id="xaasCustomerSearch" placeholder="请输入客户名称或ID搜索" class="layui-input" autocomplete="off">
+                                    <div class="search-dropdown" id="xaasCustomerDropdown"></div>
+                                </div>
+                                <div class="customer-info-display" id="xaasCustomerInfoDisplay">
+                                    客户名称：<span id="xaasSelectedCustomerName">-</span>
+                                    <span style="margin-left:20px;">客户ID：<span id="xaasSelectedCustomerId">-</span></span>
+                                    <span class="customer-type-badge" id="xaasCustomerTypeBadge" style="display:none;"></span>
+                                </div>
+                                <input type="hidden" id="xaas-customer-name">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">行业<span class="required-star">*</span>
+                                <span class="field-tooltip"><span class="tooltip-icon">ⓘ</span>
+                                    <div class="tooltip-popup">
+                                        <button class="tooltip-copy" onclick="copyTooltip(this)">复制</button>
+                                        <div class="tooltip-title">行业 备注</div>
+                                        <div class="tooltip-section"><span class="tooltip-label">用户故事：</span>选择客户所属行业分类，用于客户分层管理和行业化运营分析。</div>
+                                        <div class="tooltip-section"><span class="tooltip-label">交互规则：</span>一级行业选择后，二级行业根据一级分类联动展示，提交时两级均必填。</div>
+                                    </div>
+                                </span>
+                            </label>
+                            <div class="layui-input-block">
+                                <div class="xaas-industry-row">
+                                    <div class="custom-select" data-select-id="xaas-industry-l1">
+                                        <select class="layui-select" id="xaas-industry-l1" style="display:none;">
+                                            <option value="">请选择一级行业</option>
+                                            <option value="政府">政府</option>
+                                            <option value="金融">金融</option>
+                                            <option value="教育">教育</option>
+                                            <option value="医疗">医疗</option>
+                                            <option value="互联网">互联网</option>
+                                            <option value="制造业">制造业</option>
+                                            <option value="能源">能源</option>
+                                            <option value="交通">交通</option>
+                                            <option value="运营商">运营商</option>
+                                        </select>
+                                        <button type="button" class="custom-select-trigger">
+                                            <span class="custom-select-value">请选择一级行业</span>
+                                            <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                        </button>
+                                        <div class="custom-select-dropdown">
+                                            <ul class="custom-select-list">
+                                                <li class="custom-select-option" data-value="">请选择一级行业</li>
+                                                <li class="custom-select-option" data-value="政府">政府</li>
+                                                <li class="custom-select-option" data-value="金融">金融</li>
+                                                <li class="custom-select-option" data-value="教育">教育</li>
+                                                <li class="custom-select-option" data-value="医疗">医疗</li>
+                                                <li class="custom-select-option" data-value="互联网">互联网</li>
+                                                <li class="custom-select-option" data-value="制造业">制造业</li>
+                                                <li class="custom-select-option" data-value="能源">能源</li>
+                                                <li class="custom-select-option" data-value="交通">交通</li>
+                                                <li class="custom-select-option" data-value="运营商">运营商</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="custom-select" data-select-id="xaas-industry-l2">
+                                        <select class="layui-select" id="xaas-industry-l2" style="display:none;" disabled>
+                                            <option value="">请选择二级行业</option>
+                                        </select>
+                                        <button type="button" class="custom-select-trigger">
+                                            <span class="custom-select-value">请选择二级行业</span>
+                                            <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                        </button>
+                                        <div class="custom-select-dropdown">
+                                            <ul class="custom-select-list">
+                                                <li class="custom-select-option" data-value="">请选择二级行业</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">所属区域<span class="required-star">*</span>
+                                <span class="field-tooltip"><span class="tooltip-icon">ⓘ</span>
+                                    <div class="tooltip-popup">
+                                        <button class="tooltip-copy" onclick="copyTooltip(this)">复制</button>
+                                        <div class="tooltip-title">所属区域 备注</div>
+                                        <div class="tooltip-section"><span class="tooltip-label">用户故事：</span>选择客户所属区域，用于客户经营平台的试用列表权限隔离和查看范围控制。</div>
+                                        <div class="tooltip-section"><span class="tooltip-label">数据定义：</span>枚举值包括华东、华北、华南、西南、西北、华中、东北等区域。</div>
+                                    </div>
+                                </span>
+                            </label>
+                            <div class="layui-input-block">
+                                <div class="custom-select" data-select-id="xaas-region">
+                                    <select class="layui-select" id="xaas-region" style="display:none;">
+                                        <option value="">请选择区域</option>
+                                        <option value="华东区域">华东区域</option>
+                                        <option value="华北区域">华北区域</option>
+                                        <option value="华南区域">华南区域</option>
+                                        <option value="西南区域">西南区域</option>
+                                        <option value="西北区域">西北区域</option>
+                                        <option value="华中区域">华中区域</option>
+                                        <option value="东北区域">东北区域</option>
+                                    </select>
+                                    <button type="button" class="custom-select-trigger">
+                                        <span class="custom-select-value">请选择区域</span>
+                                        <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                    </button>
+                                    <div class="custom-select-dropdown">
+                                        <ul class="custom-select-list">
+                                            <li class="custom-select-option" data-value="">请选择区域</li>
+                                            <li class="custom-select-option" data-value="华东区域">华东区域</li>
+                                            <li class="custom-select-option" data-value="华北区域">华北区域</li>
+                                            <li class="custom-select-option" data-value="华南区域">华南区域</li>
+                                            <li class="custom-select-option" data-value="西南区域">西南区域</li>
+                                            <li class="custom-select-option" data-value="西北区域">西北区域</li>
+                                            <li class="custom-select-option" data-value="华中区域">华中区域</li>
+                                            <li class="custom-select-option" data-value="东北区域">东北区域</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">订阅产品<span class="required-star">*</span>
+                                <span class="field-tooltip"><span class="tooltip-icon">ⓘ</span>
+                                    <div class="tooltip-popup">
+                                        <button class="tooltip-copy" onclick="copyTooltip(this)">复制</button>
+                                        <div class="tooltip-title">订阅产品 备注</div>
+                                        <div class="tooltip-section"><span class="tooltip-label">用户故事：</span>展示可申请的订阅产品，按产品族分组；已试用产品显示警告仍可申请，正在试用中的产品禁止重复申请。</div>
+                                        <div class="tooltip-section"><span class="tooltip-label">交互规则：</span>勾选 SaaS-XDR 时展开额外信息；勾选 SASE-ZTNA 或 SASE-GA 时展开 SASE 额外信息；勾选已试用产品时需填写申请理由。</div>
+                                    </div>
+                                </span>
+                            </label>
+                            <div class="layui-input-block">
+                                <div class="xaas-family-list">
+                                    <div class="xaas-family">
+                                        <button type="button" class="xaas-family-head" onclick="this.closest('.xaas-family').classList.toggle('collapsed')"><span class="xaas-family-arrow">▼</span><span>XDR产品族</span><span class="xaas-family-count">1</span></button>
+                                        <div class="xaas-family-body">
+                                            <div class="xaas-product-item" data-product="SaaS-XDR" data-default-desc="有效期30天，日志量2亿条">
+                                                <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="SaaS-XDR"> <span>SaaS-XDR（含SaaS GPT）</span></label>
+                                                <div class="xaas-product-right">
+                                                    <span class="xaas-product-desc">有效期30天，日志量2亿条</span>
+                                                    <button type="button" class="xaas-spec-btn">修改规格</button>
+                                                </div>
+                                            </div>
+                                            <div class="xaas-inline-spec-area" id="xaas-xdr-inline-spec">
+                                                <div class="spec-warn">⚠ 修改默认规格需要经过审批后才生效</div>
+                                                <div class="spec-field-row">
+                                                    <label>日志量</label>
+                                                    <input type="number" id="spec-log-inline" value="200000000" min="1">
+                                                    <span class="spec-unit">条</span>
+                                                </div>
+                                                <div class="spec-modules-label">可选测试模块</div>
+                                                <div class="xaas-chip-group spec-modules">
+                                                    <button type="button" class="xaas-chip" data-value="智能对抗模块">智能对抗模块</button>
+                                                    <button type="button" class="xaas-chip" data-value="CSC模块">CSC模块</button>
+                                                    <button type="button" class="xaas-chip" data-value="钓鱼GPT模块">钓鱼GPT模块</button>
+                                                    <button type="button" class="xaas-chip" data-value="云端威胁情报模块">云端威胁情报模块</button>
+                                                    <button type="button" class="xaas-chip" data-value="自定义工单模块">自定义工单模块</button>
+                                                    <button type="button" class="xaas-chip" data-value="移动运营小助手">移动运营小助手</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="xaas-family">
+                                        <button type="button" class="xaas-family-head" onclick="this.closest('.xaas-family').classList.toggle('collapsed')"><span class="xaas-family-arrow">▼</span><span>aES产品族</span><span class="xaas-family-count">2</span></button>
+                                        <div class="xaas-family-body">
+                                            <div class="xaas-product-item" data-product="NGDR">
+                                                <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="NGDR"> <span>NGDR</span></label>
+                                                <div class="xaas-product-right">
+                                                    <div class="custom-select xaas-version-picker" data-select-id="ngdr-version" style="display:none;">
+                                                        <select id="ngdr-version" class="xaas-inline-select" style="display:none;" data-spec-select="version"><option value="基础版">基础版</option><option value="全量版">全量版</option></select>
+                                                        <button type="button" class="custom-select-trigger"><span class="custom-select-value has-value">基础版</span><span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span></button>
+                                                        <div class="custom-select-dropdown"><ul class="custom-select-list"><li class="custom-select-option selected" data-value="基础版">基础版</li><li class="custom-select-option" data-value="全量版">全量版</li></ul></div>
+                                                    </div>
+                                                    <button type="button" class="xaas-spec-btn">修改规格</button>
+                                                </div>
+                                            </div>
+                                            <div class="xaas-inline-spec-area" id="ngdr-inline-spec">
+                                                <div class="spec-warn">⚠ 修改默认规格需要经过审批后才生效</div>
+                                                <div style="display:flex;flex-wrap:wrap;gap:4px 20px;align-items:center;">
+                                                <div class="spec-field-row">
+                                                    <label>授权PC数</label>
+                                                    <input type="number" id="ngdr-pc" value="50" min="1">
+                                                    <span class="spec-unit">个</span>
+                                                </div>
+                                                <div class="spec-field-row">
+                                                    <label>授权服务器数</label>
+                                                    <input type="number" id="ngdr-server" value="50" min="1">
+                                                    <span class="spec-unit">个</span>
+                                                </div>
+                                                </div>
+                                            </div>
+                                            <div class="xaas-product-item" data-product="SaaS-aES">
+                                                <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="SaaS-aES"> <span>SaaS-aES</span></label>
+                                                <div class="xaas-product-right">
+                                                    <div class="custom-select xaas-version-picker" data-select-id="saes-version" style="display:none;">
+                                                        <select id="saes-version" class="xaas-inline-select" style="display:none;" data-spec-select="version"><option value="探针版">探针版</option><option value="全功能版">全功能版</option></select>
+                                                        <button type="button" cla

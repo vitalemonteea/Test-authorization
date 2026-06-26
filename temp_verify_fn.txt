@@ -1,0 +1,15 @@
+﻿function updateXaasExpiryButtons() {
+            document.querySelectorAll(''.spec-expiry-btn'').forEach(function(btn) {
+                var dateInput = btn.closest(''.spec-expiry-row'').querySelector(''.spec-expiry-date'');
+                var product = dateInput ? dateInput.dataset.product : null;
+                var isTrial = product && xaasTrialStatus && xaasTrialStatus[product];
+                btn.disabled = !isTrial;
+                btn.title = isTrial ? '''' : ''仅正在试用中的客户支持调整授权有效期，请先为客户开通试用授权再提交修改授权有效期申请。'';
+            });
+        }
+
+        // 授权有效期按钮点击事件
+        document.querySelectorAll(''.spec-expiry-btn'').forEach(function(btn) {
+            btn.addEventListener(''click'', function(e) {
+                e.stopPropagation();
+                var row = this.closest(''.spec-expiry

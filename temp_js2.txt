@@ -1,0 +1,180 @@
+﻿function refreshXaasProductItem(item) {
+            var cb = item.querySelector('input[name="xaas-product"]');
+            var product = item.dataset.product;
+            var checked = cb && cb.checked;
+            var specBtn = item.querySelector('.xaas-spec-btn');
+            var inlineSelectNative = item.querySelector('.xaas-inline-select');
+            var inlineSelectWrapper = inlineSelectNative ? inlineSelectNative.closest('.custom-select') : null;
+            var inlineSelect = inlineSelectWrapper || inlineSelectNative;
+            var desc = item.querySelector('.xaas-product-desc');
+            item.classList.toggle('selected', !!checked);
+            if (specBtn) specBtn.disabled = !checked;
+            // 修改规格按钮始终可见，颜色由 .selected 类控制
+            if (inlineSelect) inlineSelect.style.display = checked ? 'inline-flex' : 'none';
+            // SaaS-XDR 内联规格区（由修改规格按钮控制，不自动显示）
+            if (!desc) return;
+            if (checked) {
+                desc.classList.remove('xaas-need-spec');
+                desc.textContent = buildDescText(product) || item.dataset.defaultDesc || desc.textContent;
+            } else if (inlineSpecProducts.indexOf(product) > -1) {
+                desc.classList.add('xaas-need-spec');
+                desc.textContent = '请选择规格';
+            } else {
+                desc.classList.remove('xaas-need-spec');
+                desc.textContent = item.dataset.defaultDesc || desc.textContent;
+            }
+        }
+
+        function updateXaasFamilyCounts() {
+            var families = document.querySelectorAll('.xaas-family');
+            families.forEach(function(family) {
+                var countEl = family.querySelector('.xaas-family-count');
+                var checkboxes = family.querySelectorAll('input[name="xaas-product"]:checked');
+                if (countEl) countEl.textContent = checkboxes.length;
+            });
+        }
+
+        function updateXaasExtraVisibility() {
+            var selected = getSelectedXaasProducts();
+            var hasXdr = selected.indexOf('SaaS-XDR') > -1;
+            var hasSaseExtra = selected.indexOf('SASE-ZTNA') > -1 || selected.indexOf('SASE-GA') > -1;
+            var xdrItem = document.getElementById('xaas-saas-xdr-extra-item');
+            var saseItem = document.getElementById('xaas-sase-extra-item');
+            var xdrPanel = document.getElementById('xaas-saas-xdr-extra');
+            var sasePanel = document.getElementById('xaas-sase-extra');
+            var rowEl = document.getElementById('extra-panels-row');
+            if (xdrItem) xdrItem.style.display = hasXdr ? '' : 'none';
+            if (saseItem) saseItem.style.display = hasSaseExtra ? '' : 'none';
+            if (rowEl) rowEl.style.display = (hasXdr || hasSaseExtra) ? 'flex' : 'none';
+            if (xdrPanel) xdrPanel.classList.toggle('show', hasXdr);
+            if (sasePanel) sasePanel.classList.toggle('show', hasSaseExtra);
+        }
+
+        function updateXaasInlineSpec(product, value) {
+            if (product === 'NGDR' || product === 'SaaS-aES') {
+                xaasSpecValues[product].version = value;
+            } else if (product === 'SASE-SWG') {
+                xaasSpecValues[product].swgType = value;
+                if (value === '用户版') {
+                    xaasSpecValues[product].userCount = 50;
+                    xaasSpecValues[product].branchCount = 3;
+                    xaasSpecValues[product].bandwidth = 100;
+                } else if (value === '分支版') {
+                    xaasSpecValues[product].branchCount = 3;
+                    xaasSpecValues[product].bandwidth = 100;
+                }
+            }
+            var item = document.querySelector('.xaas-product-item[data-product="' + product + '"]');
+            if (item) refreshXaasProductItem(item);
+        }
+
+        function updateXaasIndustryL2() {
+            var l1 = document.getElementById('xaas-industry-l1');
+            var l2 = document.getElementById('xaas-industry-l2');
+            if (!l1 || !l2) return;
+            var list = xaasIndustryMap[l1.value] || [];
+            l2.innerHTML = '<option value="">请选择二级行业</option>';
+            list.forEach(function(name) {
+                var option = document.createElement('option');
+                option.value = name;
+                option.textContent = name;
+                l2.appendChild(option);
+            });
+            l2.disabled = list.length === 0;
+            // 同步custom-select视觉层
+            var l2Container = document.querySelector('[data-select-id="xaas-industry-l2"]');
+            if (l2Container) {
+                var l2List = l2Container.querySelector('.custom-select-list');
+                if (l2List) {
+                    l2List.innerHTML = '<li class="custom-select-option" data-value="">请选择二级行业</li>';
+                    list.forEach(function(name) {
+                        var li = document.createElement('li');
+                        li.className = 'custom-select-option';
+                        li.dataset.value = name;
+                        li.textContent = name;
+                        l2List.appendChild(li);
+                    });
+                }
+                var l2Options = l2Container.querySelectorAll('.custom-select-option');
+                var l2ValueSpan = l2Container.querySelector('.custom-select-value');
+                var l2Trigger = l2Container.querySelector('.custom-select-trigger');
+                l2Container._resetToDefault = function() {
+                    l2Options.forEach(function(opt) { opt.classList.remove('selected'); });
+                    if (l2Options[0]) {
+                        l2Options[0].classList.add('selected');
+                        if (l2ValueSpan) l2ValueSpan.textContent = l2Options[0].textContent;
+                        if (l2ValueSpan) l2ValueSpan.classList.remove('has-value');
+                    }
+                    if (l2) l2.value = '';
+                };
+                l2Options.forEach(function(option) {
+                    option.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        l2Options.forEach(function(opt) { opt.classList.remove('selected'); });
+                        this.classList.add('selected');
+                        if (l2ValueSpan) {
+                            l2ValueSpan.textContent = this.textContent;
+                            if (this.dataset.value) l2ValueSpan.classList.add('has-value');
+                            else l2ValueSpan.classList.remove('has-value');
+                        }
+                        if (l2) {
+                            l2.value = this.dataset.value;
+                            l2.dispatchEvent(new Event('change', { bubbles: true }));
+                        }
+                        l2Container.classList.remove('open');
+                    });
+                });
+                l2Container._resetToDefault();
+            }
+        }
+
+        function getTextareaCounter(textarea) {
+            var next = textarea.nextElementSibling;
+            return next && next.classList.contains('xaas-counter') ? next : null;
+        }
+
+        function updateTextareaCounter(textarea) {
+            var counter = getTextareaCounter(textarea);
+            if (!counter) return;
+            var max = textarea.getAttribute('maxlength') || 0;
+            counter.textContent = textarea.value.length + '/' + max;
+        }
+
+        function setXaasExtendDateLimit() {
+            var dateInput = document.getElementById('xaas-extend-date-new');
+            if (!dateInput) return;
+            var today = new Date();
+            var yyyy = today.getFullYear();
+            var mm = String(today.getMonth() + 1).padStart(2, '0');
+            var dd = String(today.getDate()).padStart(2, '0');
+            dateInput.min = yyyy + '-' + mm + '-' + dd;
+            dateInput.max = '2026-12-31';
+        }
+
+        function resetXaasForm() {
+            // 重置custom-select组件
+            ['xaas-industry-l1', 'xaas-region',
+             'xdr-test-scenario', 'xdr-test-driver', 'xdr-core-need', 'xdr-expected-result', 'xdr-is-pk',
+             'xdr-security-op-mode', 'xdr-security-staff', 'xdr-budget-info', 'xdr-security-budget'].forEach(function(id) {
+                setCustomSelectValue(id, '');
+            });
+            // 重置普通input和textarea
+            ['xaas-contact-name', 'xaas-contact-phone', 'xaas-contact-email',
+             'xdr-competitor-name', 'xdr-customer-env', 'xdr-third-party-devices',
+             'sase-customer-need', 'sase-project-scale', 'sase-competitor',
+             'xaas-extend-date-new'].forEach(function(id) {
+                var el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            setXaasCustomer('', '', '');
+            updateXaasIndustryL2();
+            xaasProductItems.forEach(function(item) {
+                var cb = item.querySelector('input[name="xaas-product"]');
+                if (cb) cb.checked = false;
+                refreshXaasProductItem(item);
+            });
+            document.querySelectorAll('.xaas-chip').forEach(function(chip) { chip.classList.remove('active'); });
+            var file = document.getElementById('xdr-collected-file');
+            if (file) file.value = '';
+            // 重置所有内联规格
+            document.

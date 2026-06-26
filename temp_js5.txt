@@ -1,0 +1,33 @@
+﻿var extendCheckNew = document.getElementById('xaas-extend-check');
+            var extendDateAreaNew = document.getElementById('xaas-extend-date-area');
+            if (extendCheckNew) extendCheckNew.checked = false;
+            if (extendDateAreaNew) extendDateAreaNew.style.display = 'none';
+            var applyReasonItem = document.getElementById('xaas-apply-reason-item');
+            var applyReasonInput = document.getElementById('xaas-apply-reason-input');
+            if (applyReasonItem) applyReasonItem.style.display = 'none';
+            if (applyReasonInput) applyReasonInput.value = '';
+            var competitorField = document.getElementById('xdr-competitor-field');
+            if (competitorField) competitorField.style.display = 'none';
+            document.querySelectorAll('textarea[maxlength]').forEach(updateTextareaCounter);
+            updateXaasExtraVisibility();
+            updateXaasFamilyCounts();
+        }
+
+        // ===== XaaS 规格编辑弹窗 =====
+        var specModal = document.getElementById('xaasSpecModal');
+        var specModalTitle = document.getElementById('specModalTitle');
+        var specModalBody = document.getElementById('specModalBody');
+        var currentSpecProduct = '';
+        var productDisplayNames = {
+            'SaaS-XDR': 'SaaS-XDR', 'NGDR': 'NGDR', 'SaaS-aES': 'SaaS-aES',
+            'SASE-XDLP': 'XDLA', 'SASE-ZTNA': 'SASE-ZTNA 零信任网络访问',
+            'SASE-SWG': 'SASE-SWG 互联网安全访问', '钓鱼邮件防护': '钓鱼邮件防护 GPT', 'SASE-GA': 'SASE-GA 全球加速'
+        };
+
+        function renderSpecFields(product) {
+            var v = xaasSpecValues[product] || {};
+            var html = '';
+            if (product === 'SaaS-XDR') {
+                html = '<div class="spec-field"><label>日志量（万条）</label><input type="number" id="spec-log" value="' + v.logAmount + '" min="1"></div>';
+            } else if (product === 'NGDR') {
+                html = '<div class="spec-field"><label>版本</label><select id="spec-version"><option' + 

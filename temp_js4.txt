@@ -1,0 +1,10 @@
+﻿function updateXaasApplyReason() {
+            if (!xaasApplyReasonArea || !xaasApplyReasonInput) return;
+            var extendChecked = extendCheck && extendCheck.checked;
+            var specActive = document.querySelectorAll('.xaas-spec-btn.active').length > 0;
+            var shouldShow = extendChecked || specActive;
+            xaasApplyReasonArea.style.display = shouldShow ? '' : 'none';
+            if (!shouldShow) xaasApplyReasonInput.value = '';
+        }
+        // 监听修改规格按钮状态变化来更新申请理由
+        document.querySelectorAll('.xaas-spec-btn').forEach(

@@ -1,0 +1,68 @@
+﻿xaasTrialStatus = {
+            'SaaS-XDR': false,
+            'NGDR': false,
+            'SaaS-aES': false,
+            'SASE-XDLP': false,
+            'SASE-ZTNA': false,
+            'SASE-SWG': false,
+            '钓鱼邮件防护 GPT': false,
+            '云威胁情报网关': false,
+            'SASE-GA': false
+        };
+
+        var xaasProductExpiry = {
+            'SaaS-XDR': '2026-07-07',
+            'NGDR': '2026-07-07',
+            'SaaS-aES': '2026-07-07',
+            'SASE-XDLP': '2026-07-07',
+            'SASE-ZTNA': '2026-07-07',
+            'SASE-SWG': '2026-07-07',
+            '钓鱼邮件防护 GPT': '2026-07-07',
+            '云威胁情报网关': '2026-07-07',
+            'SASE-GA': '2026-07-07'
+        };var xaasProductItems = Array.prototype.slice.call(document.querySelectorAll('.xaas-product-item'));
+
+        function setXaasCustomer(name, id, type) {
+            var hidden = document.getElementById('xaas-customer-name');
+            var searchInput = document.getElementById('xaasCustomerSearch');
+            var infoDisplay = document.getElementById('xaasCustomerInfoDisplay');
+            var nameSpan = document.getElementById('xaasSelectedCustomerName');
+            var idSpan = document.getElementById('xaasSelectedCustomerId');
+            var badge = document.getElementById('xaasCustomerTypeBadge');
+            if (hidden) hidden.value = name || '';
+            if (searchInput) searchInput.value = name || '';
+            if (name && nameSpan) {
+                nameSpan.textContent = name;
+                idSpan.textContent = id || '-';
+                var custType = type || 'normal';
+                if (custType === 'KA') {
+                    badge.textContent = 'KA客户';
+                    badge.className = 'customer-type-badge ka';
+                } else {
+                    badge.textContent = '普通客户';
+                    badge.className = 'customer-type-badge normal';
+                }
+                badge.style.display = 'inline-block';
+                infoDisplay.classList.add('show');
+                // 选中客户后显示产品警告提示
+                document.querySelectorAll('.xaas-product-warn').forEach(function(w) { w.classList.add('show'); });
+            } else {
+                if (infoDisplay) infoDisplay.classList.remove('show');
+                if (badge) badge.style.display = 'none';
+                // 清除客户后隐藏产品警告提示
+                document.querySelectorAll('.xaas-product-warn').forEach(function(w) { w.classList.remove('show'); });
+            }
+        }
+
+        function getSelectedXaasProducts() {
+            return xaasProductItems.filter(function(item) {
+                var cb = item.querySelector('input[name="xaas-product"]');
+                return cb && cb.checked;
+            }).map(function(item) {
+                return item.dataset.product;
+            });
+        }
+
+        function refreshXaasProductItem(item) {
+            var cb = item.querySelector('input[name="xaas-product"]');
+ 
