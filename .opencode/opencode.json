@@ -1,0 +1,13 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "agent": {
+    "vision": {
+      "description": "多模态图片分析代理，使用 mimo-v2.5-free 模型理解图片内容。当用户发送图片时调用此代理获取图片描述。",
+      "mode": "subagent",
+      "model": "opencode/mimo-v2.5-free",
+      "permission": {
+        "read": "allow"
+      }
+    }
+  }
+}
