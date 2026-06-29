@@ -86,6 +86,24 @@
         .layui-form-label { display: block; width: 150px; flex-shrink: 0; padding: 9px 0 9px 15px; font-weight: 500; line-height: 20px; text-align: left; color: #424656; }
         .layui-input-block { flex: 1; min-height: 38px; min-width: 0; position: relative; }
         .layui-input { width: 100%; max-width: 300px; height: 40px; line-height: 40px; border: 1px solid #e5eeff; background-color: #fff; border-radius: 8px; padding: 0 12px; outline: none; transition: all 0.15s; }
+        #content-hardware .basic-info-section { max-width: 1180px; }
+        #section-basic { max-width: 1080px; margin: 0 auto; }
+        #section-basic .basic-two-col-row,
+        #section-basic .borrow-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px 32px; margin: 0 0 16px; overflow: visible; }
+        #section-basic .layui-form-item { max-width: none; margin: 0 0 16px; clear: none; }
+        #section-basic .basic-two-col-row .layui-form-item,
+        #section-basic .borrow-grid .layui-form-item { margin-bottom: 0; }
+        #section-basic .layui-form-label { width: 112px; padding-left: 0; box-sizing: border-box; }
+        #section-basic .layui-input-block { min-width: 0; }
+        #section-basic .layui-input,
+        #section-basic .custom-select,
+        #section-basic .custom-select-trigger,
+        #section-basic .search-select-box,
+        #section-basic .chip-input-container { width: 100%; max-width: none; box-sizing: border-box; }
+        #section-basic .basic-full-row { max-width: 832px; margin-left: 0; margin-right: 0; }
+        #section-basic .basic-borrow-panel { margin: 4px 0 16px; padding: 16px 18px 18px; background: rgba(255,255,255,.48); border: 1px solid #e5eeff; border-radius: 10px; }
+        #section-basic .basic-borrow-title { margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #e5eeff; color: #1a1a2e; font-size: 14px; font-weight: 600; }
+        #section-basic #hwInfoSection .hw-upload-area { width: 100%; }
         .layui-input:hover { border-color: #c2c6d8; background: #fff; }
         .layui-input:focus { border-color: #0050cb; background: #fff; box-shadow: 0 0 0 3px rgba(0,80,203,.08); }
 
@@ -505,6 +523,12 @@
             .custom-select-trigger { max-width: none; }
             .search-select-box { max-width: none; width: 100%; }
             #section-basic .search-select-box { max-width: none; }
+            #section-basic .basic-two-col-row { grid-template-columns: 1fr; gap: 15px; max-width: none; margin: 0 0 15px; }
+            #section-basic .borrow-grid { grid-template-columns: 1fr; gap: 15px; }
+            #section-basic .basic-two-col-row .layui-form-label { width: auto; padding: 0 0 6px 0; }
+            #section-basic .basic-full-row { max-width: none; }
+            #section-basic .basic-borrow-panel { padding: 14px; }
+            #section-basic .basic-borrow-panel .layui-form-label { width: auto; padding: 0 0 6px 0; }
 
             .unified-date-bar { flex-wrap: wrap; }
             .module-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -694,9 +718,10 @@
                 <form class="layui-form" id="formsn">
                     <input type="hidden" id="request_origin" name="request_origin" value="1">
 
-                    <div class="special-form-section">
+                    <div class="special-form-section basic-info-section">
                         <div class="section-title">基本信息</div>
                     <div id="section-basic">
+                    <div class="basic-two-col-row">
                     <!-- 产品线 -->
                     <div class="layui-form-item">
                         <label class="layui-form-label">产品线</label>
@@ -872,7 +897,9 @@
                             </div>
                         </div>
                     </div>
+                    </div>
 
+                    <div class="basic-two-col-row">
                     <!-- 区域 -->
                     <div class="layui-form-item">
                         <label class="layui-form-label">区域</label>
@@ -982,9 +1009,10 @@
                             </div>
                         </div>
                     </div>
+                    </div>
 
                     <!-- 接收邮箱 -->
-                    <div class="layui-form-item">
+                    <div class="layui-form-item basic-full-row">
                         <label class="layui-form-label">接收邮箱</label>
                         <div class="layui-input-block">
                             <input type="text" id="userEmail" name="userEmail" placeholder="请填写正确邮箱，以免邮件发送失败" class="layui-input">
@@ -992,7 +1020,7 @@
                     </div>
 
                     <!-- 客户信息 -->
-                    <div class="layui-form-item">
+                    <div class="layui-form-item basic-full-row">
                         <label class="layui-form-label">客户信息</label>
                         <div class="layui-input-block">
                             <div class="search-select-box">
@@ -1008,7 +1036,7 @@
                     </div>
 
                     <!-- 申请类型 -->
-                    <div class="layui-form-item" id="planDevTypeFormItem">
+                    <div class="layui-form-item basic-full-row" id="planDevTypeFormItem">
                         <label class="layui-form-label">申请类型</label>
                         <div class="layui-input-block">
                             <div class="custom-select" data-select-id="planDevType">
@@ -1033,7 +1061,7 @@
                     </div>
 
                     <!-- 设备ID（Chip输入，支持多个） -->
-                    <div class="layui-form-item chip-input-wrap">
+                    <div class="layui-form-item chip-input-wrap basic-full-row">
                         <label class="layui-form-label">设备ID<span class="required-mark">*</span></label>
                         <div class="layui-input-block">
                             <div class="chip-input-container" id="chipContainer">
@@ -1044,7 +1072,7 @@
                     </div>
 
                     <!-- 设备SN（硬件模式显示） -->
-                    <div class="layui-form-item" id="devSnFormItem" style="display:none;">
+                    <div class="layui-form-item basic-full-row" id="devSnFormItem" style="display:none;">
                         <label class="layui-form-label">设备SN<span class="required-mark">*</span></label>
                         <div class="layui-input-block">
                             <input type="text" id="devSnNew" name="devSnNew" class="layui-input" placeholder="请输入设备序列号" value="">
@@ -1052,7 +1080,9 @@
                     </div>
 
                     <!-- 借测信息区域（硬件模式显示） -->
-                    <div id="borrowTestFields" style="display:none;">
+                    <div id="borrowTestFields" class="basic-borrow-panel" style="display:none;">
+                    <div class="basic-borrow-title">借测信息</div>
+                    <div class="borrow-grid">
                     <div class="layui-form-item">
                         <label class="layui-form-label">借测单号<span class="required-mark">*</span></label>
                         <div class="layui-input-block">
@@ -1118,9 +1148,10 @@
                         </div>
                     </div>
                     </div>
+                    </div>
 
                     <!-- 硬件信息文件（仅HCI/SCP产品线显示） -->
-                    <div class="layui-form-item" id="hwInfoSection" style="align-items: center;">
+                    <div class="layui-form-item basic-full-row" id="hwInfoSection" style="align-items: center;">
                         <label class="layui-form-label">硬件信息文件</label>
                         <div class="layui-input-block">
                             <div class="hw-upload-area">
