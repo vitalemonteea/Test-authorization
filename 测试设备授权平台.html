@@ -227,9 +227,24 @@
         .special-form-section { background: #f8f9ff; border-radius: 12px; margin-bottom: 14px; padding: 18px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.06); max-width: 900px; margin-left: auto; margin-right: auto; }
         .special-form-section .section-title { font-size: 15px; font-weight: 600; color: #1a1a2e; padding: 0 0 12px; border-bottom: 1px solid #eff4ff; margin-bottom: 16px; }
         .required-mark { color: #ba1a1a; margin-right: 3px; }
+        #content-hardware .basic-info-section { max-width: 900px; }
+        #section-basic { max-width: 860px; margin: 0 auto; }
+        #section-basic .basic-two-col-row,
+        #section-basic .borrow-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px 36px; margin: 0 0 18px; overflow: visible; }
+        #section-basic .layui-form-item { max-width: none; margin: 0 0 18px; clear: none; }
+        #section-basic .basic-two-col-row .layui-form-item,
+        #section-basic .borrow-grid .layui-form-item { margin-bottom: 0; }
+        #section-basic .layui-form-label { width: 120px; padding-left: 0; box-sizing: border-box; color: #0f1f3d; font-weight: 600; }
+        #section-basic .layui-input-block { min-width: 0; }
         #section-basic .layui-input,
         #section-basic .custom-select,
-        #section-basic .search-select-box { max-width: 480px; }
+        #section-basic .custom-select-trigger,
+        #section-basic .search-select-box,
+        #section-basic .chip-input-container { width: 100%; max-width: none; box-sizing: border-box; }
+        #section-basic .basic-full { max-width: none; margin-left: 0; margin-right: 0; }
+        #section-basic .basic-borrow-panel { margin: 8px 0 18px; padding: 18px 20px 20px; background: rgba(255,255,255,.46); border: 1px solid #dbe7ff; border-radius: 10px; position: relative; }
+        #section-basic .basic-borrow-title { display: inline-block; margin: -30px 0 18px; padding: 0 12px 0 0; background: #f8f9ff; color: #0f1f3d; font-size: 15px; font-weight: 600; }
+        #section-basic #hwInfoSection .hw-upload-area { width: 100%; }
 
         /* 硬件信息文件上传区 */
         #hwInfoSection .layui-form-label { padding-top: 10px; }
@@ -457,6 +472,9 @@
         .spec-expiry-btn:disabled { opacity: 0.5; cursor: not-allowed; }
         .xaas-inline-spec-area .spec-field-row .spec-unit { font-size: 13px; color: #9ca3af; }
         .xaas-inline-spec-area .spec-modules-label { font-size: 13px; color: #374151; margin-bottom: 8px; padding-top: 4px; border-top: 1px solid #fde68a; }
+        .xaas-inline-spec-actions { display: flex; justify-content: flex-start; padding-top: 14px; margin-top: 12px; border-top: 1px solid #fde68a; }
+        .xaas-inline-confirm-btn { height: 34px; padding: 0 18px; border: none; border-radius: 6px; background: #f59e0b; color: #fff; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+        .xaas-inline-confirm-btn:hover { background: #d97706; box-shadow: 0 2px 8px rgba(245,158,11,.25); }
         .xaas-spec-btn::before { content: '⚙'; font-size: 13px; line-height: 1; }
         #content-xaas .extra-panel-item > .layui-form-label { width: 150px; white-space: nowrap; }
 
@@ -507,6 +525,12 @@
             .custom-select-trigger { max-width: none; }
             .search-select-box { max-width: none; width: 100%; }
             #section-basic .search-select-box { max-width: none; }
+            #section-basic .basic-two-col-row,
+            #section-basic .borrow-grid { grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
+            #section-basic .layui-form-label,
+            #section-basic .basic-borrow-panel .layui-form-label { width: auto; padding: 0 0 6px 0; }
+            #section-basic .basic-borrow-panel { padding: 16px 14px 14px; }
+            #section-basic .basic-borrow-title { margin: -28px 0 14px; background: #f8f9ff; }
 
             .unified-date-bar { flex-wrap: wrap; }
             .module-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -697,9 +721,10 @@
                 <form class="layui-form" id="formsn">
                     <input type="hidden" id="request_origin" name="request_origin" value="1">
 
-                    <div class="special-form-section">
+                    <div class="special-form-section basic-info-section">
                         <div class="section-title">基本信息</div>
                     <div id="section-basic">
+                    <div class="basic-two-col-row">
                     <!-- 产品线 -->
                     <div class="layui-form-item">
                         <label class="layui-form-label">产品线</label>
@@ -875,7 +900,9 @@
                             </div>
                         </div>
                     </div>
+                    </div>
 
+                    <div class="basic-two-col-row">
                     <!-- 区域 -->
                     <div class="layui-form-item">
                         <label class="layui-form-label">区域</label>
@@ -985,9 +1012,10 @@
                             </div>
                         </div>
                     </div>
+                    </div>
 
                     <!-- 接收邮箱 -->
-                    <div class="layui-form-item">
+                    <div class="layui-form-item basic-full">
                         <label class="layui-form-label">接收邮箱</label>
                         <div class="layui-input-block">
                             <input type="text" id="userEmail" name="userEmail" placeholder="请填写正确邮箱，以免邮件发送失败" class="layui-input">
@@ -995,7 +1023,7 @@
                     </div>
 
                     <!-- 客户信息 -->
-                    <div class="layui-form-item">
+                    <div class="layui-form-item basic-full">
                         <label class="layui-form-label">客户信息</label>
                         <div class="layui-input-block">
                             <div class="search-select-box">
@@ -1010,7 +1038,7 @@
                     </div>
 
                     <!-- 申请类型 -->
-                    <div class="layui-form-item" id="planDevTypeFormItem">
+                    <div class="layui-form-item basic-full" id="planDevTypeFormItem">
                         <label class="layui-form-label">申请类型</label>
                         <div class="layui-input-block">
                             <div class="custom-select" data-select-id="planDevType">
@@ -1035,26 +1063,29 @@
                     </div>
 
                     <!-- 设备ID（Chip输入，支持多个） -->
-                    <div class="layui-form-item">
+                    <div class="layui-form-item basic-full">
                         <label class="layui-form-label">设备ID<span class="required-mark">*</span></label>
                         <div class="layui-input-block">
                             <div class="chip-input-container" id="chipContainer">
                                 <input type="text" id="chipInput" class="chip-input-field" placeholder="输入设备ID并回车添加..." autocomplete="off" onkeydown="if(event.keyCode===13){event.preventDefault();window.addChip(this.value);this.value='';return false}">
                             </div>
-                            <div class="chip-fixed-hint" id="chipFixedHint" style="display:none;">HCI/SCP 产品线设备ID为自动生成，不可编辑</div>
                         </div>
                     </div>
 
                     <!-- 设备SN（value=1时显示） -->
-                    <div class="layui-form-item" id="devSnFormItem" style="display:none;">
+                    <div class="layui-form-item basic-full" id="devSnFormItem" style="display:none;">
                         <label class="layui-form-label">设备SN<span class="required-mark">*</span></label>
                         <div class="layui-input-block">
-                            <input type="text" id="devSnNew" name="devSnNew" class="layui-input" placeholder="请输入设备序列号" value="">
+                            <div class="chip-input-container" id="snChipContainer">
+                                <input type="text" id="snChipInput" name="devSnNew" class="chip-input-field" placeholder="输入设备SN并回车添加..." autocomplete="off" onkeydown="if(event.keyCode===13){event.preventDefault();window.addSnChip(this.value);this.value='';return false}">
+                            </div>
                         </div>
                     </div>
 
                     <!-- 借测信息区域（value=1时显示） -->
-                    <div id="borrowTestFields" style="display:none;">
+                    <div id="borrowTestFields" class="basic-borrow-panel" style="display:none;">
+                    <div class="basic-borrow-title">借测信息</div>
+                    <div class="borrow-grid">
                     <div class="layui-form-item">
                         <label class="layui-form-label">借测单号<span class="required-mark">*</span></label>
                         <div class="layui-input-block">
@@ -1120,9 +1151,10 @@
                         </div>
                     </div>
                     </div>
+                    </div>
 
                     <!-- 硬件信息文件 -->
-                    <div class="layui-form-item" id="hwInfoSection" style="align-items: center;">
+                    <div class="layui-form-item basic-full" id="hwInfoSection" style="align-items: center;">
                         <label class="layui-form-label">硬件信息文件</label>
                         <div class="layui-input-block">
                             <div class="hw-upload-area">
@@ -1772,7 +1804,7 @@
                                                 <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="SaaS-XDR"> <span>SaaS-XDR（含SaaS GPT）</span></label>
                                                 <div class="xaas-product-right">
                                                     <span class="xaas-product-desc">有效期30天，日志量2亿条</span>
-                                                    <button type="button" class="xaas-spec-btn">修改规格</button>
+                                                    <button type="button" class="xaas-spec-btn">修改授权</button>
                                                 </div>
                                                                                         <div class="xaas-product-trial-hint" data-product="SaaS-XDR">
                                                 <span class="trial-icon">&#9888;</span>
@@ -1804,6 +1836,9 @@
                                                     <span class="spec-expiry-hint" style="display:none;font-size:12px;color:#b45309;">
                                                         编辑授权有效期时，默认选中的日期为当前的授权到期时间。可选日期为授权到期时间之后，不可缩短有效期。
                                                     </span>
+                                                </div>
+                                                <div class="xaas-inline-spec-actions">
+                                                    <button type="button" class="xaas-inline-confirm-btn" data-product="SaaS-XDR">确认修改</button>
                                                 </div>
 </div>
                                         </div>
@@ -2954,6 +2989,54 @@ function updateXaasFamilyCounts() {
                 }
             });
         }
+        var inlineSpecProductMap = {
+            'xaas-xdr-inline-spec': 'SaaS-XDR',
+            'ngdr-inline-spec': 'NGDR',
+            'saes-inline-spec': 'SaaS-aES',
+            'xdlp-inline-spec': 'SASE-XDLP',
+            'ztna-inline-spec': 'SASE-ZTNA',
+            'swg-inline-spec': 'SASE-SWG',
+            'mail-inline-spec': '钓鱼邮件防护',
+            'ga-inline-spec': 'SASE-GA'
+        };
+
+        document.querySelectorAll('.xaas-inline-spec-area').forEach(function(area) {
+            var product = inlineSpecProductMap[area.id] || '';
+            var actions = area.querySelector('.xaas-inline-spec-actions');
+            if (!actions) {
+                actions = document.createElement('div');
+                actions.className = 'xaas-inline-spec-actions';
+                area.appendChild(actions);
+            }
+            var confirmBtn = actions.querySelector('.xaas-inline-confirm-btn');
+            if (!confirmBtn) {
+                confirmBtn = document.createElement('button');
+                confirmBtn.type = 'button';
+                confirmBtn.className = 'xaas-inline-confirm-btn';
+                confirmBtn.textContent = '确认修改';
+                actions.appendChild(confirmBtn);
+            }
+            if (product) confirmBtn.dataset.product = product;
+            confirmBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var currentProduct = this.dataset.product || product;
+                xaasSpecModified = true;
+                area.classList.remove('show');
+                var item = currentProduct ? document.querySelector('.xaas-product-item[data-product="' + currentProduct + '"]') : null;
+                if (item) {
+                    var specBtn = item.querySelector('.xaas-spec-btn');
+                    if (specBtn) specBtn.classList.remove('active');
+                }
+                updateXaasApplyReason();
+                var toastEl = document.getElementById('syncToast');
+                if (toastEl) {
+                    toastEl.textContent = (currentProduct || 'XaaS产品') + '授权修改已确认，提交后进入审批流程';
+                    toastEl.style.background = '#4CAF50';
+                    toastEl.style.display = 'block';
+                    setTimeout(function() { toastEl.style.display = 'none'; }, 3000);
+                }
+            });
+        });
 
         // 内联规格字段：输入后同步到 specValues 和描述文字
         function bindInlineSpecInput(id, product, fieldKey, multiplier) {
@@ -3235,17 +3318,55 @@ function updateXaasFamilyCounts() {
         var borrowTestFields = document.getElementById('borrowTestFields');
         var chipContainer = document.getElementById('chipContainer');
         var chipInput = document.getElementById('chipInput');
-        var chipFixedHint = document.getElementById('chipFixedHint');
+        var snChipContainer = document.getElementById('snChipContainer');
+        var snChipInput = document.getElementById('snChipInput');
         var hwInfoSection = document.getElementById('hwInfoSection');
         var isHciMode = false;
 
-        // ===== SN自动关联检测借测信息 =====
+        // ===== 设备ID/SN自动关联检测借测信息 =====
         var mockBtDatabase = [
-            { snPrefix: 'SN-2024001', btNo: 'BT20240615001', btUser: '张三', btStatus: '办事处借测', btType: 'POC测试' },
-            { snPrefix: 'SN-2024002', btNo: 'BT20240615002', btUser: '李四', btStatus: '渠道借测', btType: '项目测试' },
-            { snPrefix: 'SN-TEST-001', btNo: 'BT20240615003', btUser: '王五', btStatus: '自用测试', btType: '演示测试' },
-            { snPrefix: 'SN-TEST-002', btNo: 'BT20240615004', btUser: '赵六', btStatus: '办事处借测', btType: '培训测试' },
-            { snPrefix: 'SN-DEMO-', btNo: 'BT20240615005', btUser: '孙七', btStatus: '渠道借测', btType: 'POC测试' }
+            {
+                btNo: 'BT20240615001',
+                btUser: '张三',
+                btStatus: '办事处借测',
+                btType: 'POC测试',
+                devices: [
+                    { id: 'DEV-45-AUTO-001', sn: 'SN-2024001-A' },
+                    { id: 'DEV-45-AUTO-002', sn: 'SN-2024001-B' },
+                    { id: 'DEV-45-AUTO-003', sn: 'SN-2024001-C' }
+                ]
+            },
+            {
+                btNo: 'BT20240615002',
+                btUser: '李四',
+                btStatus: '渠道借测',
+                btType: '项目测试',
+                devices: [
+                    { id: 'DEV-NGAF-001', sn: 'SN-2024002-A' },
+                    { id: 'DEV-NGAF-002', sn: 'SN-2024002-B' }
+                ]
+            },
+            {
+                btNo: 'BT20240615003',
+                btUser: '王五',
+                btStatus: '自用测试',
+                btType: '演示测试',
+                devices: [
+                    { id: 'DEV-TEST-001', sn: 'SN-TEST-001' },
+                    { id: 'DEV-TEST-002', sn: 'SN-TEST-002' }
+                ]
+            },
+            {
+                btNo: 'BT20240615005',
+                btUser: '孙七',
+                btStatus: '渠道借测',
+                btType: 'POC测试',
+                devices: [
+                    { id: 'DEV-DEMO-001', sn: 'SN-DEMO-001' },
+                    { id: 'DEV-DEMO-002', sn: 'SN-DEMO-002' },
+                    { id: 'DEV-DEMO-003', sn: 'SN-DEMO-003' }
+                ]
+            }
         ];
 
         function clearBtInputData() {
@@ -3257,56 +3378,68 @@ function updateXaasFamilyCounts() {
             setCustomSelectValue('btType', '');
         }
 
-        function simulateFetchBtDataBySn(sn) {
-            var trimmedSn = (sn || '').trim();
-            if (!trimmedSn) return null;
+        function simulateFetchBtDataByDevice(value, type) {
+            var keyword = (value || '').trim();
+            if (!keyword) return null;
             for (var i = 0; i < mockBtDatabase.length; i++) {
                 var entry = mockBtDatabase[i];
-                if (trimmedSn.indexOf(entry.snPrefix) === 0 || trimmedSn === entry.snPrefix) {
-                    return {
-                        btNo: entry.btNo,
-                        btUser: entry.btUser,
-                        btStatus: entry.btStatus,
-                        btType: entry.btType
-                    };
+                for (var j = 0; j < entry.devices.length; j++) {
+                    var device = entry.devices[j];
+                    var target = type === 'id' ? device.id : device.sn;
+                    if (target === keyword || target.indexOf(keyword) === 0 || keyword.indexOf(target) === 0) {
+                        return entry;
+                    }
                 }
             }
             return null;
         }
 
-        (function() {
-            var devSnInput = document.getElementById('devSnNew');
-            if (!devSnInput) return;
-            devSnInput.addEventListener('blur', function() {
-                var sn = this.value.trim();
-                var planDevType = document.getElementById('planDevType').value;
-                if (planDevType !== '1') return;
-                if (!sn) {
-                    clearBtInputData();
-                    return;
-                }
-                var result = simulateFetchBtDataBySn(sn);
-                if (result) {
-                    var btNoInput = document.getElementById('btNo');
-                    if (btNoInput) btNoInput.value = result.btNo;
-                    var btUserInput = document.getElementById('btUser');
-                    if (btUserInput) btUserInput.value = result.btUser;
-                    var btStatusSelect = document.getElementById('btStatus');
-                    if (btStatusSelect) setCustomSelectValue('btStatus', result.btStatus);
-                    var btTypeSelect = document.getElementById('btType');
-                    if (btTypeSelect) setCustomSelectValue('btType', result.btType);
-                } else {
-                    clearBtInputData();
-                    var toast = document.getElementById('syncToast');
-                    if (toast) {
-                        toast.textContent = '\u26a0 \u672a\u627e\u5230\u8be5SN\u5bf9\u5e94\u7684\u501f\u6d4b\u4fe1\u606f\uff0c\u8bf7\u624b\u52a8\u586b\u5199';
-                        toast.style.background = '#ff9800';
-                        toast.style.display = 'block';
-                        setTimeout(function() { toast.style.display = 'none'; toast.style.background = '#4CAF50'; }, 3000);
-                    }
-                }
-            });
-        })();
+        function showBorrowLookupMiss(type) {
+            var toast = document.getElementById('syncToast');
+            if (toast) {
+                toast.textContent = '\u26a0 \u672a\u627e\u5230\u8be5' + (type === 'id' ? '\u8bbe\u5907ID' : 'SN') + '\u5bf9\u5e94\u7684\u501f\u6d4b\u4fe1\u606f\uff0c\u8bf7\u624b\u52a8\u586b\u5199';
+                toast.style.background = '#ff9800';
+                toast.style.display = 'block';
+                setTimeout(function() { toast.style.display = 'none'; toast.style.background = '#4CAF50'; }, 3000);
+            }
+        }
+
+        function fillBorrowInfo(entry) {
+            var btNoInput = document.getElementById('btNo');
+            if (btNoInput) btNoInput.value = entry.btNo;
+            var btUserInput = document.getElementById('btUser');
+            if (btUserInput) btUserInput.value = entry.btUser;
+            setCustomSelectValue('btStatus', entry.btStatus);
+            setCustomSelectValue('btType', entry.btType);
+        }
+
+        function showBorrowConflict(existingBtNo, incomingBtNo) {
+            var toast = document.getElementById('syncToast');
+            if (toast) {
+                toast.textContent = '\u26a0 \u5f53\u524d\u8bbe\u5907\u5c5e\u4e8e\u591a\u4e2a\u501f\u6d4b\u5355\uff08' + existingBtNo + ' / ' + incomingBtNo + '\uff09\uff0c\u5efa\u8bae\u62c6\u5206\u7533\u8bf7';
+                toast.style.background = '#ff9800';
+                toast.style.display = 'block';
+                setTimeout(function() { toast.style.display = 'none'; toast.style.background = '#4CAF50'; }, 4000);
+            }
+        }
+
+        function syncBorrowInfoByDevice(value, type) {
+            if (isHciMode || planDevTypeSelect.value !== '1') return;
+            var entry = simulateFetchBtDataByDevice(value, type);
+            if (!entry) {
+                showBorrowLookupMiss(type);
+                return;
+            }
+            var btNoInput = document.getElementById('btNo');
+            var currentBtNo = btNoInput ? btNoInput.value.trim() : '';
+            if (currentBtNo && currentBtNo !== entry.btNo) {
+                showBorrowConflict(currentBtNo, entry.btNo);
+                return;
+            }
+            fillBorrowInfo(entry);
+            deviceIdChips.addMany(entry.devices.map(function(device) { return device.id; }), { silent: true });
+            deviceSnChips.addMany(entry.devices.map(function(device) { return device.sn; }), { silent: true });
+        }
 
         planDevTypeSelect.addEventListener('change', function() {
             if (isHciMode) return;
@@ -3467,66 +3600,86 @@ function updateXaasFamilyCounts() {
             });
         }
 
-        // ===== 设备ID Chip 输入 =====
-        var chipList = [];
-
-        function getChips() { return chipList.slice(); }
-
-        function renderChips() {
-            chipContainer.querySelectorAll('.chip-item').forEach(function(el) { el.remove(); });
-            chipList.forEach(function(val) {
-                var chip = document.createElement('span');
-                chip.className = 'chip-item';
-                chip.innerHTML = '<span>' + escapeHtml(val) + '</span><span class="chip-close" data-val="' + escapeHtml(val) + '">&times;</span>';
-                chipContainer.insertBefore(chip, chipInput);
-                chip.querySelector('.chip-close').addEventListener('click', function() {
-                    removeChip(this.dataset.val);
-                });
-            });
-        }
-
+        // ===== 设备ID / 设备SN Chip 输入 =====
         function escapeHtml(str) { return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-        function addChip(val) {
-            val = val.trim();
-            if (!val) return false;
-            if (chipList.indexOf(val) !== -1) return false;
-            chipList.push(val);
-            renderChips();
-            chipInput.value = '';
-            return true;
+        function createChipControl(container, input, defaultPlaceholder, onAdd) {
+            var values = [];
+            function render() {
+                container.querySelectorAll('.chip-item').forEach(function(el) { el.remove(); });
+                values.forEach(function(val) {
+                    var chip = document.createElement('span');
+                    chip.className = 'chip-item';
+                    chip.innerHTML = '<span>' + escapeHtml(val) + '</span><span class="chip-close" data-val="' + escapeHtml(val) + '">&times;</span>';
+                    container.insertBefore(chip, input);
+                    chip.querySelector('.chip-close').addEventListener('click', function() {
+                        remove(this.dataset.val);
+                    });
+                });
+            }
+            function add(val, options) {
+                val = (val || '').trim();
+                if (!val || values.indexOf(val) !== -1) return false;
+                values.push(val);
+                render();
+                input.value = '';
+                if (!options || !options.silent) onAdd(val);
+                return true;
+            }
+            function addMany(vals, options) {
+                (vals || []).forEach(function(val) { add(val, options); });
+            }
+            function remove(val) {
+                values = values.filter(function(v) { return v !== val; });
+                render();
+            }
+            function setFixed(vals) {
+                values = (vals || []).slice();
+                render();
+                input.disabled = true;
+                input.placeholder = '';
+                container.classList.add('is-fixed');
+            }
+            function clear() {
+                values = [];
+                render();
+                input.disabled = false;
+                input.placeholder = defaultPlaceholder;
+                container.classList.remove('is-fixed');
+            }
+            input.addEventListener('blur', function() {
+                var v = this.value.trim();
+                if (v) add(v);
+            });
+            container.addEventListener('click', function(e) {
+                if (!e.target.closest('.chip-item') && !input.disabled) input.focus();
+            });
+            return {
+                get: function() { return values.slice(); },
+                add: add,
+                addMany: addMany,
+                remove: remove,
+                setFixed: setFixed,
+                clear: clear,
+                focus: function() { input.focus(); }
+            };
         }
+
+        var deviceIdChips = createChipControl(chipContainer, chipInput, '输入设备ID并回车添加...', function(val) {
+            syncBorrowInfoByDevice(val, 'id');
+        });
+        var deviceSnChips = createChipControl(snChipContainer, snChipInput, '输入设备SN并回车添加...', function(val) {
+            syncBorrowInfoByDevice(val, 'sn');
+        });
+
+        function getChips() { return deviceIdChips.get(); }
+        function getSnChips() { return deviceSnChips.get(); }
+        function addChip(val) { return deviceIdChips.add(val); }
+        function addSnChip(val) { return deviceSnChips.add(val); }
+        function setFixedChips(vals) { deviceIdChips.setFixed(vals); }
+        function clearChips() { deviceIdChips.clear(); }
         window.addChip = addChip;
-
-        function removeChip(val) {
-            chipList = chipList.filter(function(v) { return v !== val; });
-            renderChips();
-        }
-
-        function setFixedChips(vals) {
-            chipList = vals.slice();
-            renderChips();
-            chipInput.disabled = true;
-            chipInput.placeholder = '';
-            chipContainer.classList.add('is-fixed');
-        }
-
-        function clearChips() {
-            chipList = [];
-            renderChips();
-            chipInput.disabled = false;
-            chipInput.placeholder = '输入设备ID并回车添加...';
-            chipContainer.classList.remove('is-fixed');
-        }
-
-        chipInput.addEventListener('blur', function() {
-            var v = this.value.trim();
-            if (v) addChip(v);
-        });
-
-        chipContainer.addEventListener('click', function(e) {
-            if (!e.target.closest('.chip-item') && !chipInput.disabled) chipInput.focus();
-        });
+        window.addSnChip = addSnChip;
 
         // ===== HCI/SCP模式控制 =====
         function updateHardwareFields() {
@@ -3534,7 +3687,10 @@ function updateXaasFamilyCounts() {
             var isHardware = pt === '1';
             devSnFormItem.style.display = isHardware ? 'flex' : 'none';
             borrowTestFields.style.display = isHardware ? 'block' : 'none';
-            if (!isHardware) clearBtInputData();
+            if (!isHardware) {
+                deviceSnChips.clear();
+                clearBtInputData();
+            }
         }
 
         function applyPlMode() {
@@ -3547,12 +3703,12 @@ function updateXaasFamilyCounts() {
                 hwInfoSection.style.display = 'flex';
                 setCustomSelectValue('planDevType', '1');
                 setFixedChips(['DEV-' + plnameSelect.value + '-AUTO-001']);
-                chipFixedHint.style.display = 'block';
+                deviceSnChips.clear();
             } else {
                 planDevTypeFormItem.style.display = '';
                 hwInfoSection.style.display = 'none';
-                chipFixedHint.style.display = 'none';
                 clearChips();
+                deviceSnChips.clear();
                 clearHwFile();
                 setCustomSelectValue('planDevType', '');
                 updateHardwareFields();
@@ -3883,8 +4039,11 @@ function updateXaasFamilyCounts() {
         var isHardware = isHciMode || planDevType === '1';
 
         if (isHardware) {
-            var sn = document.getElementById('devSnNew').value.trim();
-            if (!sn) errors.push('请填写设备SN');
+            var deviceSns = getSnChips();
+            if (deviceSns.length === 0) {
+                errors.push('请添加至少一个设备SN');
+                snChipInput.focus();
+            }
             var btNo = document.getElementById('btNo').value.trim();
             if (!btNo) errors.push('请填写借测单号');
             var btUser = document.getElementById('btUser').value.trim();
