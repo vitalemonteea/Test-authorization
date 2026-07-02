@@ -2388,7 +2388,17 @@
             '运营商': ['中国移动', '中国电信', '中国联通', '中国广电']
         };
         var xaasSpecValues = {
-            'SaaS-XDR': { logAmount: 20000 },
+            'SaaS-XDR': { logAmount: 20000, modules: '' },
+            'NGDR': { version: '基础版', pcCount: 50, serverCount: 50 },
+            'SaaS-aES': { version: '探针版', pcCount: 50, serverCount: 50 },
+            'SASE-XDLP': { userCount: 50 },
+            'SASE-ZTNA': { userCount: 50 },
+            'SASE-SWG': { swgType: '用户版', userCount: 50, branchCount: 3, bandwidth: 100 },
+            '钓鱼邮件防护': { mailCount: 10000 },
+            'SASE-GA': { bandwidth: 5 }
+        };
+        var xaasDefaultSpecValues = {
+            'SaaS-XDR': { logAmount: 20000, modules: '' },
             'NGDR': { version: '基础版', pcCount: 50, serverCount: 50 },
             'SaaS-aES': { version: '探针版', pcCount: 50, serverCount: 50 },
             'SASE-XDLP': { userCount: 50 },
@@ -2442,7 +2452,8 @@
             document.querySelectorAll('.spec-expiry-btn').forEach(function(btn) {
                 var dateInput = btn.closest('.spec-expiry-row').querySelector('.spec-expiry-date');
                 var product = dateInput ? dateInput.dataset.product : null;
-                var isTrial = product && xaasTrialStatus && xaasTrialStatus[product] === 'active';
+                var normalizedProduct = normalizeXaasProductName(product || '');
+                var isTrial = product && xaasTrialStatus && (xaasTrialStatus[product] === 'active' || xaasTrialStatus[normalizedProduct] === 'active');
                 btn.disabled = !isTrial;
                 btn.title = isTrial ? '' : '仅正在试用中的客户支持调整授权有效期，请先为客户开通试用授权再提交修改授权有效期申请。';
                 // 设置默认到期日期
@@ -2466,6 +2477,7 @@
                     dateInput.disabled = false;
                     dateInput.value = expiry;
                     dateInput.min = expiry;
+                    dateInput.dataset.expiryEditing = 'true';
                     dateInput.style.display = '';
                     hint.style.display = '';
                     if (typeof updateXaasApplyReason === 'function') updateXaasApplyReason();
@@ -2475,6 +2487,7 @@
 
         document.addEventListener('change', function(e) {
             if (e.target.classList.contains('spec-expiry-date') && !e.target.disabled) {
+                e.target.dataset.expiryEditing = 'true';
                 if (typeof updateXaasApplyReason === 'function') updateXaasApplyReason();
             }
         });var xaasProductItems = Array.prototype.slice.call(document.querySelectorAll('.xaas-product-item'));
@@ -2552,7 +2565,8 @@
             var dateInput = document.querySelector('.spec-expiry-date[data-product=' + JSON.stringify(product) + ']');
             if (dateInput) {
                 var expiryRow = dateInput.closest('.spec-expiry-row');
-                var status = (typeof xaasTrialStatus !== 'undefined' && product && xaasTrialStatus.hasOwnProperty(product)) ? xaasTrialStatus[product] : 'none';
+                var normalizedProduct = normalizeXaasProductName(product || '');
+                var status = (typeof xaasTrialStatus !== 'undefined' && product) ? (xaasTrialStatus[product] || xaasTrialStatus[normalizedProduct] || 'none') : 'none';
                 if (expiryRow) expiryRow.classList.toggle('show', status !== 'none' && status !== 'previous' || item.classList.contains('purchased'));
             }
             if (desc) {
@@ -2569,7 +2583,8 @@
             }
 
             // 显示/隐藏试用提示
-            var status = (typeof xaasTrialStatus !== 'undefined' && product && xaasTrialStatus.hasOwnProperty(product)) ? xaasTrialStatus[product] : 'none';
+            var normalizedProduct = normalizeXaasProductName(product || '');
+            var status = (typeof xaasTrialStatus !== 'undefined' && product) ? (xaasTrialStatus[product] || xaasTrialStatus[normalizedProduct] || 'none') : 'none';
             var hint = item.querySelector('.xaas-product-trial-hint');
             var cb = item.querySelector('input[name=xaas-product]');
             if (status === 'active') {
@@ -2643,6 +2658,7 @@ function updateXaasFamilyCounts() {
             }
             var item = document.querySelector('.xaas-product-item[data-product="' + product + '"]');
             if (item) refreshXaasProductItem(item);
+            if (typeof updateXaasApplyReason === 'function') updateXaasApplyReason();
         }
 
         function updateXaasIndustryL2() {
@@ -2745,13 +2761,14 @@ function updateXaasFamilyCounts() {
             if (file) file.value = '';
             // 重置所有内联规格
             document.querySelectorAll('.xaas-inline-spec-area').forEach(function(a) { a.classList.remove('show'); });
+            document.querySelectorAll('.spec-expiry-date').forEach(function(dateInput) { delete dateInput.dataset.expiryEditing; });
             var specLogInline = document.getElementById('spec-log-inline');
             if (specLogInline) specLogInline.value = 200000000;
             ['ngdr-pc','ngdr-server','saes-pc','saes-server','xdlp-users','ztna-users','swg-users','swg-branch','swg-bw','mail-count','ga-bw'].forEach(function(id) {
                 var el = document.getElementById(id);
                 if (el) el.value = el.id === 'mail-count' ? 10000 : (el.id === 'ga-bw' ? 5 : (el.id === 'swg-branch' ? 3 : (el.id === 'swg-bw' ? 100 : 50)));
             });
-            xaasSpecValues['SaaS-XDR'] = { logAmount: 20000 };
+            xaasSpecValues['SaaS-XDR'] = { logAmount: 20000, modules: '' };
             xaasSpecValues['NGDR'] = { version: '基础版', pcCount: 50, serverCount: 50 };
             xaasSpecValues['SaaS-aES'] = { version: '探针版', pcCount: 50, serverCount: 50 };
             xaasSpecValues['SASE-XDLP'] = { userCount: 50 };
@@ -2949,9 +2966,14 @@ function updateXaasFamilyCounts() {
             var inlineSelectNative = item.querySelector('.xaas-inline-select');
             if (cb) {
                 cb.addEventListener('change', function() {
+                    if (!cb.checked) {
+                        var dateInput = findXaasExpiryInput(item.dataset.product);
+                        if (dateInput) delete dateInput.dataset.expiryEditing;
+                    }
                     refreshXaasProductItem(item);
                     updateXaasExtraVisibility();
                     updateXaasFamilyCounts();
+                    if (typeof updateXaasApplyReason === 'function') updateXaasApplyReason();
                 
                 // 已试用产品勾选Toast
                 if (item.dataset.product && xaasTrialStatus && xaasTrialStatus[item.dataset.product] === 'previous') {
@@ -2987,7 +3009,14 @@ function updateXaasFamilyCounts() {
                     var desc = item.querySelector('.xaas-product-desc');
                     if (desc) desc.textContent = buildDescText('SaaS-XDR');
                 }
+                if (typeof updateXaasApplyReason === 'function') updateXaasApplyReason();
             });
+        }
+        function syncXdrSpecModules() {
+            var selectedModules = Array.prototype.map.call(document.querySelectorAll('#xaas-xdr-inline-spec .spec-modules .xaas-chip.active'), function(chip) {
+                return chip.dataset.value || chip.textContent.trim();
+            }).sort();
+            if (xaasSpecValues['SaaS-XDR']) xaasSpecValues['SaaS-XDR'].modules = selectedModules.join('|');
         }
         var inlineSpecProductMap = {
             'xaas-xdr-inline-spec': 'SaaS-XDR',
@@ -3020,14 +3049,13 @@ function updateXaasFamilyCounts() {
             confirmBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
                 var currentProduct = this.dataset.product || product;
-                xaasSpecModified = true;
                 area.classList.remove('show');
                 var item = currentProduct ? document.querySelector('.xaas-product-item[data-product="' + currentProduct + '"]') : null;
                 if (item) {
                     var specBtn = item.querySelector('.xaas-spec-btn');
                     if (specBtn) specBtn.classList.remove('active');
                 }
-                updateXaasApplyReason();
+                if (typeof updateXaasApplyReason === 'function') updateXaasApplyReason();
                 var toastEl = document.getElementById('syncToast');
                 if (toastEl) {
                     toastEl.textContent = (currentProduct || 'XaaS产品') + '授权修改已确认，提交后进入审批流程';
@@ -3051,6 +3079,7 @@ function updateXaasFamilyCounts() {
                     var desc = item.querySelector('.xaas-product-desc');
                     if (desc) desc.textContent = buildDescText(product) || item.dataset.defaultDesc;
                 }
+                if (typeof updateXaasApplyReason === 'function') updateXaasApplyReason();
             });
         }
         bindInlineSpecInput('ngdr-pc', 'NGDR', 'pcCount');
@@ -3182,6 +3211,10 @@ function updateXaasFamilyCounts() {
         document.querySelectorAll('.xaas-chip').forEach(function(chip) {
             chip.addEventListener('click', function() {
                 this.classList.toggle('active');
+                if (this.closest('#xaas-xdr-inline-spec')) {
+                    syncXdrSpecModules();
+                    if (typeof updateXaasApplyReason === 'function') updateXaasApplyReason();
+                }
             });
         });
 
@@ -3194,17 +3227,60 @@ function updateXaasFamilyCounts() {
         // ===== XaaS 申请理由显隐控制 =====
         var xaasApplyReasonArea = document.getElementById('xaas-apply-reason-item');
         var xaasApplyReasonInput = document.getElementById('xaas-apply-reason-input');
+        function normalizeXaasProductName(product) {
+            if (product === '钓鱼邮件防护 GPT') return '钓鱼邮件防护';
+            return product;
+        }
+        function findXaasExpiryInput(product) {
+            var normalized = normalizeXaasProductName(product || '');
+            var inputs = document.querySelectorAll('.spec-expiry-date');
+            for (var i = 0; i < inputs.length; i++) {
+                if (normalizeXaasProductName(inputs[i].dataset.product || '') === normalized) return inputs[i];
+            }
+            return null;
+        }
+        function isXaasProductChecked(product) {
+            var normalized = normalizeXaasProductName(product);
+            return Array.prototype.some.call(document.querySelectorAll('.xaas-product-item'), function(item) {
+                var itemProduct = normalizeXaasProductName(item.dataset.product);
+                var cb = item.querySelector('input[name=xaas-product]');
+                return itemProduct === normalized && cb && cb.checked;
+            });
+        }
+        function sameXaasSpecValue(current, defaults) {
+            if (!current || !defaults) return true;
+            return Object.keys(defaults).every(function(key) {
+                var defaultValue = defaults[key];
+                var currentValue = current[key];
+                if (typeof defaultValue === 'number') {
+                    return Number(currentValue) === defaultValue;
+                }
+                return String(currentValue) === String(defaultValue);
+            });
+        }
+        function hasChangedSelectedXaasSpec() {
+            return Object.keys(xaasDefaultSpecValues).some(function(product) {
+                if (!isXaasProductChecked(product)) return false;
+                return !sameXaasSpecValue(xaasSpecValues[product], xaasDefaultSpecValues[product]);
+            });
+        }
+        function hasEditingSelectedXaasExpiry() {
+            return Array.prototype.some.call(document.querySelectorAll('.spec-expiry-date'), function(el) {
+                var product = normalizeXaasProductName(el.dataset.product || '');
+                return product && isXaasProductChecked(product) && !el.disabled && el.dataset.expiryEditing === 'true' && el.value && el.value !== '';
+            });
+        }
+        function hasPreviousSelectedXaasProduct() {
+            return Array.prototype.some.call(document.querySelectorAll('.xaas-product-item'), function(item) {
+                var product = normalizeXaasProductName(item.dataset.product || '');
+                var c = item.querySelector('input[name=xaas-product]');
+                var status = xaasTrialStatus && (xaasTrialStatus[item.dataset.product] || xaasTrialStatus[product]);
+                return status === 'previous' && c && c.checked;
+            });
+        }
         function updateXaasApplyReason() {
             if (!xaasApplyReasonArea || !xaasApplyReasonInput) return;
-                        var specActive = xaasSpecModified || document.querySelectorAll('.xaas-spec-btn.active').length > 0;
-                        var expiryActive = Array.prototype.some.call(document.querySelectorAll('.spec-expiry-date'), function(el) { return el.value && el.value !== '' && !el.disabled; });
-            var hasPreviousChecked = false;
-            document.querySelectorAll('.xaas-product-item').forEach(function(item) {
-                var s = item.dataset.product && xaasTrialStatus && xaasTrialStatus[item.dataset.product];
-                var c = item.querySelector('input[name=xaas-product]');
-                if (s === 'previous' && c && c.checked) hasPreviousChecked = true;
-            });
-            var shouldShow = expiryActive || specActive || hasPreviousChecked;
+            var shouldShow = hasChangedSelectedXaasSpec() || hasEditingSelectedXaasExpiry() || hasPreviousSelectedXaasProduct();
             xaasApplyReasonArea.style.display = shouldShow ? '' : 'none';
             if (!shouldShow) xaasApplyReasonInput.value = '';
         }
@@ -3293,9 +3369,6 @@ function updateXaasFamilyCounts() {
                 if (!requireXaasValue('sase-competitor', '请填写竞争对手')) return false;
             }
 
-            var warnedSelected = false; // 申请理由字段已移除，不再校验
-
-            if (extendCheck && extendCheck.checked && !requireXaasValue('请选择延长试用授权有效期')) return false;
             return true;
         }
 
