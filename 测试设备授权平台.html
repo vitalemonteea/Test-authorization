@@ -166,6 +166,8 @@
             padding: 8px 12px 8px 24px; font-size: 14px; color: #424656; cursor: pointer; transition: all 0.15s; white-space: nowrap;
         }
         .custom-select-option:hover { background: #eff4ff; color: #0050cb; }
+        .custom-select-option.disabled { color: #b8bfcc; cursor: not-allowed; background: #f7f8fa; }
+        .custom-select-option.disabled:hover { color: #b8bfcc; background: #f7f8fa; }
         .custom-select-option.selected {
             background: #e5eeff; color: #0050cb; font-weight: 500; border-left: 2px solid #0050cb; padding-left: 22px;
         }
@@ -2281,6 +2283,7 @@
             options.forEach(function(option) {
                 option.addEventListener('click', function(e) {
                     e.stopPropagation();
+                    if (this.classList.contains('disabled') || this.getAttribute('aria-disabled') === 'true') return;
                     updateDisplay(this);
                     container.classList.remove('open');
                 });
@@ -2440,7 +2443,8 @@
             'C100001': { 'SaaS-XDR': 'active', 'NGDR': 'previous', 'SASE-ZTNA': 'active', 'SASE-GA': 'previous' },
             'C100002': { 'SaaS-aES': 'previous', 'SASE-ZTNA': 'previous', 'SASE-GA': 'previous' },
             'C100003': { 'SaaS-XDR': 'previous', 'SASE-ZTNA': 'active', 'SASE-GA': 'active' },
-            'C100004': { 'SaaS-XDR': 'active', 'SASE-SWG': 'previous', 'SASE-ZTNA': 'previous', 'NGDR': 'previous' }
+            'C100004': { 'SaaS-XDR': 'active', 'SASE-SWG': 'previous', 'SASE-ZTNA': 'previous', 'NGDR': 'previous' },
+            'C100010': { 'SASE-GA': 'active' }
         };
         var customerPurchasedProducts = {
             'C100001': ['SASE-XDLA'],
@@ -2474,6 +2478,7 @@
                     var expiryDefault = xaasProductExpiry[product];
                     if (!dateInput.value) dateInput.value = expiryDefault;
                     dateInput.disabled = !isTrial;
+                    dateInput.min = isTrial ? expiryDefault : '';
                 }
             });        }
 
@@ -2544,6 +2549,8 @@
             }
         
             // 同步产品试用状态
+            xaasTrialSpecBaseline = {};
+            clearXaasEditSpecGuards();
             if (id && customerProductStates[id]) {
                 var trialStates = customerProductStates[id];
                 Object.keys(xaasTrialStatus).forEach(function(p) { xaasTrialStatus[p] = 'none'; });
@@ -2551,11 +2558,15 @@
             } else {
                 Object.keys(xaasTrialStatus).forEach(function(p) { xaasTrialStatus[p] = 'none'; });
             }
+            if (name === '中国石油天然气集团有限公司') {
+                xaasTrialStatus['SASE-GA'] = 'active';
+            }
             
             // 标记已购买产品
+            var purchasedProducts = (name === '中国石油天然气集团有限公司') ? [] : (customerPurchasedProducts[id] || []);
             xaasProductItems.forEach(function(item) {
                 var pname = item.dataset.product;
-                var isPurchased = pname && customerPurchasedProducts[id] && customerPurchasedProducts[id].indexOf(pname) > -1;
+                var isPurchased = pname && purchasedProducts.indexOf(pname) > -1;
                 item.classList.toggle('purchased', isPurchased);
                 var warnEl = item.querySelector('.xaas-product-warn');
                 if (warnEl) warnEl.classList.toggle('show', isPurchased);
@@ -2834,6 +2845,7 @@ function updateXaasFamilyCounts() {
                 if (el) el.value = el.id === 'mail-count' ? 10000 : (el.id === 'ga-bw' ? 5 : (el.id === 'swg-branch' ? 3 : (el.id === 'swg-bw' ? 100 : 50)));
             });
             setCustomSelectValue('ga-bw', '5');
+            clearXaasEditSpecGuards();
             xaasSpecValues['SaaS-XDR'] = { logAmount: 20000, modules: '' };
             xaasSpecValues['NGDR'] = { version: '基础版', pcCount: 50, serverCount: 50 };
             xaasSpecValues['SaaS-aES'] = { version: '探针版', pcCount: 50, serverCount: 50 };
@@ -2864,30 +2876,211 @@ function updateXaasFamilyCounts() {
             'SASE-XDLA': 'SASE-XDLA 数据泄密分析', 'SASE-ZTNA': 'SASE-ZTNA 零信任网络访问',
             'SASE-SWG': 'SASE-SWG 互联网安全访问', '钓鱼邮件防护': '钓鱼邮件防护 GPT', 'SASE-GA': 'SASE-GA 全球加速'
         };
+        var xaasTrialSpecBaseline = {};
+
+        function cloneXaasSpecValue(value) {
+            return JSON.parse(JSON.stringify(value || {}));
+        }
+
+        function getXaasTrialSpecBaseline(product) {
+            if (!product || !isXaasActiveTrialContinuation(product)) return null;
+            if (!xaasTrialSpecBaseline[product]) {
+                xaasTrialSpecBaseline[product] = cloneXaasSpecValue(xaasSpecValues[product]);
+            }
+            return xaasTrialSpecBaseline[product];
+        }
+
+        function getXaasTrialExpiryBaseline(product) {
+            if (!product || !isXaasActiveTrialContinuation(product)) return '';
+            var normalizedProduct = normalizeXaasProductName(product || '');
+            return (xaasProductExpiry && (xaasProductExpiry[product] || xaasProductExpiry[normalizedProduct])) || '';
+        }
+
+        function setNumberMin(id, minValue) {
+            var el = document.getElementById(id);
+            if (el && minValue !== undefined && minValue !== null && minValue !== '') el.min = String(minValue);
+        }
+
+        function buildGaBandwidthOptions(currentValue, baseline) {
+            return [5, 10, 20, 30, 50].map(function(value) {
+                var selected = Number(currentValue) === value ? ' selected' : '';
+                var disabled = baseline && value < Number(baseline.bandwidth || 0) ? ' disabled' : '';
+                return '<option value="' + value + '"' + selected + disabled + '>' + value + 'M</option>';
+            }).join('');
+        }
+
+        function applyXaasSpecEditGuards(product) {
+            var baseline = getXaasTrialSpecBaseline(product);
+            if (!baseline) return;
+            if (product === 'SaaS-XDR') {
+                setNumberMin('spec-log', baseline.logAmount);
+            } else if (product === 'NGDR' || product === 'SaaS-aES') {
+                setNumberMin('spec-pc', baseline.pcCount);
+                setNumberMin('spec-server', baseline.serverCount);
+            } else if (product === 'SASE-XDLA' || product === 'SASE-ZTNA') {
+                setNumberMin('spec-users', baseline.userCount);
+            } else if (product === 'SASE-SWG') {
+                setNumberMin('spec-swg-users', baseline.userCount);
+                setNumberMin('spec-swg-branch', baseline.branchCount);
+                setNumberMin('spec-swg-bw', baseline.bandwidth);
+            } else if (product === '钓鱼邮件防护') {
+                setNumberMin('spec-mail', baseline.mailCount);
+            }
+        }
+
+        function validateXaasSpecIncrease(product, values) {
+            var baseline = getXaasTrialSpecBaseline(product);
+            if (!baseline) return true;
+            var productName = productDisplayNames[product] || product;
+            function reject(label) {
+                alert(productName + '正在试用中，' + label + '只能增加，不能降低。');
+                return false;
+            }
+            function ensureAtLeast(key, label) {
+                if (values[key] === undefined || baseline[key] === undefined) return true;
+                return Number(values[key]) >= Number(baseline[key]) || reject(label);
+            }
+            if (product === 'SaaS-XDR') return ensureAtLeast('logAmount', '日志量');
+            if (product === 'NGDR' || product === 'SaaS-aES') return ensureAtLeast('pcCount', '授权PC数') && ensureAtLeast('serverCount', '授权服务器数');
+            if (product === 'SASE-XDLA' || product === 'SASE-ZTNA') return ensureAtLeast('userCount', '授权用户数');
+            if (product === 'SASE-SWG') return ensureAtLeast('userCount', '授权用户数') && ensureAtLeast('branchCount', '分支数') && ensureAtLeast('bandwidth', '带宽');
+            if (product === '钓鱼邮件防护') return ensureAtLeast('mailCount', '每日邮件数量');
+            if (product === 'SASE-GA') return ensureAtLeast('bandwidth', '带宽');
+            return true;
+        }
+
+        function getInlineXaasSpecValues(product) {
+            var current = cloneXaasSpecValue(xaasSpecValues[product]);
+            function numberValue(id, fallback) {
+                var el = document.getElementById(id);
+                return el ? (parseInt(el.value) || fallback) : fallback;
+            }
+            if (product === 'SaaS-XDR') {
+                current.logAmount = Math.round(numberValue('spec-log-inline', 200000000) / 10000) || 20000;
+                current.modules = syncXdrSpecModules(false);
+            } else if (product === 'NGDR') {
+                current.pcCount = numberValue('ngdr-pc', 50);
+                current.serverCount = numberValue('ngdr-server', 50);
+            } else if (product === 'SaaS-aES') {
+                current.pcCount = numberValue('saes-pc', 50);
+                current.serverCount = numberValue('saes-server', 50);
+            } else if (product === 'SASE-XDLA') {
+                current.userCount = numberValue('xdla-users', 50);
+            } else if (product === 'SASE-ZTNA') {
+                current.userCount = numberValue('ztna-users', 50);
+            } else if (product === 'SASE-SWG') {
+                current.userCount = numberValue('swg-users', 50);
+                current.branchCount = numberValue('swg-branch', 3);
+                current.bandwidth = numberValue('swg-bw', 100);
+            } else if (product === '钓鱼邮件防护') {
+                current.mailCount = numberValue('mail-count', 10000);
+            } else if (product === 'SASE-GA') {
+                current.bandwidth = numberValue('ga-bw', 5);
+            }
+            return current;
+        }
+
+        function buildDescTextFromValues(product, values) {
+            var original = xaasSpecValues[product];
+            xaasSpecValues[product] = values;
+            var text = buildDescText(product);
+            xaasSpecValues[product] = original;
+            return text;
+        }
+
+        function commitInlineXaasSpecValues(product, values) {
+            if (!product || !xaasSpecValues[product] || !values) return;
+            Object.keys(values).forEach(function(key) {
+                xaasSpecValues[product][key] = values[key];
+            });
+        }
+
+        function disableCustomSelectOptionsBelow(selectId, minValue) {
+            var select = document.getElementById(selectId);
+            var wrapper = select ? select.closest('.custom-select') : null;
+            if (!select || !wrapper) return;
+            Array.prototype.forEach.call(select.options, function(option) {
+                option.disabled = Number(option.value) < Number(minValue);
+            });
+            wrapper.querySelectorAll('.custom-select-option').forEach(function(option) {
+                var disabled = Number(option.dataset.value) < Number(minValue);
+                option.classList.toggle('disabled', disabled);
+                option.setAttribute('aria-disabled', disabled ? 'true' : 'false');
+            });
+            if (Number(select.value) < Number(minValue)) {
+                setCustomSelectValue(selectId, String(minValue));
+                select.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        }
+
+        function clearCustomSelectDisabledOptions(selectId) {
+            var select = document.getElementById(selectId);
+            var wrapper = select ? select.closest('.custom-select') : null;
+            if (!select || !wrapper) return;
+            Array.prototype.forEach.call(select.options, function(option) { option.disabled = false; });
+            wrapper.querySelectorAll('.custom-select-option').forEach(function(option) {
+                option.classList.remove('disabled');
+                option.setAttribute('aria-disabled', 'false');
+            });
+        }
+
+        function clearXaasEditSpecGuards() {
+            clearCustomSelectDisabledOptions('ga-bw');
+        }
+
+        function applyInlineXaasSpecGuards(product) {
+            var baseline = getXaasTrialSpecBaseline(product);
+            if (!baseline) {
+                if (product === 'SASE-GA') clearXaasEditSpecGuards();
+                return;
+            }
+            if (product === 'SaaS-XDR') {
+                setNumberMin('spec-log-inline', Number(baseline.logAmount || 0) * 10000);
+            } else if (product === 'NGDR') {
+                setNumberMin('ngdr-pc', baseline.pcCount);
+                setNumberMin('ngdr-server', baseline.serverCount);
+            } else if (product === 'SaaS-aES') {
+                setNumberMin('saes-pc', baseline.pcCount);
+                setNumberMin('saes-server', baseline.serverCount);
+            } else if (product === 'SASE-XDLA') {
+                setNumberMin('xdla-users', baseline.userCount);
+            } else if (product === 'SASE-ZTNA') {
+                setNumberMin('ztna-users', baseline.userCount);
+            } else if (product === 'SASE-SWG') {
+                setNumberMin('swg-users', baseline.userCount);
+                setNumberMin('swg-branch', baseline.branchCount);
+                setNumberMin('swg-bw', baseline.bandwidth);
+            } else if (product === '钓鱼邮件防护') {
+                setNumberMin('mail-count', baseline.mailCount);
+            } else if (product === 'SASE-GA') {
+                disableCustomSelectOptionsBelow('ga-bw', baseline.bandwidth);
+            }
+        }
 
         function renderSpecFields(product) {
             var v = xaasSpecValues[product] || {};
+            var baseline = getXaasTrialSpecBaseline(product);
             var html = '';
             if (product === 'SaaS-XDR') {
-                html = '<div class="spec-field"><label>日志量（万条）</label><input type="number" id="spec-log" value="' + v.logAmount + '" min="1"></div>';
+                html = '<div class="spec-field"><label>日志量（万条）</label><input type="number" id="spec-log" value="' + v.logAmount + '" min="' + (baseline ? baseline.logAmount : 1) + '"></div>';
             } else if (product === 'NGDR') {
                 html = '<div class="spec-field"><label>版本</label><select id="spec-version"><option' + (v.version==='基础版'?' selected':'') + '>基础版</option><option' + (v.version==='全量版'?' selected':'') + '>全量版</option></select></div>';
-                html += '<div class="spec-field"><label>授权PC数</label><input type="number" id="spec-pc" value="' + v.pcCount + '" min="1"></div>';
-                html += '<div class="spec-field"><label>授权服务器数</label><input type="number" id="spec-server" value="' + v.serverCount + '" min="1"></div>';
+                html += '<div class="spec-field"><label>授权PC数</label><input type="number" id="spec-pc" value="' + v.pcCount + '" min="' + (baseline ? baseline.pcCount : 1) + '"></div>';
+                html += '<div class="spec-field"><label>授权服务器数</label><input type="number" id="spec-server" value="' + v.serverCount + '" min="' + (baseline ? baseline.serverCount : 1) + '"></div>';
             } else if (product === 'SaaS-aES') {
                 html = '<div class="spec-field"><label>版本</label><select id="spec-version"><option' + (v.version==='探针版'?' selected':'') + '>探针版</option><option' + (v.version==='全功能版'?' selected':'') + '>全功能版</option></select></div>';
-                html += '<div class="spec-field"><label>授权PC数</label><input type="number" id="spec-pc" value="' + v.pcCount + '" min="1"></div>';
-                html += '<div class="spec-field"><label>授权服务器数</label><input type="number" id="spec-server" value="' + v.serverCount + '" min="1"></div>';
+                html += '<div class="spec-field"><label>授权PC数</label><input type="number" id="spec-pc" value="' + v.pcCount + '" min="' + (baseline ? baseline.pcCount : 1) + '"></div>';
+                html += '<div class="spec-field"><label>授权服务器数</label><input type="number" id="spec-server" value="' + v.serverCount + '" min="' + (baseline ? baseline.serverCount : 1) + '"></div>';
             } else if (product === 'SASE-XDLA' || product === 'SASE-ZTNA') {
-                html = '<div class="spec-field"><label>授权用户数</label><input type="number" id="spec-users" value="' + v.userCount + '" min="1"></div>';
+                html = '<div class="spec-field"><label>授权用户数</label><input type="number" id="spec-users" value="' + v.userCount + '" min="' + (baseline ? baseline.userCount : 1) + '"></div>';
             } else if (product === 'SASE-SWG') {
                 html = '<div class="spec-field"><label>规格类型</label><select id="spec-swg-type"><option' + (v.swgType==='用户版'?' selected':'') + '>用户版</option><option' + (v.swgType==='分支版'?' selected':'') + '>分支版</option><option' + (v.swgType==='用户+分支版'?' selected':'') + '>用户+分支版</option></select></div>';
-                html += '<div class="spec-field" id="spec-swg-users-field"' + (v.swgType==='分支版'?' style="display:none"':'') + '><label>授权用户数</label><input type="number" id="spec-swg-users" value="' + v.userCount + '" min="1"></div>';
-                html += '<div class="spec-field" id="spec-swg-branch-field"' + (v.swgType==='用户版'?' style="display:none"':'') + '><label>分支数</label><input type="number" id="spec-swg-branch" value="' + v.branchCount + '" min="1"></div><div class="spec-field" id="spec-swg-bw-field"' + (v.swgType==='用户版'?' style="display:none"':'') + '><label>每分支带宽（M）</label><input type="number" id="spec-swg-bw" value="' + v.bandwidth + '" min="1"></div>';
+                html += '<div class="spec-field" id="spec-swg-users-field"' + (v.swgType==='分支版'?' style="display:none"':'') + '><label>授权用户数</label><input type="number" id="spec-swg-users" value="' + v.userCount + '" min="' + (baseline ? baseline.userCount : 1) + '"></div>';
+                html += '<div class="spec-field" id="spec-swg-branch-field"' + (v.swgType==='用户版'?' style="display:none"':'') + '><label>分支数</label><input type="number" id="spec-swg-branch" value="' + v.branchCount + '" min="' + (baseline ? baseline.branchCount : 1) + '"></div><div class="spec-field" id="spec-swg-bw-field"' + (v.swgType==='用户版'?' style="display:none"':'') + '><label>每分支带宽（M）</label><input type="number" id="spec-swg-bw" value="' + v.bandwidth + '" min="' + (baseline ? baseline.bandwidth : 1) + '"></div>';
             } else if (product === '钓鱼邮件防护') {
-                html = '<div class="spec-field"><label>每日邮件数量（封）</label><input type="number" id="spec-mail" value="' + v.mailCount + '" min="1"></div>';
+                html = '<div class="spec-field"><label>每日邮件数量（封）</label><input type="number" id="spec-mail" value="' + v.mailCount + '" min="' + (baseline ? baseline.mailCount : 1) + '"></div>';
             } else if (product === 'SASE-GA') {
-                html = '<div class="spec-field"><label>带宽（M）</label><select id="spec-bw"><option value="5"' + (Number(v.bandwidth)===5?' selected':'') + '>5M</option><option value="10"' + (Number(v.bandwidth)===10?' selected':'') + '>10M</option><option value="20"' + (Number(v.bandwidth)===20?' selected':'') + '>20M</option><option value="30"' + (Number(v.bandwidth)===30?' selected':'') + '>30M</option><option value="50"' + (Number(v.bandwidth)===50?' selected':'') + '>50M</option></select></div>';
+                html = '<div class="spec-field"><label>带宽（M）</label><select id="spec-bw">' + buildGaBandwidthOptions(v.bandwidth, baseline) + '</select></div>';
             }
             return html;
         }
@@ -2896,6 +3089,7 @@ function updateXaasFamilyCounts() {
             currentSpecProduct = product;
             specModalTitle.textContent = '修改规格 - ' + (productDisplayNames[product] || product);
             specModalBody.innerHTML = renderSpecFields(product);
+            applyXaasSpecEditGuards(product);
             specModal.classList.add('show');
             var swgTypeSelect = document.getElementById('spec-swg-type');
             if (swgTypeSelect) {
@@ -2916,29 +3110,33 @@ function updateXaasFamilyCounts() {
         function saveSpecValues() {
             var p = currentSpecProduct;
             var v = xaasSpecValues[p];
-            if (!v) return;
+            if (!v) return false;
+            var nextValues = cloneXaasSpecValue(v);
             if (p === 'SaaS-XDR') {
-                v.logAmount = parseInt(document.getElementById('spec-log').value) || 20000;
+                nextValues.logAmount = parseInt(document.getElementById('spec-log').value) || 20000;
             } else if (p === 'NGDR') {
-                v.version = document.getElementById('spec-version').value;
-                v.pcCount = parseInt(document.getElementById('spec-pc').value) || 50;
-                v.serverCount = parseInt(document.getElementById('spec-server').value) || 50;
+                nextValues.version = document.getElementById('spec-version').value;
+                nextValues.pcCount = parseInt(document.getElementById('spec-pc').value) || 50;
+                nextValues.serverCount = parseInt(document.getElementById('spec-server').value) || 50;
             } else if (p === 'SaaS-aES') {
-                v.version = document.getElementById('spec-version').value;
-                v.pcCount = parseInt(document.getElementById('spec-pc').value) || 50;
-                v.serverCount = parseInt(document.getElementById('spec-server').value) || 50;
+                nextValues.version = document.getElementById('spec-version').value;
+                nextValues.pcCount = parseInt(document.getElementById('spec-pc').value) || 50;
+                nextValues.serverCount = parseInt(document.getElementById('spec-server').value) || 50;
             } else if (p === 'SASE-XDLA' || p === 'SASE-ZTNA') {
-                v.userCount = parseInt(document.getElementById('spec-users').value) || 50;
+                nextValues.userCount = parseInt(document.getElementById('spec-users').value) || 50;
             } else if (p === 'SASE-SWG') {
-                v.swgType = document.getElementById('spec-swg-type').value;
-                v.userCount = parseInt(document.getElementById('spec-swg-users').value) || 50;
-                v.branchCount = parseInt(document.getElementById('spec-swg-branch').value) || 3;
-                v.bandwidth = parseInt(document.getElementById('spec-swg-bw').value) || 100;
+                nextValues.swgType = document.getElementById('spec-swg-type').value;
+                nextValues.userCount = parseInt(document.getElementById('spec-swg-users').value) || 50;
+                nextValues.branchCount = parseInt(document.getElementById('spec-swg-branch').value) || 3;
+                nextValues.bandwidth = parseInt(document.getElementById('spec-swg-bw').value) || 100;
             } else if (p === '钓鱼邮件防护') {
-                v.mailCount = parseInt(document.getElementById('spec-mail').value) || 10000;
+                nextValues.mailCount = parseInt(document.getElementById('spec-mail').value) || 10000;
             } else if (p === 'SASE-GA') {
-                v.bandwidth = parseInt(document.getElementById('spec-bw').value) || 5;
+                nextValues.bandwidth = parseInt(document.getElementById('spec-bw').value) || 5;
             }
+            if (!validateXaasSpecIncrease(p, nextValues)) return false;
+            Object.keys(nextValues).forEach(function(key) { v[key] = nextValues[key]; });
+            return true;
         }
 
         function buildDescText(product) {
@@ -2986,6 +3184,7 @@ function updateXaasFamilyCounts() {
                     });
                     // 切换当前规格区
                     if (!isOpen && inlineSpec) {
+                        applyInlineXaasSpecGuards(product);
                         inlineSpec.classList.add('show');
                         this.classList.add('active');
                     }
@@ -3007,7 +3206,7 @@ function updateXaasFamilyCounts() {
 
         document.getElementById('specCancelBtn').addEventListener('click', closeSpecModal);
         document.getElementById('specConfirmBtn').addEventListener('click', function() {
-            saveSpecValues();
+            if (!saveSpecValues()) return;
             var item = document.querySelector('.xaas-product-item[data-product="' + currentSpecProduct + '"]');
             if (item) {
                 var desc = item.querySelector('.xaas-product-desc');
@@ -3069,20 +3268,20 @@ function updateXaasFamilyCounts() {
         var specLogInline = document.getElementById('spec-log-inline');
         if (specLogInline) {
             specLogInline.addEventListener('input', function() {
-                xaasSpecValues['SaaS-XDR'].logAmount = Math.round(parseInt(this.value) / 10000) || 20000;
                 var item = document.querySelector('.xaas-product-item[data-product="SaaS-XDR"]');
                 if (item) {
                     var desc = item.querySelector('.xaas-product-desc');
-                    if (desc) desc.textContent = buildDescText('SaaS-XDR');
+                    if (desc) desc.textContent = buildDescTextFromValues('SaaS-XDR', getInlineXaasSpecValues('SaaS-XDR'));
                 }
-                if (typeof updateXaasApplyReason === 'function') updateXaasApplyReason();
             });
         }
-        function syncXdrSpecModules() {
+        function syncXdrSpecModules(commit) {
             var selectedModules = Array.prototype.map.call(document.querySelectorAll('#xaas-xdr-inline-spec .spec-modules .xaas-chip.active'), function(chip) {
                 return chip.dataset.value || chip.textContent.trim();
             }).sort();
-            if (xaasSpecValues['SaaS-XDR']) xaasSpecValues['SaaS-XDR'].modules = selectedModules.join('|');
+            var moduleValue = selectedModules.join('|');
+            if (commit && xaasSpecValues['SaaS-XDR']) xaasSpecValues['SaaS-XDR'].modules = moduleValue;
+            return moduleValue;
         }
         var inlineSpecProductMap = {
             'xaas-xdr-inline-spec': 'SaaS-XDR',
@@ -3115,6 +3314,14 @@ function updateXaasFamilyCounts() {
             confirmBtn.addEventListener('click', function(e) {
                 e.stopPropagation();
                 var currentProduct = this.dataset.product || product;
+                var inlineValues = getInlineXaasSpecValues(currentProduct);
+                if (!validateXaasSpecIncrease(currentProduct, inlineValues)) return;
+                commitInlineXaasSpecValues(currentProduct, inlineValues);
+                var currentItem = currentProduct ? document.querySelector('.xaas-product-item[data-product="' + currentProduct + '"]') : null;
+                if (currentItem) {
+                    var currentDesc = currentItem.querySelector('.xaas-product-desc');
+                    if (currentDesc) currentDesc.textContent = buildDescText(currentProduct) || currentItem.dataset.defaultDesc;
+                }
                 area.classList.remove('show');
                 var item = currentProduct ? document.querySelector('.xaas-product-item[data-product="' + currentProduct + '"]') : null;
                 if (item) {
@@ -3139,13 +3346,17 @@ function updateXaasFamilyCounts() {
             var syncInlineSpecValue = function() {
                 var val = parseInt(this.value) || 0;
                 if (multiplier) val = Math.round(val / multiplier);
-                if (xaasSpecValues[product]) xaasSpecValues[product][fieldKey] = val;
+                var baseline = getXaasTrialSpecBaseline(product);
+                if (baseline && baseline[fieldKey] !== undefined && Number(val) < Number(baseline[fieldKey])) {
+                    alert((productDisplayNames[product] || product) + '正在试用中，规格只能增加，不能降低。');
+                    val = Number(baseline[fieldKey]);
+                    this.value = multiplier ? val * multiplier : val;
+                }
                 var item = document.querySelector('.xaas-product-item[data-product="' + product + '"]');
                 if (item) {
                     var desc = item.querySelector('.xaas-product-desc');
-                    if (desc) desc.textContent = buildDescText(product) || item.dataset.defaultDesc;
+                    if (desc) desc.textContent = buildDescTextFromValues(product, getInlineXaasSpecValues(product)) || item.dataset.defaultDesc;
                 }
-                if (typeof updateXaasApplyReason === 'function') updateXaasApplyReason();
             };
             el.addEventListener('input', syncInlineSpecValue);
             el.addEventListener('change', syncInlineSpecValue);
@@ -3281,7 +3492,7 @@ function updateXaasFamilyCounts() {
             chip.addEventListener('click', function() {
                 this.classList.toggle('active');
                 if (this.closest('#xaas-xdr-inline-spec')) {
-                    syncXdrSpecModules();
+                syncXdrSpecModules(false);
                     if (typeof updateXaasApplyReason === 'function') updateXaasApplyReason();
                 }
             });
