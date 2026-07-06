@@ -1,5 +1,0 @@
-﻿<div class="xaas-product-item" data-product="钓鱼邮件防护" data-default-desc="有效期30天，每日邮件数量10000封">
-                                                <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="钓鱼邮件防护 GPT"> <span>钓鱼邮件防护 GPT</span></label>
-                                                <div class="xaas-product-right">
-                                                    <span class="xaas-product-desc">有效期30天，每日邮件数量10000封</span>
-                                 

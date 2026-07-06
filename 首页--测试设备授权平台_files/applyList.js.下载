@@ -1,0 +1,529 @@
+var form,table,tableIns;
+layui.config({
+	base:'public/layui/'
+}).extend({
+	xmSelect:'xm-select'
+}).use(['xmSelect','form', 'layer', 'table', 'laytpl', 'laydate'], function () {
+	var  xmSelect=layui.xmSelect,
+		form = layui.form,
+		layer = parent.layer === undefined ? layui.layer : top.layer,
+		$ = layui.jquery,
+		laytpl = layui.laytpl,
+		table = layui.table,
+		laydate = layui.laydate;
+
+	$('.useDate').each(function () {
+		laydate.render({
+			elem: this
+		});
+	})
+
+	//搜索
+	$(".search_btn").on("click", function () {
+		var isCheck = 0;
+		if ($('#isCheck').is(':checked')) {
+			isCheck = 1;
+		}
+		if ($(".plname").val() == '') {
+			layer.msg("请先选择产品线");
+			return false;
+		}
+		table.reload("applyListTable", {
+			page: {
+				curr: 1 //重新从第 1 页开始
+			},
+			where: {
+				key: $("#searchVal").val(),  //搜索的关键字
+				startDate: $("#startDate").val(),
+				endDate: $("#endDate").val(),
+				area: $("#area").val(),
+				office: $("#office").val(),
+				sn: $("#sn").val(),
+				isCheck: isCheck,
+				username: $("#username").val()
+			}
+		})
+	});
+
+	loadPlnameSelect();
+
+	//导出数据
+	$(".export_btn").on("click", function () {
+		var plName = ids;
+		var isCheck = 0;
+		if ($('#isCheck').is(':checked')) {
+			isCheck = 1;
+		}
+		if (plName == '') {
+			layer.msg("请先选择产品线");
+			return false;
+		}
+
+		if(!$("#startDate").val() && !$("#endDate").val()){
+			layer.msg("请选择时间范围");
+			return false;
+		}
+
+		//1.先查询表头
+		$.ajax({
+			type: 'GET',
+			url: base_url + 'applyList/getExportList',
+			data:{
+				plname:plName,
+				startDate: $("#startDate").val(),
+				endDate: $("#endDate").val(),
+				area: $("#area").val(),
+				office: $("#office").val(),
+				sn: $("#sn").val(),
+			},
+			dataType: 'json',
+			success: function (res) {
+				if (parseInt(res.code) === 0) {
+					ToExportData(res.data);
+				}else {
+					layer.msg(res.msg);
+					return false;
+				}
+			},error:function () {
+				layer.msg('导出失败！请联系管理员！');
+				return false;
+			}
+		});
+	})
+	var cols = [
+		{type: "checkbox", fixed: "left", width: 40},
+		{field: 'bpm_id', title: '审批流程单号', width: 200, sort: true, align: 'center',templet:function (d) {
+			if(d.bpm_id){
+				if (d.type != 10 && d.guid != '') {
+					return ' <a onclick=toExamineDetail("'+d.bpm_id+'") class="layui-btn layui-btn-normal layui-btn-xs" title="'+d.bpm_id+'">'+d.bpm_id+'</a>';
+				}else {
+					return d.bpm_id;
+				}
+
+			}else{
+				return '';
+			}
+		}},
+		{field: 'plname', title: '产品线', width: 100, align: 'center', sort: true},
+		{field: 'ver_field', title: '版本号', width: 160, align: 'center'},
+		{field: 'type', title: '授权审核', width: 88, align: 'center',templet:function (d) {
+				switch (parseInt(d.type)){
+					case 0:
+					case 1:
+						if(d.workNo){
+								return ' <a onclick="toDetail('+d.id+')" class="layui-btn layui-btn-normal layui-btn-xs" title="审核">授权审核</a>';
+						}else{
+							return '<span style="color: #FF5722">未审核</span>';
+						}
+						break;
+					case 5:
+						return '<span style="color: #ccc">已驳回</span>';
+						break;
+					case 10:
+						return '<span style="color: #5FB878">已审核</span>';
+						break;
+					default:
+						return  '';
+						break;
+				}
+			}},
+		{field: 'customer', title: '客户名称', width: 120, align: 'center', templet: function (d) {
+				if(d.plname == 'EDR'){
+					return d.salesInterfacePerson;
+				}else{
+					return d.customer;
+				}
+			}},
+		{field: 'tid', title: '订单号', width: 160, align: 'center'},
+		{field: 'devId', title: '设备ID', width: 160, align: 'center'},
+		{field: 'devSn', title: '设备SN', width: 130, align: 'center'},
+		{field: 'area', title: '区域', width: 80, align: 'center'},
+		{field: 'office', title: '办事处', width: 80, align: 'center'},
+		{field: 'username', title: '申请人', width: 120, sort: true, align: 'center'},
+		{field: 'addDate', title: '申请时间', width: 160, sort: true, align: 'center'},
+		{field: 'sn1', title: '云授权序列号', width: 220, align: 'center',
+			templet:function (d) {
+				if(d.level < 3){
+					if(d.type < 5){
+						return '审核中';
+					}
+					else if(d.type == 5){
+						return '已驳回';
+					}
+				}
+				return d.sn1;
+			}
+		},
+		{
+			field: 'active_url', title: '云图链接', minWidth: 100, templet: function (d) {
+				if(d.level < 3){
+					if(d.type < 5){
+						return '审核中';
+					}
+					else if(d.type == 5){
+						return '已驳回';
+					}
+				}
+				if(!d.upload_url){
+					if(d.active_url){
+						return ' <a class="layui-btn layui-btn-normal layui-btn-xs" href="'+d.active_url+'" title="云图授权" target="_blank">云图授权</a>';
+					}
+				}
+
+				return '';
+			}
+		},
+		{
+			field: 'upload_url', title: '授权文件', minWidth: 90, templet: function (d) {
+				if(d.level < 3){
+					if(d.type < 5){
+						return '审核中';
+					}
+					else if(d.type == 5){
+						return '已驳回';
+					}
+				}
+				if(d.upload_url){
+					return ' <a class="layui-btn layui-btn-normal layui-btn-xs" href="'+d.upload_url+'" title="授权文件" target="_blank">授权文件</a>';
+				}else{
+					return '';
+				}
+			}
+		}
+
+	];
+	tableIns = table.render({
+		elem: '#applyList',
+		url: base_url + 'applyList/getApplyList',
+		cellMinWidth: 95,
+		page: true,
+		where: {
+			"plnames":''
+		},
+		height: "full-125",
+		limit: 20,
+		limits: [10, 15, 20, 25],
+		id: "applyListTable",	//容器唯一ID
+		cols: [cols],
+	});
+
+	//审核
+	$(".check_btn").click(function () {
+		var checkStatus = table.checkStatus('applyListTable'),
+			data = checkStatus.data,
+			ids = [];
+		types = [];
+		plnames = [];
+
+		if (data.length > 0) {
+			for (var i in data) {
+				ids.push(data[i].id);
+			}
+			for (var i in data) {
+				types.push(data[i].type);
+			}
+			for (var i in data) {
+				plnames.push(data[i].plname);
+			}
+			if (types[0] == 5 || types[0] == 10) {	//已驳回 || 已通过
+				layer.alert('请选择待审核的申请！');
+				return false;
+			}
+			//产品线去重
+			var plnameArr = [];
+			for (i = 0; i < plnames.length; i++) {
+				if (plnameArr.indexOf(plnames[i]) == -1) {
+					plnameArr.push(plnames[i]);
+				}
+			}
+			layer.confirm('确定审核通过吗？', {btn: ["通过", "驳回", "取消"]}, function (index1) {
+				var index = layer.msg('处理中，请稍候...', {icon: 16, time: false, shade: 0.8});
+				$.ajax({
+					url: base_url + 'getsn/check',
+					type: 'post',
+					data: {ids: ids, plname: plnameArr[0], checkType: 1},	//1表示通过
+					dataType: 'json',
+					success: function (r) {
+						if (r.status == 1) {
+							layer.msg('操作成功');
+							tableIns.reload();
+							layer.close(index1);
+							layer.close(index);
+						} else {
+							layer.alert(r.msg);
+						}
+					},
+					error: function () {
+						layer.alert('操作失败，请刷新后重试！');
+					}
+				});
+			}, function () {
+				layer.prompt({
+					area: ['100px', '180px']
+				}, function (value, index2, elem) {
+					var index = layer.msg('处理中，请稍候...', {icon: 16, time: false, shade: 0.8});
+					$.ajax({
+						url: base_url + 'getsn/check',
+						type: 'post',
+						data: {ids: ids, plname: plnameArr[0], checkType: 2, checkRemark: value},	//2表示驳回
+						dataType: 'json',
+						success: function (r) {
+							if (r.status == 1) {
+								layer.msg('操作成功');
+								tableIns.reload();
+								layer.close(index2);
+								layer.clode(index);
+							} else {
+								layer.alert('操作失败，请联系管理员查看！');
+							}
+						},
+						error: function () {
+							layer.alert('操作失败，请刷新后重试！');
+						}
+					});
+				})
+			})
+		} else {
+			layer.msg("请至少选择一条数据");
+		}
+	})
+
+	//首先先查询产品线对应的序列号列表
+	// var plname = data.value;
+	var ids = [];
+	//首先先查询产品线对应的序列号列表
+	$.ajax({
+		url: base_url + 'sysParam/getPlnameList',
+		type: "get",
+		async: false,
+		dataType:"JSON",
+		success: function (res) {
+			obj123 = xmSelect.render({
+				el:'#plname',
+				tree:{
+					show: true,
+					expandedKeys:[]
+				},
+				toolbar:{
+					show: true,
+					list : ['ALL','CLEAR','REVERSE']
+				},
+				filterable: true,       //搜索
+				direction: 'down',      // 展开方向 下
+				data:res,
+				on:function (row) {
+					ids = [];
+					$.each(row.arr, function (index, item) {
+						ids.push(item.value)
+					})
+					tableIns = table.render({
+						elem: '#applyList',
+						url: base_url + 'applyList/getApplyList',
+						cellMinWidth: 95,
+						page: true,
+						where: {
+							"plnames":ids
+						},
+						height: "full-125",
+						limit: 20,
+						limits: [10, 15, 20, 25],
+						id: "applyListTable",	//容器唯一ID
+						cols: [cols],
+					});
+				}
+			})
+
+		}
+	});
+
+	function ToExportData(data){
+		let planName=$("#plname").val();
+		let titleArr=[
+			'产品线',
+			'版本号',
+			'客户名称',
+			'订单号',
+			'设备ID',
+			'设备SN',
+			'区域',
+			'办事处',
+			'申请人',
+			'申请时间',
+			'云授权序列号',
+			'云图链接',
+			'授权文件',
+		];
+
+		switch (planName){
+			case 'EDR':
+				titleArr.push('客户名称');
+				titleArr.push('销售接口人');
+				titleArr.push('Win服务器');
+				titleArr.push('Linux服务器');
+				titleArr.push('PC客户端');
+				titleArr.push('测试项目申请原因');
+				break;
+		}
+
+		let arr=[];
+		$.each(data,function (key,item) {
+			let _arr=[
+				item.plname,
+				item.ver_field,
+				item.customer,
+				item.tid,
+				item.devId,
+				item.devSn,
+				item.area,
+				item.office,
+				item.username,
+				item.addDate,
+				item.sn1,
+				item.active_url,
+				item.upload_url
+			];
+
+			switch (planName){
+				case 'EDR':
+					_arr.push(item.customer);
+					_arr.push(item.salesInterfacePerson);
+					_arr.push(item.win_num);
+					_arr.push(item.linux_num);
+					_arr.push(item.pc_num);
+					let testReason='';
+					switch (item.testReason){
+						case '1':
+							testReason='安全事件应急测试';
+							break;
+						case '2':
+							testReason='EDR售前测试';
+							break;
+						case '3':
+							testReason='EDR售前测试（需总部专家保障）';
+							break;
+						case '4':
+							testReason='病毒检出PK测试（需总部专家保障）';
+							break;
+						case '5':
+							testReason='其他';
+							break;
+					}
+					_arr.push(testReason);
+					break;
+			}
+			arr.push(_arr);
+		})
+
+		table.exportFile(titleArr, arr, 'csv');
+	}
+})
+//授权详情
+function toDetail(id) {
+	var index = layui.layer.open({
+		title : "授权详情",
+		type : 2,
+		area: ['80%', '90%'],
+		content : base_url + "apply/detail?id="+id,
+		success : function(layero, index){
+			console.log("layer " + index)
+			window.tempIndex = index
+		}
+	})
+	console.log("layer 2 " + index)
+
+}
+function toExamineDetail(id) {
+	var safeId = String(id == null ? '' : id).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+	var html = '<div style="background:#fafafa;border-bottom:1px solid #f0f0f0;padding:12px 14px;display:flex;align-items:center;flex-wrap:nowrap;gap:10px;">'
+		+ '<span style="flex-shrink:0;font-size:13px;color:#666;font-weight:500;white-space:nowrap;">审批单号</span>'
+		+ '<input type="text" readonly value="'+safeId+'" style="flex:1;min-width:0;box-sizing:border-box;border:1px solid #e6e6e6;background:#fff;padding:7px 10px;border-radius:4px;font-size:13px;color:#333;" '
+		+ 'onclick="this.select();try{document.execCommand(\'copy\');layer.msg(\'已复制\',{time:1200});}catch(e){layer.msg(\'请手动复制\');}" title="点击复制"/>'
+		+ '</div>';
+	html += '<div style="max-height:380px;overflow-y:auto;padding:12px 14px 16px 14px;">';
+	html += '<ul class="layui-timeline" style="margin:0;">';
+	$.ajax({
+		url: base_url + 'PrmPorts/getApprovalProcess',
+		type: 'post',
+		data: {number: id,type: 1},
+		dataType: 'json',
+		async: false,
+		success: function (r) {
+			if(r.code==1 && r.data && r.data.length >= 1){
+				for (var i=0;i<r.data.length;i++){
+					var row = r.data[i];
+					var name = row.name || '';
+					var addTime = row.addTime || '';
+					var icon = "&#x1005;";
+					// 与已完成节点统一：「审批人 · 状态」单行；多人时接口已用顿号拼接，自动换行不断字
+					var stateStr = row.state || '';
+					var assigneeStr = row.assignee || '';
+					var detailLine = assigneeStr
+						? (assigneeStr + (stateStr ? ' <span style="color:#bbb;">·</span> ' + stateStr : ''))
+						: stateStr;
+					var htmlP = '<p style="margin:8px 0 0 0;font-size:13px;color:#555;line-height:1.55;word-wrap:break-word;">' + detailLine + '</p>';
+					if((r.data.length-1)==i){
+						icon="&#xe63d;";
+					}
+					if (row.throughRule) {
+						htmlP += '<p style="color:#999;font-size:12px;margin-top:8px;line-height:1.45;padding:6px 8px;background:#f7f7f7;border-radius:4px;">' + row.throughRule + '</p>';
+					}
+					var titleBlock = '<div style="margin:0;display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:nowrap;">'
+						+ '<div style="font-size:14px;color:#333;font-weight:600;line-height:1.4;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+name+'</div>'
+						+ '<div style="font-size:12px;color:#999;flex-shrink:0;white-space:nowrap;letter-spacing:0.02em;">'+addTime+'</div>'
+						+ '</div>';
+					var itemBorder = (i < r.data.length - 1) ? 'padding-bottom:14px;border-bottom:1px solid #f2f2f2;' : 'padding-bottom:4px;';
+					html+="<li class=\"layui-timeline-item\" style=\"padding-bottom:2px;\">\n" +
+						"    <i class=\"layui-icon layui-timeline-axis\" style=\"color:#5FB878;\">"+icon+"</i>\n" +
+						"    <div class=\"layui-timeline-content layui-text\" style=\""+itemBorder+"\">\n" +
+						"      " + titleBlock + "\n" + htmlP+
+						" 	 </div>"+
+						" 	 </li>"
+					;
+				}
+			} else {
+				html += '<li class="layui-timeline-item"><div class="layui-timeline-content layui-text" style="color:#999;font-size:13px;">暂无审批记录</div></li>';
+			}
+		}
+	});
+	html = html + "</ul></div>";
+
+	layer.open({
+		title: '<span style="font-size:15px;font-weight:600;">审批详情</span>',
+		type: 1,
+		area: ['420px', '520px'],
+		content: html,
+		shade: 0.35,
+		resize: false
+	});
+}
+//授权审核
+function toIsExamine(id){
+	layer.confirm('确定审核通过吗？', {btn: ["通过", "驳回", "取消"]}, function (index1) {
+		layer.close(index1);
+		dealExamine(id,10);
+	},function (index2) {
+		layer.close(index2);
+		dealExamine(id,5);
+	});
+}
+
+//处理审核
+function dealExamine(id,type){
+	$.ajax({
+		url: base_url + 'planNew/dealExamine',
+		type: 'post',
+		data: {id: id, type: type},
+		dataType: 'json',
+		success: function (r) {
+			if(parseInt(r.code) === 0){
+				layer.alert('操作成功！');
+			}else{
+				layer.alert('操作失败，请刷新后重试！');
+			}
+			tableIns.reload();
+		},
+		error: function () {
+			layer.alert('操作失败，请刷新后重试！');
+		}
+	});
+}
