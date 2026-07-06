@@ -211,10 +211,17 @@
         .customer-type-badge.ka { background: #fff3e0; color: #e65100; border: 1px solid #ffcc80; }
         .customer-type-badge.normal { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
 
+        /* 多匹配选择模式 */
+        .search-select-readonly { background: #f5f7fa !important; color: #666 !important; cursor: pointer; }
+        .match-badge { display: none; padding: 2px 10px; border-radius: 10px; font-size: 12px; line-height: 20px; white-space: nowrap; background: #eff4ff; color: #0050cb; border: 1px solid #b3c5ff; flex-shrink: 0; }
+        .match-badge.show { display: inline-block; }
+        .match-badge.selected { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+
         /* 所属云图账号 */
         .cloud-account-item { display: none; margin-top: 8px; }
         .cloud-account-item.show { display: block; }
-        .cloud-account-select { max-width: 300px; }
+        .cloud-account-select { max-width: 480px; }
+        [data-select-id="xaas-region"] { max-width: 480px; }
 
         /* 统一授权日期栏 */
         .unified-date-bar { display: flex; align-items: center; gap: 12px; background: #eff4ff; border: none; border-radius: 10px; padding: 14px 18px; margin-bottom: 15px; margin-left: 15px; margin-right: 20px; max-width: 900px; margin-left: auto; margin-right: auto; }
@@ -1670,6 +1677,7 @@
                             <div class="layui-input-block">
                                 <div class="search-select-box">
                                     <input type="text" id="xaasCustomerSearch" placeholder="请输入客户名称搜索" class="layui-input" autocomplete="off">
+                                    <span class="match-badge" id="xaasMatchBadge"></span>
                                     <span class="field-tooltip" style="display:inline-flex;flex-shrink:0;vertical-align:middle;"><span class="tooltip-icon">&#9432;</span><div class="tooltip-popup"><div class="tooltip-title">客户名称 备注</div><div class="tooltip-section">如果联系人手机号绑定的客户名称不准确，请联系客户换绑云图绑定企业名称(400-630-6430)</div></div></span>
                                     <div class="search-dropdown" id="xaasCustomerDropdown"></div>
                                 </div>
@@ -3505,6 +3513,19 @@ function updateXaasFamilyCounts() {
             });
         }
 
+        function resetXaasSearchState() {
+            var searchInput = document.getElementById('xaasCustomerSearch');
+            var badge = document.getElementById('xaasMatchBadge');
+            xaasMultiMatchCache = null;
+            if (searchInput) {
+                searchInput.readOnly = false;
+                searchInput.classList.remove('search-select-readonly');
+                searchInput.placeholder = '请输入客户名称搜索';
+            }
+            if (badge) { badge.textContent = ''; badge.className = 'match-badge'; }
+        }
+
+        var xaasMultiMatchCache = null;
         var xaasPhoneInput = document.getElementById('xaas-contact-phone');
         if (xaasPhoneInput) {
             xaasPhoneInput.addEventListener('blur', function() {
@@ -3512,12 +3533,14 @@ function updateXaasFamilyCounts() {
                 var hint = document.getElementById('xaas-phone-hint');
                 if (!phone) {
                     setXaasCustomer('', '', '');
+                    resetXaasSearchState();
                     if (hint) hint.textContent = '输入手机号后模拟匹配客户名称；未匹配时可通过搜索选择客户。';
                     return;
                 }
                 var result = resolveMockXaasCustomer(phone);
                 if (!result) {
                     setXaasCustomer('', '', '');
+                    resetXaasSearchState();
                     if (hint) hint.textContent = '未匹配到云图客户，请搜索或创建客户。';
                     return;
                 }
@@ -3526,9 +3549,11 @@ function updateXaasFamilyCounts() {
                 if (contactName && !contactName.value.trim() && result.contactName) contactName.value = result.contactName;
                 if (mcodes.length === 0) {
                     setXaasCustomer('', '', '');
+                    resetXaasSearchState();
                     if (hint) hint.textContent = '该手机号未注册云图账号，请搜索或创建客户。';
                 } else if (mcodes.length === 1) {
                     // 单个云图客户 → 自动填入 + 锁定
+                    resetXaasSearchState();
                     var matchedCustomers = resolveCustomersByMcodes(mcodes);
                     if (matchedCustomers.length > 0) {
                         var c = matchedCustomers[0];
@@ -3539,20 +3564,29 @@ function updateXaasFamilyCounts() {
                         if (hint) hint.textContent = '匹配到mcode但主数据无对应客户，请搜索或创建。';
                     }
                 } else {
-                    // 多个云图客户 → 在下拉中展示让用户选择（不锁定）
+                    // 多个云图客户 → 锁定输入框，只允许从匹配结果中选择
                     setXaasCustomer('', '', '');
                     var matchedList = resolveCustomersByMcodes(mcodes);
+                    xaasMultiMatchCache = matchedList.length > 0 ? matchedList : null;
+                    // 锁定搜索框：禁止打字，但可点击展开下拉
+                    var searchInput = document.getElementById('xaasCustomerSearch');
+                    if (searchInput) {
+                        searchInput.readOnly = true;
+                        searchInput.classList.add('search-select-readonly');
+                        searchInput.placeholder = '请点击选择客户';
+                    }
+                    // 显示匹配计数标签
+                    var badge = document.getElementById('xaasMatchBadge');
+                    if (badge && matchedList.length > 0) {
+                        badge.textContent = '已匹配 ' + matchedList.length + ' 个客户';
+                        badge.className = 'match-badge show';
+                    }
+                    // 展开下拉列表
                     var dropdownEl = document.getElementById('xaasCustomerDropdown');
                     if (dropdownEl && matchedList.length > 0) {
-                        dropdownEl.innerHTML = matchedList.map(function(c) {
-                            var custType = c.type || 'normal';
-                            var badgeClass = custType === 'KA' ? 'item-badge ka' : 'item-badge normal';
-                            var badgeText = custType === 'KA' ? 'KA客户' : '普通客户';
-                            return '<div class="search-item" data-name="' + c.name + '" data-id="' + c.id + '" data-type="' + custType + '" data-sales="' + (c.sales||'') + '"><span class="item-left"><span class="item-name">' + c.name + '</span></span><span class="sales-person-badge" style="margin-left:6px;">' + (c.sales||'') + '</span><span class="' + badgeClass + '">' + badgeText + '</span></div>';
-                        }).join('');
-                        dropdownEl.classList.add('show');
+                        renderMultiMatchDropdown(dropdownEl, matchedList);
                     }
-                    if (hint) hint.textContent = '匹配到多个云图客户，请从下拉列表中选择一个。';
+                    if (hint) hint.textContent = '已根据手机号匹配到 ' + matchedList.length + ' 个客户，请点击上方输入框选择一个。';
                 }
             });
         }
@@ -3568,6 +3602,17 @@ function updateXaasFamilyCounts() {
             });
         }
 
+        function renderMultiMatchDropdown(dropdownEl, matchedList) {
+            if (!dropdownEl || !matchedList) return;
+            dropdownEl.innerHTML = matchedList.map(function(c) {
+                var custType = c.type || 'normal';
+                var badgeClass = custType === 'KA' ? 'item-badge ka' : 'item-badge normal';
+                var badgeText = custType === 'KA' ? 'KA客户' : '普通客户';
+                return '<div class="search-item" data-name="' + c.name + '" data-id="' + c.id + '" data-type="' + custType + '" data-sales="' + (c.sales||'') + '"><span class="item-left"><span class="item-name">' + c.name + '</span></span><span class="sales-person-badge" style="margin-left:6px;">' + (c.sales||'') + '</span><span class="' + badgeClass + '">' + badgeText + '</span></div>';
+            }).join('');
+            dropdownEl.classList.add('show');
+        }
+
         var customerCreateUrl = 'https://pgsuat.sangfor.com/main.aspx?appid=052ed337-d149-4b71-a464-ea4fa532d3c4&pagetype=entityrecord&etn=account&formid=393fc924-a179-4c6a-9497-439bd3d02da6';
         function openCustomerCreatePage() {
             window.open(customerCreateUrl, '_blank');
@@ -3577,10 +3622,25 @@ function updateXaasFamilyCounts() {
         var xaasSearchInput = document.getElementById('xaasCustomerSearch');
         var xaasDropdown = document.getElementById('xaasCustomerDropdown');
         if (xaasSearchInput && xaasDropdown) {
+            // focus时如果输入为空且有缓存 → 重新渲染多匹配列表
+            xaasSearchInput.addEventListener('focus', function() {
+                // 多匹配模式（readOnly）：点击展开缓存的下拉列表
+                if (this.readOnly && this.classList.contains('search-select-readonly')) {
+                    if (xaasMultiMatchCache && xaasMultiMatchCache.length > 0) {
+                        renderMultiMatchDropdown(xaasDropdown, xaasMultiMatchCache);
+                    }
+                    return;
+                }
+                // 普通模式：输入为空且有缓存时展开
+                if (!this.value.trim() && xaasMultiMatchCache && xaasMultiMatchCache.length > 0) {
+                    renderMultiMatchDropdown(xaasDropdown, xaasMultiMatchCache);
+                }
+            });
             xaasSearchInput.addEventListener('input', function() {
                 if (this.readOnly) { xaasDropdown.classList.remove('show'); return; }
                 var keyword = this.value.trim().toLowerCase();
                 if (!keyword) { xaasDropdown.classList.remove('show'); xaasDropdown.innerHTML = ''; return; }
+                xaasMultiMatchCache = null;
                 var matched = customers.filter(function(c) {
                     return c.name.toLowerCase().indexOf(keyword) > -1;
                 }).slice(0, 10);
@@ -3604,7 +3664,11 @@ function updateXaasFamilyCounts() {
                     return;
                 }
                 if (item && item.dataset.name) {
-                    setXaasCustomer(item.dataset.name, item.dataset.id, item.dataset.type, item.dataset.sales);
+                    // 判断是否来自多匹配模式（readOnly标记）
+                    var searchInput = document.getElementById('xaasCustomerSearch');
+                    var isMultiMatch = searchInput && searchInput.readOnly && searchInput.classList.contains('search-select-readonly');
+                    if (!isMultiMatch) xaasMultiMatchCache = null;
+                    setXaasCustomer(item.dataset.name, item.dataset.id, item.dataset.type, item.dataset.sales, isMultiMatch);
                     xaasDropdown.classList.remove('show');
                 }
             });

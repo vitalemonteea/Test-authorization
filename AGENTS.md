@@ -6,3 +6,8 @@
 5. 然后用 task tool 调用 vision 子代理分析图片
 
 如果图片已在项目目录（如 assets/），直接 spawn vision 子代理处理。
+
+打包项目时：
+1. 使用全局 skill `web-mock-build-deploy`（位于 `~/.config/opencode/skills/web-mock-build-deploy/`）
+2. 打包前将 HTML 文件重命名为 `index.html`，确保部署后子路径可直接访问
+3. 项目相关静态资源（如 logo.jpg）需一并打包
