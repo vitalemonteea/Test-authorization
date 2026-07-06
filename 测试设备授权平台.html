@@ -211,6 +211,11 @@
         .customer-type-badge.ka { background: #fff3e0; color: #e65100; border: 1px solid #ffcc80; }
         .customer-type-badge.normal { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
 
+        /* 所属云图账号 */
+        .cloud-account-item { display: none; margin-top: 8px; }
+        .cloud-account-item.show { display: block; }
+        .cloud-account-select { max-width: 300px; }
+
         /* 统一授权日期栏 */
         .unified-date-bar { display: flex; align-items: center; gap: 12px; background: #eff4ff; border: none; border-radius: 10px; padding: 14px 18px; margin-bottom: 15px; margin-left: 15px; margin-right: 20px; max-width: 900px; margin-left: auto; margin-right: auto; }
         .unified-date-bar .bar-label { font-weight: 600; font-size: 14px; color: #333; white-space: nowrap; }
@@ -1673,6 +1678,27 @@
                                     <span class="customer-type-badge" id="xaasCustomerTypeBadge" style="display:none;"></span>
                                 </div>
                                 <input type="hidden" id="xaas-customer-name">
+                                <input type="hidden" id="xaas-customer-id">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item cloud-account-item" id="xaasCloudAccountItem">
+                            <label class="layui-form-label">所属云图账号</label>
+                            <div class="layui-input-block">
+                                <div class="custom-select cloud-account-select" data-select-id="xaas-cloud-account">
+                                    <select class="layui-select" id="xaas-cloud-account" style="display:none;">
+                                        <option value="">请选择云图账号</option>
+                                    </select>
+                                    <button type="button" class="custom-select-trigger">
+                                        <span class="custom-select-value">请选择云图账号</span>
+                                        <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                    </button>
+                                    <div class="custom-select-dropdown">
+                                        <ul class="custom-select-list">
+                                            <li class="custom-select-option selected" data-value="">请选择云图账号</li>
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -2385,12 +2411,32 @@
             }, 2500);
         }
 
-        var mockXaasCustomers = {
-            '1717717': { customerId: 'C100001', contactName: '马化腾' },
-            '17177170000': { customerId: 'C100001', contactName: '马化腾' },
-            '13800138000': { customerId: 'C100001', contactName: '张三' },
-            '13900139000': { customerId: 'C100004', contactName: '李四' },
-            '13700137000': { customerId: 'C100005', contactName: '王五' }
+        var mockXaasPhoneLookup = {
+            '1717717': { mcodes: ['C100001'], contactName: '马化腾' },
+            '17177170000': { mcodes: ['C100001'], contactName: '马化腾' },
+            '13800138000': { mcodes: ['C100001'], contactName: '张三' },
+            '13900139000': { mcodes: ['C100004'], contactName: '李四' },
+            '13700137000': { mcodes: ['C100005'], contactName: '王五' },
+            '13600000000': { mcodes: ['C100001', 'C100010'], contactName: '张三' },
+            '13500000000': { mcodes: [] }
+        };
+
+        var mockCloudAccounts = {
+            'C100001': [
+                { phone: '13800138000', realName: '马化腾' },
+                { phone: '13912345678', realName: '张勇' }
+            ],
+            'C100010': [
+                { phone: '13612345678', realName: '王磊' },
+                { phone: '13798765432', realName: '陈静' },
+                { phone: '13511112222', realName: '赵岩' }
+            ],
+            'C100004': [
+                { phone: '13900139000', realName: '李四' }
+            ],
+            'C100003': [
+                { phone: '13200001111', realName: '任正非' }
+            ]
         };
         var xaasIndustryMap = {
             '政府': ['中央部委', '省市级政府', '区县级政府', '公检法'],
@@ -2522,11 +2568,13 @@
 
         function setXaasCustomer(name, id, type, sales, locked) {
             var hidden = document.getElementById('xaas-customer-name');
+            var hiddenId = document.getElementById('xaas-customer-id');
             var searchInput = document.getElementById('xaasCustomerSearch');
             var infoDisplay = document.getElementById('xaasCustomerInfoDisplay');
             var nameSpan = document.getElementById('xaasSelectedCustomerName');
             var badge = document.getElementById('xaasCustomerTypeBadge');
             if (hidden) hidden.value = name || '';
+            if (hiddenId) hiddenId.value = id || '';
             if (searchInput) searchInput.value = name || '';
             setXaasCustomerSearchLocked(!!locked);
             if (name && nameSpan) {
@@ -2573,6 +2621,9 @@
             });
             xaasProductItems.forEach(function(item) { refreshXaasProductItem(item); });
             updateXaasExtraVisibility();
+
+            // 确认主数据客户后 → 云图重查主账号列表
+            loadCloudAccounts(id);
             }
 
         function findCustomerById(id) {
@@ -2580,19 +2631,86 @@
             return customers.find(function(c) { return c.id === id; }) || null;
         }
 
-        function resolveMockXaasCustomer(phone) {
-            var mock = mockXaasCustomers[phone];
-            if (!mock) return null;
-            var customer = findCustomerById(mock.customerId || mock.id);
-            if (!customer && mock.name && typeof customers !== 'undefined') {
-                customer = customers.find(function(c) { return c.name === mock.name; }) || null;
+        function loadCloudAccounts(customerId) {
+            var item = document.getElementById('xaasCloudAccountItem');
+            var nativeSelect = document.getElementById('xaas-cloud-account');
+            if (!item || !nativeSelect) return;
+            var accounts = (customerId && mockCloudAccounts[customerId]) || [];
+            // 更新原生select选项
+            var optsHtml = '<option value="">请选择云图账号</option>';
+            for (var i = 0; i < accounts.length; i++) {
+                optsHtml += '<option value="' + accounts[i].phone + '">' + accounts[i].phone + '（' + accounts[i].realName + '）</option>';
             }
-            if (!customer) customer = mock;
+            nativeSelect.innerHTML = optsHtml;
+            // 同步自定义下拉框UI
+            var valueSpan = item.querySelector('.custom-select-trigger .custom-select-value');
+            var container = item.querySelector('.custom-select');
+            var list = item.querySelector('.custom-select-list');
+            if (valueSpan) { valueSpan.textContent = '请选择云图账号'; valueSpan.classList.remove('has-value'); }
+            if (list) {
+                var lisHtml = '<li class="custom-select-option selected" data-value="">请选择云图账号</li>';
+                for (var j = 0; j < accounts.length; j++) {
+                    var display = accounts[j].phone + '（' + accounts[j].realName + '）';
+                    lisHtml += '<li class="custom-select-option" data-value="' + accounts[j].phone + '">' + display + '</li>';
+                }
+                list.innerHTML = lisHtml;
+            }
+            // 绑定新选项点击事件
+            if (container && list) {
+                var options = list.querySelectorAll('.custom-select-option');
+                container._resetToDefault = function() {
+                    var opts = list.querySelectorAll('.custom-select-option');
+                    opts.forEach(function(opt) { opt.classList.remove('selected'); });
+                    opts[0].classList.add('selected');
+                    if (valueSpan) { valueSpan.textContent = opts[0].textContent; valueSpan.classList.remove('has-value'); }
+                    if (nativeSelect) nativeSelect.value = opts[0].dataset.value;
+                };
+                container._setValue = function(val) {
+                    var opts = list.querySelectorAll('.custom-select-option');
+                    var target = null;
+                    opts.forEach(function(opt) { if (opt.dataset.value === val) target = opt; });
+                    if (target) {
+                        opts.forEach(function(opt) { opt.classList.remove('selected'); });
+                        target.classList.add('selected');
+                        if (valueSpan) { valueSpan.textContent = target.textContent; if (val) valueSpan.classList.add('has-value'); else valueSpan.classList.remove('has-value'); }
+                        if (nativeSelect) nativeSelect.value = val;
+                    }
+                };
+                options.forEach(function(option) {
+                    option.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        if (this.classList.contains('disabled') || this.getAttribute('aria-disabled') === 'true') return;
+                        var opts = list.querySelectorAll('.custom-select-option');
+                        opts.forEach(function(opt) { opt.classList.remove('selected'); });
+                        this.classList.add('selected');
+                        if (valueSpan) { valueSpan.textContent = this.textContent; if (this.dataset.value) valueSpan.classList.add('has-value'); else valueSpan.classList.remove('has-value'); }
+                        if (nativeSelect) { nativeSelect.value = this.dataset.value; nativeSelect.dispatchEvent(new Event('change', { bubbles: true })); }
+                        container.classList.remove('open');
+                    });
+                });
+            }
+            // 多个账号时显示，单个或无账号时隐藏
+            item.classList.toggle('show', accounts.length > 1);
+        }
+
+        function resolveCustomersByMcodes(mcodes) {
+            if (!mcodes || !mcodes.length || typeof customers === 'undefined') return [];
+            return mcodes.map(function(mcode) {
+                var customer = findCustomerById(mcode);
+                return customer ? {
+                    id: customer.id,
+                    name: customer.name,
+                    type: customer.type || 'normal',
+                    sales: customer.sales || ''
+                } : null;
+            }).filter(Boolean);
+        }
+
+        function resolveMockXaasCustomer(phone) {
+            var mock = mockXaasPhoneLookup[phone];
+            if (!mock) return null;
             return {
-                id: customer.id || mock.customerId || mock.id || 'C100000',
-                name: customer.name || mock.name || '',
-                type: customer.type || mock.type || 'normal',
-                sales: customer.sales || mock.sales || '',
+                mcodes: mock.mcodes || [],
                 contactName: mock.contactName || ''
             };
         }
@@ -3397,16 +3515,56 @@ function updateXaasFamilyCounts() {
                     if (hint) hint.textContent = '输入手机号后模拟匹配客户名称；未匹配时可通过搜索选择客户。';
                     return;
                 }
-                var customer = resolveMockXaasCustomer(phone);
-                if (customer) {
-                    setXaasCustomer(customer.name, customer.id, customer.type, customer.sales, true);
-                    var contactName = document.getElementById('xaas-contact-name');
-                    if (contactName && !contactName.value.trim()) contactName.value = customer.contactName;
-                    if (hint) hint.textContent = '已根据手机号匹配客户名称。';
-                } else {
+                var result = resolveMockXaasCustomer(phone);
+                if (!result) {
                     setXaasCustomer('', '', '');
-                    if (hint) hint.textContent = '未匹配到客户，请通过搜索框手动选择客户。';
+                    if (hint) hint.textContent = '未匹配到云图客户，请搜索或创建客户。';
+                    return;
                 }
+                var mcodes = result.mcodes;
+                var contactName = document.getElementById('xaas-contact-name');
+                if (contactName && !contactName.value.trim() && result.contactName) contactName.value = result.contactName;
+                if (mcodes.length === 0) {
+                    setXaasCustomer('', '', '');
+                    if (hint) hint.textContent = '该手机号未注册云图账号，请搜索或创建客户。';
+                } else if (mcodes.length === 1) {
+                    // 单个云图客户 → 自动填入 + 锁定
+                    var matchedCustomers = resolveCustomersByMcodes(mcodes);
+                    if (matchedCustomers.length > 0) {
+                        var c = matchedCustomers[0];
+                        setXaasCustomer(c.name, c.id, c.type, c.sales, true);
+                        if (hint) hint.textContent = '已根据手机号匹配客户名称。';
+                    } else {
+                        setXaasCustomer('', '', '');
+                        if (hint) hint.textContent = '匹配到mcode但主数据无对应客户，请搜索或创建。';
+                    }
+                } else {
+                    // 多个云图客户 → 在下拉中展示让用户选择（不锁定）
+                    setXaasCustomer('', '', '');
+                    var matchedList = resolveCustomersByMcodes(mcodes);
+                    var dropdownEl = document.getElementById('xaasCustomerDropdown');
+                    if (dropdownEl && matchedList.length > 0) {
+                        dropdownEl.innerHTML = matchedList.map(function(c) {
+                            var custType = c.type || 'normal';
+                            var badgeClass = custType === 'KA' ? 'item-badge ka' : 'item-badge normal';
+                            var badgeText = custType === 'KA' ? 'KA客户' : '普通客户';
+                            return '<div class="search-item" data-name="' + c.name + '" data-id="' + c.id + '" data-type="' + custType + '" data-sales="' + (c.sales||'') + '"><span class="item-left"><span class="item-name">' + c.name + '</span></span><span class="sales-person-badge" style="margin-left:6px;">' + (c.sales||'') + '</span><span class="' + badgeClass + '">' + badgeText + '</span></div>';
+                        }).join('');
+                        dropdownEl.classList.add('show');
+                    }
+                    if (hint) hint.textContent = '匹配到多个云图客户，请从下拉列表中选择一个。';
+                }
+            });
+        }
+
+        // ===== 云图账号选择 =====
+        var xaasCloudAccountSelect = document.getElementById('xaas-cloud-account');
+        if (xaasCloudAccountSelect) {
+            xaasCloudAccountSelect.addEventListener('change', function() {
+                var selectedOption = this.options[this.selectedIndex];
+                var displayText = selectedOption ? selectedOption.text : '';
+                var trigger = document.querySelector('#xaasCloudAccountItem .custom-select-trigger .custom-select-value');
+                if (trigger) trigger.textContent = displayText || '请选择云图账号';
             });
         }
 
@@ -3601,7 +3759,7 @@ function updateXaasFamilyCounts() {
             }
             if (!requireXaasValue('xaas-contact-name', '请填写客户联系人姓名')) return false;
             var xaasPhoneValue = ((document.getElementById('xaas-contact-phone') || {}).value || '').trim();
-            if (!/^1\d{10}$/.test(xaasPhoneValue) && !mockXaasCustomers[xaasPhoneValue]) {
+            if (!/^1\d{10}$/.test(xaasPhoneValue) && !mockXaasPhoneLookup[xaasPhoneValue]) {
                 alert('请填写正确的客户联系人手机号');
                 return false;
             }

@@ -212,6 +212,11 @@
         .customer-type-badge.ka { background: #fff3e0; color: #e65100; border: 1px solid #ffcc80; }
         .customer-type-badge.normal { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
 
+        /* 所属云图账号 */
+        .cloud-account-item { display: none; margin-top: 8px; }
+        .cloud-account-item.show { display: block; }
+        .cloud-account-select { max-width: 300px; }
+
         /* 统一授权日期栏 */
         .unified-date-bar { display: flex; align-items: center; gap: 12px; background: #eff4ff; border: none; border-radius: 10px; padding: 14px 18px; margin-bottom: 15px; margin-left: 15px; margin-right: 20px; max-width: 900px; margin-left: auto; margin-right: auto; }
         .unified-date-bar .bar-label { font-weight: 600; font-size: 14px; color: #333; white-space: nowrap; }
@@ -1755,6 +1760,27 @@
                                     <span style="margin-left:20px;">客户ID：<span id="xaasSelectedCustomerIdV2">-</span></span>
                                     <span class="customer-type-badge" id="xaasCustomerTypeBadgeV2" style="display:none;"></span>
                                 </div>
+                                <input type="hidden" id="xaas-customer-id" value="">
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item cloud-account-item" id="xaasCloudAccountItem">
+                            <label class="layui-form-label">所属云图账号</label>
+                            <div class="layui-input-block">
+                                <div class="custom-select cloud-account-select" data-select-id="xaas-cloud-account">
+                                    <select class="layui-select" id="xaas-cloud-account" style="display:none;">
+                                        <option value="">请选择云图账号</option>
+                                    </select>
+                                    <button type="button" class="custom-select-trigger">
+                                        <span class="custom-select-value">请选择云图账号</span>
+                                        <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                    </button>
+                                    <div class="custom-select-dropdown">
+                                        <ul class="custom-select-list">
+                                            <li class="custom-select-option selected" data-value="">请选择云图账号</li>
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -2593,23 +2619,92 @@
             var idSpan = document.getElementById('xaasSelectedCustomerIdV2');
             var badge = document.getElementById('xaasCustomerTypeBadgeV2');
             var searchInput = document.getElementById('xaasCustomerSearchV2');
+            var hiddenId = document.getElementById('xaas-customer-id');
             if (searchInput) searchInput.value = name || '';
-            if (infoDiv) infoDiv.style.display = 'block';
-            if (nameSpan) nameSpan.textContent = name;
+            if (infoDiv) infoDiv.style.display = name ? 'block' : 'none';
+            if (nameSpan) nameSpan.textContent = name || '-';
             if (idSpan) idSpan.textContent = id || '-';
+            if (hiddenId) hiddenId.value = id || '';
             if (badge) {
-                if (type === 'KA') {
-                    badge.textContent = 'KA客户';
-                    badge.className = 'customer-type-badge ka';
+                if (name) {
+                    if (type === 'KA') {
+                        badge.textContent = 'KA客户';
+                        badge.className = 'customer-type-badge ka';
+                    } else {
+                        badge.textContent = '普通客户';
+                        badge.className = 'customer-type-badge normal';
+                    }
+                    badge.style.display = 'inline-block';
                 } else {
-                    badge.textContent = '普通客户';
-                    badge.className = 'customer-type-badge normal';
+                    badge.style.display = 'none';
                 }
-                badge.style.display = 'inline-block';
             }
-            xaasCustomerSelected = true;
+            xaasCustomerSelected = !!name;
+            // 加载云图账号
+            loadCloudAccounts(id);
+            // 同步产品试用状态
+            syncXaasProductStates(id);
             // 选中客户后显示产品警告提示
             document.querySelectorAll('.xaas-product-warn').forEach(function(w) { w.classList.add('show'); });
+        }
+
+        function loadCloudAccounts(customerId) {
+            var item = document.getElementById('xaasCloudAccountItem');
+            var nativeSelect = document.getElementById('xaas-cloud-account');
+            if (!item || !nativeSelect) return;
+            var accounts = (customerId && mockCloudAccounts[customerId]) || [];
+            // 更新原生select选项
+            var optsHtml = '<option value="">请选择云图账号</option>';
+            for (var i = 0; i < accounts.length; i++) {
+                optsHtml += '<option value="' + accounts[i].phone + '">' + accounts[i].phone + '（' + accounts[i].realName + '）</option>';
+            }
+            nativeSelect.innerHTML = optsHtml;
+            // 同步自定义下拉框UI
+            var trigger = item.querySelector('.custom-select-trigger .custom-select-value');
+            var container = item.querySelector('.custom-select');
+            var list = item.querySelector('.custom-select-list');
+            if (trigger) trigger.textContent = '请选择云图账号';
+            if (list) {
+                var lisHtml = '<li class="custom-select-option selected" data-value="">请选择云图账号</li>';
+                for (var j = 0; j < accounts.length; j++) {
+                    var display = accounts[j].phone + '（' + accounts[j].realName + '）';
+                    lisHtml += '<li class="custom-select-option" data-value="' + accounts[j].phone + '">' + display + '</li>';
+                }
+                list.innerHTML = lisHtml;
+            }
+            // 重新初始化自定义下拉框以绑定新选项事件
+            if (container) initCustomSelect(container);
+            // 多个账号时显示，单个或无账号时隐藏
+            item.classList.toggle('show', accounts.length > 1);
+        }
+
+        function syncXaasProductStates(customerId) {
+            // 重置所有试用状态
+            Object.keys(xaasTrialStatus).forEach(function(p) { xaasTrialStatus[p] = 'none'; });
+            if (customerId && customerProductStates[customerId]) {
+                var states = customerProductStates[customerId];
+                Object.keys(states).forEach(function(p) {
+                    if (xaasTrialStatus.hasOwnProperty(p)) xaasTrialStatus[p] = states[p];
+                });
+            }
+            // 标记已购买产品
+            var purchasedProducts = (customerId && customerPurchasedProducts[customerId]) || [];
+            document.querySelectorAll('.xaas-product-item').forEach(function(item) {
+                var pname = item.dataset.product;
+                var isPurchased = pname && purchasedProducts.indexOf(pname) > -1;
+                item.classList.toggle('purchased', isPurchased);
+            });
+        }
+
+        // ===== 云图账号选择 =====
+        var xaasCloudAccountSelect = document.getElementById('xaas-cloud-account');
+        if (xaasCloudAccountSelect) {
+            xaasCloudAccountSelect.addEventListener('change', function() {
+                var selectedOption = this.options[this.selectedIndex];
+                var displayText = selectedOption ? selectedOption.text : '';
+                var trigger = document.querySelector('#xaasCloudAccountItem .custom-select-trigger .custom-select-value');
+                if (trigger) trigger.textContent = displayText || '请选择云图账号';
+            });
         }
 
         // ===== XaaS 延长试用授权有效期 =====
@@ -3537,6 +3632,51 @@
             { name: '中兴通讯股份有限公司', id: 'C100014', type: 'normal' },
             { name: '浙江大学信息技术中心', id: 'C100015', type: 'normal' }
         ];
+
+        // 云图账号模拟数据（手机号 + 真实姓名）
+        var mockCloudAccounts = {
+            'C100001': [
+                { phone: '13800138000', realName: '马化腾' },
+                { phone: '13912345678', realName: '张勇' }
+            ],
+            'C100004': [
+                { phone: '13900139000', realName: '李四' }
+            ],
+            'C100010': [
+                { phone: '13612345678', realName: '王磊' },
+                { phone: '13798765432', realName: '陈静' },
+                { phone: '13511112222', realName: '赵岩' }
+            ],
+            'C100003': [
+                { phone: '13200001111', realName: '任正非' }
+            ]
+        };
+
+        // 客户产品试用状态映射（模拟数据）
+        var customerProductStates = {
+            'C100001': { 'SaaS-XDR': 'active', 'NGDR': 'previous', 'SASE-ZTNA': 'active', 'SASE-GA': 'previous' },
+            'C100002': { 'SaaS-aES': 'previous', 'SASE-ZTNA': 'previous', 'SASE-GA': 'previous' },
+            'C100003': { 'SaaS-XDR': 'previous', 'SASE-ZTNA': 'active', 'SASE-GA': 'active' },
+            'C100004': { 'SaaS-XDR': 'active', 'SASE-SWG': 'previous', 'SASE-ZTNA': 'previous', 'NGDR': 'previous' },
+            'C100010': { 'SASE-GA': 'active' }
+        };
+        var customerPurchasedProducts = {
+            'C100001': ['SASE-XDLA'],
+            'C100002': ['SASE-SWG'],
+            'C100003': ['NGDR', 'SaaS-aES'],
+            'C100005': ['云威胁情报网关', '钓鱼邮件防护 GPT']
+        };
+        var xaasTrialStatus = {
+            'SaaS-XDR': 'none', 'NGDR': 'none', 'SaaS-aES': 'none', 'SASE-XDLA': 'none',
+            'SASE-ZTNA': 'none', 'SASE-SWG': 'none', 'SASE-GA': 'none',
+            '钓鱼邮件防护 GPT': 'none', '云威胁情报网关': 'none'
+        };
+        var xaasProductExpiry = {
+            'SaaS-XDR': '2026-07-07', 'NGDR': '2026-07-07', 'SaaS-aES': '2026-07-07',
+            'SASE-XDLA': '2026-07-07', 'SASE-ZTNA': '2026-07-07', 'SASE-SWG': '2026-07-07',
+            'SASE-GA': '2026-07-07', '钓鱼邮件防护 GPT': '2026-07-07', '云威胁情报网关': '2026-07-07'
+        };
+
         var searchInput = document.getElementById('customerSearch');
         var dropdown = document.getElementById('customerDropdown');
         var infoDisplay = document.getElementById('customerInfoDisplay');
