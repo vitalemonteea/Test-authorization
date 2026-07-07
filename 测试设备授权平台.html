@@ -218,10 +218,27 @@
         .match-badge.selected { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
 
         /* 所属云图账号 */
-        .cloud-account-item { display: none; margin-top: 8px; }
-        .cloud-account-item.show { display: block; }
+        #content-xaas .cloud-account-item { display: none; margin-top: 8px; }
+        #content-xaas .cloud-account-item.show { display: flex; }
         .cloud-account-select { max-width: 480px; }
-        [data-select-id="xaas-region"] { max-width: 480px; }
+        [data-select-id="xaas-cloud-account"] { max-width: 480px; }
+        [data-select-id="xaas-cloud-account"] .custom-select-dropdown { min-width: 460px; width: auto; max-width: 560px; }
+        /* 云图账号选项卡片式布局 */
+        .cloud-account-option { padding: 10px 14px !important; cursor: pointer; transition: background 0.15s; border-bottom: 1px solid #f0f2f5; }
+        .cloud-account-option:last-child { border-bottom: none; }
+        .cloud-account-option:hover { background: #eff4ff; }
+        .cloud-account-option.selected { background: #e5eeff; }
+        .cloud-account-option-head { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+        .cloud-account-option-phone { font-size: 14px; font-weight: 600; color: #1a1a2e; }
+        .cloud-account-option-name { font-size: 13px; color: #424656; }
+        .cloud-account-option-meta { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 12px; color: #8b92a5; line-height: 1.6; }
+        .cloud-account-option-meta .meta-item { display: inline-flex; align-items: center; gap: 3px; }
+        .cloud-account-option-meta .meta-label { color: #b8bfcc; }
+        .cloud-account-option-meta .meta-value { color: #424656; font-weight: 500; }
+        .cloud-account-trigger-display { display: flex; flex-direction: column; gap: 2px; line-height: 1.4; }
+        .cloud-account-trigger-main { font-size: 14px; color: #1a1a2e; font-weight: 500; }
+        .cloud-account-trigger-sub { font-size: 12px; color: #8b92a5; }
+        [data-select-id="xaas-cloud-account"] .custom-select-value { display: flex; flex-direction: column; gap: 2px; line-height: 1.4; }
 
         /* 统一授权日期栏 */
         .unified-date-bar { display: flex; align-items: center; gap: 12px; background: #eff4ff; border: none; border-radius: 10px; padding: 14px 18px; margin-bottom: 15px; margin-left: 15px; margin-right: 20px; max-width: 900px; margin-left: auto; margin-right: auto; }
@@ -1663,6 +1680,27 @@
                             </div>
                         </div>
                         
+                        <div class="layui-form-item cloud-account-item" id="xaasCloudAccountItem">
+                            <label class="layui-form-label">所属云图账号</label>
+                            <div class="layui-input-block">
+                                <div class="custom-select cloud-account-select" data-select-id="xaas-cloud-account">
+                                    <select class="layui-select" id="xaas-cloud-account" style="display:none;">
+                                        <option value="">请选择云图账号</option>
+                                    </select>
+                                    <button type="button" class="custom-select-trigger">
+                                        <span class="custom-select-value">请选择云图账号</span>
+                                        <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                    </button>
+                                    <div class="custom-select-dropdown">
+                                        <ul class="custom-select-list">
+                                            <li class="custom-select-option selected" data-value="">请选择云图账号</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
                         <div class="layui-form-item">
                             <label class="layui-form-label">客户名称<span class="required-star">*</span>
                                 <span class="field-tooltip"><span class="tooltip-icon">ⓘ</span>
@@ -1687,26 +1725,6 @@
                                 </div>
                                 <input type="hidden" id="xaas-customer-name">
                                 <input type="hidden" id="xaas-customer-id">
-                            </div>
-                        </div>
-
-                        <div class="layui-form-item cloud-account-item" id="xaasCloudAccountItem">
-                            <label class="layui-form-label">所属云图账号</label>
-                            <div class="layui-input-block">
-                                <div class="custom-select cloud-account-select" data-select-id="xaas-cloud-account">
-                                    <select class="layui-select" id="xaas-cloud-account" style="display:none;">
-                                        <option value="">请选择云图账号</option>
-                                    </select>
-                                    <button type="button" class="custom-select-trigger">
-                                        <span class="custom-select-value">请选择云图账号</span>
-                                        <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
-                                    </button>
-                                    <div class="custom-select-dropdown">
-                                        <ul class="custom-select-list">
-                                            <li class="custom-select-option selected" data-value="">请选择云图账号</li>
-                                        </ul>
-                                    </div>
-                                </div>
                             </div>
                         </div>
 
@@ -1768,49 +1786,6 @@
                                                 <li class="custom-select-option" data-value="">请选择二级行业</li>
                                             </ul>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">所属区域<span class="required-star">*</span>
-                                <span class="field-tooltip"><span class="tooltip-icon">ⓘ</span>
-                                    <div class="tooltip-popup">
-                                        <button class="tooltip-copy" onclick="copyTooltip(this)">复制</button>
-                                        <div class="tooltip-title">所属区域 备注</div>
-                                        <div class="tooltip-section"><span class="tooltip-label">用户故事：</span>选择客户所属区域，用于客户经营平台的试用列表权限隔离和查看范围控制。</div>
-                                        <div class="tooltip-section"><span class="tooltip-label">数据定义：</span>枚举值包括华东、华北、华南、西南、西北、华中、东北等区域。</div>
-                                    </div>
-                                </span>
-                            </label>
-                            <div class="layui-input-block">
-                                <div class="custom-select" data-select-id="xaas-region">
-                                    <select class="layui-select" id="xaas-region" style="display:none;">
-                                        <option value="">请选择区域</option>
-                                        <option value="华东区域">华东区域</option>
-                                        <option value="华北区域">华北区域</option>
-                                        <option value="华南区域">华南区域</option>
-                                        <option value="西南区域">西南区域</option>
-                                        <option value="西北区域">西北区域</option>
-                                        <option value="华中区域">华中区域</option>
-                                        <option value="东北区域">东北区域</option>
-                                    </select>
-                                    <button type="button" class="custom-select-trigger">
-                                        <span class="custom-select-value">请选择区域</span>
-                                        <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
-                                    </button>
-                                    <div class="custom-select-dropdown">
-                                        <ul class="custom-select-list">
-                                            <li class="custom-select-option" data-value="">请选择区域</li>
-                                            <li class="custom-select-option" data-value="华东区域">华东区域</li>
-                                            <li class="custom-select-option" data-value="华北区域">华北区域</li>
-                                            <li class="custom-select-option" data-value="华南区域">华南区域</li>
-                                            <li class="custom-select-option" data-value="西南区域">西南区域</li>
-                                            <li class="custom-select-option" data-value="西北区域">西北区域</li>
-                                            <li class="custom-select-option" data-value="华中区域">华中区域</li>
-                                            <li class="custom-select-option" data-value="东北区域">东北区域</li>
-                                        </ul>
                                     </div>
                                 </div>
                             </div>
@@ -2061,12 +2036,7 @@
                                                     <input type="number" id="swg-branch" value="3" min="1">
                                                     <span class="spec-unit">条</span>
                                                 </div>
-                                                <div class="spec-field-row" id="swg-bw-row" style="display:none;">
-                                                    <label>每分支带宽</label>
-                                                    <input type="number" id="swg-bw" value="100" min="1">
-                                                    <span class="spec-unit">M</span>
-                                                </div>
-                                                                                            
+                                                
                                                 
                                                 <div class="spec-field-row spec-expiry-row">
                                                     <label>授权有效期</label>
@@ -2081,39 +2051,11 @@
                                                 <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="全球加速"> <span>SASE-GA 全球加速</span></label>
                                                 <div class="xaas-product-right">
                                                     <span class="xaas-product-desc">有效期15天，带宽5M</span>
-                                                    <button type="button" class="xaas-spec-btn">修改规格</button>
                                                 </div>
                                                                                         <div class="xaas-product-trial-hint" data-product="SASE-GA">
                                                 <span class="trial-icon">&#9888;</span>
                                                 <span>客户正在试用该产品，支持修改授权信息或延长有效期</span>
                                             </div>
-</div>
-                                            <div class="xaas-inline-spec-area" id="ga-inline-spec">
-                                                <div class="spec-warn">⚠ 修改默认规格需要经过审批后才生效</div>
-                                                <div class="spec-field-row">
-                                                    <label>带宽</label>
-                                                    <div class="custom-select xaas-version-picker" data-select-id="ga-bw-select" style="max-width:160px;">
-                                                        <select id="ga-bw" class="xaas-inline-select" style="display:none;" data-spec-select="bandwidth">
-                                                            <option value="5">5M</option>
-                                                            <option value="10">10M</option>
-                                                            <option value="20">20M</option>
-                                                            <option value="30">30M</option>
-                                                            <option value="50">50M</option>
-                                                        </select>
-                                                        <button type="button" class="custom-select-trigger"><span class="custom-select-value has-value">5M</span><span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span></button>
-                                                        <div class="custom-select-dropdown"><ul class="custom-select-list"><li class="custom-select-option selected" data-value="5">5M</li><li class="custom-select-option" data-value="10">10M</li><li class="custom-select-option" data-value="20">20M</li><li class="custom-select-option" data-value="30">30M</li><li class="custom-select-option" data-value="50">50M</li></ul></div>
-                                                    </div>
-                                                    <span class="spec-unit">M</span>
-                                                </div>
-
-                                                <div class="spec-field-row spec-expiry-row">
-                                                    <label>授权有效期</label>
-                                                    <input type="date" class="spec-expiry-date" data-product="SASE-GA" disabled>
-                                                    <button type="button" class="spec-expiry-btn" title="仅正在试用中的客户支持调整授权有效期" disabled>修改授权有效期</button>
-                                                    <span class="spec-expiry-hint" style="display:none;font-size:12px;color:#b45309;">
-                                                        编辑授权有效期时，默认选中的日期为当前的授权到期时间。可选日期为授权到期时间之后，不可缩短有效期。
-                                                    </span>
-                                                </div>
 </div>
                                             <div class="xaas-product-item" data-product="钓鱼邮件防护" data-default-desc="有效期30天，每日邮件数量10000封">
                                                 <label class="xaas-product-check"><input type="checkbox" name="xaas-product" value="钓鱼邮件防护 GPT"> <span>钓鱼邮件防护 GPT</span></label>
@@ -2431,21 +2373,32 @@
 
         var mockCloudAccounts = {
             'C100001': [
-                { phone: '13800138000', realName: '马化腾' },
-                { phone: '13912345678', realName: '张勇' }
+                { phone: '13800138000', realName: '马化腾', tenantId: 'tenant-001', tenantName: '腾讯科技', masterAccount: '13800138000', masterContact: '马化腾' },
+                { phone: '13912345678', realName: '张勇', tenantId: 'tenant-002', tenantName: '阿里巴巴', masterAccount: '13912345678', masterContact: '张勇' }
             ],
             'C100010': [
-                { phone: '13612345678', realName: '王磊' },
-                { phone: '13798765432', realName: '陈静' },
-                { phone: '13511112222', realName: '赵岩' }
+                { phone: '13612345678', realName: '王磊', tenantId: 'tenant-010', tenantName: '字节跳动', masterAccount: '13612345678', masterContact: '王磊' },
+                { phone: '13798765432', realName: '陈静', tenantId: 'tenant-011', tenantName: '字节跳动-飞书', masterAccount: '13798765432', masterContact: '陈静' },
+                { phone: '13511112222', realName: '赵岩', tenantId: 'tenant-012', tenantName: '字节跳动-TikTok', masterAccount: '13511112222', masterContact: '赵岩' }
             ],
             'C100004': [
-                { phone: '13900139000', realName: '李四' }
+                { phone: '13900139000', realName: '李四', tenantId: 'tenant-004', tenantName: '百度科技', masterAccount: '13900139000', masterContact: '李四' }
             ],
             'C100003': [
-                { phone: '13200001111', realName: '任正非' }
+                { phone: '13200001111', realName: '任正非', tenantId: 'tenant-003', tenantName: '华为技术', masterAccount: '13200001111', masterContact: '任正非' }
             ]
         };
+
+        var mockXaasPhoneToAccounts = {
+            '1717717': { accounts: [], contactName: '马化腾' },
+            '17177170000': { accounts: [], contactName: '马化腾' },
+            '13800138000': { accounts: ['C100001'] },
+            '13900139000': { accounts: ['C100004'] },
+            '13700137000': { accounts: [] },
+            '13600000000': { accounts: ['C100001', 'C100010'] },
+            '13500000000': { accounts: [] }
+        };
+
         var xaasIndustryMap = {
             '政府': ['中央部委', '省市级政府', '区县级政府', '公检法'],
             '金融': ['银行', '证券', '保险', '基金', '信托'],
@@ -2463,8 +2416,7 @@
             'SaaS-aES': { version: '探针版', pcCount: 50, serverCount: 50 },
             'SASE-XDLA': { userCount: 50 },
             'SASE-ZTNA': { userCount: 50 },
-            'SASE-SWG': { swgType: '用户版', userCount: 50, branchCount: 3, bandwidth: 100 },
-            'SASE-GA': { bandwidth: 5 },
+            'SASE-SWG': { swgType: '用户版', userCount: 50, branchCount: 3 },
             '钓鱼邮件防护': { mailCount: 10000 }
         };
         var xaasDefaultSpecValues = {
@@ -2473,8 +2425,7 @@
             'SaaS-aES': { version: '探针版', pcCount: 50, serverCount: 50 },
             'SASE-XDLA': { userCount: 50 },
             'SASE-ZTNA': { userCount: 50 },
-            'SASE-SWG': { swgType: '用户版', userCount: 50, branchCount: 3, bandwidth: 100 },
-            'SASE-GA': { bandwidth: 5 },
+            'SASE-SWG': { swgType: '用户版', userCount: 50, branchCount: 3 },
             '钓鱼邮件防护': { mailCount: 10000 }
         };
         var inlineSpecProducts = ['NGDR', 'SaaS-aES', 'SASE-SWG'];
@@ -2715,12 +2666,98 @@
         }
 
         function resolveMockXaasCustomer(phone) {
-            var mock = mockXaasPhoneLookup[phone];
+            var mock = mockXaasPhoneToAccounts[phone];
             if (!mock) return null;
+            var allAccounts = [];
+            if (mock.accounts && mock.accounts.length > 0) {
+                mock.accounts.forEach(function(cid) {
+                    var accounts = mockCloudAccounts[cid] || [];
+                    accounts.forEach(function(acc) {
+                        if (!allAccounts.some(function(a) { return a.phone === acc.phone; })) {
+                            allAccounts.push(acc);
+                        }
+                    });
+                });
+            }
             return {
-                mcodes: mock.mcodes || [],
+                accounts: allAccounts,
                 contactName: mock.contactName || ''
             };
+        }
+
+        function findCustomerIdByPhone(phone) {
+            for (var cid in mockCloudAccounts) {
+                var accounts = mockCloudAccounts[cid];
+                for (var i = 0; i < accounts.length; i++) {
+                    if (accounts[i].phone === phone) return cid;
+                }
+            }
+            return null;
+        }
+
+        function hideCloudAccountFields() {
+            var item = document.getElementById('xaasCloudAccountItem');
+            if (item) item.classList.remove('show');
+        }
+
+
+
+        function showCloudAccountSelection(accounts) {
+            var item = document.getElementById('xaasCloudAccountItem');
+            var nativeSelect = document.getElementById('xaas-cloud-account');
+            var container = item ? item.querySelector('.custom-select') : null;
+            var list = container ? container.querySelector('.custom-select-list') : null;
+            if (!item || !nativeSelect || !list) return;
+            
+            var optsHtml = '<option value="">请选择云图账号</option>';
+            for (var i = 0; i < accounts.length; i++) {
+                optsHtml += '<option value="' + accounts[i].phone + '" data-tenant-id="' + (accounts[i].tenantId||'') + '" data-tenant-name="' + (accounts[i].tenantName||'') + '" data-master-account="' + (accounts[i].masterAccount||'') + '" data-master-contact="' + (accounts[i].masterContact||'') + '" data-real-name="' + (accounts[i].realName||'') + '">' + accounts[i].phone + '（' + accounts[i].realName + '）</option>';
+            }
+            nativeSelect.innerHTML = optsHtml;
+            
+            var valueSpan = item.querySelector('.custom-select-trigger .custom-select-value');
+            if (valueSpan) { valueSpan.innerHTML = '<span class="cloud-account-trigger-main">请选择云图账号</span>'; valueSpan.classList.remove('has-value'); }
+            var lisHtml = '<li class="custom-select-option selected cloud-account-option" data-value="">请选择云图账号</li>';
+            for (var j = 0; j < accounts.length; j++) {
+                var a = accounts[j];
+                lisHtml += '<li class="custom-select-option cloud-account-option" data-value="' + a.phone + '" data-tenant-id="' + (a.tenantId||'') + '" data-tenant-name="' + (a.tenantName||'') + '" data-master-account="' + (a.masterAccount||'') + '" data-master-contact="' + (a.masterContact||'') + '" data-real-name="' + (a.realName||'') + '">'
+                    + '<div class="cloud-account-option-head">'
+                    + '<span class="cloud-account-option-phone">' + a.phone + '</span>'
+                    + '<span class="cloud-account-option-name">' + a.realName + '</span>'
+                    + '</div>'
+                    + '<div class="cloud-account-option-meta">'
+                    + '<span class="meta-item"><span class="meta-label">租户ID:</span><span class="meta-value">' + a.tenantId + '</span></span>'
+                    + '<span class="meta-item"><span class="meta-label">租户名:</span><span class="meta-value">' + a.tenantName + '</span></span>'
+                    + '<span class="meta-item"><span class="meta-label">主账号:</span><span class="meta-value">' + a.masterAccount + '</span></span>'
+                    + '<span class="meta-item"><span class="meta-label">联系人:</span><span class="meta-value">' + a.masterContact + '</span></span>'
+                    + '</div>'
+                    + '</li>';
+            }
+            list.innerHTML = lisHtml;
+            var options = list.querySelectorAll('.custom-select-option');
+            options.forEach(function(option) {
+                option.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    if (this.classList.contains('disabled') || this.getAttribute('aria-disabled') === 'true') return;
+                    options.forEach(function(opt) { opt.classList.remove('selected'); });
+                    this.classList.add('selected');
+                    if (valueSpan) {
+                        if (this.dataset.value) {
+                            valueSpan.innerHTML = '<span class="cloud-account-trigger-main">' + this.dataset.realName + ' · ' + this.dataset.value + '</span><span class="cloud-account-trigger-sub">' + this.dataset.tenantName + ' · ' + this.dataset.tenantId + '</span>';
+                            valueSpan.classList.add('has-value');
+                        } else {
+                            valueSpan.innerHTML = '<span class="cloud-account-trigger-main">请选择云图账号</span>';
+                            valueSpan.classList.remove('has-value');
+                        }
+                    }
+                    if (nativeSelect) {
+                        nativeSelect.value = this.dataset.value;
+                        nativeSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
+                    container.classList.remove('open');
+                });
+            });
+            item.classList.add('show');
         }
 
         function getSelectedXaasProducts() {
@@ -2756,6 +2793,25 @@
             var product = item.dataset.product;
             var checked = cb && cb.checked;
             var specBtn = item.querySelector('.xaas-spec-btn');
+            if (product === 'SASE-GA') {
+                if (specBtn) specBtn.style.display = 'none';
+                var gaStatus = getXaasTrialStatus(product);
+                if (gaStatus === 'previous' || gaStatus === 'active') {
+                    if (cb) { cb.disabled = true; cb.checked = false; }
+                    item.classList.add('disabled');
+                    var gaHint = item.querySelector('.xaas-product-trial-hint');
+                    if (gaHint) {
+                        gaHint.classList.add('show');
+                        var textSpan = gaHint.querySelector('span:last-child');
+                        if (textSpan) textSpan.textContent = 'GA只支持新用户使用';
+                    } else {
+                        var hintDiv = document.createElement('div');
+                        hintDiv.className = 'xaas-product-trial-hint show';
+                        hintDiv.innerHTML = '<span class="trial-icon">⚠</span><span>GA只支持新用户使用</span>';
+                        item.appendChild(hintDiv);
+                    }
+                }
+            }
             var inlineSelectNative = item.querySelector('.xaas-inline-select');
             var inlineSelectWrapper = inlineSelectNative ? inlineSelectNative.closest('.custom-select') : null;
             var inlineSelect = inlineSelectWrapper || inlineSelectNative;
@@ -2852,10 +2908,8 @@ function updateXaasFamilyCounts() {
                 if (value === '用户版') {
                     xaasSpecValues[product].userCount = 50;
                     xaasSpecValues[product].branchCount = 3;
-                    xaasSpecValues[product].bandwidth = 100;
                 } else if (value === '分支版') {
                     xaasSpecValues[product].branchCount = 3;
-                    xaasSpecValues[product].bandwidth = 100;
                 }
             }
             var item = document.querySelector('.xaas-product-item[data-product="' + product + '"]');
@@ -2937,7 +2991,7 @@ function updateXaasFamilyCounts() {
 
         function resetXaasForm() {
             // 重置custom-select组件
-            ['xaas-industry-l1', 'xaas-region',
+            ['xaas-industry-l1',
              'xdr-test-scenario', 'xdr-test-driver', 'xdr-core-need', 'xdr-expected-result', 'xdr-is-pk',
              'xdr-security-op-mode', 'xdr-security-staff', 'xdr-budget-info', 'xdr-security-budget'].forEach(function(id) {
                 setCustomSelectValue(id, '');
@@ -2966,20 +3020,18 @@ function updateXaasFamilyCounts() {
             document.querySelectorAll('.spec-expiry-date').forEach(function(dateInput) { delete dateInput.dataset.expiryEditing; });
             var specLogInline = document.getElementById('spec-log-inline');
             if (specLogInline) specLogInline.value = 200000000;
-            ['ngdr-pc','ngdr-server','saes-pc','saes-server','xdla-users','ztna-users','swg-users','swg-branch','swg-bw','mail-count','ga-bw'].forEach(function(id) {
+            ['ngdr-pc','ngdr-server','saes-pc','saes-server','xdla-users','ztna-users','swg-users','swg-branch','mail-count'].forEach(function(id) {
                 var el = document.getElementById(id);
-                if (el) el.value = el.id === 'mail-count' ? 10000 : (el.id === 'ga-bw' ? 5 : (el.id === 'swg-branch' ? 3 : (el.id === 'swg-bw' ? 100 : 50)));
+                if (el) el.value = el.id === 'mail-count' ? 10000 : (el.id === 'swg-branch' ? 3 : 50);
             });
-            setCustomSelectValue('ga-bw', '5');
             clearXaasEditSpecGuards();
             xaasSpecValues['SaaS-XDR'] = { logAmount: 20000, modules: '' };
             xaasSpecValues['NGDR'] = { version: '基础版', pcCount: 50, serverCount: 50 };
             xaasSpecValues['SaaS-aES'] = { version: '探针版', pcCount: 50, serverCount: 50 };
             xaasSpecValues['SASE-XDLA'] = { userCount: 50 };
             xaasSpecValues['SASE-ZTNA'] = { userCount: 50 };
-            xaasSpecValues['SASE-SWG'] = { swgType: '用户版', userCount: 50, branchCount: 3, bandwidth: 100 };
+            xaasSpecValues['SASE-SWG'] = { swgType: '用户版', userCount: 50, branchCount: 3 };
             xaasSpecValues['钓鱼邮件防护'] = { mailCount: 10000 };
-            xaasSpecValues['SASE-GA'] = { bandwidth: 5 };
                                                             xaasSpecModified = false;
             var applyReasonItem = document.getElementById('xaas-apply-reason-item');
             var applyReasonInput = document.getElementById('xaas-apply-reason-input');
@@ -3048,7 +3100,6 @@ function updateXaasFamilyCounts() {
             } else if (product === 'SASE-SWG') {
                 setNumberMin('spec-swg-users', baseline.userCount);
                 setNumberMin('spec-swg-branch', baseline.branchCount);
-                setNumberMin('spec-swg-bw', baseline.bandwidth);
             } else if (product === '钓鱼邮件防护') {
                 setNumberMin('spec-mail', baseline.mailCount);
             }
@@ -3069,9 +3120,8 @@ function updateXaasFamilyCounts() {
             if (product === 'SaaS-XDR') return ensureAtLeast('logAmount', '日志量');
             if (product === 'NGDR' || product === 'SaaS-aES') return ensureAtLeast('pcCount', '授权PC数') && ensureAtLeast('serverCount', '授权服务器数');
             if (product === 'SASE-XDLA' || product === 'SASE-ZTNA') return ensureAtLeast('userCount', '授权用户数');
-            if (product === 'SASE-SWG') return ensureAtLeast('userCount', '授权用户数') && ensureAtLeast('branchCount', '分支数') && ensureAtLeast('bandwidth', '带宽');
+            if (product === 'SASE-SWG') return ensureAtLeast('userCount', '授权用户数') && ensureAtLeast('branchCount', '分支数');
             if (product === '钓鱼邮件防护') return ensureAtLeast('mailCount', '每日邮件数量');
-            if (product === 'SASE-GA') return ensureAtLeast('bandwidth', '带宽');
             return true;
         }
 
@@ -3097,11 +3147,8 @@ function updateXaasFamilyCounts() {
             } else if (product === 'SASE-SWG') {
                 current.userCount = numberValue('swg-users', 50);
                 current.branchCount = numberValue('swg-branch', 3);
-                current.bandwidth = numberValue('swg-bw', 100);
             } else if (product === '钓鱼邮件防护') {
                 current.mailCount = numberValue('mail-count', 10000);
-            } else if (product === 'SASE-GA') {
-                current.bandwidth = numberValue('ga-bw', 5);
             }
             return current;
         }
@@ -3151,13 +3198,11 @@ function updateXaasFamilyCounts() {
         }
 
         function clearXaasEditSpecGuards() {
-            clearCustomSelectDisabledOptions('ga-bw');
         }
 
         function applyInlineXaasSpecGuards(product) {
             var baseline = getXaasTrialSpecBaseline(product);
             if (!baseline) {
-                if (product === 'SASE-GA') clearXaasEditSpecGuards();
                 return;
             }
             if (product === 'SaaS-XDR') {
@@ -3175,11 +3220,8 @@ function updateXaasFamilyCounts() {
             } else if (product === 'SASE-SWG') {
                 setNumberMin('swg-users', baseline.userCount);
                 setNumberMin('swg-branch', baseline.branchCount);
-                setNumberMin('swg-bw', baseline.bandwidth);
             } else if (product === '钓鱼邮件防护') {
                 setNumberMin('mail-count', baseline.mailCount);
-            } else if (product === 'SASE-GA') {
-                disableCustomSelectOptionsBelow('ga-bw', baseline.bandwidth);
             }
         }
 
@@ -3202,11 +3244,9 @@ function updateXaasFamilyCounts() {
             } else if (product === 'SASE-SWG') {
                 html = '<div class="spec-field"><label>规格类型</label><select id="spec-swg-type"><option' + (v.swgType==='用户版'?' selected':'') + '>用户版</option><option' + (v.swgType==='分支版'?' selected':'') + '>分支版</option><option' + (v.swgType==='用户+分支版'?' selected':'') + '>用户+分支版</option></select></div>';
                 html += '<div class="spec-field" id="spec-swg-users-field"' + (v.swgType==='分支版'?' style="display:none"':'') + '><label>授权用户数</label><input type="number" id="spec-swg-users" value="' + v.userCount + '" min="' + (baseline ? baseline.userCount : 1) + '"></div>';
-                html += '<div class="spec-field" id="spec-swg-branch-field"' + (v.swgType==='用户版'?' style="display:none"':'') + '><label>分支数</label><input type="number" id="spec-swg-branch" value="' + v.branchCount + '" min="' + (baseline ? baseline.branchCount : 1) + '"></div><div class="spec-field" id="spec-swg-bw-field"' + (v.swgType==='用户版'?' style="display:none"':'') + '><label>每分支带宽（M）</label><input type="number" id="spec-swg-bw" value="' + v.bandwidth + '" min="' + (baseline ? baseline.bandwidth : 1) + '"></div>';
+                html += '<div class="spec-field" id="spec-swg-branch-field"' + (v.swgType==='用户版'?' style="display:none"':'') + '><label>分支数</label><input type="number" id="spec-swg-branch" value="' + v.branchCount + '" min="' + (baseline ? baseline.branchCount : 1) + '"></div>';
             } else if (product === '钓鱼邮件防护') {
                 html = '<div class="spec-field"><label>每日邮件数量（封）</label><input type="number" id="spec-mail" value="' + v.mailCount + '" min="' + (baseline ? baseline.mailCount : 1) + '"></div>';
-            } else if (product === 'SASE-GA') {
-                html = '<div class="spec-field"><label>带宽（M）</label><select id="spec-bw">' + buildGaBandwidthOptions(v.bandwidth, baseline) + '</select></div>';
             }
             return html;
         }
@@ -3223,7 +3263,6 @@ function updateXaasFamilyCounts() {
                     var val = this.value;
                     document.getElementById('spec-swg-users-field').style.display = (val === '分支版') ? 'none' : '';
                     document.getElementById('spec-swg-branch-field').style.display = (val === '用户版') ? 'none' : '';
-                    document.getElementById('spec-swg-bw-field').style.display = (val === '用户版') ? 'none' : '';
                 });
             }
         }
@@ -3254,11 +3293,8 @@ function updateXaasFamilyCounts() {
                 nextValues.swgType = document.getElementById('spec-swg-type').value;
                 nextValues.userCount = parseInt(document.getElementById('spec-swg-users').value) || 50;
                 nextValues.branchCount = parseInt(document.getElementById('spec-swg-branch').value) || 3;
-                nextValues.bandwidth = parseInt(document.getElementById('spec-swg-bw').value) || 100;
             } else if (p === '钓鱼邮件防护') {
                 nextValues.mailCount = parseInt(document.getElementById('spec-mail').value) || 10000;
-            } else if (p === 'SASE-GA') {
-                nextValues.bandwidth = parseInt(document.getElementById('spec-bw').value) || 5;
             }
             if (!validateXaasSpecIncrease(p, nextValues)) return false;
             Object.keys(nextValues).forEach(function(key) { v[key] = nextValues[key]; });
@@ -3280,7 +3316,6 @@ function updateXaasFamilyCounts() {
                 return '有效期30天，用户+分支版，用户数' + v.userCount + '个，分支' + v.branchCount + '*' + v.bandwidth + 'M';
             }
             if (product === '钓鱼邮件防护') return '有效期30天，每日邮件数量' + v.mailCount + '封';
-            if (product === 'SASE-GA') return '有效期15天，带宽' + v.bandwidth + 'M';
             return '';
         }
 
@@ -3297,7 +3332,6 @@ function updateXaasFamilyCounts() {
                 else if (product === 'SASE-ZTNA') inlineSpecId = 'ztna-inline-spec';
                 else if (product === 'SASE-SWG') inlineSpecId = 'swg-inline-spec';
                 else if (product === '钓鱼邮件防护') inlineSpecId = 'mail-inline-spec';
-                else if (product === 'SASE-GA') inlineSpecId = 'ga-inline-spec';
                 if (inlineSpecId) {
                     var inlineSpec = document.getElementById(inlineSpecId);
                     var isOpen = inlineSpec && inlineSpec.classList.contains('show');
@@ -3416,8 +3450,7 @@ function updateXaasFamilyCounts() {
             'xdla-inline-spec': 'SASE-XDLA',
             'ztna-inline-spec': 'SASE-ZTNA',
             'swg-inline-spec': 'SASE-SWG',
-            'mail-inline-spec': '钓鱼邮件防护',
-            'ga-inline-spec': 'SASE-GA'
+            'mail-inline-spec': '钓鱼邮件防护'
         };
 
         document.querySelectorAll('.xaas-inline-spec-area').forEach(function(area) {
@@ -3495,9 +3528,7 @@ function updateXaasFamilyCounts() {
         bindInlineSpecInput('ztna-users', 'SASE-ZTNA', 'userCount');
         bindInlineSpecInput('swg-users', 'SASE-SWG', 'userCount');
         bindInlineSpecInput('swg-branch', 'SASE-SWG', 'branchCount');
-        bindInlineSpecInput('swg-bw', 'SASE-SWG', 'bandwidth');
         bindInlineSpecInput('mail-count', '钓鱼邮件防护', 'mailCount');
-        bindInlineSpecInput('ga-bw', 'SASE-GA', 'bandwidth');
 
         // SASE-SWG 内联选择联动：显示/隐藏内联规格中的字段
         var swgInlineSelect = document.querySelector('.xaas-product-item[data-product="SASE-SWG"] .xaas-inline-select');
@@ -3506,10 +3537,8 @@ function updateXaasFamilyCounts() {
                 var val = this.value;
                 var usersRow = document.getElementById('swg-users-row');
                 var branchRow = document.getElementById('swg-branch-row');
-                var bwRow = document.getElementById('swg-bw-row');
                 if (usersRow) usersRow.style.display = (val === '分支版') ? 'none' : '';
                 if (branchRow) branchRow.style.display = (val === '用户版') ? 'none' : '';
-                if (bwRow) bwRow.style.display = (val === '用户版') ? 'none' : '';
             });
         }
 
@@ -3534,6 +3563,7 @@ function updateXaasFamilyCounts() {
                 if (!phone) {
                     setXaasCustomer('', '', '');
                     resetXaasSearchState();
+                    hideCloudAccountFields();
                     if (hint) hint.textContent = '输入手机号后模拟匹配客户名称；未匹配时可通过搜索选择客户。';
                     return;
                 }
@@ -3541,52 +3571,45 @@ function updateXaasFamilyCounts() {
                 if (!result) {
                     setXaasCustomer('', '', '');
                     resetXaasSearchState();
+                    hideCloudAccountFields();
                     if (hint) hint.textContent = '未匹配到云图客户，请搜索或创建客户。';
                     return;
                 }
-                var mcodes = result.mcodes;
                 var contactName = document.getElementById('xaas-contact-name');
                 if (contactName && !contactName.value.trim() && result.contactName) contactName.value = result.contactName;
-                if (mcodes.length === 0) {
+                var accounts = result.accounts || [];
+                
+                if (accounts.length === 0) {
+                    hideCloudAccountFields();
                     setXaasCustomer('', '', '');
                     resetXaasSearchState();
                     if (hint) hint.textContent = '该手机号未注册云图账号，请搜索或创建客户。';
-                } else if (mcodes.length === 1) {
-                    // 单个云图客户 → 自动填入 + 锁定
-                    resetXaasSearchState();
-                    var matchedCustomers = resolveCustomersByMcodes(mcodes);
-                    if (matchedCustomers.length > 0) {
-                        var c = matchedCustomers[0];
-                        setXaasCustomer(c.name, c.id, c.type, c.sales, true);
-                        if (hint) hint.textContent = '已根据手机号匹配客户名称。';
+                } else if (accounts.length === 1) {
+                    hideCloudAccountFields();
+                    var cid = findCustomerIdByPhone(accounts[0].phone);
+                    if (cid) {
+                        var matchedCustomers = resolveCustomersByMcodes([cid]);
+                        if (matchedCustomers.length > 0) {
+                            var c = matchedCustomers[0];
+                            setXaasCustomer(c.name, c.id, c.type, c.sales, true);
+                            if (hint) hint.textContent = '已根据云图账号匹配客户名称。';
+                        } else {
+                            setXaasCustomer('', '', '');
+                            if (hint) hint.textContent = '云图账号存在但主数据无对应客户，请搜索或创建。';
+                        }
                     } else {
                         setXaasCustomer('', '', '');
-                        if (hint) hint.textContent = '匹配到mcode但主数据无对应客户，请搜索或创建。';
+                        if (hint) hint.textContent = '云图账号存在但无法匹配客户，请搜索或创建。';
                     }
                 } else {
-                    // 多个云图客户 → 锁定输入框，只允许从匹配结果中选择
-                    setXaasCustomer('', '', '');
-                    var matchedList = resolveCustomersByMcodes(mcodes);
-                    xaasMultiMatchCache = matchedList.length > 0 ? matchedList : null;
-                    // 锁定搜索框：禁止打字，但可点击展开下拉
+                    showCloudAccountSelection(accounts);
+                    // 重置客户名称等字段，但不调 setXaasCustomer（避免触发 loadCloudAccounts 覆盖 show 类）
                     var searchInput = document.getElementById('xaasCustomerSearch');
-                    if (searchInput) {
-                        searchInput.readOnly = true;
-                        searchInput.classList.add('search-select-readonly');
-                        searchInput.placeholder = '请点击选择客户';
-                    }
-                    // 显示匹配计数标签
-                    var badge = document.getElementById('xaasMatchBadge');
-                    if (badge && matchedList.length > 0) {
-                        badge.textContent = '已匹配 ' + matchedList.length + ' 个客户';
-                        badge.className = 'match-badge show';
-                    }
-                    // 展开下拉列表
-                    var dropdownEl = document.getElementById('xaasCustomerDropdown');
-                    if (dropdownEl && matchedList.length > 0) {
-                        renderMultiMatchDropdown(dropdownEl, matchedList);
-                    }
-                    if (hint) hint.textContent = '已根据手机号匹配到 ' + matchedList.length + ' 个客户，请点击上方输入框选择一个。';
+                    if (searchInput) { searchInput.value = ''; searchInput.readOnly = false; searchInput.classList.remove('customer-search-locked', 'search-select-readonly'); searchInput.placeholder = '请先选择云图账号'; }
+                    var infoDisplay = document.getElementById('xaasCustomerInfoDisplay');
+                    if (infoDisplay) infoDisplay.classList.remove('show');
+                    xaasMultiMatchCache = null;
+                    if (hint) hint.textContent = '已找到 ' + accounts.length + ' 个云图账号，请选择所属账号。';
                 }
             });
         }
@@ -3599,6 +3622,37 @@ function updateXaasFamilyCounts() {
                 var displayText = selectedOption ? selectedOption.text : '';
                 var trigger = document.querySelector('#xaasCloudAccountItem .custom-select-trigger .custom-select-value');
                 if (trigger) trigger.textContent = displayText || '请选择云图账号';
+                
+                if (selectedOption && selectedOption.value) {
+                    var account = {
+                        tenantId: selectedOption.dataset.tenantId || '',
+                        tenantName: selectedOption.dataset.tenantName || '',
+                        masterAccount: selectedOption.dataset.masterAccount || '',
+                        masterContact: selectedOption.dataset.masterContact || '',
+                        phone: selectedOption.value,
+                        realName: selectedOption.dataset.realName || ''
+                    };
+                    // 选中后在 trigger 显示结构化信息
+                    if (trigger) trigger.innerHTML = '<span class="cloud-account-trigger-main">' + account.realName + ' · ' + account.phone + '</span><span class="cloud-account-trigger-sub">' + account.tenantName + ' · ' + account.tenantId + '</span>';
+                    
+                    var cid = findCustomerIdByPhone(account.phone);
+                    resetXaasSearchState();
+                    if (cid) {
+                        var matchedCustomers = resolveCustomersByMcodes([cid]);
+                        if (matchedCustomers.length > 0) {
+                            var c = matchedCustomers[0];
+                            setXaasCustomer(c.name, c.id, c.type, c.sales, true);
+                            var hint = document.getElementById('xaas-phone-hint');
+                            if (hint) hint.textContent = '已选择云图账号，客户名称已自动匹配。';
+                        } else {
+                            setXaasCustomer('', '', '');
+                        }
+                    } else {
+                        setXaasCustomer('', '', '');
+                    }
+                } else {
+                    hideCloudAccountFields();
+                }
             });
         }
 
@@ -3834,7 +3888,6 @@ function updateXaasFamilyCounts() {
             if (!requireXaasValue('xaas-customer-name', '请选择客户名称')) return false;
             if (!requireXaasValue('xaas-industry-l1', '请选择一级行业')) return false;
             if (!requireXaasValue('xaas-industry-l2', '请选择二级行业')) return false;
-            if (!requireXaasValue('xaas-region', '请选择所属区域')) return false;
 
             if (xaasNeedsXdrExtraInfo()) {
                 if (!requireXaasValue('xdr-test-scenario', '请选择测试场景')) return false;
