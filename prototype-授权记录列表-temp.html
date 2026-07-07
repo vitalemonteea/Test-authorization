@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>原型 - 授权记录列表</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<script>
+tailwind.config = {
+    darkMode: "class",
+    theme: {
+        extend: {
+            colors: {
+                "primary": "#0050cb", "on-primary": "#ffffff", "primary-container": "#0066ff",
+                "surface": "#f8f9ff", "surface-container-lowest": "#ffffff", "surface-container-low": "#eff4ff",
+                "surface-container": "#e5eeff", "on-surface": "#0b1c30", "on-surface-variant": "#424656",
+                "outline-variant": "#c2c6d8", "outline": "#727687", "error": "#ba1a1a", "error-container": "#ffdad6",
+                "secondary": "#5c5f61", "on-secondary": "#ffffff", "background": "#f8f9ff", "on-background": "#0b1c30"
+            },
+            borderRadius: { DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px" },
+            spacing: { gutter: "24px", "margin-desktop": "40px", "margin-mobile": "16px", "sidebar-width": "240px", "header-height": "64px" },
+            fontFamily: { inter: ["Inter"] },
+            fontSize: {
+                "2xs": ["11px", { lineHeight: "14px", fontWeight: "500" }],
+                "xs": ["12px", { lineHeight: "16px", fontWeight: "500" }],
+                "sm": ["13px", { lineHeight: "18px", fontWeight: "400" }],
+                "base": ["14px", { lineHeight: "20px", fontWeight: "400" }],
+                "lg": ["18px", { lineHeight: "24px", fontWeight: "600" }],
+                "xl": ["24px", { lineHeight: "30px", fontWeight: "600" }]
+            }
+        }
+    }
+}
+</script>
+<style>
+    body { font-family: 'Inter', sans-serif; background: #f8f9ff; color: #0b1c30; font-size: 13px; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20; }
+    .material-symbols-outlined.fill { font-variation-settings: 'FILL' 1; }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #c2c6d8; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #727687; }
+    .expand-icon { transition: transform 0.2s; }
+    .expand-icon.expanded { transform: rotate(90deg); }
+    .sticky-left { position: sticky; z-index: 2; background: inherit; }
+    .sticky-left-0 { left: 0; }
+    .sticky-left-1 { left: 145px; }
+    .sticky-right { position: sticky; right: 0; z-index: 2; background: inherit; }
+    .sticky-right-1 { right: 155px; }
+    thead .sticky-left, thead .sticky-right { background: #fff; }
+    tbody tr:hover .sticky-left, tbody tr:hover .sticky-right { background: inherit; }
+    tbody tr .sticky-left, tbody tr .sticky-right { background: #fff; }
+    .solution-detail-row td { position: static !important; }
+    .solution-expand-wrap { border-radius: 6px; background: #f0f5ff; margin: 0 12px 0 44px; padding: 10px 12px; }
+    /* Independent scroll for table */
+    .table-scroll-wrap { overflow: auto; max-height: calc(100vh - 250px); min-height: 0; }
+    .table-scroll-wrap::-webkit-scrollbar { width: 6px; height: 6px; }
+    .table-scroll-wrap::-webkit-scrollbar-track { background: transparent; }
+    .table-scroll-wrap::-webkit-scrollbar-thumb { background: #c2c6d8; border-radius: 9999px; }
+    .table-scroll-wrap::-webkit-scrollbar-thumb:hover { background: #727687; }
+    thead th { position: sticky !important; top: 0; z-index: 10; background: #ffffff; }
+    thead .sticky-left { z-index: 11; }
+    thead .sticky-right { z-index: 11; }
+    .sticky-left-1::after { content: ''; position: absolute; right: -5px; top: 0; bottom: 0; width: 5px; background: linear-gradient(to right, rgba(0,0,0,0.05), transparent); pointer-events: none; }
+    .sticky-right-1::before { content: ''; position: absolute; left: -5px; top: 0; bottom: 0; width: 5px; background: linear-gradient(to left, rgba(0,0,0,0.05), transparent); pointer-events: none; }
+</style>
+</head>
+<body>
+
+<div class="h-screen overflow-hidden flex flex-col">
+    <!-- TopNavBar -->
+    <header class="bg-[#5c5f61] text-white fixed top-0 w-full z-50 border-b border-[#c2c6d8] flex justify-between items-center h-14 px-4">
+        <div class="font-bold tracking-tight text-[16px]">测试设备授权平台</div>
+        <div class="flex items-center gap-3">
+            <a class="text-white/80 hover:text-white text-[12px]" href="#">使用手册</a>
+            <span class="w-6 h-6 rounded-full bg-[#0066ff] flex items-center justify-center text-[11px] font-bold">�?/span>
+        </div>
+    </header>
+
+    <div class="flex flex-1 pt-14">
+        <!-- SideNavBar -->
+        <aside class="bg-white fixed left-0 top-14 w-52 h-[calc(100vh-56px)] border-r border-[#c2c6d8] flex flex-col py-3 hidden md:flex z-40">
+            <div class="px-4 pb-3 mb-2 border-b border-[#c2c6d8]/30">
+                <div class="text-[13px] font-bold text-[#0b1c30]">钱金�?4903</div>
+                <div class="text-[11px] text-[#424656]">欢迎回来</div>
+            </div>
+            <div class="flex-1 px-2 space-y-0.5">
+                <a class="text-[#424656] hover:text-[#0050cb] hover:bg-[#eff4ff] flex items-center gap-2 px-3 py-2 rounded-lg text-[13px]" href="#"><span class="material-symbols-outlined text-[16px]">home</span>后台首页</a>
+                <a class="text-[#424656] hover:text-[#0050cb] hover:bg-[#eff4ff] flex items-center gap-2 px-3 py-2 rounded-lg text-[13px]" href="#"><span class="material-symbols-outlined text-[16px]">assignment</span>申请授权</a>
+                <a class="text-[#0050cb] border-l-4 border-[#0050cb] bg-[#eff4ff] font-bold flex items-center gap-2 px-3 py-2 rounded-lg -ml-px pl-[11px] text-[13px]" href="#"><span class="material-symbols-outlined fill text-[16px]">history</span>授权记录</a>
+            </div>
+            <div class="mt-auto px-2 pt-3 border-t border-[#c2c6d8]/30">
+                <a class="text-[#424656] hover:text-[#0050cb] hover:bg-[#eff4ff] flex items-center gap-2 px-3 py-2 rounded-lg text-[13px]" href="#"><span class="material-symbols-outlined text-[16px]">contact_support</span>联系我们</a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 md:ml-52 p-4 md:p-5 bg-[#f8f9ff] flex flex-col">
+            <div class="max-w-[1600px] w-full mx-auto flex-1 flex flex-col gap-3 min-h-0">
+
+                <!-- Page Header (compact) -->
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <h1 class="text-[20px] font-semibold text-[#0b1c30]">授权记录</h1>
+                            <span class="text-[12.5px] text-[#424656]">管理和查看所有设备授权申请及历史记录�?/span>
+                        </div>
+                    <div class="flex items-center gap-1.5 bg-white px-2 py-1 rounded-full border border-[#c2c6d8]/40">
+                        <span class="flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#f8f9ff] text-[11px]"><span class="w-1.5 h-1.5 rounded-full bg-[#424656]"></span>�?7</span>
+                        <div class="w-px h-3 bg-[#c2c6d8]/40"></div>
+                        <span class="flex items-center gap-1 px-2 py-0.5 rounded-full hover:bg-[#eff4ff] cursor-pointer text-[11px] text-[#0050cb]"><span class="w-1.5 h-1.5 rounded-full bg-[#0050cb]"></span>待审�?</span>
+                        <span class="flex items-center gap-1 px-2 py-0.5 rounded-full hover:bg-[#eff4ff] cursor-pointer text-[11px] text-[#424656]"><span class="w-1.5 h-1.5 rounded-full bg-[#10b981]"></span>审批�?</span>
+                        <span class="flex items-center gap-1 px-2 py-0.5 rounded-full hover:bg-[#eff4ff] cursor-pointer text-[11px] text-[#424656]"><span class="w-1.5 h-1.5 rounded-full bg-[#8b5cf6]"></span>已通过1</span>
+                        <span class="flex items-center gap-1 px-2 py-0.5 rounded-full hover:bg-[#eff4ff] cursor-pointer text-[11px] text-[#424656]"><span class="w-1.5 h-1.5 rounded-full bg-[#3b82f6]"></span>已授�?</span>
+                        <span class="flex items-center gap-1 px-2 py-0.5 rounded-full hover:bg-[#eff4ff] cursor-pointer text-[11px] text-[#424656]"><span class="w-1.5 h-1.5 rounded-full bg-[#ba1a1a]"></span>已驳�?</span>
+                    </div>
+                </div>
+
+                <!-- Filters (compact) -->
+                <div class="bg-white rounded-lg shadow-sm border border-[#c2c6d8]/30 p-2.5">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <div class="flex items-center border border-[#c2c6d8]/50 rounded-md bg-[#f8f9ff] focus-within:border-[#0050cb] overflow-hidden h-8">
+                            <label class="px-2 py-1 bg-white border-r border-[#c2c6d8]/50 text-[11px] text-[#424656] whitespace-nowrap">类型</label>
+                            <select class="border-0 bg-transparent px-2 py-1 text-[12px] text-[#0b1c30] focus:ring-0 min-w-[80px]"><option>全部</option><option>产品授权</option><option>XaaS</option><option>解决方案</option></select>
+                        </div>
+                        <div class="flex items-center border border-[#c2c6d8]/50 rounded-md bg-[#f8f9ff] focus-within:border-[#0050cb] overflow-hidden h-8">
+                            <label class="px-2 py-1 bg-white border-r border-[#c2c6d8]/50 text-[11px] text-[#424656] whitespace-nowrap">状�?/label>
+                            <select class="border-0 bg-transparent px-2 py-1 text-[12px] text-[#0b1c30] focus:ring-0 min-w-[80px]"><option>全部</option><option>待审�?/option><option>审批�?/option><option>已授�?/option><option>已驳�?/option></select>
+                        </div>
+                        <div class="flex items-center border border-[#c2c6d8]/50 rounded-md bg-[#f8f9ff] focus-within:border-[#0050cb] overflow-hidden h-8">
+                            <label class="px-2 py-1 bg-white border-r border-[#c2c6d8]/50 text-[11px] text-[#424656] whitespace-nowrap">产品�?/label>
+                            <select class="border-0 bg-transparent px-2 py-1 text-[12px] text-[#0b1c30] focus:ring-0 min-w-[80px]"><option>全部</option><option>HCI</option><option>NGAF</option><option>AD</option><option>XDR</option></select>
+                        </div>
+                        <div class="flex items-center border border-[#c2c6d8]/50 rounded-md bg-[#f8f9ff] focus-within:border-[#0050cb] h-8 px-2 w-[140px]">
+                            <span class="material-symbols-outlined text-[14px] text-[#424656] mr-1">search</span>
+                            <input class="border-0 bg-transparent p-0 w-full text-[12px] text-[#0b1c30] focus:ring-0 placeholder:text-[#727687]" placeholder="设备ID/SN"/>
+                        </div>
+                        <div class="flex items-center border border-[#c2c6d8]/50 rounded-md bg-[#f8f9ff] focus-within:border-[#0050cb] h-8 px-2 w-[110px]">
+                            <span class="material-symbols-outlined text-[14px] text-[#424656] mr-1">person</span>
+                            <input class="border-0 bg-transparent p-0 w-full text-[12px] text-[#0b1c30] focus:ring-0 placeholder:text-[#727687]" placeholder="申请�?/>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <div class="flex items-center border border-[#c2c6d8]/50 rounded-md bg-[#f8f9ff] h-8 px-2 w-[110px]">
+                                <input class="border-0 bg-transparent p-0 w-full text-[12px] text-[#0b1c30] focus:ring-0" placeholder="�?�?�? type="text"/>
+                                <span class="material-symbols-outlined text-[14px] text-[#424656] cursor-pointer">calendar_today</span>
+                            </div>
+                            <span class="text-[#424656] text-[11px]">~</span>
+                            <div class="flex items-center border border-[#c2c6d8]/50 rounded-md bg-[#f8f9ff] h-8 px-2 w-[110px]">
+                                <input class="border-0 bg-transparent p-0 w-full text-[12px] text-[#0b1c30] focus:ring-0" placeholder="�?�?�? type="text"/>
+                                <span class="material-symbols-outlined text-[14px] text-[#424656] cursor-pointer">calendar_today</span>
+                            </div>
+                        </div>
+                        <button class="h-8 px-3 bg-[#0050cb] text-white rounded-md text-[11px] font-medium hover:bg-[#0050cb]/90 shadow-sm flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">search</span>搜索</button>
+                        <button class="h-8 px-3 bg-white text-[#0050cb] border border-[#0050cb]/30 rounded-md text-[11px] font-medium hover:bg-[#eff4ff] flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">download</span>导出</button>
+                    </div>
+                </div>
+
+                <!-- Table (independent scroll) -->
+                <div class="bg-white rounded-lg shadow-sm border border-[#c2c6d8]/30 flex-1 flex flex-col min-h-0">
+                    <div class="table-scroll-wrap">
+                        <table class="w-full text-left border-collapse min-w-[1550px]" style="font-size:13px;">
+                            <thead>
+                                <tr class="border-b border-[#c2c6d8]/40 bg-white">
+                                    <th class="sticky-left sticky-left-0 py-3 px-4 text-[11.5px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[145px]">申请编号</th>
+                                    <th class="sticky-left sticky-left-1 py-3 px-4 text-[11.5px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[105px]">授权类型</th>
+                                    <th class="py-3 px-4 text-[11.5px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap">产品�?方案</th>
+                                    <th class="py-3 px-4 text-[11.5px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[125px]">版本�?/th>
+                                    <th class="py-3 px-4 text-[11.5px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap">客户名称</th>
+                                    <th class="py-3 px-4 text-[11.5px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[135px]">设备ID</th>
+                                    <th class="py-3 px-4 text-[11.5px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[125px]">设备SN</th>
+                                    <th class="py-3 px-4 text-[11.5px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[75px]">区域</th>
+                                    <th class="py-3 px-4 text-[11.5px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[205px]">授权有效�?/th>
+                                    <th class="py-3 px-4 text-[11.5px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[100px]">申请�?/th>
+                                    <th class="py-3 px-4 text-[11.5px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[140px]">申请时间</th>
+                                    <th class="sticky-right sticky-right-1 py-3 px-4 text-[11.5px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[110px]">审批状�?/th>
+                                    <th class="sticky-right py-3 px-4 text-[11.5px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap text-right w-[155px]">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-[#c2c6d8]/15">
+                                <!-- Row 1: 产品授权 - 已授�?-->
+                                <tr class="hover:bg-[#f8f9ff]/40 transition-colors">
+                                    <td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-[#0050cb] hover:underline font-medium" href="javascript:;">AUTH-20260701-001</a></td>
+                                    <td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-[#0050cb]/10 text-[#0050cb] border border-[#0050cb]/20">产品授权</span></td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">HCI</td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">HCI-6.8.1-VKEY</td>
+                                    <td class="py-3 px-4 whitespace-nowrap"><span class="text-[#0b1c30]">腾讯科技</span> <span class="inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-amber-100 text-amber-800 border border-amber-200">KA</span></td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-2024-HCI-001</td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-HCI-001</td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">上海�?/td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-01 ~ 2026-09-29</td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">张三</td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-01 10:30</td>
+                                    <td class="sticky-right sticky-right-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已授�?/span></td>
+                                    <td class="sticky-right py-3 px-4 text-right whitespace-nowrap"><span class="text-[#0050cb] hover:bg-[#0050cb]/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="text-[#0050cb] hover:bg-[#0050cb]/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">复制</span><span class="ml-1 px-2 py-0.5 bg-[#0050cb] text-white rounded text-[10px] font-medium cursor-pointer hover:bg-[#0050cb]/90">续期</span></td>
+                                </tr>
+                                <!-- Row 2: XaaS - 待审�?-->
+                                <tr class="hover:bg-[#f8f9ff]/40 transition-colors">
+                                    <td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-[#0050cb] hover:underline font-medium" href="javascript:;">AUTH-20260702-015</a></td>
+                                    <td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">XaaS</span></td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">SaaS-XDR</td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">XDR-2.1.0</td>
+                                    <td class="py-3 px-4 whitespace-nowrap"><span class="text-[#0b1c30]">阿里�?/span> <span class="inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-amber-100 text-amber-800 border border-amber-200">KA</span></td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">3个设�?/td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">�?/td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">深圳�?/td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-02 ~ 2026-10-01</td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">李四</td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-02 14:20</td>
+                                    <td class="sticky-right sticky-right-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-blue-50 text-blue-700 border border-blue-200"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>待审�?/span></td>
+                                    <td class="sticky-right py-3 px-4 text-right whitespace-nowrap"><span class="text-[#0050cb] hover:bg-[#0050cb]/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">审核</span><span class="text-[#0050cb] hover:bg-[#0050cb]/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">复制</span></td>
+                                </tr>
+                                <!-- Row 3: 产品授权 - 审批�?-->
+                                <tr class="hover:bg-[#f8f9ff]/40 transition-colors">
+                                    <td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-[#0050cb] hover:underline font-medium" href="javascript:;">AUTH-20260703-022</a></td>
+                                    <td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-[#0050cb]/10 text-[#0050cb] border border-[#0050cb]/20">产品授权</span></td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">NGAF</td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">NGAF-8.0.15</td>
+                                    <td class="py-3 px-4 whitespace-nowrap"><span class="text-[#0b1c30]">华为技�?/span> <span class="inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-amber-100 text-amber-800 border border-amber-200">KA</span></td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-2024-NGAF-003</td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-NGAF-003</td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">北京�?/td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-03 ~ 2026-10-01</td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">王五</td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-03 09:15</td>
+                                    <td class="sticky-right sticky-right-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-50 text-amber-700 border border-amber-200"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>审批�?/span></td>
+                                    <td class="sticky-right py-3 px-4 text-right whitespace-nowrap"><span class="text-[#0050cb] hover:bg-[#0050cb]/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="text-[#0050cb] hover:bg-[#0050cb]/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">复制</span></td>
+                                </tr>
+                                <!-- Row 3.5: 产品授权 - 已通过 -->
+                                <tr class="hover:bg-[#f8f9ff]/40 transition-colors">
+                                    <td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-[#0050cb] hover:underline font-medium" href="javascript:;">AUTH-20260704-028</a></td>
+                                    <td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-[#0050cb]/10 text-[#0050cb] border border-[#0050cb]/20">产品授权</span></td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">SIP</td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">SIP-3.0.5</td>
+                                    <td class="py-3 px-4 whitespace-nowrap"><span class="text-[#0b1c30]">南方电网</span> <span class="inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border border-slate-200">普�?/span></td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-SIP-001</td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-SIP-001</td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">广州�?/td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-04 ~ 2026-10-02</td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">周九</td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-04 16:00</td>
+                                    <td class="sticky-right sticky-right-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-violet-50 text-violet-700 border border-violet-200"><span class="w-1.5 h-1.5 rounded-full bg-violet-500"></span>已通过</span></td>
+                                    <td class="sticky-right py-3 px-4 text-right whitespace-nowrap"><span class="text-[#0050cb] hover:bg-[#0050cb]/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="text-[#0050cb] hover:bg-[#0050cb]/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">复制</span></td>
+                                </tr>
+                                <!-- Row 4: 产品授权 - 已驳�?-->
+                                <tr class="hover:bg-[#f8f9ff]/40 transition-colors">
+                                    <td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-[#0050cb] hover:underline font-medium" href="javascript:;">AUTH-20260628-033</a></td>
+                                    <td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-[#0050cb]/10 text-[#0050cb] border border-[#0050cb]/20">产品授权</span></td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">AD</td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">AD-7.0.8</td>
+                                    <td class="py-3 px-4 whitespace-nowrap"><span class="text-[#0b1c30]">百度网讯</span> <span class="inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border border-slate-200">普�?/span></td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-2024-AD-007</td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-AD-007</td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">广州�?/td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">�?/td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">赵六</td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-28 16:40</td>
+                                    <td class="sticky-right sticky-right-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-red-50 text-[#ba1a1a] border border-[#ba1a1a]/20"><span class="w-1.5 h-1.5 rounded-full bg-[#ba1a1a]"></span>已驳�?/span></td>
+                                    <td class="sticky-right py-3 px-4 text-right whitespace-nowrap"><span class="text-[#0050cb] hover:bg-[#0050cb]/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="text-[#0050cb] hover:bg-[#0050cb]/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">复制</span><span class="ml-1 px-2 py-0.5 bg-[#c2c6d8] text-white rounded text-[10px] font-medium cursor-not-allowed">续期</span></td>
+                                </tr>
+                                <!-- Row 5: 解决方案 - 已授�?-->
+                                <tr class="hover:bg-[#f8f9ff]/40 transition-colors bg-subtle">
+                                    <td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-1"><button class="text-[#424656] hover:text-[#0050cb]" onclick="toggleSolution(this)"><span class="material-symbols-outlined text-[16px] expand-icon">chevron_right</span></button><a class="text-[#0050cb] hover:underline font-medium" href="javascript:;">SOL-20260701-001</a></div></td>
+                                    <td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-50 text-amber-700 border border-amber-200">解决方案</span></td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">企业云方�?/td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">�?/td>
+                                    <td class="py-3 px-4 whitespace-nowrap"><span class="text-[#0b1c30]">工商银行</span> <span class="inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-amber-100 text-amber-800 border border-amber-200">KA</span></td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">5个设�?/td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">5个设�?/td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">杭州�?/td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-01 ~ 2026-09-29</td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">钱七</td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-01 11:00</td>
+                                    <td class="sticky-right sticky-right-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已授�?/span></td>
+                                    <td class="sticky-right py-3 px-4 text-right whitespace-nowrap"><span class="text-[#0050cb] hover:bg-[#0050cb]/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="text-[#0050cb] hover:bg-[#0050cb]/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">复制</span><span class="ml-1 px-2 py-0.5 bg-[#0050cb] text-white rounded text-[10px] font-medium cursor-pointer hover:bg-[#0050cb]/90">续期</span></td>
+                                </tr>
+                                <!-- 解决方案展开详情 -->
+                                <tr class="solution-detail-row" style="display:none;">
+                                    <td colspan="13" class="p-0 bg-[#f8f9ff]" style="border-top:2px solid #e5eeff;">
+                                        <div style="padding:6px 12px 10px;">
+                                            <div class="solution-expand-wrap">
+                                                <div class="bg-white rounded border border-[#c2c6d8]/20 overflow-hidden" style="font-size:11.5px;">
+                                                <table class="w-full">
+                                                    <thead><tr class="border-b border-[#c2c6d8]/30 bg-[#e8eeff]"><th class="py-2 px-3 text-[10.5px] font-medium text-[#424656] uppercase">产品�?/th><th class="py-2 px-3 text-[10.5px] font-medium text-[#424656] uppercase">版本�?/th><th class="py-2 px-3 text-[10.5px] font-medium text-[#424656] uppercase">设备ID</th><th class="py-2 px-3 text-[10.5px] font-medium text-[#424656] uppercase">设备SN</th><th class="py-2 px-3 text-[10.5px] font-medium text-[#424656] uppercase">区域</th><th class="py-2 px-3 text-[10.5px] font-medium text-[#424656] uppercase">授权有效�?/th><th class="py-2 px-3 text-[10.5px] font-medium text-[#424656] uppercase">授权�?/th></tr></thead>
+                                                    <tbody>
+                                                        <tr class="hover:bg-[#eef4ff]"><td class="py-2 px-3">HCI</td><td class="py-2 px-3">HCI-6.8.1-VKEY</td><td class="py-2 px-3">GW-HCI-001</td><td class="py-2 px-3">SN-HCI-001</td><td class="py-2 px-3">上海�?/td><td class="py-2 px-3">2026-07-01 ~ 2026-09-29</td><td class="py-2 px-3">LIC-HCI-001</td></tr>
+                                                        <tr class="hover:bg-[#eef4ff]"><td class="py-2 px-3">AC</td><td class="py-2 px-3">AC-13.0.3</td><td class="py-2 px-3">GW-AC-005</td><td class="py-2 px-3">SN-AC-005</td><td class="py-2 px-3">上海�?/td><td class="py-2 px-3">2026-07-01 ~ 2026-09-29</td><td class="py-2 px-3">LIC-AC-005</td></tr>
+                                                        <tr class="hover:bg-[#eef4ff]"><td class="py-2 px-3">NGAF</td><td class="py-2 px-3">NGAF-8.0.15</td><td class="py-2 px-3">GW-NGAF-003</td><td class="py-2 px-3">SN-NGAF-003</td><td class="py-2 px-3">上海�?/td><td class="py-2 px-3">2026-07-01 ~ 2026-09-29</td><td class="py-2 px-3">LIC-NGAF-003</td></tr>
+                                                        <tr class="hover:bg-[#eef4ff]"><td class="py-2 px-3">AD</td><td class="py-2 px-3">AD-7.0.8</td><td class="py-2 px-3">GW-AD-002</td><td class="py-2 px-3">SN-AD-002</td><td class="py-2 px-3">上海�?/td><td class="py-2 px-3">2026-07-01 ~ 2026-09-29</td><td class="py-2 px-3">LIC-AD-002</td></tr>
+                                                         <tr class="hover:bg-[#eef4ff]"><td class="py-2 px-3">WOC</td><td class="py-2 px-3">WOC-8.0.5</td><td class="py-2 px-3">GW-WOC-001</td><td class="py-2 px-3">SN-WOC-001</td><td class="py-2 px-3">上海�?/td><td class="py-2 px-3">2026-07-01 ~ 2026-09-29</td><td class="py-2 px-3">LIC-WOC-001</td></tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <!-- Row 6: 解决方案 - 待审�?-->
+                                <tr class="hover:bg-[#f8f9ff]/40 transition-colors bg-subtle">
+                                    <td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-1"><button class="text-[#424656] hover:text-[#0050cb]" onclick="toggleSolution(this)"><span class="material-symbols-outlined text-[16px] expand-icon">chevron_right</span></button><a class="text-[#0050cb] hover:underline font-medium" href="javascript:;">SOL-20260704-002</a></div></td>
+                                    <td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-50 text-amber-700 border border-amber-200">解决方案</span></td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">安全态势方案</td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">�?/td>
+                                    <td class="py-3 px-4 whitespace-nowrap"><span class="text-[#0b1c30]">建设银行</span> <span class="inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border border-slate-200">普�?/span></td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">3个设�?/td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">3个设�?/td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">北京�?/td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-04 ~ 2026-10-02</td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">孙八</td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-04 15:30</td>
+                                    <td class="sticky-right sticky-right-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-blue-50 text-blue-700 border border-blue-200"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>待审�?/span></td>
+                                    <td class="sticky-right py-3 px-4 text-right whitespace-nowrap"><span class="text-[#0050cb] hover:bg-[#0050cb]/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">审核</span><span class="text-[#0050cb] hover:bg-[#0050cb]/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">复制</span></td>
+                                </tr>
+                                <!-- Row 7: WAF - 已授�?-->
+                                <tr class="hover:bg-[#f8f9ff]/40 transition-colors">
+                                    <td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-[#0050cb] hover:underline font-medium" href="javascript:;">AUTH-20260630-041</a></td>
+                                    <td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-[#0050cb]/10 text-[#0050cb] border border-[#0050cb]/20">产品授权</span></td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">WAF</td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">WAF-7.0.5</td>
+                                    <td class="py-3 px-4 whitespace-nowrap"><span class="text-[#0b1c30]">中国移动</span> <span class="inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-amber-100 text-amber-800 border border-amber-200">KA</span></td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-WAF-012</td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-WAF-012</td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">北京�?/td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-30 ~ 2026-09-28</td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">陈十</td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-30 09:00</td>
+                                    <td class="sticky-right sticky-right-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已授�?/span></td>
+                                    <td class="sticky-right py-3 px-4 text-right whitespace-nowrap"><span class="text-[#0050cb] hover:bg-[#0050cb]/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="text-[#0050cb] hover:bg-[#0050cb]/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">复制</span><span class="ml-1 px-2 py-0.5 bg-[#0050cb] text-white rounded text-[10px] font-medium cursor-pointer hover:bg-[#0050cb]/90">续期</span></td>
+                                </tr>
+                                <!-- Row 8: XaaS - 已授�?-->
+                                <tr class="hover:bg-[#f8f9ff]/40 transition-colors">
+                                    <td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-[#0050cb] hover:underline font-medium" href="javascript:;">AUTH-20260629-050</a></td>
+                                    <td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">XaaS</span></td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">SASE-GA</td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">SASE-3.0.1</td>
+                                    <td class="py-3 px-4 whitespace-nowrap"><span class="text-[#0b1c30]">京东集团</span> <span class="inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border border-slate-200">普�?/span></td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2个设�?/td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">�?/td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">华南�?/td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-29 ~ 2026-09-27</td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">刘十一</td>
+                                    <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-29 14:00</td>
+                                    <td class="sticky-right sticky-right-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已授�?/span></td>
+                                    <td class="sticky-right py-3 px-4 text-right whitespace-nowrap"><span class="text-[#0050cb] hover:bg-[#0050cb]/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="text-[#0050cb] hover:bg-[#0050cb]/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">复制</span><span class="ml-1 px-2 py-0.5 bg-[#0050cb] text-white rounded text-[10px] font-medium cursor-pointer hover:bg-[#0050cb]/90">续期</span></td>
+                                </tr>

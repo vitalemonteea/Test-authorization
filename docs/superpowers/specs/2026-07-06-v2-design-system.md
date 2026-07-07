@@ -1,383 +1,356 @@
 # 测试设备授权平台 V2 — 设计系统规范
 
-> 基于 `测试设备授权平台V2.html` 提取，遵循 Material Design 3（MD3）设计语言
-> 最后更新：2026-07-06
+> 本次更新：2026-07-06 — 新增 Tailwind CSS + MD3 完整色彩体系（来自授权记录页原型）
+> 原 V2 HTML（申请授权页）保留作为历史参考
 
 ---
 
-## 一、色彩系统
+## 一、技术栈
 
-### 1.1 主色调
-
-| 用途 | 色值 | 备注 |
-|------|------|------|
-| Primary（主色） | `#0050cb` | 按钮、激活态、链接 |
-| Primary Hover | `#003fa3` | 按钮悬停 |
-| Primary Pill | `#dae1ff` bg / `#0050cb` text | 功能开关开启态 |
-| Primary Light | `#eff4ff` | 行悬停背景、搜索下拉悬停 |
-| Primary Border | `#e5eeff` | 输入框默认边框 |
-
-### 1.2 中性色
-
-| 用途 | 色值 |
+| 维度 | 内容 |
 |------|------|
-| Surface 容器色 | `#f8f9ff` |
-| 卡片/背景纯白 | `#ffffff` |
-| 标题色（强调） | `#1a1a2e` / `#0b1c30` |
-| 正文色（默认） | `#424656` |
-| 辅助/次要文字 | `#8b92a5` |
-| 占位/灰色文字 | `#999` |
-| 分割线/边框 | `#eff4ff` / `#e6e6e6` |
-| 输入框边框 | `#e5eeff` |
-| 输入框 Hover 边框 | `#c2c6d8` |
-| 禁用背景 | `#e8ecf0` |
-| 不可用按钮 | `#aaa` |
-
-### 1.3 语义色
-
-| 用途 | 色值 | 场景 |
-|------|------|------|
-| 错误/必填 | `#ba1a1a` / `#c62828` | 校验失败提示、必填星号、红色边框 |
-| 成功 | `#2e7d32` | 通过状态 |
-| 警告 | `#e65100` | 超限提示、过期警告 |
-| Toast 成功 | `#4CAF50` | 操作成功提示 |
-| Toast 警告 | `#ff9800` | 操作警告提示 |
-
-### 1.4 徽章/Pill 体系
-
-| 类型 | 背景 | 文字 | 边框 | 场景 |
-|------|------|------|------|------|
-| KA 客户 | `#fff3e0` | `#e65100` | `#ffcc80` | KA 客户标识 |
-| 普通客户 | `#e8f5e9` | `#2e7d32` | `#a5d6a7` | 普通客户标识 |
-| 状态-活跃 | `#e8f5e9` | `#2e7d32` | — | 授权有效 |
-| 状态-过期 | `#fce4ec` | `#c62828` | — | 授权过期 |
-| 功能 Pill-开 | `#dae1ff` | `#0050cb` | — | 功能开启 |
-| 功能 Pill-关 | `#e8ecf0` | `#8b92a5` | — | 功能关闭 |
-| 模块状态-启用 | `#0050cb` | `#ffffff` | — | 模块已启用 pill |
-| 模块状态-禁用 | `#e8ecf0` | `#8b92a5` | — | 模块已禁用 pill |
-| 续期-常规 | `#e8f5e9` | `#2e7d32` | `#a5d6a7` | 常规续期 |
-| 续期-超规 | `#fff3e0` | `#e65100` | `#ffcc80` | 超规续期 |
-| 日期限制-普通 | `#dce8ff` | `#0050cb` | — | 90 天 |
-| 日期限制-KA | `#fff3e0` | `#e65100` | — | 180 天 |
-
-### 1.5 Special 交互色
-
-| 元素 | 默认 | Hover | Focus/Active |
-|------|------|-------|-------------|
-| 输入框 | border `#e5eeff` bg `#fff` | border `#c2c6d8` | border `#0050cb` + `box-shadow: 0 0 0 3px rgba(0,80,203,.08)` |
-| 主按钮 | bg `#0066ff`/`#0050cb` color `#fff` | `opacity: 0.9` + `box-shadow: 0 2px 8px rgba(0,80,203,.25)` | — |
-| 次要按钮 | bg `#fff` color `#0050cb` border `#0050cb` | bg `#eff4ff` | — |
-| 下拉悬停 | — | bg `#eff4ff` color `#0050cb` | bg `#e5eeff` color `#0050cb` font-weight `500` left-border `2px solid #0050cb` |
-| 导航项 | color `#424656` | bg `#eff4ff` color `#0050cb` | bg `#0050cb` color `#fff` font-weight `600` |
-| 功能 Pill | on: `#dae1ff/#0050cb`, off: `#e8ecf0/#8b92a5` | `transform: translateY(-1px)`, `box-shadow: 0 2px 6px rgba(0,0,0,.06)` | — |
-| 卡片头部 | — | bg `#f0f3ff` | — |
-| 卡片本体 | `box-shadow: 0 1px 4px rgba(0,0,0,.06), 0 0 1px rgba(0,0,0,.04)` | `box-shadow: 0 4px 12px rgba(0,0,0,.08)` | — |
+| CSS 框架 | **Tailwind CSS**（CDN: `cdn.tailwindcss.com`，插件: `forms, container-queries`） |
+| 设计语言 | Material Design 3（MD3） |
+| 字体 | **Inter**（Google Fonts） |
+| 图标 | **Material Symbols Outlined**（Google Fonts） |
+| 配置方式 | `tailwind.config` 内联 `<script>`，定义完整 MD3 色彩令牌 |
 
 ---
 
-## 二、布局系统
+## 二、色彩系统（MD3 完整令牌）
 
-### 2.1 页面结构
+> 以下色彩令牌定义在 `tailwind.config.theme.extend.colors` 中，Tailwind 类名直接使用。
+
+### 2.1 主色与表层色
+
+| Tailwind 类名 | 色值 | 用途 |
+|---------------|------|------|
+| `text-primary` / `bg-primary` | `#0050cb` | 主色：链接、按钮、激活态 |
+| `bg-primary-container` | `#0066ff` | 主色容器：头像背景 |
+| `text-on-primary` | `#ffffff` | 主色上的文字 |
+| `text-on-primary-fixed` | `#001849` | 主色固定变体上的文字 |
+| `text-primary-fixed` | `#dae1ff` | 主色固定变体 |
+| `bg-surface` | `#f8f9ff` | 页面背景 |
+| `bg-surface-container-lowest` | `#ffffff` | 卡片/表/面板背景 |
+| `bg-surface-container-low` | `#eff4ff` | 次要背景：悬停、统计条 |
+| `bg-surface-container` | `#e5eeff` | 更深一层容器 |
+| `bg-surface-container-high` | `#dce9ff` | 高对比容器 |
+| `bg-surface-container-highest` | `#d3e4fe` | 最高对比容器 |
+
+### 2.2 文字色
+
+| Tailwind 类名 | 色值 | 用途 |
+|---------------|------|------|
+| `text-on-surface` | `#0b1c30` | 正文主色 |
+| `text-on-surface-variant` | `#424656` | 辅助文字、占位符、次要信息 |
+| `text-on-secondary` | `#ffffff` | 次要色上的文字 |
+| `text-on-secondary-fixed-variant` | `#444749` | 次要色固定变体 |
+
+### 2.3 语义色
+
+| Tailwind 类名 | 色值 | 用途 |
+|---------------|------|------|
+| `text-error` / `bg-error` | `#ba1a1a` | 错误/必填 |
+| `bg-error-container` | `#ffdad6` | 错误容器背景 |
+| `text-on-error` | `#ffffff` | 错误色上的文字 |
+| `text-on-error-container` | `#93000a` | 错误容器上的文字 |
+
+### 2.4 边框与轮廓
+
+| Tailwind 类名 | 色值 | 用途 |
+|---------------|------|------|
+| `border-outline-variant` | `#c2c6d8` | 分割线、边框 |
+| `border-outline` | `#727687` | 强调边框 |
+
+### 2.5 常用组合模式
+
+| 元素 | Tailwind 类 |
+|------|-------------|
+| 页面标题 | `text-headline-lg text-headline-lg text-on-surface` |
+| 页面描述 | `text-body-md text-body-md text-on-surface-variant` |
+| 卡片容器 | `bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30` |
+| 输入框 | `border border-outline-variant/50 rounded-lg bg-surface focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/20` |
+| 主按钮 | `bg-primary text-on-primary rounded-lg hover:bg-primary/90 transition-colors shadow-sm` |
+| 次要按钮 | `bg-surface text-primary border border-primary/30 rounded-lg hover:bg-surface-container-low transition-colors shadow-sm` |
+| 表格表头 | `text-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider` |
+| 表格行 | `hover:bg-surface-container-lowest/50 transition-colors divide-y divide-outline-variant/20` |
+| Pagination 当前页 | `bg-primary text-on-primary shadow-sm` |
+| Pagination 普通页 | `border border-outline-variant/50 text-on-surface hover:bg-surface-container transition-colors` |
+
+---
+
+## 三、排版
+
+### 3.1 字体
+
+```css
+font-family: 'Inter', sans-serif;
+```
+
+### 3.2 字号体系（Tailwind 类）
+
+| Tailwind 类 | 字号/行高 | 字重 | 用途 |
+|-------------|-----------|------|------|
+| `text-headline-lg text-headline-lg` | 30px/38px | 600 | 页面大标题 |
+| `text-headline-md text-headline-md` | 24px/32px | 600 | 页面标题 |
+| `text-headline-sm text-headline-sm` | 20px/28px | 600 | 区块标题 |
+| `text-body-lg text-body-lg` | 16px/24px | 400 | 正文大 |
+| `text-body-md text-body-md` | 14px/20px | 400 | 正文/表格内容 |
+| `text-body-sm text-body-sm` | 12px/16px | 400 | 辅助文字 |
+| `text-label-md text-label-md` | 14px/20px | 500 | 标签/按钮文字 |
+| `text-label-sm text-label-sm` | 12px/16px | 500 | 小标签/表头 |
+| `text-nav-main text-nav-main` | 14px/20px | 500 | 导航文字 |
+| `text-logo-text text-logo-text` | 18px/24px | 700 | Logo 文字 |
+
+> **注意**：Tailwind 类名重复写两次，因为 `fontSize` 配置中自定义了完整的 `[size, {lineHeight, letterSpacing, fontWeight}]` 对象。使用时需同时应用 `text-<size>` 和 `text-<size>`（例：`text-headline-md text-headline-md` 等同于 `text-[24px] leading-[32px] font-semibold`）。
+
+### 3.3 图标
+
+```html
+<!-- 引入 -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+
+<!-- 使用 -->
+<span class="material-symbols-outlined">search</span>
+<span class="material-symbols-outlined fill">history</span>  <!-- FILL=1 -->
+```
+
+- 默认字号：`text-[18px]`（20px 用于某些场景）
+- 默认颜色：`text-on-surface-variant`（hover 后 `text-primary`）
+- `fill` 类激活填充态（`FILL: 1`）
+
+---
+
+## 四、布局系统
+
+### 4.1 页面结构
 
 ```
-┌─────────────────────────────────────────┐
-│  Header (50px)                          │
-├──────┬──────────────────────────────────┤
-│      │  Tab Bar (40px)                  │
-│ Side ├──────────────────────────────────┤
-│(200px)│  Content Body                   │
-│      │  max-width: 900px, margin: auto  │
-│      │  padding: 12px 200px 12px 200px  │
-│      │                                  │
-├──────┴──────────────────────────────────┤
-│  Footer (44px)                          │
-└─────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────┐
+│  Header (64px)                                      │
+├────────┬────────────────────────────────────────────┤
+│        │                                            │
+│ Sidebar│  Main Content                              │
+│ (240px) │  max-width: 1600px, margin: auto           │
+│        │  padding: margin-desktop(40px)              │
+│        │  gap: 6 (24px)                             │
+│        │                                            │
+├────────┴────────────────────────────────────────────┤
+│  Footer (auto)                                      │
+└─────────────────────────────────────────────────────┘
 ```
 
-### 2.2 关键尺寸
+### 4.2 间距体系
 
-| 元素 | 尺寸 |
+| Tailwind 值 | px | 用途 |
+|------------|-----|------|
+| `gap-1` | 4px | 紧凑间距 |
+| `gap-2` | 8px | 按钮间距、徽章间距 |
+| `gap-3` | 12px | 筛选项间距 |
+| `gap-4` | 16px | 内容区块间距 |
+| `gap-6` | 24px | 大区块间距 |
+| `p-5` | 20px | 卡片内边距 |
+| `px-6` / `py-4` | 24px / 16px | 表格单元格 |
+| `px-gutter` | 24px | Header 水平 padding |
+| `p-margin-desktop` | 40px | 内容区大屏 padding |
+| `p-margin-mobile` | 16px | 内容区小屏 padding |
+
+### 4.3 响应式断点
+
+| 断点 | 调整 |
 |------|------|
-| 内容最大宽度 | 900px |
-| 左侧导航宽度 | 200px |
-| 右侧模块导航宽度 | 168px（紧凑 156px/138px） |
-| Header 高度 | 50px |
-| Tab Bar 高度 | 40px |
-| Footer 高度 | 44px |
-| 内容区 padding | `12px 200px` |
-
-### 2.3 响应式断点
-
-| 断点 | 调整内容 |
-|------|----------|
-| ≤1520px | 右侧 padding 缩小至 40px，内容区 max-width 自适应 |
-| ≤1366px | 右侧 padding → 28px，右侧导航缩小 |
-| ≤1100px | 右侧 padding → 18px，导航缩至 138px |
-| ≤768px | 隐藏左侧导航，右导航缩至 126px，单列布局 |
-| ≤480px | 表单垂直排列，按钮全宽 |
+| `md:` (768px) | 显示侧边栏、导航文字 |
+| `lg:` (1024px) | 筛选栏水平排列 |
+| default | 移动端垂直堆叠 |
 
 ---
 
-## 三、圆角体系
+## 五、圆角体系
 
-| 级别 | 圆角值 | 应用 |
-|------|--------|------|
-| 卡片 | `12px` | 模块卡片、特殊表单区、右侧导航 |
-| 控件 | `8px` | 输入框、按钮、下拉框、文件信息框、导航项 |
-| 徽章 | `16px`/`999px` | 状态 Pill、功能 Pill、模块状态标签 |
-| 小控件 | `6px` | 查询 Tab、内联选择框、规格按钮 |
-| 工具提示 | `8px` | Tooltip 弹窗 |
-| 搜索下拉 | `2px` | 旧版搜索下拉容器 |
-
----
-
-## 四、阴影体系
-
-| 层级 | 阴影值 | 用途 |
-|------|--------|------|
-| 基础 | `0 1px 4px rgba(0,0,0,.06), 0 0 1px rgba(0,0,0,.04)` | 卡片默认 |
-| 抬高 | `0 4px 12px rgba(0,0,0,.08)` | 卡片 Hover |
-| 浮层 | `0 4px 12px rgba(0,0,0,.04), 0 1px 3px rgba(0,0,0,.02)` | 下拉菜单 |
-| 菜单 | `0 2px 10px rgba(0,0,0,.12)` | 搜索下拉 |
-| 强调 | `0 2px 12px rgba(0,0,0,.08)` | 右侧导航 |
-| 按钮 | `0 2px 8px rgba(0,80,203,.25)` | 按钮 Hover |
-| Modal | `0 4px 20px rgba(0,0,0,.15)` | 弹窗 |
-| Tooltip | `0 4px 16px rgba(0,0,0,.25)` | 工具提示 |
+| Tailwind 类 | 值 | 用途 |
+|------------|-----|------|
+| `rounded` (DEFAULT) | `0.25rem` (4px) | 标准圆角 |
+| `rounded-lg` | `0.5rem` (8px) | 按钮、输入框、卡片 |
+| `rounded-xl` | `0.75rem` (12px) | 卡片容器 |
+| `rounded-full` | `9999px` | Pill、状态徽章 |
+| `rounded-md` | 6px | 分页按钮 |
 
 ---
 
-## 五、排版
+## 六、阴影体系
 
-### 5.1 字体栈
+| Tailwind 类 | 值 | 用途 |
+|------------|-----|------|
+| `shadow-sm` | `0 1px 2px 0 rgb(0 0 0 / 0.05)` | 卡片容器、按钮 |
+| `shadow` | 默认 | 下拉菜单、弹窗 |
 
-```
-font-family: "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
-```
-
-### 5.2 字号与字重
-
-| 用途 | 字号 | 字重 | 色值 |
-|------|------|------|------|
-| 页面标题/模块名 | 15px | 600 | `#1a1a2e` |
-| 操作栏标题 | 15px | 600 | `#1a1a2e` |
-| 表单标签 | 14px | 500 | `#424656` |
-| 输入框文字 | 14px | 400 | `#0b1c30` |
-| 下拉选项 | 14px | 400 | `#424656` |
-| 按钮文字 | 14px | 500 | `#fff` / `#0050cb` |
-| 辅助说明 | 12px | 400 | `#8b92a5` / `#999` |
-| 徽章/Pill | 11-12px | 500-600 | 见色彩体系 |
-| Tab 标签 | 13px | 500 | `#8b92a5` (active: `#0050cb`) |
-| Toast | 14px | 400 | `#fff` |
-
-### 5.3 图标
-
-使用 **Material Symbols Outlined** 字体图标：
-- 引用：`https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap`
-- 设置方式：`font-family: 'Material Symbols Outlined'; font-size: 22px`
-- 常用图标：`arrow_drop_down`、`close`、`expand_less` 等
+> 整体采用偏平设计，阴影仅用在卡片容器和按钮上。
 
 ---
 
-## 六、组件规范
+## 七、组件规范
 
-### 6.1 表单元素
-
-#### 输入框（.layui-input）
-```
-height: 40px; border-radius: 8px; border: 1px solid #e5eeff;
-padding: 0 12px; background: #fff; max-width: 300px;
-transition: all 0.15s;
-```
-- Hover: `border-color: #c2c6d8`
-- Focus: `border-color: #0050cb` + `box-shadow: 0 0 0 3px rgba(0,80,203,.08)`
-
-#### 下拉选择框（.layui-select-box / .layui-select）
-```
-height: 40px; border-radius: 8px; border: 1px solid #c2c6d8;
-padding: 0 36px 0 12px; max-width: 300px;
-appearance: none; cursor: pointer;
-```
-- Focus: `border: 2px solid #0050cb` + `box-shadow: 0 0 0 3px #b3c5ff`
-
-#### 自定义下拉框（.custom-select）
-完整自定义组件，包含 trigger + dropdown + option 体系
-- Trigger: `height: 40px; border: 1px solid #c2c6d8; border-radius: 8px;`
-- Dropdown: `box-shadow + border-radius: 8px`
-- Option hover: `background: #eff4ff; color: #0050cb`
-- Option selected: `background: #e5eeff; color: #0050cb; font-weight: 500; border-left: 2px solid #0050cb`
-- Group label: `font-weight: 500; color: #0b1c30; padding: 8px 12px`
-- Arrow: `Material Symbols Outlined: arrow_drop_down`，open 时旋转 180deg
-
-#### 文本域（.layui-textarea）
-```
-width: 100%; max-width: 400px; min-height: 100px;
-border: 1px solid #e5eeff; border-radius: 8px;
-padding: 10px 12px; resize: vertical;
-```
-
-### 6.2 按钮
-
-#### 主按钮（.layui-btn）
-```
-height: 40px; padding: 0 24px; background: #0066ff;
-color: #fff; border: 1px solid #0066ff; border-radius: 8px;
-font-size: 14px; font-weight: 500;
-```
-- Hover: `opacity: 0.9; box-shadow: 0 2px 8px rgba(0,80,203,.25)`
-- Disabled: `opacity: 0.5; cursor: not-allowed; box-shadow: none`
-
-#### 次要按钮（.layui-btn-primary）
-```
-background: #fff; color: #0050cb; border-color: #0050cb;
-```
-- Hover: `background: #eff4ff; box-shadow: none`
-
-#### 工具按钮（.toolbar-btn）
-```
-height: 28px; padding: 0 12px; background: #eff4ff;
-color: #0050cb; border-radius: 8px; font-size: 12px;
-```
-
-### 6.3 开关（Toggle Switch）
+### 7.1 Header（顶部导航栏）
 
 ```
-width: 40px; height: 22px; border-radius: 11px;
-cursor: pointer; transition: background 0.2s;
-```
-- 开启：`background: #0050cb`，滑块右侧（`left: 21px`）
-- 关闭：`background: #c2c6d8`，滑块左侧（`left: 3px`）
-- 滑块：`width: 16px; height: 16px; border-radius: 50%; background: #fff`
-
-### 6.4 模块卡片（.module-item）
-
-```
-background: #f8f9ff; border-radius: 12px; border: none;
-overflow: hidden; max-width: 900px; margin: 0 auto 12px;
-box-shadow: 0 1px 4px rgba(0,0,0,.06), 0 0 1px rgba(0,0,0,.04);
-```
-- Hover: `box-shadow: 0 4px 12px rgba(0,0,0,.08)`
-- Disabled: `opacity: 0.45`
-
-**卡片头部（.module-head）**：
-```
-display: flex; align-items: center; padding: 14px 22px; gap: 12px;
-cursor: pointer; user-select: none;
-```
-- Hover: `background: #f0f3ff`
-
-**卡片内容区（.module-body）**：
-```
-border-top: 1px solid #eff4ff; padding: 14px 22px;
+fixed top-0 w-full z-50
+bg-secondary dark:bg-on-secondary-fixed-variant
+text-on-secondary
+border-b border-outline-variant
+h-header-height (64px)
+px-gutter (24px)
+flex justify-between items-center
 ```
 
-**双栏网格（.module-grid）**：
-```
-display: grid; grid-template-columns: 1fr 1fr; gap: 8px 24px;
-```
+- 左侧：Logo（`font-bold tracking-tight text-lg`）
+- 右侧：导航链接 + 通知按钮 + 帮助按钮 + 用户头像
 
-**功能开关区（.module-features）**：
-```
-border-top: 1px solid #eff4ff; padding: 8px 0;
-display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-```
-
-### 6.5 文件上传（.hw-upload-area）
+### 7.2 Sidebar（侧边栏）
 
 ```
-display: flex; align-items: center; gap: 10px; min-height: 40px;
-```
-布局：文件名容器（左）→ 上传按钮（右）→ 校验结果 pill
-
-- 文件名容器：`width: 300px; height: 40px; border: 1px solid #e5eeff; border-radius: 8px;`
-- 上传按钮：主按钮样式 + upload icon (⇧)
-- 校验结果：pill 样式（`.pass: #e8f5e9/#2e7d32` / `.fail: #ffebee/#c62828`）
-
-### 6.6 模块导航（.module-nav）
-
-```
-position: fixed; top: 100px; right: 12px; width: 168px;
-background: #fff; border-radius: 12px; padding: 10px 6px;
-max-height: calc(100vh - 160px); overflow-y: auto;
-box-shadow: 0 2px 12px rgba(0,0,0,.08);
-```
-- Item hover: `background: #eff4ff; color: #0050cb; border-radius: 8px;`
-- Item active: `background: #0050cb; color: #fff; font-weight: 600;`
-- Title: `font-size: 13px; font-weight: 600; color: #1a1a2e;`
-
-### 6.7 Tooltip
-
-```
-background: #1f2937; color: #f3f4f6; border-radius: 8px;
-padding: 14px 16px; font-size: 13px; line-height: 1.7;
-box-shadow: 0 4px 16px rgba(0,0,0,.25);
-```
-- 三角箭头：`border-right: 6px solid #1f2937`
-- 复制按钮：右上角 `border: 1px solid #4b5563; color: #9ca3af;`
-
-### 6.8 Toast
-
-```
-position: fixed; top: 60px; right: 20px; background: #4CAF50;
-color: #fff; padding: 10px 20px; border-radius: 4px;
-font-size: 14px; z-index: 99999;
+fixed left-0 top-header-height
+w-sidebar-width (240px)
+h-[calc(100vh-64px)]
+border-r border-outline-variant
+bg-surface-container-lowest
+z-40
 ```
 
-### 6.9 Tab 栏（.renewal-tab-bar / .ea-tab-bar）
+- 顶部：用户信息（头像 + 姓名 + 欢迎语）
+- 中间：导航列表（`px-3 py-2 space-y-1`）
+- 激活项：`text-primary border-l-4 border-primary bg-surface-container-low font-bold`
+- 底部：联系我们等
+
+### 7.3 页面标题区
+
+```html
+<h1 class="text-headline-lg text-headline-lg text-on-surface">页面标题</h1>
+<p class="text-body-md text-body-md text-on-surface-variant mt-1">页面描述</p>
+```
+
+### 7.4 统计 Pill 条
+
+```html
+<div class="flex flex-wrap items-center gap-2 bg-surface-container-lowest p-1.5 rounded-full border border-outline-variant/40 shadow-sm">
+  <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-surface ...">
+    <span class="w-2 h-2 rounded-full bg-xxx"></span>
+    <span>标签文字 N</span>
+  </div>
+</div>
+```
+
+- 容器：`rounded-full`，内边距 `p-1.5`
+- 每个统计项：`rounded-full`，`px-3 py-1`
+- 圆点：`w-2 h-2 rounded-full`
+- 可点击项：`hover:bg-surface-container transition-colors cursor-pointer`
+
+### 7.5 筛选栏
 
 ```
-display: flex; gap: 0; border-bottom: 2px solid #e5eeff;
+bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 p-5
+flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between
 ```
-- Tab: `padding: 8px 20px; font-size: 13px; font-weight: 500; color: #8b92a5; border-bottom: 2px solid transparent; margin-bottom: -2px;`
-- Active: `color: #0050cb; border-bottom-color: #0050cb;`
 
-### 6.10 搜索下拉（.search-select-box）
+**筛选组**（`flex flex-wrap items-center gap-3`）：
 
-- Input: 同标准输入框, `max-width: 300px;`
-- Dropdown: `border: 1px solid #e6e6e6; border-radius: 2px; box-shadow: 0 2px 10px rgba(0,0,0,.12); max-height: 300px;`
-- Item: `padding: 9px 15px; border-bottom: 1px solid #f6f6f6; display: flex; justify-content: space-between;`
-- Item hover: `background: #eff4ff; color: #0050cb;`
+**带标签的选择框**（分组过滤）：
+```html
+<div class="flex items-center border border-outline-variant/50 rounded-lg bg-surface focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/20 overflow-hidden h-10">
+  <label class="px-3 py-2 bg-surface-container-lowest border-r border-outline-variant/50 ...">标签</label>
+  <select class="border-0 bg-transparent py-2 pl-3 pr-8 ...">
+    <option>选项</option>
+  </select>
+</div>
+```
 
----
+**带图标的搜索输入框**：
+```html
+<div class="flex items-center border border-outline-variant/50 rounded-lg bg-surface focus-within:border-primary ... h-10 px-3 w-[180px]">
+  <span class="material-symbols-outlined text-[18px] text-on-surface-variant mr-2">search</span>
+  <input class="border-0 bg-transparent p-0 w-full ..." placeholder="占位文字" type="text"/>
+</div>
+```
 
-## 七、间距体系
+### 7.6 表格
 
-| 间距 | 值 | 典型用途 |
-|------|----|---------|
-| 超小 | 4px/6px | 字段间紧凑排列 |
-| 小 | 8px/10px | gap、间距 |
-| 中 | 12px/14px | 卡片内边距、字段间隔 |
-| 大 | 18px/20px/22px | 卡片 body 内边距、分区间距 |
-| 特大 | 24px | 弹窗内边距 |
-| 底部 | 12px/15px | 表单项间距、卡片间隔 |
+| 部分 | 样式 |
+|------|------|
+| 容器 | `bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 overflow-hidden` |
+| 表头 | `text-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider py-4 px-6` |
+| 普通单元格 | `py-4 px-6 text-body-sm text-body-sm text-on-surface/variant whitespace-nowrap` |
+| 行悬停 | `hover:bg-surface-container-lowest/50 transition-colors` |
+| 操作按钮 | `text-primary hover:bg-primary/10 rounded transition-colors font-medium text-xs p-1` |
+| 续期按钮 | `px-2 py-1 bg-primary text-on-primary rounded text-[11px] font-medium hover:bg-primary/90 transition-colors shadow-sm` |
+
+**状态 Pill**：
+```html
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-xxx text-xxx border border-xxx">
+  <span class="w-1.5 h-1.5 rounded-full bg-xxx"></span>
+  状态文字
+</span>
+```
+
+| 状态 | bg | text | border | dot |
+|------|----|------|--------|-----|
+| 已授权 | `bg-emerald-50` | `text-emerald-700` | `border-emerald-200` | `bg-emerald-500` |
+| 待审批 | `bg-blue-50` | `text-blue-700` | `border-blue-200` | `bg-blue-500` |
+| 审批中 | `bg-amber-50` | `text-amber-700` | `border-amber-200` | `bg-amber-500 animate-pulse` |
+| 已驳回 | `bg-error-container/30` | `text-error` | `border-error/20` | `bg-error` |
+
+**授权类型 Pill**：
+| 类型 | bg | text | border |
+|------|----|------|--------|
+| 产品授权 | `bg-primary/10` | `text-primary` | `border-primary/20` |
+| XaaS | `bg-emerald-50` | `text-emerald-700` | `border-emerald-200` |
+| 解决方案 | `bg-amber-50` | `text-amber-700` | `border-amber-200` |
+
+**客户徽章**：
+| 类型 | bg | text | border |
+|------|----|------|--------|
+| KA客户 | `bg-amber-100` | `text-amber-800` | `border-amber-200` |
+| 普通客户 | `bg-slate-100` | `text-slate-600` | `border-slate-200` |
+
+### 7.7 分页
+
+```
+flex items-center justify-between
+```
+
+- 左侧：文字信息 "显示第 X 到 Y 条，共 Z 条记录"
+- 右侧：分页按钮组（`flex items-center gap-1`）
+  - 当前页：`bg-primary text-on-primary shadow-sm`
+  - 普通页：`border border-outline-variant/50 text-on-surface hover:bg-surface-container`
+  - 翻页箭头：`material-symbols-outlined text-[18px]`
+- 跳转：`input w-12 h-8 border rounded-md text-center` + "前往 X 页"
+
+### 7.8 解决方案折叠行
+
+- 主行：`bg-surface-container-lowest/30`（微高亮区分）
+- 展开箭头：`material-symbols-outlined > chevron_right`，展开后旋转
+- 展开详情：内嵌子表格，缩进展示各产品授权明细
 
 ---
 
 ## 八、过渡与动画
 
-| 元素 | 属性 | 时长 | 缓动 |
-|------|------|------|------|
-| 输入框边框 | border-color | 0.15s | ease |
-| 按钮 Hover | opacity, box-shadow | 0.2s | ease |
-| 下拉箭头旋转 | transform | 0.2s | ease |
-| 折叠箭头旋转 | transform | 0.2s | ease |
-| 开关滑块 | left, background | 0.2s | ease |
-| 卡片阴影 | box-shadow | 0.2s | ease |
-| 禁用模块 | opacity | 0.3s | ease |
-| 导航项 | all | 0.15s | ease |
-| Pill Hover | transform, box-shadow | 0.2s | ease |
-| 功能开关 Transition | all | 0.2s | ease |
+| 元素 | 过渡/动画 | 时长 |
+|------|----------|------|
+| 按钮 Hover | `transition-colors` | 150ms |
+| 输入框 Focus | `focus-within:border-primary focus-within:ring-1` | 150ms |
+| 表格行 Hover | `transition-colors` | 150ms |
+| 导航项 Hover | `transition-all` | 150ms |
+| 审批中状态 | `animate-pulse` | 持续闪烁 |
+| Sidebar 导航项 | `transition-colors` | 150ms |
 
 ---
 
 ## 九、新页面遵循规范
 
-所有新增页面需遵循以下规则：
-
-1. **色彩**：使用上述色板中的色值，不得引入新的色值
-2. **布局**：内容区最大宽度 900px + 水平居中
-3. **组件**：优先复用现有组件（`custom-select`、`toggle-switch`、Pill、Badge 等）
-4. **圆角**：严格遵循圆角体系（12px/8px/16px/6px）
-5. **阴影**：遵循阴影分层体系
-6. **间距**：使用间距体系中的值
-7. **图标**：使用 Material Symbols Outlined 图标库
-8. **响应式**：适配 5 个断点（1520/1366/1100/768/480）
+1. **CSS 框架**：使用 Tailwind CSS（CDN 引入），不要使用 Layui 的原生 CSS
+2. **色彩**：使用上述 MD3 色彩令牌，通过 Tailwind 类名引用
+3. **字体**：默认 Inter，图标使用 Material Symbols Outlined
+4. **布局**：Header(64px) + Sidebar(240px) + 内容区（max-width: 1600px）
+5. **组件**：使用上述组件规范中的 Tailwind 类组合
+6. **状态标识**：统一使用 full rounded 的 Pill 样式
+7. **操作按钮**：表格内操作用文字按钮（`text-primary hover:bg-primary/10`），强调操作用实心按钮
+8. **响应式**：至少适配 md(768px) 和 lg(1024px) 两个断点
