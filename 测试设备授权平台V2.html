@@ -18,52 +18,52 @@
 
         /* 布局容器 */
         .layui-layout-admin { position: relative; height: 100%; }
-        .layui-layout-admin .layui-header { position: fixed; top: 0; left: 0; right: 0; z-index: 2000; }
-        .layui-layout-admin .layui-side { position: fixed; top: 50px; bottom: 0; left: 0; width: 200px; z-index: 1000; overflow: hidden; }
-        .layui-layout-admin .layui-body { position: fixed; top: 50px; bottom: 44px; left: 200px; right: 0; overflow: hidden; background: #fff; }
-        .layui-layout-admin .layui-footer { position: fixed; bottom: 0; left: 200px; right: 0; height: 44px; z-index: 999; }
+        .layui-layout-admin .layui-header { position: fixed; top: 0; left: 200px; right: 0; z-index: 2000; }
+        .layui-layout-admin .layui-side { position: fixed; top: 0; bottom: 0; left: 0; width: 200px; z-index: 1000; overflow: hidden; }
+        .layui-layout-admin .layui-body { position: fixed; top: 40px; bottom: 44px; left: 200px; right: 0; overflow: hidden; background: #fff; }
+        .layui-layout-admin .layui-footer { position: fixed; bottom: 0; left: 0; right: 0; height: 44px; z-index: 999; }
 
-        /* 顶部Header */
-        .header { height: 50px; background-color: #0687E5; }
-        .layui-main { position: relative; margin: 0; height: 100%; }
-        .logo { color: #fff; float: left; line-height: 50px; font-size: 18px; padding: 0 25px; text-align: center; }
-        .logo:hover { color: #fff; }
+        /* ===== Header 顶部栏 - 浅色现代风格 ===== */
+        .layui-header { height: 40px; background: #fff; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: flex-end; padding: 0 24px; gap: 4px; }
+        .header-icon-btn { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border: none; background: transparent; border-radius: 8px; cursor: pointer; color: #5f6368; transition: background 0.2s ease, color 0.2s ease; position: relative; font-family: inherit; font-size: 14px; }
+        .header-icon-btn:hover { background: rgba(0,0,0,.04); color: #0050cb; }
+        .header-icon-btn .material-symbols-outlined { font-size: 24px; }
+        .header-user { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 12px 0 8px; border: none; background: transparent; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 14px; transition: background 0.2s ease; margin-left: 8px; }
+        .header-user:hover { background: rgba(0,0,0,.04); }
+.header-user .dropdown-arrow { font-size: 20px; margin-left: -4px; transition: transform 0.2s ease; }
+        .header-user.open .dropdown-arrow { transform: rotate(180deg); }
+.header-user-dropdown { position: relative; }
+.header-menu-btn { display: none; align-items: center; justify-content: center; width: 40px; height: 40px; border: none; background: transparent; border-radius: 8px; cursor: pointer; color: #5f6368; }
+.header-menu-btn:hover { background: rgba(0,0,0,.04); }
+.sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,.5); z-index: 2500; }
+.user-dropdown-menu { display: none; position: absolute; top: 44px; right: 0; min-width: 140px; background: #fff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,.15); z-index: 9999; padding: 6px 0; }
+.user-dropdown-menu.show { display: block; }
+.user-dropdown-menu .logout-item { display: flex; align-items: center; gap: 10px; padding: 10px 16px; color: #333; cursor: pointer; transition: background 0.2s ease; }
+.user-dropdown-menu .logout-item:hover { background: #f5f5f5; color: #c62828; }
+.user-dropdown-menu .logout-item .material-symbols-outlined { font-size: 18px; }
+        .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: #e5e7eb; color: #5f6368; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; flex-shrink: 0; }
+        .user-name { color: #333; }
+        .tooltip-wrap { position: relative; }
+        .tooltip-box { display: none; position: absolute; top: 44px; right: 50%; transform: translateX(50%); white-space: nowrap; background: #1f2937; color: #fff; font-size: 12px; padding: 6px 12px; border-radius: 6px; z-index: 9999; pointer-events: none; }
+        .tooltip-wrap:hover .tooltip-box { display: block; }
 
-        /* 顶部菜单 */
-        .topLevelMenus { float: left; height: 50px; }
-        .topLevelMenus li { float: left; line-height: 50px; position: relative; }
-        .topLevelMenus li a { display: block; padding: 0 20px; color: #fff; line-height: 50px; }
-        .topLevelMenus li.layui-this { background-color: rgba(0,0,0,0.1); }
-
-        /* 顶部右侧菜单 */
-        .top_menu { position: absolute; right: 0; top: 0; height: 50px; }
-        .top_menu li { float: left; position: relative; line-height: 50px; }
-        .top_menu li > a { display: block; padding: 0 20px; color: #fff; line-height: 50px; }
-        .top_menu li .layui-nav-child { display: none; position: absolute; top: 50px; right: 0; min-width: 100px; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,.15); border-radius: 2px; z-index: 99999; }
-        .top_menu li:hover .layui-nav-child { display: block; }
-        .top_menu li .layui-nav-child dd a { display: block; padding: 8px 20px; color: #333; line-height: 30px; }
-        .top_menu li .layui-nav-child dd a:hover { background-color: #0050cb; color: #fff; }
-        .userAvatar { width: 35px; height: 35px; border-radius: 50%; vertical-align: middle; margin-right: 5px; background: #ccc; display: inline-block; }
-        .adminName { margin-left: 5px; }
-        .header-link { float: right; margin-right: 200px; line-height: 50px; }
-        .header-link a { color: #fff; }
-        .header-link a:hover { color: #eee; }
-
-        /* 左侧边栏 */
-        .layui-side { border-right: 1px solid #ccc; background: #fff; }
-        .user-photo { width: 200px; height: 140px; padding: 15px 0 5px; border-bottom: 1px solid #ccc; text-align: center; }
-        .user-photo .img { display: block; width: 80px; height: 80px; margin: 0 auto 10px; }
-        .user-photo .img .avatar-placeholder { display: block; width: 100%; height: 100%; border-radius: 50%; border: 1px solid #44576b; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-        .user-photo p { font-size: 12px; color: #000; white-space: nowrap; overflow: hidden; text-align: center; line-height: 25px; }
+        /* ===== Sidebar 侧边栏 - 浅色现代风格 ===== */
+        .layui-side { background: #fff; border-right: 1px solid #e5e7eb; display: flex; flex-direction: column; }
 
         /* 左侧导航菜单 */
-        .navBar { overflow-y: auto; }
-        .navBar ul { padding: 0; }
-        .navBar ul li { position: relative; }
-        .navBar ul li a { display: block; padding: 10px 20px; color: #333; line-height: 20px; transition: all 0.2s; }
-        .navBar ul li a:hover { background: #eee; }
+        .navBar { overflow-y: auto; padding: 8px 0 8px; flex: 1; }
+        .navBar ul { list-style: none; padding: 0 12px; }
+        .navBar ul li a { display: flex; align-items: center; gap: 12px; padding: 10px 12px; margin-bottom: 2px; border-radius: 8px; color: #333; line-height: 20px; transition: background 0.2s ease, color 0.2s ease; }
+        .navBar ul li a:hover { background: rgba(0,0,0,.04); }
+        .navBar ul li a .material-symbols-outlined { font-size: 20px; }
         .navBar ul li.layui-this > a { background: #0050cb; color: #fff; }
-        .navBar ul li a cite { font-style: normal; margin-left: 5px; }
+        .navBar ul li.layui-this > a:hover { background: #0050cb; color: #fff; }
+        .navBar ul li a cite { font-style: normal; }
+
+        /* ===== Sidebar 品牌区 - 深信服logo + 平台名称 ===== */
+        .sidebar-brand { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: none; }
+        .brand-logo { width: 28px; height: 28px; flex-shrink: 0; display: block; object-fit: contain; }
+        .brand-title { font-size: 15px; font-weight: 600; color: #1a1a2e; white-space: nowrap; }
 
         /* 主内容区 */
         .layui-body { border-top: 0; }
@@ -89,6 +89,19 @@
         .layui-input:hover { border-color: #c2c6d8; background: #fff; }
         .layui-input:focus { border-color: #0050cb; background: #fff; box-shadow: 0 0 0 3px rgba(0,80,203,.08); }
 
+        /* XaaS 表单样式 - 与硬件授权视觉统一 */
+        #content-xaas .special-form-section { background: #f8f9ff; border: none; border-radius: 12px; padding: 18px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.06); max-width: 900px; overflow: visible; }
+        #content-xaas .special-form-section .section-title { font-size: 15px; font-weight: 600; color: #1a1a2e; padding: 0 0 12px; border-bottom: 1px solid #eff4ff; margin-bottom: 16px; background: transparent; }
+        #content-xaas .layui-form-item { display: flex; align-items: flex-start; max-width: 900px; min-height: auto; margin: 0 auto 15px; }
+        #content-xaas .layui-form-label { width: 150px; flex-shrink: 0; padding: 9px 0 9px 15px; font-weight: 500; line-height: 20px; text-align: left; color: #424656; }
+        #content-xaas .layui-input-block { flex: 1; min-height: 38px; min-width: 0; position: relative; padding: 0; }
+        #content-xaas .layui-input,
+        #content-xaas .layui-select,
+        #content-xaas .custom-select-trigger { height: 40px; max-width: 480px; border-radius: 8px; }
+        #content-xaas .search-select-box { max-width: 480px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+        #content-xaas .search-select-box .layui-input { flex: 1; min-width: 0; }
+        #content-xaas .search-select-box .search-dropdown { flex: 0 0 100%; }
+
         /* 下拉选择框 */
         .layui-select-box { position: relative; max-width: 300px; }
         .layui-select {
@@ -111,7 +124,7 @@
         .layui-select-box > .layui-edge::before { content: 'arrow_drop_down'; }
 
         /* 自定义下拉组件 */
-        .custom-select { position: relative; width: 100%; max-width: 100%; min-width: 360px; }
+        .custom-select { position: relative; max-width: 300px; }
         .custom-select-trigger {
             width: 100%; height: 40px;
             background: #fff; border: 1px solid #c2c6d8; border-radius: 8px;
@@ -128,6 +141,15 @@
         .custom-select-value.has-value { color: #0b1c30; }
         .custom-select-arrow { font-size: 22px; color: #424656; transition: transform 0.2s; }
         .custom-select.open .custom-select-arrow { transform: rotate(180deg); color: #0050cb; }
+
+        /* ===== 申请类型下拉框 - 拓宽下拉面板宽度 ===== */
+        .custom-select[data-select-id="planDevType"] .custom-select-dropdown {
+            min-width: 480px;
+            right: auto;
+            width: max-content;
+            max-width: 560px;
+        }
+
         .custom-select-dropdown {
             display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0;
             background: #fff; border: 1px solid #c2c6d8; border-radius: 8px;
@@ -144,42 +166,18 @@
             padding: 8px 12px 8px 24px; font-size: 14px; color: #424656; cursor: pointer; transition: all 0.15s; white-space: nowrap;
         }
         .custom-select-option:hover { background: #eff4ff; color: #0050cb; }
+        .custom-select-option.disabled { color: #b8bfcc; cursor: not-allowed; background: #f7f8fa; }
+        .custom-select-option.disabled:hover { color: #b8bfcc; background: #f7f8fa; }
         .custom-select-option.selected {
             background: #e5eeff; color: #0050cb; font-weight: 500; border-left: 2px solid #0050cb; padding-left: 22px;
         }
 
         /* 按钮 */
-        .layui-btn { display: inline-flex; align-items: center; justify-content: center; height: 40px; padding: 0 24px; background-color: #0066ff; color: #fff; white-space: nowrap; text-align: center; font-size: 14px; font-weight: 500; border: 1px solid #0066ff; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+        .layui-btn { display: inline-flex; align-items: center; justify-content: center; height: 40px; padding: 0 24px; background-color: #0050cb; color: #fff; white-space: nowrap; text-align: center; font-size: 14px; font-weight: 500; border: none; border-radius: 10px; cursor: pointer; transition: all 0.2s; }
         .layui-btn:hover { opacity: 0.9; box-shadow: 0 2px 8px rgba(0,80,203,.25); }
-        .layui-btn:disabled, .layui-btn.disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
-        .layui-btn-primary { background-color: #fff; color: #0050cb; border-color: #0050cb; }
-        .layui-btn-primary:hover { background: #eff4ff; box-shadow: none; color: #0050cb; }
+        .layui-btn-primary { background-color: #eff4ff; color: #0050cb; border: none; }
+        .layui-btn-primary:hover { background: #dae1ff; box-shadow: none; color: #0050cb; }
 
-
-        /* ===== 申请类型下拉框 - 拓宽下拉面板宽度 ===== */
-.custom-select[data-select-id="planDevType"] .custom-select-dropdown {
-            min-width: 480px;
-            right: auto;
-            width: max-content;
-            max-width: 560px;
-        }
-        /* ===== 授权场景下拉框菜单面板 ===== */
-        .custom-select[data-select-id="authScene"] .custom-select-dropdown {
-            border: 1px solid rgba(194,198,216,0.2);
-            box-shadow: 0 8px 24px -4px rgba(11,28,48,0.1);
-            padding: 8px 0; background: #fff;
-        }
-        .custom-select[data-select-id="authScene"] .custom-select-group-label {
-            padding: 8px 16px 4px; font-size: 14px; font-weight: 400; color: #757575; cursor: default; line-height: 20px; border-top: 1px solid rgba(194,198,216,0.25); margin-top: 4px;
-        }
-        .custom-select[data-select-id="authScene"] .custom-select-group-label:first-child {
-            border-top: none; margin-top: 0; padding-top: 4px;
-        }
-        .custom-select[data-select-id="authScene"] .custom-select-option { padding: 8px 16px 8px 32px; font-size: 14px; color: #424656;
-            cursor: pointer; transition: all 0.15s; white-space: nowrap;
-        }
-        .custom-select[data-select-id="authScene"] .custom-select-option:hover { background: #eff4ff; color: #0050cb; }
-        .custom-select[data-select-id="authScene"] .custom-select-option.selected { background: #eff4ff; color: #0050cb; font-weight: 500; border-left: none; padding-left: 32px; }
 
         /* 表单辅助 */
         .font-acloud { color: #999; display: block; margin-bottom: 3px; font-size: 12px; }
@@ -205,17 +203,25 @@
         .search-dropdown .search-item .item-badge.normal { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
         .search-dropdown .search-item:hover .item-badge.ka { background: #fff3e0; border-color: #ffcc80; }
         .search-dropdown .search-item:hover .item-badge.normal { background: #e8f5e9; border-color: #a5d6a7; }
-        .customer-info-display { margin-top: 8px; font-size: 13px; color: #666; line-height: 28px; background: #f8f8f8; padding: 5px 12px; border-radius: 2px; display: none; }
+        .customer-info-display { margin-top: 8px; font-size: 13px; color: #666; line-height: 28px; background: #f8f8f8; padding: 5px 12px; border-radius: 2px; display: none; width: fit-content; }
         .customer-info-display.show { display: block; }
         .customer-info-display span { color: #333; font-weight: 500; }
+        .customer-search-locked { background: #f5f7fa !important; color: #666 !important; cursor: not-allowed; }
         .customer-type-badge { display: inline-block; padding: 1px 8px; border-radius: 3px; font-size: 11px; font-weight: 600; margin-left: 10px; vertical-align: middle; line-height: 20px; }
         .customer-type-badge.ka { background: #fff3e0; color: #e65100; border: 1px solid #ffcc80; }
         .customer-type-badge.normal { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
 
+        /* 多匹配选择模式 */
+        .search-select-readonly { background: #f5f7fa !important; color: #666 !important; cursor: pointer; }
+        .match-badge { display: none; padding: 2px 10px; border-radius: 10px; font-size: 12px; line-height: 20px; white-space: nowrap; background: #eff4ff; color: #0050cb; border: 1px solid #b3c5ff; flex-shrink: 0; }
+        .match-badge.show { display: inline-block; }
+        .match-badge.selected { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+
         /* 所属云图账号 */
         .cloud-account-item { display: none; margin-top: 8px; }
         .cloud-account-item.show { display: block; }
-        .cloud-account-select { max-width: 300px; }
+        .cloud-account-select { max-width: 480px; }
+        [data-select-id="xaas-region"] { max-width: 480px; }
 
         /* 统一授权日期栏 */
         .unified-date-bar { display: flex; align-items: center; gap: 12px; background: #eff4ff; border: none; border-radius: 10px; padding: 14px 18px; margin-bottom: 15px; margin-left: 15px; margin-right: 20px; max-width: 900px; margin-left: auto; margin-right: auto; }
@@ -225,36 +231,35 @@
         .unified-date-bar .apply-date-btn:hover { opacity: 0.85; }
         .unified-date-bar .apply-date-btn:disabled { background: #aaa; cursor: not-allowed; }
         .unified-date-bar .bar-hint { font-size: 12px; color: #999; flex: 1; }
+        .sync-toast { position: fixed; top: 60px; right: 20px; background: #4CAF50; color: #fff; padding: 10px 20px; border-radius: 4px; font-size: 14px; z-index: 99999; display: none; box-shadow: 0 2px 8px rgba(0,0,0,.2); }
         .unified-date-bar .date-limit-hint { font-size: 12px; color: #0050cb; background: #dce8ff; padding: 2px 10px; border-radius: 12px; white-space: nowrap; font-weight: 500; flex-shrink: 0; }
         .unified-date-bar .date-limit-hint.ka { color: #e65100; background: #fff3e0; }
-        .unified-date-bar input[type="date"].out-of-range { border-color: #c62828 !important; background: #ffebee !important; }
-        .sync-toast { position: fixed; top: 60px; right: 20px; background: #4CAF50; color: #fff; padding: 10px 20px; border-radius: 4px; font-size: 14px; z-index: 99999; display: none; box-shadow: 0 2px 8px rgba(0,0,0,.2); }
+        
+        .unified-date-header { display: contents; }
+        .unified-date-body { display: contents; }
 
         /* 特殊流程表单 */
         .special-form-section { background: #f8f9ff; border-radius: 12px; margin-bottom: 14px; padding: 18px 20px; box-shadow: 0 1px 4px rgba(0,0,0,.06); max-width: 900px; margin-left: auto; margin-right: auto; }
         .special-form-section .section-title { font-size: 15px; font-weight: 600; color: #1a1a2e; padding: 0 0 12px; border-bottom: 1px solid #eff4ff; margin-bottom: 16px; }
         .required-mark { color: #ba1a1a; margin-right: 3px; }
-        #section-basic { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 18px; align-items: start; }
-        #section-basic > .layui-form-item,
-        #borrowTestFields > .layui-form-item,
-        #overlimit-fields > .layui-form-item,
-        #renewal-section > .layui-form-item,
-        .existing-auth-section > .layui-form-item { width: 100%; max-width: none; margin: 0; }
-        #section-basic .layui-form-label { width: 104px; padding-left: 0; padding-right: 10px; box-sizing: border-box; }
+        #content-hardware .basic-info-section { max-width: 900px; }
+        #section-basic { max-width: 860px; margin: 0 auto; }
+        #section-basic .basic-two-col-row,
+        #section-basic .borrow-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px 36px; margin: 0 0 18px; overflow: visible; }
+        #section-basic .layui-form-item { max-width: none; margin: 0 0 18px; clear: none; }
+        #section-basic .basic-two-col-row .layui-form-item,
+        #section-basic .borrow-grid .layui-form-item { margin-bottom: 0; }
+        #section-basic .layui-form-label { width: 120px; padding-left: 0; box-sizing: border-box; color: #0f1f3d; font-weight: 600; }
+        #section-basic .layui-input-block { min-width: 0; }
         #section-basic .layui-input,
-        #section-basic .layui-select-box,
         #section-basic .custom-select,
-        #section-basic .search-select-box { max-width: none; min-width: 0; width: 100%; }
-        #section-basic .custom-select-trigger { width: 100%; }
-        .basic-full,
-        #renewal-section,
-        #overlimit-fields,
-        #borrowTestFields,
-        .existing-auth-section,
-        #hwInfoSection { grid-column: 1 / -1; }
-        #borrowTestFields { display: none; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 18px; }
-        #overlimit-fields { display: none; }
-        #overlimit-fields .layui-textarea { max-width: 620px; }
+        #section-basic .custom-select-trigger,
+        #section-basic .search-select-box,
+        #section-basic .chip-input-container { width: 100%; max-width: none; box-sizing: border-box; }
+        #section-basic .basic-full { max-width: none; margin-left: 0; margin-right: 0; }
+        #section-basic .basic-borrow-panel { margin: 8px 0 18px; padding: 18px 20px 20px; background: rgba(255,255,255,.46); border: 1px solid #dbe7ff; border-radius: 10px; position: relative; }
+        #section-basic .basic-borrow-title { display: inline-block; margin: -30px 0 18px; padding: 0 12px 0 0; background: #f8f9ff; color: #0f1f3d; font-size: 15px; font-weight: 600; }
+        #section-basic #hwInfoSection .hw-upload-area { width: 100%; }
 
         /* 硬件信息文件上传区 */
         #hwInfoSection .layui-form-label { padding-top: 10px; }
@@ -269,8 +274,9 @@
         .hw-file-info .hw-file-clear { display: none; align-items: center; justify-content: center; width: 20px; height: 20px; margin-left: 6px; border: none; background: #e8ecf0; border-radius: 50%; font-size: 13px; line-height: 1; color: #8b92a5; cursor: pointer; flex-shrink: 0; transition: all 0.15s; }
         .hw-file-info .hw-file-clear:hover { background: #dae1ff; color: #0050cb; }
         .hw-file-info.has-file .hw-file-clear { display: inline-flex; }
-        .hw-upload-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 40px; padding: 0 20px; background-color: #0066ff; color: #fff; border: 1px solid #0066ff; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; transition: all 0.2s; flex-shrink: 0; }
+        .hw-upload-btn { display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 18px; background-color: #0050cb; color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; transition: all 0.2s; flex-shrink: 0; }
         .hw-upload-btn:hover { opacity: 0.9; box-shadow: 0 2px 8px rgba(0,80,203,.25); }
+        .xaas-extra-field .hw-upload-btn { display: inline-flex; align-items: center; justify-content: center; color: #fff; }
         .hw-upload-btn .upload-icon { font-size: 15px; line-height: 1; }
         .hw-upload-result { font-size: 12px; display: inline-flex; align-items: center; gap: 4px; padding: 4px 12px; border-radius: 16px; font-weight: 500; height: 40px; box-sizing: border-box; }
         .hw-upload-result:empty { display: none; }
@@ -334,17 +340,17 @@
         .module-nav-item:hover { background: #eff4ff; color: #0050cb; }
         .module-nav-item.active { color: #fff; font-weight: 600; background: #0050cb; }
 
-        /* XaaS 产品列表样式 */
+        /* XaaS 表单样式 */
         .required-star { color: #c62828; margin-left: 2px; }
-        .xaas-product-list { border: 1px solid #d1d5db; border-radius: 8px; max-width: 600px; overflow: hidden; }
+        .xaas-product-list { border: 1px solid #d1d5db; border-radius: 8px; max-width: 600px; overflow: visible; }
         .xaas-product-item { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; padding: 8px 12px; border-radius: 8px; transition: background 0.15s; }
         .xaas-product-item:hover { background: #f9fafb; }
-        .xaas-product-item.selected { background: #ecfeff; }
-        .xaas-product-item.selected:hover { background: #cffafe; }
+        .xaas-product-item.selected { background: #eff4ff; }
+        .xaas-product-item.selected:hover { background: #dae1ff; }
         .xaas-product-item.disabled { background: #f7f7f7; opacity: .55; }
         .xaas-product-item.disabled .xaas-product-check { cursor: not-allowed; }
         .xaas-product-check { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; font-weight: 500; color: #1f2937; min-width: 0; flex: 1; }
-        .xaas-product-check input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: #0891b2; }
+        .xaas-product-check input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: #0050cb; }
         .xaas-product-desc { font-size: 13px; color: #6b7280; max-width: 240px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .xaas-product-desc.xaas-need-spec { color: #9ca3af; font-style: italic; }
         .xaas-product-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
@@ -354,39 +360,53 @@
         .xaas-spec-btn.active:hover { background: #003fa3; border-color: #003fa3; color: #fff; }
         .xaas-spec-btn:disabled { opacity: 0.4; cursor: not-allowed; background: #f5f5f5; border-color: #d1d5db; color: #9ca3af; }
         .xaas-spec-btn:disabled:hover { background: #f5f5f5; border-color: #d1d5db; color: #9ca3af; box-shadow: none; }
-        .xaas-version-picker { width: 150px; }
-        .xaas-version-picker .custom-select-trigger { height: 32px; border-radius: 6px; padding: 0 8px; }
-        .xaas-version-picker .custom-select-value { font-size: 13px; }
-        .xaas-version-picker .custom-select-arrow { font-size: 20px; }
-        .xaas-spec-btn::before { content: '⚙'; font-size: 13px; line-height: 1; }
+        #content-xaas .xaas-version-picker { width: 220px; }
+        #content-xaas .xaas-version-picker .custom-select-trigger { height: 32px; border-radius: 6px; padding: 0 8px; white-space: nowrap; }
+        #content-xaas .xaas-version-picker .custom-select-value { font-size: 13px; white-space: nowrap; }
+        #content-xaas .xaas-version-picker .custom-select-arrow { font-size: 20px; flex-shrink: 0; }
+        #content-xaas .xaas-version-picker.open { z-index: 3000; }
+        #content-xaas .xaas-version-picker .custom-select-dropdown { min-width: 100%; width: auto; right: 0; left: auto; max-width: 360px; z-index: 3000; }
         .xaas-spec-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; display: none; justify-content: center; align-items: center; }
         .xaas-spec-modal-overlay.show { display: flex; }
-        .xaas-spec-modal { background: #fff; border-radius: 10px; padding: 24px; min-width: 420px; max-width: 520px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+        .xaas-spec-modal { background: #fff; border-radius: 12px; padding: 24px; min-width: 420px; max-width: 480px; box-shadow: 0 8px 32px rgba(0,0,0,0.12); }
         .xaas-spec-modal-title { font-size: 16px; font-weight: 600; margin-bottom: 20px; color: #333; }
         .xaas-spec-modal .spec-field { margin-bottom: 14px; }
         .xaas-spec-modal .spec-field label { display: block; font-size: 13px; color: #666; margin-bottom: 4px; }
-        .xaas-spec-modal .spec-field input, .xaas-spec-modal .spec-field select { width: 100%; height: 36px; padding: 0 10px; border: 1px solid #d9d9d9; border-radius: 6px; font-size: 13px; box-sizing: border-box; }
+        .xaas-spec-modal .spec-field input, .xaas-spec-modal .spec-field select { width: 100%; height: 40px; padding: 0 12px; border: 1px solid #c2c6d8; border-radius: 8px; font-size: 14px; box-sizing: border-box; transition: all 0.15s; }
+        .xaas-spec-modal .spec-field input:hover, .xaas-spec-modal .spec-field select:hover { border-color: #0050cb; }
+        .xaas-spec-modal .spec-field input:focus, .xaas-spec-modal .spec-field select:focus { border: 2px solid #0050cb; box-shadow: 0 0 0 3px #b3c5ff; padding-left: 11px; }
         .xaas-spec-modal-btns { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
         .xaas-spec-modal-btns button { padding: 6px 20px; border-radius: 6px; font-size: 13px; cursor: pointer; }
-        .xaas-spec-modal-btns .spec-cancel { border: 1px solid #d9d9d9; background: #fff; color: #666; }
-        .xaas-spec-modal-btns .spec-confirm { border: none; background: #0891b2; color: #fff; }
-        .xaas-spec-modal-btns .spec-confirm:hover { background: #0e7490; }
-        .xaas-extend-section { border: 1px solid #d1d5db; border-radius: 8px; padding: 12px 16px; max-width: 500px; }
+        .xaas-spec-modal-btns .spec-cancel { border: 1px solid #c2c6d8; background: #fff; color: #424656; border-radius: 8px; }
+        .xaas-spec-modal-btns .spec-cancel:hover { background: #eff4ff; }
+        .xaas-spec-modal-btns .spec-confirm { border: none; background: #0050cb; color: #fff; border-radius: 8px; }
+        .xaas-spec-modal-btns .spec-confirm:hover { background: #003fa3; }
+        .xaas-extend-section { border: 1px solid #d1d5db; border-radius: 8px; padding: 14px 18px; width: 100%; background: #fff; }
         .xaas-extend-check { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 14px; }
-        .xaas-extend-check input[type="checkbox"] { width: 16px; height: 16px; accent-color: #0891b2; cursor: pointer; }
+        .xaas-extend-check input[type="checkbox"] { width: 16px; height: 16px; accent-color: #0050cb; cursor: pointer; }
         .xaas-extend-tip-icon { color: #e65100; cursor: help; font-size: 14px; }
         .xaas-extend-date-area { margin-top: 10px; }
         .xaas-extend-hint { font-size: 12px; color: #e65100; margin-top: 8px; }
         .xaas-extend-warn { font-size: 12px; color: #e65100; margin-top: 4px; }
         /* 申请理由区域 */
-        .xaas-apply-reason-area { width: 100%; max-width: 500px; }
+        .xaas-apply-reason-area { width: 100%; }
         .xaas-apply-reason-area textarea { width: 100%; min-height: 80px; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; font-family: inherit; resize: vertical; outline: none; transition: border-color 0.15s, box-shadow 0.15s; }
         .xaas-apply-reason-area textarea:focus { border-color: #0891b2; box-shadow: 0 0 0 3px rgba(8,145,178,0.1); }
         .xaas-apply-reason-area .reason-label { font-size: 13px; color: #374151; margin-bottom: 6px; display: block; }
         .xaas-apply-reason-area .required-star { color: #c62828; }
-
-        /* 产品族样式 */
-        .xaas-family-list { border: 1px solid #d1d5db; border-radius: 8px; width: 100%; background: #fff; overflow: hidden; }
+        .xaas-form-wide { max-width: 900px; }
+        .xaas-approval-rule-bar { display: flex; justify-content: flex-end; align-items: center; margin-bottom: 12px; }
+        .xaas-approval-rule-link { display: inline-flex; align-items: center; gap: 4px; color: #0891b2; font-size: 13px; cursor: pointer; transition: color 0.15s; }
+        .xaas-approval-rule-link:hover { color: #0e7490; }
+        .rules-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 4px; font-size: 12px; }
+        .rules-badge-blue { background: #eff6ff; color: #2563eb; }
+        .rules-badge-gray { background: #f3f4f6; color: #6b7280; }
+        .rules-badge-green { background: #f0fdf4; color: #16a34a; }
+        .rules-arrow { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; color: #d1d5db; margin: 0 4px; font-size: 12px; }
+        .xaas-industry-row { display: flex; gap: 12px; max-width: 480px; }
+        .xaas-industry-row select { flex: 1; min-width: 0; }
+        .xaas-industry-row .custom-select { flex: 1; min-width: 0; max-width: none; }
+        .xaas-family-list { border: 1px solid #d1d5db; border-radius: 8px; width: 100%; background: #fff; overflow: visible; }
         .xaas-family { border-bottom: 1px solid #e5e7eb; }
         .xaas-family:last-child { border-bottom: none; }
         .xaas-family-head { display: flex; align-items: center; gap: 8px; width: 100%; padding: 10px 14px; background: #f9fafb; border: none; cursor: pointer; font-size: 14px; font-weight: 500; color: #374151; text-align: left; transition: background 0.15s; }
@@ -394,41 +414,34 @@
         .xaas-family-arrow { width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 11px; transition: transform 0.2s; flex-shrink: 0; }
         .xaas-family.collapsed .xaas-family-arrow { transform: rotate(-90deg); }
         .xaas-family.collapsed .xaas-family-body { display: none; }
-        .xaas-family-count { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; background: #cffafe; color: #0e7490; font-size: 12px; line-height: 20px; text-align: center; font-weight: 500; }
+        .xaas-family-count { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; background: #e5eeff; color: #0050cb; font-size: 12px; line-height: 20px; text-align: center; font-weight: 500; }
         .xaas-family-body { padding: 4px 6px; }
         .xaas-inline-select { height: 32px; min-width: 132px; padding: 0 28px 0 10px; border: 1px solid #c2c6d8; border-radius: 6px; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24'%3E%3Cpath fill='%23424656' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E") no-repeat right 6px center; background-size: 18px; color: #424656; font-size: 13px; outline: none; cursor: pointer; transition: all 0.15s; -webkit-appearance: none; -moz-appearance: none; appearance: none; }
-        .xaas-inline-select:hover { border-color: #9ca3af; }
+        .xaas-inline-select:hover { border-color: #0050cb; }
         .xaas-inline-select:focus { border: 2px solid #0050cb; box-shadow: 0 0 0 3px #b3c5ff; }
         .xaas-product-warn { display: none; flex: 0 0 100%; margin: 2px 0 0 28px; color: #e65100; font-size: 12px; line-height: 18px; }
         .xaas-product-warn.show { display: block; }
-
-        /* SaaS-XDR 内联规格展开区 */
-        .xaas-inline-spec-area { display: none; margin: 8px 0 0 28px; padding: 12px; border: 1px solid #fde68a; border-radius: 8px; background: #fffbeb; }
-        .xaas-inline-spec-area.show { display: block; }
-        .xaas-inline-spec-area .spec-warn { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; color: #b45309; font-size: 12px; }
-        .xaas-inline-spec-area .spec-field-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-        .xaas-inline-spec-area .spec-field-row label { font-size: 13px; color: #6b7280; white-space: nowrap; }
-        .xaas-inline-spec-area .spec-field-row input { width: 112px; height: 32px; padding: 0 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; outline: none; }
-        .xaas-inline-spec-area .spec-field-row input:focus { border-color: #f59e0b; box-shadow: 0 0 0 3px #fef3c7; }
-        .xaas-inline-spec-area .spec-field-row .spec-unit { font-size: 13px; color: #9ca3af; }
-        .xaas-inline-spec-area .spec-modules-label { font-size: 13px; color: #374151; margin-bottom: 8px; padding-top: 4px; border-top: 1px solid #fde68a; }
-
-        /* 额外信息面板 */
+        .xaas-product-trial-hint { display: none; flex: 0 0 100%; margin: 2px 0 0 28px; color: #e65100; font-size: 12px; line-height: 18px; }
+        .xaas-product-trial-hint.show { display: block; }
+        .xaas-product-trial-hint .trial-icon { font-size: 12px; }
         .xaas-extra-panel { display: none; width: 100%; border: 1px solid #fde68a; border-radius: 8px; background: #fffbeb; overflow: hidden; }
         .xaas-extra-panel.show { display: block; }
         .xaas-extra-title { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid #fde68a; background: #fef3c7; color: #92400e; font-size: 14px; font-weight: 600; }
         .xaas-extra-body { padding: 0; }
         .xaas-extra-grid { display: block; }
         .xaas-extra-field { display: flex; align-items: flex-start; min-height: 44px; padding: 8px 14px; border-bottom: 1px solid #f0f2f5; box-sizing: border-box; }
-        .xaas-extra-field.full { flex-wrap: nowrap; }
+        .xaas-extra-field.full { flex-wrap: nowrap; align-items: center; }
         .xaas-extra-field.full.xaas-extra-field-longlabel { flex-wrap: wrap; }
-        .xaas-extra-field label { display: block; flex: 0 0 150px; padding: 9px 15px 9px 0; margin: 0; color: #424656; font-size: 14px; font-weight: 500; line-height: 20px; text-align: left; box-sizing: border-box; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .xaas-extra-field.full.xaas-field-column { flex-direction: column; align-items: stretch; }
+        .xaas-extra-field.full.xaas-field-column input { width: 100%; box-sizing: border-box; }
+        .xaas-extra-field label { display: block; flex: 0 0 150px; width: 150px; padding: 9px 15px 9px 0; margin: 0; color: #424656; font-size: 14px; font-weight: 500; line-height: 20px; text-align: left; box-sizing: border-box; white-space: normal; word-break: break-word; }
         .xaas-extra-field > select,
         .xaas-extra-field > input,
         .xaas-extra-field > textarea,
         .xaas-extra-field > .xaas-chip-group,
         .xaas-extra-field > .xaas-reference-link,
-        .xaas-extra-field > .custom-select { flex: 1; min-width: 0; max-width: none; }
+        .xaas-extra-field > .custom-select,
+        .xaas-extra-field > div { flex: 1; min-width: 0; max-width: none; }
         .xaas-extra-field select,
         .xaas-extra-field input,
         .xaas-extra-field textarea { width: 100%; border: 1px solid #c2c6d8; border-radius: 8px; background: #fff; font-size: 14px; outline: none; box-sizing: border-box; transition: all 0.15s; }
@@ -437,21 +450,56 @@
         .xaas-extra-field textarea { min-height: 76px; padding: 8px 12px; resize: vertical; }
         .xaas-extra-field select:hover,
         .xaas-extra-field input:hover,
-        .xaas-extra-field textarea:hover { border-color: #0891b2; }
+        .xaas-extra-field textarea:hover { border-color: #0050cb; }
         .xaas-extra-field select:focus,
         .xaas-extra-field input:focus,
-        .xaas-extra-field textarea:focus { border: 2px solid #0891b2; box-shadow: 0 0 0 3px #cffafe; padding-left: 11px; }
+        .xaas-extra-field textarea:focus { border: 2px solid #0050cb; box-shadow: 0 0 0 3px #b3c5ff; padding-left: 11px; }
         .xaas-chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
-        .xaas-chip { height: 32px; padding: 0 14px; border: 1px solid #c2c6d8; border-radius: 8px; background: #fff; color: #424656; cursor: pointer; transition: all 0.15s; font-size: 13px; }
-        .xaas-chip:hover { border-color: #0891b2; color: #0891b2; }
-        .xaas-chip.active { border-color: #0891b2; background: #e5eeff; color: #0891b2; }
+        .xaas-chip { height: 32px; padding: 0 14px; border: 1px solid #c2c6d8; border-radius: 8px; background: #fff; color: #424656; cursor: pointer; transition: all 0.15s; font-size: 13px; outline: none; }
+        .xaas-chip:hover { border-color: #0050cb; color: #0050cb; background: #eff4ff; }
+        .xaas-chip.active { border-color: #0050cb; background: #0050cb; color: #fff; font-weight: 500; }
+        .xaas-chip.active:hover { background: #003fa3; border-color: #003fa3; }
         .xaas-extra-field .xaas-counter { flex: 0 0 auto; margin: 4px 0 0 0; color: #8b92a5; font-size: 12px; text-align: right; }
         .xaas-counter { margin-top: 4px; color: #8b92a5; font-size: 12px; text-align: right; }
-        .xaas-reference-link { display: inline-flex; align-items: center; gap: 6px; color: #0891b2; font-size: 13px; text-decoration: none; }
-        .xaas-reference-link:hover { color: #0e7490; }
+        .xaas-reference-link { display: inline-flex; align-items: center; gap: 6px; color: #0050cb; font-size: 13px; text-decoration: none; }
+        .xaas-reference-link:hover { color: #003fa3; }
         .xaas-extra-field .xaas-file-hint { flex: 0 0 auto; margin: 4px 0 0 0; }
         .xaas-file-hint { margin-top: 4px; color: #8b92a5; font-size: 12px; }
+        .xaas-template-link { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px 4px 8px; border: 1px solid #f59e0b; border-radius: 6px; color: #b45309; font-size: 13px; text-decoration: none; background: #fff; transition: background 0.15s; cursor: pointer; }
+        .xaas-template-link:hover { background: #fef3c7; }
+        .xaas-template-link .tmpl-icon { font-size: 16px; line-height: 1; flex-shrink: 0; }
+        .xaas-file-upload-row { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
         .xaas-form-actions { text-align: center; padding-top: 8px; }
+
+        /* SaaS-XDR 内联规格展开区 */
+        .xaas-inline-spec-area { display: none; margin: 8px 0 0 28px; padding: 12px; border: 1px solid #fde68a; border-radius: 8px; background: #fffbeb; overflow: visible; }
+        .xaas-inline-spec-area.show { display: block; }
+        .xaas-inline-spec-area .spec-warn { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; color: #b45309; font-size: 12px; }
+        .xaas-inline-spec-area .spec-field-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+        .xaas-inline-spec-area .spec-field-row label { font-size: 13px; color: #6b7280; white-space: nowrap; }
+        .xaas-inline-spec-area .spec-field-row input { width: 112px; height: 32px; padding: 0 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; outline: none; }
+        .xaas-inline-spec-area .spec-field-row input:focus { border-color: #f59e0b; box-shadow: 0 0 0 3px #fef3c7; }
+        .xaas-inline-spec-area .spec-expiry-row { display: none; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+        .xaas-inline-spec-area .spec-expiry-row.show { display: flex; }
+        .xaas-inline-spec-area .spec-expiry-row .spec-expiry-date { width: 240px; height: 32px; padding: 0 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; outline: none; }
+        .xaas-inline-spec-area .spec-expiry-row .spec-expiry-date:focus { border-color: #f59e0b; box-shadow: 0 0 0 3px #fef3c7; }
+        .spec-expiry-btn { display: inline-flex; align-items: center; gap: 4px; height: 32px; padding: 0 10px; font-size: 12px; border: 1px solid #d1d5db; border-radius: 6px; background: #fff; color: #424656; cursor: pointer; white-space: nowrap; transition: all 0.15s; }
+        .spec-expiry-btn:hover:not(:disabled) { border-color: #f59e0b; background: #fffbeb; color: #b45309; }
+        .spec-expiry-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .xaas-inline-spec-area .spec-field-row .spec-unit { font-size: 13px; color: #9ca3af; }
+        .xaas-inline-spec-area .spec-modules-label { font-size: 13px; color: #374151; margin-bottom: 8px; padding-top: 4px; border-top: 1px solid #fde68a; }
+        .xaas-inline-spec-actions { display: flex; justify-content: flex-start; padding-top: 14px; margin-top: 12px; border-top: 1px solid #fde68a; }
+        .xaas-inline-confirm-btn { height: 34px; padding: 0 18px; border: none; border-radius: 6px; background: #f59e0b; color: #fff; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+        .xaas-inline-confirm-btn:hover { background: #d97706; box-shadow: 0 2px 8px rgba(245,158,11,.25); }
+        .xaas-spec-btn::before { content: '⚙'; font-size: 13px; line-height: 1; }
+        #content-xaas .extra-panel-item > .layui-form-label { width: 150px; white-space: nowrap; }
+
+        /* 额外信息卡片并排布局 */
+        .extra-panels-row { display: flex; flex-direction: column; gap: 16px; max-width: 900px; margin: 0 auto 15px; padding-left: 150px; align-items: flex-start; box-sizing: border-box; }
+        .extra-panels-row .extra-panel-card { width: 100%; min-width: 0; border: 1px solid #fde68a; border-radius: 8px; background: #fffbeb; overflow: hidden; }
+        .extra-panels-row .extra-panel-card .xaas-extra-body { padding: 0; }
+        .extra-panels-row .extra-panel-card .xaas-extra-field { padding: 8px 14px; border-bottom: 1px solid #f0f2f5; box-sizing: border-box; }
+        .extra-panels-row .extra-panel-card .xaas-extra-field:last-child { border-bottom: none; }
 
         /* 字段备注 Tooltip */
         .field-tooltip { position: relative; display: inline-flex; align-items: center; margin-left: 4px; vertical-align: middle; }
@@ -464,162 +512,247 @@
         .tooltip-popup .tooltip-copy { position: absolute; top: 10px; right: 12px; background: transparent; border: 1px solid #4b5563; color: #9ca3af; font-size: 11px; padding: 2px 8px; border-radius: 4px; cursor: pointer; }
         .tooltip-popup .tooltip-copy:hover { background: #374151; color: #fff; }
         .field-tooltip:hover .tooltip-popup { display: block; }
-
-        /* ===== 续期授权区域 ===== */
-        .renewal-tab-bar { display: flex; gap: 0; margin-bottom: 12px; border-bottom: 2px solid #e5eeff; }
-        .renewal-tab { padding: 8px 20px; font-size: 13px; font-weight: 500; color: #8b92a5; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.2s; user-select: none; }
-        .renewal-tab:hover { color: #0050cb; }
-        .renewal-tab.active { color: #0050cb; border-bottom-color: #0050cb; }
-        .renewal-tab-panel { padding: 0; }
-
-        .renewal-badge { display: none; padding: 4px 14px; border-radius: 16px; font-size: 12px; font-weight: 600; line-height: 20px; white-space: nowrap; flex-shrink: 0; }
-        .renewal-badge.show { display: inline-flex; }
-        .renewal-badge.normal-renewal { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
-        .renewal-badge.overlimit-renewal { background: #fff3e0; color: #e65100; border: 1px solid #ffcc80; }
-        .renewal-summary { display: none; max-width: 620px; margin-top: 12px; padding: 12px 14px; border-radius: 8px; border: 1px solid #a5d6a7; background: #f1f8f2; color: #1b5e20; font-size: 13px; }
-        .renewal-summary.show { display: block; }
-        .renewal-summary.overlimit { border-color: #ffcc80; background: #fff8ed; color: #7a3a00; }
-        .renewal-summary-title { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; font-weight: 600; color: inherit; }
-        .renewal-summary-status { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 999px; background: rgba(46,125,50,.12); color: #2e7d32; font-size: 12px; white-space: nowrap; }
-        .renewal-summary.overlimit .renewal-summary-status { background: rgba(230,81,0,.12); color: #e65100; }
-        .renewal-summary-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 12px; }
-        .renewal-summary-item span { display: block; color: #6b7280; font-size: 12px; line-height: 18px; }
-        .renewal-summary-item strong { display: block; color: inherit; font-size: 13px; line-height: 20px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        /* ===== 已有授权展示区 ===== */
-        .existing-auth-section { display: none; margin: 8px 0 4px; }
-        .existing-auth-section.show { display: block; }
-        .ea-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-        .ea-title { font-size: 14px; font-weight: 600; color: #1a2b4a; }
-        .ea-tab-bar { display: flex; gap: 0; border: 1px solid #e5eeff; border-radius: 6px; overflow: hidden; margin-bottom: 10px; width: fit-content; }
-        .ea-tab { padding: 6px 16px; font-size: 13px; color: #5f6b7a; cursor: pointer; background: #f7f9fc; border-right: 1px solid #e5eeff; transition: all .15s; user-select: none; }
-        .ea-tab:last-child { border-right: none; }
-        .ea-tab.active { background: #0050cb; color: #fff; }
-        .ea-tab:hover:not(.active) { background: #eef2fa; }
-        .ea-query-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-        .ea-query-row input { flex: 1; max-width: 320px; height: 36px; padding: 0 12px; border: 1px solid #e5eeff; border-radius: 6px; font-size: 13px; outline: none; }
-        .ea-query-row input:focus { border-color: #0050cb; box-shadow: 0 0 0 2px rgba(0,80,203,.08); }
-        .ea-query-btn { padding: 6px 18px; background: #0050cb; color: #fff; border: none; border-radius: 6px; font-size: 13px; cursor: pointer; white-space: nowrap; }
-        .ea-query-btn:hover { background: #003fa3; }
-        .ea-result-card { border: 1px solid #e5eeff; border-radius: 8px; background: #f7f9fc; padding: 12px 14px; margin-top: 6px; }
-        .ea-result-card.found { border-color: #a5d6a7; background: #f1f8f2; }
-        .ea-result-card.not-found { border-color: #ffcc80; background: #fff8ed; }
-        .ea-result-device { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 13px; color: #1a2b4a; }
-        .ea-result-device strong { color: #0050cb; }
-        .ea-module-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 6px; }
-        .ea-module-table th { text-align: left; padding: 6px 8px; background: #e8edf5; color: #5f6b7a; font-weight: 600; border-bottom: 1px solid #d8e0ec; }
-        .ea-module-table td { padding: 6px 8px; border-bottom: 1px solid #eef2f7; color: #1a2b4a; }
-        .ea-module-table tr:last-child td { border-bottom: none; }
-        .ea-status-badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; }
-        .ea-status-badge.active { background: #e8f5e9; color: #2e7d32; }
-        .ea-status-badge.expired { background: #fce4ec; color: #c62828; }
-        .ea-hint { font-size: 12px; color: #999; margin-top: 4px; }
-        .ea-upload-area { margin-top: 8px; }
-        .layui-textarea { width: 100%; max-width: 400px; min-height: 100px; border: 1px solid #e5eeff; border-radius: 8px; padding: 10px 12px; font-size: 14px; font-family: inherit; outline: none; resize: vertical; transition: all 0.15s; box-sizing: border-box; }
-        .layui-textarea:hover { border-color: #c2c6d8; }
-        .layui-textarea:focus { border-color: #0050cb; box-shadow: 0 0 0 3px rgba(0,80,203,.08); }
-        /* ===== 响应式适配 ===== */
-        @media screen and (max-width: 1520px) {
-            .content-body { padding: 12px 220px 12px 40px; }
-            .special-form-section,
-            .module-item,
-            .module-toolbar,
-            .unified-date-bar,
-            .layui-form-item {
-                max-width: min(900px, 100%);
+        /* ===== 移动端适配 ===== */
+        .sales-person-badge { display: inline-block; padding: 1px 8px; border-radius: 3px; font-size: 11px; font-weight: 500; margin-left: 10px; vertical-align: middle; line-height: 20px; background: #e8eaf6; color: #3949ab; border: 1px solid #c5cae9; }
+        
+        @media (max-width: 768px) {
+            .header-menu-btn { display: inline-flex; margin-right: auto; }
+            .layui-header { padding: 0 8px 0 4px; }
+            .user-name, .dropdown-arrow { display: none; }
+            .layui-layout-admin .layui-header { left: 0; }
+            .layui-layout-admin .layui-side {
+                transform: translateX(-100%);
+                transition: transform 0.25s ease;
+                z-index: 3000;
             }
-        }
-
-        @media screen and (max-width: 1366px) {
-            .content-body { padding: 12px 196px 12px 28px; }
-            .module-nav { right: 8px; width: 156px; top: 90px; max-height: calc(100vh - 150px); padding: 8px 5px; }
-            .module-nav-title { padding: 4px 8px 8px; }
-            .module-nav-item { padding: 7px 8px; font-size: 12px; }
-        }
-
-        @media screen and (max-width: 1100px) {
-            .content-body { padding: 12px 166px 12px 18px; }
-            .module-nav { width: 138px; }
-            .layui-form-label { width: 120px; }
-            .grid-field .gf-label { width: 90px; }
-            .unified-date-bar .layui-input { width: 150px; }
-            .hw-file-info { width: 240px; }
-        }
-
-        @media screen and (max-width: 768px) {
-            .layui-layout-admin .layui-side { display: none; }
+            .layui-layout-admin .layui-side.open { transform: translateX(0); }
+            .sidebar-overlay.show { display: block; }
             .layui-layout-admin .layui-body { left: 0; }
             .layui-layout-admin .layui-footer { left: 0; }
-            .module-nav { right: 6px; width: 126px; top: 88px; }
-            .content-body { padding: 12px 142px 12px 14px; }
-            #section-basic,
-            #borrowTestFields { grid-template-columns: 1fr; }
-            .layui-form-label { width: 100px; font-size: 13px; padding: 9px 0 9px 8px; }
-            .layui-input, .layui-select-box { max-width: 100%; }
-            .unified-date-bar { flex-wrap: wrap; gap: 8px; padding: 12px 14px; }
-            .unified-date-bar .layui-input { width: 100%; }
-            .unified-date-bar .bar-hint { flex: none; width: 100%; order: 10; }
-            .unified-date-bar .date-limit-hint { order: -1; }
-            .module-grid { grid-template-columns: 1fr; }
-            .module-head { padding: 12px 14px; }
-            .module-body { padding: 12px 14px; }
-            .hw-upload-area { flex-wrap: wrap; }
-            .hw-file-info { width: 100%; }
-            .special-form-section { padding: 14px 16px; }
-            .grid-field { flex-wrap: wrap; gap: 4px; }
-            .grid-field .gf-label { width: auto; }
-            .renewal-summary-grid { grid-template-columns: 1fr; }
-            .xaas-product-list { max-width: 100%; }
+            .content-body { padding: 12px 16px; }
+            .module-nav { display: none !important; }
+
+            .layui-form-item { flex-direction: column; align-items: stretch; }
+            .layui-form-label { width: auto; padding: 0 0 6px 0; }
+            .layui-input { max-width: none; width: 100%; }
+            .layui-select-box { max-width: none; width: 100%; }
+            .layui-select { max-width: none; width: 100%; }
+            .custom-select { max-width: none; width: 100%; }
+            .custom-select-trigger { max-width: none; }
+            .search-select-box { max-width: none; width: 100%; }
+            #section-basic .search-select-box { max-width: none; }
+            #section-basic .basic-two-col-row,
+            #section-basic .borrow-grid { grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
+            #section-basic .layui-form-label,
+            #section-basic .basic-borrow-panel .layui-form-label { width: auto; padding: 0 0 6px 0; }
+            #section-basic .basic-borrow-panel { padding: 16px 14px 14px; }
+            #section-basic .basic-borrow-title { margin: -28px 0 14px; background: #f8f9ff; }
+
+            .unified-date-bar { flex-wrap: wrap; }
+            .module-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+            .xaas-spec-modal { min-width: auto; width: 90%; }
+            #top_tabs_box { display: none; }
+            .content-body { top: 0; }
+            /* 硬件信息文件上传区 */
+            .hw-upload-area { flex-direction: row; align-items: center; flex-wrap: nowrap; gap: 8px; }
+            .hw-file-info { flex: 1; width: auto; min-width: 0; }
+            .hw-upload-btn { flex: 0 0 auto; width: auto; padding: 0 12px; white-space: nowrap; }
+            #hwInfoSection .layui-form-item { align-items: flex-start !important; }
+            #hwInfoSection .layui-form-label { align-self: flex-start; text-align: left; padding-left: 0; }
+            #hwInfoSection .layui-input-block { width: 100%; text-align: left; }
+            #hwInfoSection .hw-upload-area { justify-content: flex-start; }
+
+            /* 统一授权日期栏 */
+            .unified-date-bar { flex-direction: column; align-items: stretch; gap: 12px; background: #f8f9ff; border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; }
+            .unified-date-header { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+            .unified-date-body { display: flex; gap: 10px; align-items: center; width: 100%; }
+            .unified-date-body .layui-input { flex: 1; width: auto; min-width: 120px; height: 40px; }
+            .unified-date-bar .bar-hint { display: none; }
+            .unified-date-body .apply-date-btn { flex: 0 0 auto; height: 40px; line-height: 40px; padding: 0 14px; }
+            /* 模块配置卡片瘦身 */
+            .module-item { border-radius: 8px; margin-bottom: 8px; }
+            .module-head { padding: 10px 14px; gap: 8px; }
+            .module-name { font-size: 14px; }
+            .module-count { font-size: 11px; }
+            .module-status { font-size: 10px; padding: 2px 8px; }
+            .module-body { padding: 10px 14px; }            /* 模块配置字段 - 2列网格 + 纵向布局 */
+            .module-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+            .grid-field { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 4px; padding: 4px 0; }
+            .grid-field .gf-label { flex: 0 0 100%; width: 100%; font-size: 12px; line-height: 1.4; white-space: normal; word-break: break-word; }
+            .grid-field .gf-val { flex: 1; min-width: 0; width: auto; }
+            .grid-field .gf-val input { width: 100%; max-width: none; height: 32px; font-size: 13px; padding: 0 10px; box-sizing: border-box; }
+            .grid-field .gf-hint { font-size: 11px; flex-shrink: 0; white-space: nowrap; }
+            .module-features { gap: 6px; }
+            .feat-pill { padding: 4px 10px; font-size: 11px; }
+            .module-toolbar { padding: 8px 0; }
+
+            /* XaaS 移动端适配 */
+            #content-xaas .layui-form-item { flex-direction: column; align-items: stretch; margin-left: 0; margin-right: 0; }
+            #content-xaas .layui-form-label { width: auto; padding: 0 0 6px 0; }
+            #content-xaas .layui-input-block { width: 100%; }
+            #content-xaas .layui-input,
+            #content-xaas .layui-select,
+            #content-xaas .custom-select-trigger { max-width: none; width: 100%; }
+            .extra-panels-row { padding-left: 0; }
+            .xaas-extra-field { flex-direction: column; align-items: stretch; min-height: auto; padding: 6px 12px; }
+            .xaas-extra-field label { flex: none; width: auto; padding: 0 0 4px 0; min-height: auto; }
+            .xaas-extra-field .hw-upload-area { flex-direction: row; align-items: center; flex-wrap: nowrap; gap: 8px; }
+            .xaas-extra-field .hw-upload-area .hw-upload-btn { flex-shrink: 0; }
+            .xaas-extra-field.full { flex-direction: column; align-items: stretch; }
+            .xaas-extra-field.full label { width: 100%; text-align: left; }
+            .xaas-extra-field.full > input,
+            .xaas-extra-field.full > div { width: 100%; max-width: none; box-sizing: border-box; }
+            #xdr-project-landing-date { width: 100% !important; max-width: none !important; }
+            .xaas-extra-field.full .xaas-template-link { align-self: flex-start; }
+            .xaas-extra-field.full .hw-upload-area { width: 100%; justify-content: flex-start; flex-wrap: wrap; }
+            .xaas-extra-field.full .hw-file-info { flex: 1 1 160px; min-width: 0; }
+            .xaas-extra-field.full .hw-upload-area .hw-upload-btn { flex: 0 0 auto; }
+            .xaas-extra-field.full .xaas-file-hint { width: 100%; text-align: left; }
+            .xaas-product-list { max-width: none; width: 100%; }
+            .xaas-product-item { padding: 8px 10px; }
+            .xaas-product-check { flex: 0 0 100%; margin-bottom: 4px; }
+            .xaas-product-desc { max-width: none; font-size: 11px; width: 100%; white-space: normal; overflow: visible; }
+            .xaas-product-right { flex: 0 0 auto; width: 100%; justify-content: space-between; gap: 6px; }
+            #content-xaas .xaas-version-picker { flex: 1; max-width: none; min-width: 0; }
+            #content-xaas .xaas-version-picker .custom-select-trigger { width: 100%; }
+            .xaas-industry-row { flex-direction: row; flex-wrap: nowrap; gap: 8px; max-width: none; }
+            .xaas-industry-row .custom-select { flex: 1 1 0; width: 0; min-width: 0; }
+            .xaas-industry-row .custom-select .custom-select-trigger { width: 100%; box-sizing: border-box; }
+            .xaas-family-head { padding: 8px 10px; font-size: 13px; }
+            .xaas-inline-spec-area { margin: 6px 0 0 0; padding: 8px; }
+            .xaas-inline-spec-area .spec-field-row { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 4px; }
+            .xaas-inline-spec-area .spec-field-row label { flex: 0 0 100%; }
+            .xaas-inline-spec-area .spec-field-row input { flex: 1; min-width: 0; }
+            .xaas-spec-btn { height: 28px; padding: 0 8px; font-size: 12px; }
+            .tooltip-popup { width: 260px; left: 0; top: 24px; }
+            .toolbar-btn { height: 26px; line-height: 24px; padding: 0 10px; font-size: 11px; }
+            .xaas-inline-spec-area .spec-expiry-row { flex-direction: column; align-items: stretch; gap: 4px; }
+            .xaas-inline-spec-area .spec-expiry-row.show { display: flex; }
+            .spec-expiry-date { width: 100%; }
+            .xaas-approval-rule-bar { justify-content: flex-start; }
+            .xaas-rules-overlay { align-items: stretch !important; justify-content: center !important; padding: 12px 10px; box-sizing: border-box; }
+            .xaas-rules-card { width: 100% !important; max-width: 100% !important; max-height: calc(100vh - 24px) !important; margin: 0 !important; border-radius: 10px !important; }
+            .xaas-rules-header { padding: 12px 16px !important; }
+            .xaas-rules-header h3 { font-size: 15px !important; }
+            .xaas-rules-body { padding: 16px 14px !important; overflow-x: hidden !important; }
+            .xaas-rules-body > div { margin-bottom: 18px !important; }
+            .xaas-rules-body h4 { margin-bottom: 10px !important; }
+            .xaas-rules-body p { margin-left: 0 !important; }
+            .xaas-rules-body h4 + div { margin-left: 0 !important; border: none !important; overflow: visible !important; }
+            .xaas-rules-body table,
+            .xaas-rules-body thead,
+            .xaas-rules-body tbody,
+            .xaas-rules-body tr,
+            .xaas-rules-body th,
+            .xaas-rules-body td { display: block !important; width: 100% !important; box-sizing: border-box !important; }
+            .xaas-rules-body thead { display: none !important; }
+            .xaas-rules-body tr { margin-bottom: 10px; border: 1px solid #e5e7eb; border-radius: 8px; background: #fff; overflow: hidden; }
+            .xaas-rules-body td:first-child { padding: 9px 12px !important; background: #f9fafb; border-bottom: 1px solid #e5e7eb; white-space: normal !important; font-weight: 500; }
+            .xaas-rules-body td:last-child { display: flex !important; flex-wrap: wrap; align-items: center; gap: 6px; padding: 10px 12px !important; }
+            .xaas-rules-body .rules-badge { max-width: 100%; white-space: normal; line-height: 18px; }
+            .xaas-rules-body .rules-arrow { transform: rotate(90deg); margin: 0 2px; }
+            .custom-select-option { font-size: 12px; white-space: normal; }
+            .xaas-product-warn { margin-left: 0; }
+            .xaas-product-trial-hint { margin-left: 0; }
+            .custom-select-dropdown { min-width: 100% !important; width: 100% !important; max-width: 100% !important; right: 0 !important; }
         }
 
-        @media screen and (max-width: 480px) {
-            .layui-form-item { flex-direction: column; }
-            .layui-form-label { width: 100%; padding-left: 0; padding-bottom: 4px; }
-            .layui-btn { width: 100%; justify-content: center; }
-            .unified-date-bar .apply-date-btn { width: 100%; justify-content: center; }
-            .hw-upload-btn { width: 100%; justify-content: center; }
-        }
+        /* ===== 设备ID Chip 输入 ===== */
+        .chip-input-container { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; min-height: 40px; padding: 6px 10px; background: #fff; border: 1px solid #e5eeff; border-radius: 8px; cursor: text; transition: border-color 0.15s; max-width: 480px; box-sizing: border-box; }
+        .chip-input-container:focus-within { border-color: #0050cb; box-shadow: 0 0 0 3px rgba(0,80,203,.08); }
+        .chip-input-container.is-fixed { background: #f5f7fa; border-color: #d8e0ec; cursor: default; }
+        .chip-item { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; background: #e5eeff; color: #0050cb; border-radius: 6px; font-size: 13px; font-weight: 500; line-height: 24px; white-space: nowrap; }
+        .chip-item .chip-close { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 50%; cursor: pointer; font-size: 12px; color: #0050cb; transition: all 0.15s; }
+        .chip-item .chip-close:hover { background: #0050cb; color: #fff; }
+        .chip-input-field { flex: 1; min-width: 120px; height: 28px; border: none; outline: none; font-size: 14px; background: transparent; padding: 0; }
+        .chip-input-field:disabled { background: transparent; cursor: default; }
+        .chip-fixed-hint { font-size: 12px; color: #8b92a5; margin-top: 4px; }
+        #hwInfoSection { grid-column: 1 / -1; }
+    
+
+        /* ===== 授权记录表格样式 ===== */
+#content-records body{font-family:"Inter",sans-serif;background:#fff;color:#0b1c30;font-size:13px}
+        #content-records .material-symbols-outlined{font-variation-settings:"FILL"0,"wght"400,"GRAD"0,"opsz"20}
+        #content-records ::-webkit-scrollbar{width:5px;height:5px}
+        #content-records ::-webkit-scrollbar-track{background:transparent}
+        #content-records ::-webkit-scrollbar-thumb{background:#c2c6d8;border-radius:9999px}
+        #content-records .expand-icon{transition:transform .2s}
+        #content-records .expand-icon.expanded{transform:rotate(90deg)}
+        #content-records tbody td{position:relative;z-index:1;border-bottom:1px solid rgba(194,198,216,0.15)}
+        #content-records .sticky-left{position:sticky;left:0;z-index:10;background:inherit}
+        #content-records .sticky-left-1{left:145px}
+        #content-records .sticky-right{position:sticky;right:0;z-index:10;background:inherit}
+        #content-records tbody tr td{background:#fff}
+        #content-records tbody tr td.sticky-left,tbody tr td.sticky-right{background:#fff}
+        #content-records tbody tr:hover td{background:#eef3ff}
+        #content-records tbody tr:hover td.sticky-left,tbody tr:hover td.sticky-right{background:#eef3ff!important}
+        #content-records .sticky-left-1::after,.sticky-right::before{content:"";position:absolute;top:-1px;bottom:-1px;width:8px;pointer-events:none;z-index:20}
+        #content-records .sticky-left-1::after{right:-6px;background:linear-gradient(to right,rgba(0,0,0,0.06),transparent)}
+        #content-records .sticky-right::before{left:-6px;background:linear-gradient(to left,rgba(0,0,0,0.06),transparent)}
+        #content-records thead th{position:sticky!important;top:0;z-index:5;background:#fff;border-bottom:1px solid rgba(194,198,216,0.4)}
+        #content-records thead .sticky-left,thead .sticky-right{z-index:15;background:#fff!important}
+        #content-records .table-scroll-wrap{flex:1;overflow:auto;min-height:0;scrollbar-gutter:stable}
+        #content-records .table-scroll-wrap::-webkit-scrollbar{width:6px;height:6px}
+        #content-records .table-scroll-wrap::-webkit-scrollbar-track{background:transparent}
+        #content-records .table-scroll-wrap::-webkit-scrollbar-thumb{background:#c2c6d8;border-radius:9999px}
+        #content-records .solution-expand-wrap{border-radius:6px;background:#f0f5ff;margin:0 12px 0 44px;padding:10px 12px}
+        #content-records .solution-detail-row td{position:static!important;z-index:auto;border-bottom:none!important}
+        #content-records .cust-cell{display:flex;align-items:center;gap:8px;max-width:200px}
+        #content-records .cust-cell .cust-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        #content-records .cust-cell .cust-name:hover{overflow:visible;position:relative}
+        #content-records .cust-cell .cust-name:hover::after{content:attr(data-full);position:absolute;left:0;top:100%;z-index:30;background:#1f2937;color:#f3f4f6;padding:6px 10px;border-radius:6px;font-size:12px;white-space:nowrap;pointer-events:none}
+        #content-records .cust-cell .cust-badge{flex-shrink:0}
+        #content-records .filter-divider{width:1px;height:20px;background:rgba(194,198,216,0.4);flex-shrink:0}
     </style>
 </head>
 <body>
     <div class="layui-layout layui-layout-admin">
         <!-- 顶部 -->
-        <div class="layui-header header">
-            <div class="layui-main">
-                <a href="javascript:;" class="logo">测试设备授权平台</a>
-                <ul class="topLevelMenus">
-                    <li class="layui-this"><a href="javascript:;">授权管理</a></li>
-                </ul>
-                <span class="header-link"><a href="javascript:;">操作手册</a></span>
-                <ul class="top_menu">
-                    <li>
-                        <a href="javascript:;">
-                            <span class="userAvatar"></span>
-                            <cite class="adminName">钱金城94903</cite>
-                        </a>
-                        <dl class="layui-nav-child">
-                            <dd><a href="javascript:;">退出</a></dd>
-                        </dl>
-                    </li>
+        <div class="layui-header">
+            <button type="button" class="header-menu-btn" onclick="toggleMobileSidebar()">
+                <span class="material-symbols-outlined">menu</span>
+            </button>
+            <div class="tooltip-wrap">
+                <button type="button" class="header-icon-btn" onclick="window.open('https://200-200-0-201.atrust.sangfor.com/sap/files/czsc.pdf')">
+                    <span class="material-symbols-outlined">menu_book</span>
+                </button>
+                <span class="tooltip-box">操作手册</span>
+            </div>
+            <button type="button" class="header-icon-btn" onclick="window.open('javascript:;')">
+                <span class="material-symbols-outlined">settings</span>
+            </button>
+                        <div class="header-user-dropdown" id="userDropdown">
+                <button type="button" class="header-user" onclick="toggleUserDropdown()">
+                    <span class="user-avatar">钱</span>
+                    <span class="user-name">钱金城94903</span>
+                    <span class="material-symbols-outlined dropdown-arrow">arrow_drop_down</span>
+                </button>
+                <div class="user-dropdown-menu" id="userDropdownMenu">
+                    <div class="logout-item" onclick="handleLogout()">
+                        <span class="material-symbols-outlined">power_settings_new</span>
+                        <span>退出</span>
+                    </div>
+                </div>
+            </div>
+
+        <!-- 左侧导航 -->
+        <div class="layui-side">
+            <div class="sidebar-brand">
+                <img class="brand-logo" src="logo.jpg" alt="logo">
+                <span class="brand-title">测试设备授权平台</span>
+            </div>
+            <div class="navBar" id="navBar">
+                <ul>
+                    <li><a href="javascript:;"><span class="material-symbols-outlined">dashboard</span><cite>后台首页</cite></a></li>
+                    <li class="layui-this" data-tab="hardware"><a href="javascript:;"><span class="material-symbols-outlined">verified</span><cite>申请产品授权</cite></a></li>
+                    <li data-tab="xaas"><a href="javascript:;"><span class="material-symbols-outlined">cloud</span><cite>申请XaaS授权</cite></a></li>
+                    <li data-tab="records"><a href="javascript:;"><span class="material-symbols-outlined">history</span><cite>授权记录</cite></a></li>
+                    <li><a href="javascript:;"><span class="material-symbols-outlined">support_agent</span><cite>安全&amp;云计算产品线授权申请接口人</cite></a></li>
                 </ul>
             </div>
         </div>
 
-        <!-- 左侧导航 -->
-        <div class="layui-side">
-            <div class="user-photo">
-                <a class="img"><span class="avatar-placeholder"></span></a>
-                <p>你好！<span class="userName">钱金城94903</span>, 欢迎登录</p>
-            </div>
-            <div class="navBar" id="navBar">
-                <ul>
-                    <li><a href="javascript:;"><cite>后台首页</cite></a></li>
-                    <li class="layui-this" data-tab="hardware"><a href="javascript:;"><cite>申请产品授权</cite></a></li>
-                    <li data-tab="xaas"><a href="javascript:;"><cite>申请XaaS授权</cite></a></li>
-                    <li><a href="javascript:;"><cite>授权记录</cite></a></li>
-                    <li><a href="javascript:;"><cite>安全&amp;云计算产品线授权申请接口人</cite></a></li>
-                </ul>
-            </div>
-        </div>
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileSidebar()"></div>
 
         <!-- 右侧内容 -->
         <div class="layui-body">
@@ -2149,6 +2282,850 @@
     </div>
 
     <!-- 右侧模块导航 -->
+                    <div id="content-records" style="display:none;">
+    
+<main class="flex-1 flex flex-col min-w-0 p-4 md:p-5 bg-white">
+<div class="w-full mx-auto flex-1 flex flex-col gap-3 min-h-0">
+<div class="flex items-center justify-between shrink-0">
+<div class="flex items-center gap-3"><h1 class="text-[20px] font-semibold text-[#0b1c30]">授权记录</h1><span class="text-[12px] text-[#424656]">管理和查看所有设备授权申请及历史记录。</span></div>
+<div class="flex items-center gap-1.5 bg-white px-2 py-1 rounded-full border border-[#c2c6d8]/40">
+<span class="flex items-center gap-1 px-2 py-0.5 rounded-full bg-white text-[11px]"><span class="w-1.5 h-1.5 rounded-full bg-[#424656]"></span>共51</span>
+<div class="w-px h-3 bg-[#c2c6d8]/40"></div>
+<span class="flex items-center gap-1 px-2 py-0.5 rounded-full hover:bg-[#eff4ff] cursor-pointer text-[11px] text-primary"><span class="w-1.5 h-1.5 rounded-full bg-primary"></span>待审批2</span>
+<span class="flex items-center gap-1 px-2 py-0.5 rounded-full hover:bg-[#eff4ff] cursor-pointer text-[11px] text-[#424656]"><span class="w-1.5 h-1.5 rounded-full bg-[#10b981]"></span>审批中1</span>
+<span class="flex items-center gap-1 px-2 py-0.5 rounded-full hover:bg-[#eff4ff] cursor-pointer text-[11px] text-[#424656]"><span class="w-1.5 h-1.5 rounded-full bg-[#8b5cf6]"></span>已通过1</span>
+<span class="flex items-center gap-1 px-2 py-0.5 rounded-full hover:bg-[#eff4ff] cursor-pointer text-[11px] text-[#424656]"><span class="w-1.5 h-1.5 rounded-full bg-[#3b82f6]"></span>已授权4</span>
+<span class="flex items-center gap-1 px-2 py-0.5 rounded-full hover:bg-[#eff4ff] cursor-pointer text-[11px] text-[#424656]"><span class="w-1.5 h-1.5 rounded-full bg-error"></span>已驳回1</span><span class="flex items-center gap-1 px-2 py-0.5 rounded-full hover:bg-[#eff4ff] cursor-pointer text-[11px] text-[#424656]"><span class="w-1.5 h-1.5 rounded-full bg-[#9ca3af]"></span>已过期1</span>
+</div>
+</div>
+<!-- Filters -->
+<div class="bg-white rounded-lg shadow-sm border border-[#c2c6d8]/30 p-3 shrink-0">
+<div class="flex flex-wrap items-center gap-2">
+<div class="flex items-center border border-[#c2c6d8]/50 rounded-md bg-[#f8f9ff] focus-within:border-primary overflow-hidden h-8">
+<label class="px-2 py-1 bg-white border-r border-[#c2c6d8]/50 text-[11px] text-[#424656] whitespace-nowrap">类型</label>
+<select class="border-0 bg-transparent px-2 py-1 text-[12px] text-[#0b1c30] focus:ring-0 min-w-[80px]"><option>全部</option><option>产品授权</option><option>XaaS</option><option>解决方案</option></select>
+</div>
+<div class="flex items-center border border-[#c2c6d8]/50 rounded-md bg-[#f8f9ff] focus-within:border-primary overflow-hidden h-8">
+<label class="px-2 py-1 bg-white border-r border-[#c2c6d8]/50 text-[11px] text-[#424656] whitespace-nowrap">状态</label>
+<select class="border-0 bg-transparent px-2 py-1 text-[12px] text-[#0b1c30] focus:ring-0 min-w-[80px]"><option>全部</option><option>待审批</option><option>审批中</option><option>已通过</option><option>已授权</option><option>已过期</option><option>已驳回</option></select>
+</div>
+<div class="flex items-center border border-[#c2c6d8]/50 rounded-md bg-[#f8f9ff] focus-within:border-primary overflow-hidden h-8">
+<label class="px-2 py-1 bg-white border-r border-[#c2c6d8]/50 text-[11px] text-[#424656] whitespace-nowrap">产品线</label>
+<select class="border-0 bg-transparent px-2 py-1 text-[12px] text-[#0b1c30] focus:ring-0 min-w-[80px]"><option>全部</option></select>
+</div>
+<span class="filter-divider"></span>
+<div class="flex items-center border border-[#c2c6d8]/50 rounded-md bg-[#f8f9ff] focus-within:border-primary h-8 px-2 w-[140px]">
+<span class="material-symbols-outlined text-[14px] text-[#424656] mr-1">search</span>
+<input class="border-0 bg-transparent p-0 w-full text-[12px] text-[#0b1c30] focus:ring-0 placeholder:text-[#727687]" placeholder="设备ID/SN"/>
+</div>
+<div class="flex items-center border border-[#c2c6d8]/50 rounded-md bg-[#f8f9ff] focus-within:border-primary h-8 px-2 w-[110px]">
+<span class="material-symbols-outlined text-[14px] text-[#424656] mr-1">person</span>
+<input class="border-0 bg-transparent p-0 w-full text-[12px] text-[#0b1c30] focus:ring-0 placeholder:text-[#727687]" placeholder="申请人"/>
+</div>
+<span class="filter-divider"></span>
+<div class="flex items-center gap-1">
+<span class="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-medium cursor-pointer hover:bg-primary/20">今天</span>
+<span class="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-medium cursor-pointer hover:bg-primary/20">近7天</span>
+<span class="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-primary text-white text-[10px] font-medium cursor-pointer">近30天</span>
+<span class="flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-medium cursor-pointer hover:bg-primary/20">近90天</span>
+<div class="flex items-center border border-[#c2c6d8]/50 rounded-md bg-[#f8f9ff] h-8 px-2 w-[100px]"><input class="border-0 bg-transparent p-0 w-full text-[12px] text-[#0b1c30] focus:ring-0" placeholder="开始" type="text"/></div>
+<span class="text-[#424656] text-[11px]">~</span>
+<div class="flex items-center border border-[#c2c6d8]/50 rounded-md bg-[#f8f9ff] h-8 px-2 w-[100px]"><input class="border-0 bg-transparent p-0 w-full text-[12px] text-[#0b1c30] focus:ring-0" placeholder="结束" type="text"/></div>
+</div>
+<button class="h-8 px-3 bg-primary text-white rounded-md text-[11px] font-medium hover:bg-primary/90 flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">search</span>搜索</button>
+<button class="h-8 px-3 bg-white text-primary border border-primary/30 rounded-md text-[11px] font-medium hover:bg-[#eff4ff] flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">close</span>重置</button>
+<button class="h-8 px-3 bg-white text-primary border border-primary/30 rounded-md text-[11px] font-medium hover:bg-[#eff4ff] flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">download</span>导出</button>
+</div>
+</div>
+<!-- Table -->
+<div class="bg-white rounded-lg shadow-sm border border-[#c2c6d8]/30 flex-1 flex flex-col min-h-0">
+<div class="table-scroll-wrap">
+<table class="w-full text-left" style="font-size:13px;table-layout:fixed;border-collapse:separate;border-spacing:0;">
+<thead>
+<tr class="border-b border-[#c2c6d8]/40">
+<th class="sticky-left sticky-left-0 py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[145px]">申请编号</th>
+<th class="sticky-left sticky-left-1 py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[105px]">授权类型</th>
+<th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[90px]">申请平台</th>
+<th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap">产品线/方案</th>
+<th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[120px]">版本号</th>
+<th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap">客户名称</th>
+<th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[140px]">设备ID</th>
+<th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[75px]">区域</th>
+<th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[210px]">授权有效期</th>
+<th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[80px]">申请人</th>
+<th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[140px]">申请时间</th>
+<th class="sticky-right py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[270px]"><div class="flex items-center justify-between"><span>审批状态</span><span>操作</span></div></th>
+</tr>
+</thead>
+<tbody>
+<![CDATA[
+]]>
+<!-- Row 1 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260701-001</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">HCI</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">HCI-6.8.1-VKEY</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="深圳市腾讯计算机系统有限公司" title="深圳市腾讯计算机系统有限公司">深圳市腾讯计算机系统有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-amber-100 text-amber-800 border border-amber-200">KA</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-2024-HCI-001</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">上海区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-01 ~ 2026-09-29</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">张三</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-01 10:30</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已授权</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">复制</span><span class="px-2 py-0.5 bg-primary text-white rounded text-[10px] font-medium cursor-pointer hover:bg-primary/90">续期</span></div></div></td>
+</tr>
+
+<!-- Row 2 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260702-015</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">XaaS</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">XaaS平台</td>
+
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">SaaS-XDR</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">XDR-2.1.0</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="阿里巴巴(中国)有限公司" title="阿里巴巴(中国)有限公司">阿里巴巴(中国)有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-amber-100 text-amber-800 border border-amber-200">KA</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">3个设备</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">深圳区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-02 ~ 2026-10-01</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">李四</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-02 14:20</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-blue-50 text-blue-700 border border-blue-200"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>待审批</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">审核</span><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">撤销</span></div></div></td>
+</tr>
+
+<!-- Row 3 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260703-022</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">NGAF</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">NGAF-8.0.15</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="华为技术有限公司" title="华为技术有限公司">华为技术有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-amber-100 text-amber-800 border border-amber-200">KA</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-2024-NGAF-003</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">北京区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-03 ~ 2026-10-01</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">王五</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-03 09:15</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-amber-50 text-amber-700 border border-amber-200"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>审批中</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span></div></div></td>
+</tr>
+
+<!-- Row 4 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260704-028</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">SIP</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SIP-3.0.5</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="中国南方电网有限责任公司" title="中国南方电网有限责任公司">中国南方电网有限责任公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-SIP-001</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">广州区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-04 ~ 2026-10-02</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">周九</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-04 16:00</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-violet-50 text-violet-700 border border-violet-200"><span class="w-1.5 h-1.5 rounded-full bg-violet-500"></span>已通过</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span></div></div></td>
+</tr>
+
+<!-- Row 5 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260628-033</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">AD</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">AD-7.0.8</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="北京百度网讯科技有限公司" title="北京百度网讯科技有限公司">北京百度网讯科技有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-2024-AD-007</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">广州区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2025-07-01 ~ 2026-01-01</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">赵六</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-28 16:40</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-gray-100 text-gray-500 border border-gray-200"><span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>已过期</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="px-2 py-0.5 bg-primary text-white rounded text-[10px] font-medium cursor-pointer hover:bg-primary/90">续期</span></div></div></td>
+</tr>
+<!-- Solution 1 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors solution-parent">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-1"><button class="text-[#424656] hover:text-primary" onclick="toggleSolution(this)"><span class="material-symbols-outlined text-[16px] expand-icon">chevron_right</span></button><a class="text-primary hover:underline font-medium" href="javascript:;">SOL-20260701-001</a></div></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-50 text-amber-700 border border-amber-200">解决方案</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">企业云一体化方案</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="中国工商银行股份有限公司" title="中国工商银行股份有限公司">中国工商银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-amber-100 text-amber-800 border border-amber-200">KA</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">5个设备</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">杭州区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-01 ~ 2026-12-28</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">钱七</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-01 11:00</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已授权</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">复制</span><span class="px-2 py-0.5 bg-primary text-white rounded text-[10px] font-medium cursor-pointer hover:bg-primary/90">续期</span></div></div></td>
+</tr>
+
+<!-- Solution 1 Expand -->
+<tr class="solution-detail-row" style="display:none;">
+<td colspan="11" class="p-0 bg-[#f8f9ff]" style="border-top:2px solid #e5eeff;">
+<div style="padding:6px 12px 10px;"><div class="solution-expand-wrap">
+<div class="bg-white rounded border border-[#c2c6d8]/20 overflow-hidden" style="font-size:11.5px;">
+<table class="w-full">
+<thead><tr class="border-b border-[#c2c6d8]/30 bg-[#e8eeff]"><th class="py-2 px-3 text-[10.5px] font-medium text-[#424656] uppercase">产品线</th><th class="py-2 px-3 text-[10.5px] font-medium text-[#424656] uppercase">版本号</th><th class="py-2 px-3 text-[10.5px] font-medium text-[#424656] uppercase">设备ID</th><th class="py-2 px-3 text-[10.5px] font-medium text-[#424656] uppercase">设备SN</th><th class="py-2 px-3 text-[10.5px] font-medium text-[#424656] uppercase">区域</th><th class="py-2 px-3 text-[10.5px] font-medium text-[#424656] uppercase">授权有效期</th><th class="py-2 px-3 text-[10.5px] font-medium text-[#424656] uppercase">授权码</th></tr></thead>
+<tbody>
+<tr class="hover:bg-[#eef4ff]"><td class="py-2 px-3">HCI</td><td class="py-2 px-3">HCI-6.8.1-VKEY</td><td class="py-2 px-3">GW-HCI-001</td><td class="py-2 px-3">SN-HCI-001</td><td class="py-2 px-3">上海区</td><td class="py-2 px-3">2026-07-01~2026-12-28</td><td class="py-2 px-3">LIC-HCI-001</td></tr>
+<tr class="hover:bg-[#eef4ff]"><td class="py-2 px-3">AC</td><td class="py-2 px-3">AC-13.0.3</td><td class="py-2 px-3">GW-AC-005</td><td class="py-2 px-3">SN-AC-005</td><td class="py-2 px-3">上海区</td><td class="py-2 px-3">2026-07-01~2026-12-28</td><td class="py-2 px-3">LIC-AC-005</td></tr>
+<tr class="hover:bg-[#eef4ff]"><td class="py-2 px-3">NGAF</td><td class="py-2 px-3">NGAF-8.0.15</td><td class="py-2 px-3">GW-NGAF-003</td><td class="py-2 px-3">SN-NGAF-003</td><td class="py-2 px-3">上海区</td><td class="py-2 px-3">2026-07-01~2026-12-28</td><td class="py-2 px-3">LIC-NGAF-003</td></tr>
+<tr class="hover:bg-[#eef4ff]"><td class="py-2 px-3">AD</td><td class="py-2 px-3">AD-7.0.8</td><td class="py-2 px-3">GW-AD-002</td><td class="py-2 px-3">SN-AD-002</td><td class="py-2 px-3">上海区</td><td class="py-2 px-3">2026-07-01~2026-12-28</td><td class="py-2 px-3">LIC-AD-002</td></tr>
+<tr class="hover:bg-[#eef4ff]"><td class="py-2 px-3">WOC</td><td class="py-2 px-3">WOC-8.0.5</td><td class="py-2 px-3">GW-WOC-001</td><td class="py-2 px-3">SN-WOC-001</td><td class="py-2 px-3">上海区</td><td class="py-2 px-3">2026-07-01~2026-12-28</td><td class="py-2 px-3">LIC-WOC-001</td></tr>
+</tbody></table></div></div></div></td>
+</tr>
+
+<!-- Solution 2 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors solution-parent">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-1"><button class="text-[#424656] hover:text-primary" onclick="toggleSolution(this)"><span class="material-symbols-outlined text-[16px] expand-icon">chevron_right</span></button><a class="text-primary hover:underline font-medium" href="javascript:;">SOL-20260704-002</a></div></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-50 text-amber-700 border border-amber-200">解决方案</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">安全态势感知方案</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="中国建设银行股份有限公司" title="中国建设银行股份有限公司">中国建设银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">3个设备</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">北京区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-04 ~ 2026-10-02</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">孙八</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-04 15:30</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-red-50 text-error border border-error/20"><span class="w-1.5 h-1.5 rounded-full bg-error"></span>已驳回</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">重新提交</span></div></div></td>
+</tr>
+
+<!-- Row 8: WAF -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260630-041</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">WAF</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">WAF-7.0.5</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="中国石油天然气集团有限公司" title="中国石油天然气集团有限公司">中国石油天然气集团有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-amber-100 text-amber-800 border border-amber-200">KA</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-WAF-012</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">北京区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-30 ~ 2026-09-28</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">陈十</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-30 09:00</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已授权</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">复制</span><span class="px-2 py-0.5 bg-primary text-white rounded text-[10px] font-medium cursor-pointer hover:bg-primary/90">续期</span></div></div></td>
+</tr>
+<!-- Row 9: SASE-GA -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260629-050</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">XaaS</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">XaaS平台</td>
+
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">SASE-GA</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SASE-3.0.1</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="京东集团股份有限公司" title="京东集团股份有限公司">京东集团股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2个设备</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">华南区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-29 ~ 2026-09-27</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">刘十一</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-29 14:00</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已授权</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">复制</span><span class="px-2 py-0.5 bg-primary text-white rounded text-[10px] font-medium cursor-pointer hover:bg-primary/90">续期</span></div></div></td>
+</tr>
+
+<!-- Row 10: EDR -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260705-061</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">EDR</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">EDR-3.5.0</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="浙江大学信息技术中心" title="浙江大学信息技术中心">浙江大学信息技术中心</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-EDR-008</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">杭州区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-05 ~ 2026-10-03</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">吴十二</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-05 08:30</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-blue-50 text-blue-700 border border-blue-200"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>待审批</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span></div></div></td>
+</tr>
+
+<!-- Row 11 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="已过期">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260725-111</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">AC</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">AC-13.0.3</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="长沙银行股份有限公司" title="长沙银行股份有限公司">长沙银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-AC-100</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">华中区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-25 ~ 2027-02-05</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">黄伟</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-25 17:26</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-gray-100 text-gray-500 border border-gray-200"><span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>已过期</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="px-2 py-0.5 bg-primary text-white rounded text-[10px] font-medium cursor-pointer hover:bg-primary/90">续期</span></div></div></td>
+</tr>
+<!-- Row 12 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="已授权">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260707-112</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">EDR</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">EDR-3.5.0</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="兴业银行股份有限公司" title="兴业银行股份有限公司">兴业银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-EDR-101</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">西北区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-07 ~ 2027-03-02</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">张磊</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-07 09:42</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已授权</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">复制</span><span class="px-2 py-0.5 bg-primary text-white rounded text-[10px] font-medium cursor-pointer hover:bg-primary/90">续期</span></div></div></td>
+</tr>
+<!-- Row 13 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="已过期">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260630-113</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">许可证平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">BBC</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">BBC-4.1.0</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="上海银行股份有限公司" title="上海银行股份有限公司">上海银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-BBC-102</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">杭州区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-30 ~ 2027-01-23</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">徐亮</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-30 16:06</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-gray-100 text-gray-500 border border-gray-200"><span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>已过期</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="px-2 py-0.5 bg-primary text-white rounded text-[10px] font-medium cursor-pointer hover:bg-primary/90">续期</span></div></div></td>
+</tr>
+<!-- Row 14 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="已过期">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260702-114</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">HCI</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">HCI-6.8.1-VKEY</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="南京银行股份有限公司" title="南京银行股份有限公司">南京银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-HCI-103</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">武汉区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-02 ~ 2027-06-23</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">胡波</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-02 12:07</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-gray-100 text-gray-500 border border-gray-200"><span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>已过期</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="px-2 py-0.5 bg-primary text-white rounded text-[10px] font-medium cursor-pointer hover:bg-primary/90">续期</span></div></div></td>
+</tr>
+<!-- Row 15 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="待审批">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260724-115</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">许可证平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">SSL</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SSL-7.1.3</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="成都银行股份有限公司" title="成都银行股份有限公司">成都银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-SSL-104</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">成都区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-24 ~ 2026-11-22</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">王强</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-24 16:48</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-blue-50 text-blue-700 border border-blue-200"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>待审批</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">审核</span><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">撤销</span></div></div></td>
+</tr>
+<!-- Row 16 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="已驳回">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260602-116</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">许可证平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">WOC</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">WOC-8.0.5</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="上海浦东发展银行" title="上海浦东发展银行">上海浦东发展银行</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-WOC-105</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">西南区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-02 ~ 2027-02-20</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">徐亮</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-02 16:36</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-red-50 text-error border border-error/20"><span class="w-1.5 h-1.5 rounded-full bg-error"></span>已驳回</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">重新提交</span></div></div></td>
+</tr>
+<!-- Row 17 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="已通过">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260624-117</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">WOC</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">WOC-8.0.5</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="中信银行股份有限公司" title="中信银行股份有限公司">中信银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-amber-100 text-amber-800 border-amber-200">KA</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-WOC-106</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">重庆区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-24 ~ 2026-11-12</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">何雪</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-24 14:12</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-violet-50 text-violet-700 border border-violet-200"><span class="w-1.5 h-1.5 rounded-full bg-violet-500"></span>已通过</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span></div></div></td>
+</tr>
+<!-- Row 18 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="待审批">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260621-118</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">STA</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">STA-2.0.1</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="成都银行股份有限公司" title="成都银行股份有限公司">成都银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-STA-107</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">上海区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-21 ~ 2026-09-30</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">王强</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-21 15:20</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-blue-50 text-blue-700 border border-blue-200"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>待审批</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">审核</span><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">撤销</span></div></div></td>
+</tr>
+<!-- Row 19 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="已驳回">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260722-119</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">NDR</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">NDR-2.1.0</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="中国农业银行股份有限公司" title="中国农业银行股份有限公司">中国农业银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-NDR-108</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">上海区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-22 ~ 2027-01-15</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">朱红</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-22 09:18</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-red-50 text-error border border-error/20"><span class="w-1.5 h-1.5 rounded-full bg-error"></span>已驳回</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">重新提交</span></div></div></td>
+</tr>
+<!-- Row 20 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="已授权">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260730-120</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">aTrust</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">aTrust-6.0.0</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="武汉农村商业银行" title="武汉农村商业银行">武汉农村商业银行</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-aTrust-109</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">天津区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-30 ~ 2027-01-05</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">李华</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-30 11:32</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已授权</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">复制</span><span class="px-2 py-0.5 bg-primary text-white rounded text-[10px] font-medium cursor-pointer hover:bg-primary/90">续期</span></div></div></td>
+</tr>
+<!-- Row 21 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="已通过">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260610-121</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">aTrust</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">aTrust-6.0.0</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="南京银行股份有限公司" title="南京银行股份有限公司">南京银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-aTrust-110</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">东北区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-10 ~ 2027-02-25</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">赵敏</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-10 10:25</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-violet-50 text-violet-700 border border-violet-200"><span class="w-1.5 h-1.5 rounded-full bg-violet-500"></span>已通过</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span></div></div></td>
+</tr>
+<!-- Row 22 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="已过期">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260710-122</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">NGAF</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">NGAF-8.0.15</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="上海农村商业银行" title="上海农村商业银行">上海农村商业银行</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-NGAF-111</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">西南区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-10 ~ 2027-02-19</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">朱红</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-10 14:42</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-gray-100 text-gray-500 border border-gray-200"><span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>已过期</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="px-2 py-0.5 bg-primary text-white rounded text-[10px] font-medium cursor-pointer hover:bg-primary/90">续期</span></div></div></td>
+</tr>
+<!-- Row 23 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="待审批">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260701-123</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">许可证平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">HCI</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">HCI-6.8.1-VKEY</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="郑州银行股份有限公司" title="郑州银行股份有限公司">郑州银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-HCI-112</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">华中区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-01 ~ 2026-12-04</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">朱红</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-01 16:12</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-blue-50 text-blue-700 border border-blue-200"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>待审批</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">审核</span><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">撤销</span></div></div></td>
+</tr>
+<!-- Row 24 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="已过期">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260705-124</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">XaaS平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">AD</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">AD-7.0.8</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="郑州银行股份有限公司" title="郑州银行股份有限公司">郑州银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-AD-113</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">杭州区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-05 ~ 2026-09-16</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">李华</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-05 15:52</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-gray-100 text-gray-500 border border-gray-200"><span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>已过期</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="px-2 py-0.5 bg-primary text-white rounded text-[10px] font-medium cursor-pointer hover:bg-primary/90">续期</span></div></div></td>
+</tr>
+<!-- Row 25 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="待审批">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260726-125</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">STA</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">STA-2.0.1</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="中国铁路工程集团有限公司" title="中国铁路工程集团有限公司">中国铁路工程集团有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-STA-114</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">武汉区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-26 ~ 2027-03-20</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">何雪</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-26 16:32</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-blue-50 text-blue-700 border border-blue-200"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>待审批</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">审核</span><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">撤销</span></div></div></td>
+</tr>
+<!-- Row 26 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="已驳回">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260621-126</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">许可证平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">SSL</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SSL-7.1.3</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="中国光大银行股份有限公司" title="中国光大银行股份有限公司">中国光大银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-SSL-115</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">南京区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-21 ~ 2026-10-30</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">郭明</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-21 08:38</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-red-50 text-error border border-error/20"><span class="w-1.5 h-1.5 rounded-full bg-error"></span>已驳回</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">重新提交</span></div></div></td>
+</tr>
+<!-- Row 27 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="已过期">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260728-127</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">SCP</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SCP-3.0.0</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="北京农村商业银行" title="北京农村商业银行">北京农村商业银行</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-SCP-116</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">上海区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-28 ~ 2027-04-10</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">陈静</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-28 16:53</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-gray-100 text-gray-500 border border-gray-200"><span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>已过期</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="px-2 py-0.5 bg-primary text-white rounded text-[10px] font-medium cursor-pointer hover:bg-primary/90">续期</span></div></div></td>
+</tr>
+<!-- Row 28 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="已过期">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260715-128</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">AC</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">AC-13.0.3</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="北京银行股份有限公司" title="北京银行股份有限公司">北京银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-AC-117</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">重庆区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-15 ~ 2027-02-05</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">林峰</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-15 10:38</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-gray-100 text-gray-500 border border-gray-200"><span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>已过期</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="px-2 py-0.5 bg-primary text-white rounded text-[10px] font-medium cursor-pointer hover:bg-primary/90">续期</span></div></div></td>
+</tr>
+<!-- Row 29 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="已通过">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260612-129</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">BBC</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">BBC-4.1.0</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="成都农村商业银行" title="成都农村商业银行">成都农村商业银行</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-BBC-118</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">华南区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-12 ~ 2026-09-27</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">胡波</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-12 15:52</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-violet-50 text-violet-700 border border-violet-200"><span class="w-1.5 h-1.5 rounded-full bg-violet-500"></span>已通过</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span></div></div></td>
+</tr>
+<!-- Row 30 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="已授权">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260618-130</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">BBC</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">BBC-4.1.0</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="中国民生银行股份有限公司" title="中国民生银行股份有限公司">中国民生银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-BBC-119</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">北京区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-18 ~ 2026-09-20</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">胡波</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-18 11:52</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已授权</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">复制</span><span class="px-2 py-0.5 bg-primary text-white rounded text-[10px] font-medium cursor-pointer hover:bg-primary/90">续期</span></div></div></td>
+</tr>
+<!-- Row 31 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="已驳回">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260705-131</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">许可证平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">WOC</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">WOC-8.0.5</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="中国邮政集团公司" title="中国邮政集团公司">中国邮政集团公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-WOC-120</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">长沙区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-05 ~ 2026-08-08</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">何雪</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-05 12:40</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-red-50 text-error border border-error/20"><span class="w-1.5 h-1.5 rounded-full bg-error"></span>已驳回</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">重新提交</span></div></div></td>
+</tr>
+<!-- Row 32 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="已授权">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260616-132</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">HCI</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">HCI-6.8.1-VKEY</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="武汉农村商业银行" title="武汉农村商业银行">武汉农村商业银行</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-HCI-121</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">华北区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-16 ~ 2027-02-10</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">高远</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-16 10:36</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已授权</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">复制</span><span class="px-2 py-0.5 bg-primary text-white rounded text-[10px] font-medium cursor-pointer hover:bg-primary/90">续期</span></div></div></td>
+</tr>
+<!-- Row 33 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="已过期">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260629-133</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">HCI</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">HCI-6.8.1-VKEY</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="厦门国际银行" title="厦门国际银行">厦门国际银行</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-HCI-122</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">上海区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-29 ~ 2027-04-04</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">林峰</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-29 14:26</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-gray-100 text-gray-500 border border-gray-200"><span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>已过期</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="px-2 py-0.5 bg-primary text-white rounded text-[10px] font-medium cursor-pointer hover:bg-primary/90">续期</span></div></div></td>
+</tr>
+<!-- Row 34 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="已授权">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260609-134</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">XaaS平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">Logger</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">LOG-3.0.0</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="上海银行股份有限公司" title="上海银行股份有限公司">上海银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-Logger-123</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">华中区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-09 ~ 2027-01-23</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">徐亮</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-09 16:54</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已授权</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">复制</span><span class="px-2 py-0.5 bg-primary text-white rounded text-[10px] font-medium cursor-pointer hover:bg-primary/90">续期</span></div></div></td>
+</tr>
+<!-- Row 35 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="已驳回">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260612-135</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">AD</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">AD-7.0.8</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="中国铁路工程集团有限公司" title="中国铁路工程集团有限公司">中国铁路工程集团有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-AD-124</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">上海区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-12 ~ 2027-02-03</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">高远</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-12 10:09</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-red-50 text-error border border-error/20"><span class="w-1.5 h-1.5 rounded-full bg-error"></span>已驳回</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">重新提交</span></div></div></td>
+</tr>
+<!-- Row 36 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="已过期">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260618-136</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">EDR</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">EDR-3.5.0</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="重庆银行股份有限公司" title="重庆银行股份有限公司">重庆银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-EDR-125</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">重庆区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-18 ~ 2027-03-22</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">陈静</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-18 15:36</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-gray-100 text-gray-500 border border-gray-200"><span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>已过期</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="px-2 py-0.5 bg-primary text-white rounded text-[10px] font-medium cursor-pointer hover:bg-primary/90">续期</span></div></div></td>
+</tr>
+<!-- Row 37 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="审批中">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260711-137</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">SSL</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SSL-7.1.3</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="武汉农村商业银行" title="武汉农村商业银行">武汉农村商业银行</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-SSL-126</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">上海区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-11 ~ 2027-04-15</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">吴婷</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-11 15:23</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-amber-50 text-amber-700 border border-amber-200"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>审批中</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span></div></div></td>
+</tr>
+<!-- Row 38 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="已驳回">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260727-138</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">许可证平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">BBC</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">BBC-4.1.0</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="重庆银行股份有限公司" title="重庆银行股份有限公司">重庆银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-BBC-127</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">华中区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-27 ~ 2027-06-30</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">何雪</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-27 09:16</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-red-50 text-error border border-error/20"><span class="w-1.5 h-1.5 rounded-full bg-error"></span>已驳回</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">重新提交</span></div></div></td>
+</tr>
+<!-- Row 39 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="已通过">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260705-139</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">NDR</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">NDR-2.1.0</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="重庆农村商业银行" title="重庆农村商业银行">重庆农村商业银行</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-NDR-128</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">西南区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-05 ~ 2026-12-06</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">何雪</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-05 13:29</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-violet-50 text-violet-700 border border-violet-200"><span class="w-1.5 h-1.5 rounded-full bg-violet-500"></span>已通过</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span></div></div></td>
+</tr>
+<!-- Row 40 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="已驳回">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260721-140</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">许可证平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">NGAF</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">NGAF-8.0.15</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="中国光大银行股份有限公司" title="中国光大银行股份有限公司">中国光大银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-NGAF-129</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">杭州区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-21 ~ 2027-05-01</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">杨帆</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-21 17:23</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-red-50 text-error border border-error/20"><span class="w-1.5 h-1.5 rounded-full bg-error"></span>已驳回</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">重新提交</span></div></div></td>
+</tr>
+<!-- Row 41 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="已过期">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260722-141</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">NGAF</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">NGAF-8.0.15</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="广发银行股份有限公司" title="广发银行股份有限公司">广发银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-NGAF-130</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">天津区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-22 ~ 2027-04-03</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">林峰</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-22 10:56</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-gray-100 text-gray-500 border border-gray-200"><span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>已过期</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="px-2 py-0.5 bg-primary text-white rounded text-[10px] font-medium cursor-pointer hover:bg-primary/90">续期</span></div></div></td>
+</tr>
+<!-- Row 42 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="已通过">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260618-142</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">SIP</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SIP-3.0.5</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="上海浦东发展银行" title="上海浦东发展银行">上海浦东发展银行</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-SIP-131</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">西北区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-18 ~ 2027-04-18</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">孙丽</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-18 08:12</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-violet-50 text-violet-700 border border-violet-200"><span class="w-1.5 h-1.5 rounded-full bg-violet-500"></span>已通过</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span></div></div></td>
+</tr>
+<!-- Row 43 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="待审批">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260721-143</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">WOC</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">WOC-8.0.5</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="招商银行股份有限公司" title="招商银行股份有限公司">招商银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-amber-100 text-amber-800 border-amber-200">KA</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-WOC-132</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">杭州区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-21 ~ 2027-03-04</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">黄伟</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-21 16:11</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-blue-50 text-blue-700 border border-blue-200"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>待审批</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">审核</span><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">撤销</span></div></div></td>
+</tr>
+<!-- Row 44 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="已过期">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260729-144</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">HCI</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">HCI-6.8.1-VKEY</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="中国铁路工程集团有限公司" title="中国铁路工程集团有限公司">中国铁路工程集团有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-HCI-133</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">重庆区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-29 ~ 2027-04-27</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">刘洋</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-29 09:07</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-gray-100 text-gray-500 border border-gray-200"><span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>已过期</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="px-2 py-0.5 bg-primary text-white rounded text-[10px] font-medium cursor-pointer hover:bg-primary/90">续期</span></div></div></td>
+</tr>
+<!-- Row 45 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="已授权">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260720-145</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">HCI</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">HCI-6.8.1-VKEY</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="天津滨海农村商业银行" title="天津滨海农村商业银行">天津滨海农村商业银行</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-HCI-134</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">东北区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-20 ~ 2026-12-06</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">何雪</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-20 10:56</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已授权</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">复制</span><span class="px-2 py-0.5 bg-primary text-white rounded text-[10px] font-medium cursor-pointer hover:bg-primary/90">续期</span></div></div></td>
+</tr>
+<!-- Row 46 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="已驳回">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260614-146</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">许可证平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">HCI</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">HCI-6.8.1-VKEY</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="中国移动通信集团" title="中国移动通信集团">中国移动通信集团</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-amber-100 text-amber-800 border-amber-200">KA</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-HCI-135</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">成都区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-14 ~ 2027-02-15</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">高远</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-14 14:01</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-red-50 text-error border border-error/20"><span class="w-1.5 h-1.5 rounded-full bg-error"></span>已驳回</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">重新提交</span></div></div></td>
+</tr>
+<!-- Row 47 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="已过期">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260623-147</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">aBDI</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">aBDI-3.0.0</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="中国民生银行股份有限公司" title="中国民生银行股份有限公司">中国民生银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-aBDI-136</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">北京区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-23 ~ 2027-04-22</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">李华</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-23 12:48</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-gray-100 text-gray-500 border border-gray-200"><span class="w-1.5 h-1.5 rounded-full bg-gray-400"></span>已过期</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="px-2 py-0.5 bg-primary text-white rounded text-[10px] font-medium cursor-pointer hover:bg-primary/90">续期</span></div></div></td>
+</tr>
+<!-- Row 48 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="已驳回">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260614-148</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">Logger</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">LOG-3.0.0</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="南京银行股份有限公司" title="南京银行股份有限公司">南京银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-Logger-137</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">长沙区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-14 ~ 2027-02-16</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">罗琳</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-14 08:19</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-red-50 text-error border border-error/20"><span class="w-1.5 h-1.5 rounded-full bg-error"></span>已驳回</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">重新提交</span></div></div></td>
+</tr>
+<!-- Row 49 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="审批中">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260629-149</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">STA</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">STA-2.0.1</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="北京银行股份有限公司" title="北京银行股份有限公司">北京银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-STA-138</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">西安区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-29 ~ 2026-10-30</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">张磊</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-29 10:08</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-amber-50 text-amber-700 border border-amber-200"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>审批中</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span></div></div></td>
+</tr>
+<!-- Row 50 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="已授权">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260602-150</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">aBDI</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">aBDI-3.0.0</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="兴业银行股份有限公司" title="兴业银行股份有限公司">兴业银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-aBDI-139</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">深圳区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-02 ~ 2027-05-27</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">郭明</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-02 14:08</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已授权</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">复制</span><span class="px-2 py-0.5 bg-primary text-white rounded text-[10px] font-medium cursor-pointer hover:bg-primary/90">续期</span></div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<!-- Pagination -->
+<div class="px-3 py-2 border border-[#c2c6d8]/30 rounded-lg flex items-center justify-between bg-white text-[12px] shrink-0">
+<div class="flex items-center gap-3">
+<span class="text-[#424656]" id="paginationInfo">显示第 1 到 10 条，共 51 条</span>
+<div class="flex items-center gap-1">
+<select class="border border-[#c2c6d8]/50 rounded text-[11px] h-6 px-1 bg-white text-[#424656]" id="pageSizeSelect">
+<option value="10" selected>10条/页</option>
+<option value="20">20条/页</option>
+<option value="50">50条/页</option>
+<option value="100">100条/页</option>
+</select>
+</div>
+</div>
+<div class="flex items-center gap-0.5" id="pageBtnContainer">
+<span class="w-6 h-6 flex items-center justify-center rounded border border-[#c2c6d8]/50 text-[#424656] cursor-pointer hover:bg-surface-container" id="prevPage"><span class="material-symbols-outlined text-[14px]">chevron_left</span></span>
+<span class="px-1 text-[#424656] text-[11px]" id="pageDots">...</span>
+<span class="w-6 h-6 flex items-center justify-center rounded border border-[#c2c6d8]/50 text-[#424656] cursor-pointer hover:bg-surface-container" id="nextPage"><span class="material-symbols-outlined text-[14px]">chevron_right</span></span>
+<span class="ml-2 text-[#424656] text-[11px]">前往 <input class="w-10 h-6 border border-[#c2c6d8]/50 rounded text-center text-[11px]" type="text" value="1" id="gotoInput" onkeydown="if(event.key==='Enter')gotoPage(parseInt(this.value))"/> 页</span>
+</div>
+</div>
+</div>
+
+<footer class="text-center py-2 text-[#424656]/60 text-[11px] shrink-0">Copyright @2018 深信服科技股份有限公司 版权所有</footer>
+</div>
+</main>
+                </div>
+
     <div class="module-nav" id="moduleNav">
         <div class="module-nav-title">模块导航</div>
         <div class="module-nav-item enabled active" data-target="section-basic">基本信息</div>
@@ -2196,6 +3173,10 @@
             contentXaas.style.display = (tabName === 'xaas') ? 'block' : 'none';
             // 切换右侧模块导航
             moduleNav.style.display = (tabName === 'hardware') ? 'block' : 'none';
+            // 切换授权记录显示
+            var contentRec = document.getElementById('content-records');
+            if (contentRec) contentRec.style.display = (tabName === 'records') ? 'block' : 'none';
+
             // 更新左侧导航高亮
             document.querySelectorAll('#navBar ul li').forEach(function(li) {
                 li.classList.remove('layui-this');
@@ -4075,7 +5056,39 @@
             }, 50);
         });
     });
-    </script>
+        // 用户头像下拉菜单
+    function toggleUserDropdown() {
+        var menu = document.getElementById('userDropdownMenu');
+        var btn = document.querySelector('#userDropdown .header-user');
+        if (menu) menu.classList.toggle('show');
+        if (btn) btn.classList.toggle('open');
+    }
+    function handleLogout() {
+        alert('退出登录');
+    }
+    document.addEventListener('click', function(e) {
+        var dropdown = document.getElementById('userDropdown');
+        if (dropdown && !dropdown.contains(e.target)) {
+            var menu = document.getElementById('userDropdownMenu');
+            if (menu) menu.classList.remove('show');
+            var btn = document.querySelector('#userDropdown .header-user');
+            if (btn) btn.classList.remove('open');
+        }
+    });
+    // 移动端侧边栏切换
+    function toggleMobileSidebar() {
+        var side = document.querySelector('.layui-side');
+        var overlay = document.getElementById('sidebarOverlay');
+        if (side) side.classList.toggle('open');
+        if (overlay) overlay.classList.toggle('show');
+    }
+    function closeMobileSidebar() {
+        var side = document.querySelector('.layui-side');
+        var overlay = document.getElementById('sidebarOverlay');
+        if (side) side.classList.remove('open');
+        if (overlay) overlay.classList.remove('show');
+    }
+</script>
 </body>
 </html>
 
