@@ -2359,6 +2359,9 @@
             }, 2500);
         }
 
+        // 保存当前手机号查到的全量账号列表，用于切换云图账号时保持下拉框选项完整
+        var _xaasCurrentPhoneAccounts = [];
+
         var mockXaasPhoneLookup = {
             '1717717': { mcodes: ['C100001'], contactName: '马化腾' },
             '17177170000': { mcodes: ['C100001'], contactName: '马化腾' },
@@ -2371,7 +2374,9 @@
 
         var mockCloudAccounts = {
             'C100001': [
-                { phone: '13800138000', realName: '马化腾', tenantId: '10010010', masterAccount: 'user123', enterpriseName: '腾讯科技', masterContact: '马化腾' },
+                { phone: '13800138000', realName: '马化腾', tenantId: '10010010', masterAccount: 'user123', enterpriseName: '腾讯科技', masterContact: '马化腾' }
+            ],
+            'C100002': [
                 { phone: '13912345678', realName: '张勇', tenantId: '20020019', masterAccount: 'test@example.com', enterpriseName: '阿里巴巴', masterContact: '张勇' }
             ],
             'C100010': [
@@ -2390,7 +2395,7 @@
         var mockXaasPhoneToAccounts = {
             '1717717': { accounts: [], contactName: '马化腾' },
             '17177170000': { accounts: [], contactName: '马化腾' },
-            '13800138000': { accounts: ['C100001'] },
+            '13800138000': { accounts: ['C100001', 'C100002'] },
             '13900139000': { accounts: ['C100004'] },
             '13700137000': { accounts: [] },
             '13600000000': { accounts: ['C100001', 'C100010'] },
@@ -2588,17 +2593,17 @@
             return customers.find(function(c) { return c.id === id; }) || null;
         }
 
-        function loadCloudAccounts(customerId) {
+        function loadCloudAccounts(customerId, explicitAccounts) {
             var item = document.getElementById('xaasCloudAccountItem');
             var nativeSelect = document.getElementById('xaas-cloud-account');
             if (!item || !nativeSelect) return;
             // 保存当前选中值，防止重建 innerHTML 后丢失
             var prevValue = nativeSelect.value;
-            var accounts = (customerId && mockCloudAccounts[customerId]) || [];
+            var accounts = explicitAccounts || ((customerId && mockCloudAccounts[customerId]) || []);
             // 更新原生select选项（带data属性）
             var optsHtml = '<option value="">请选择云图账号</option>';
             for (var i = 0; i < accounts.length; i++) {
-                optsHtml += '<option value="' + accounts[i].phone + '" data-customer-id="' + (customerId||'') + '" data-tenant-id="' + (accounts[i].tenantId||'') + '" data-master-account="' + (accounts[i].masterAccount||'') + '" data-enterprise-name="' + (accounts[i].enterpriseName||'') + '" data-master-contact="' + (accounts[i].masterContact||'') + '" data-real-name="' + (accounts[i].realName||'') + '">' + accounts[i].phone + '（' + accounts[i].realName + '）</option>';
+                optsHtml += '<option value="' + accounts[i].phone + '" data-customer-id="' + (accounts[i].cid||customerId||'') + '" data-tenant-id="' + (accounts[i].tenantId||'') + '" data-master-account="' + (accounts[i].masterAccount||'') + '" data-enterprise-name="' + (accounts[i].enterpriseName||'') + '" data-master-contact="' + (accounts[i].masterContact||'') + '" data-real-name="' + (accounts[i].realName||'') + '">' + accounts[i].phone + '（' + accounts[i].realName + '）</option>';
             }
             nativeSelect.innerHTML = optsHtml;
             // 恢复之前选中的值
@@ -3606,6 +3611,7 @@ function updateXaasFamilyCounts() {
                 var contactName = document.getElementById('xaas-contact-name');
                 if (contactName && !contactName.value.trim() && result.contactName) contactName.value = result.contactName;
                 var accounts = result.accounts || [];
+                _xaasCurrentPhoneAccounts = accounts;
                 
                 if (accounts.length === 0) {
                     hideCloudAccountFields();
@@ -3670,6 +3676,10 @@ function updateXaasFamilyCounts() {
                         if (matchedCustomers.length > 0) {
                             var c = matchedCustomers[0];
                             setXaasCustomer(c.name, c.id, c.type, c.sales, true);
+                            // 恢复全量账号列表，保持下拉框选项完整
+                            if (_xaasCurrentPhoneAccounts.length > 1) {
+                                loadCloudAccounts(null, _xaasCurrentPhoneAccounts);
+                            }
                             var hint = document.getElementById('xaas-phone-hint');
                             if (hint) hint.textContent = '已选择云图账号，客户名称已自动匹配。';
                         } else {
