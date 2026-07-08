@@ -224,21 +224,20 @@
         [data-select-id="xaas-cloud-account"] { max-width: 480px; }
         [data-select-id="xaas-cloud-account"] .custom-select-dropdown { min-width: 460px; width: auto; max-width: 560px; }
         /* 云图账号选项卡片式布局 */
-        .cloud-account-option { padding: 10px 14px !important; cursor: pointer; transition: background 0.15s; border-bottom: 1px solid #f0f2f5; }
+        .cloud-account-option { padding: 12px 16px !important; cursor: pointer; transition: all 0.15s; border-bottom: 1px solid #f0f2f5; position: relative; }
         .cloud-account-option:last-child { border-bottom: none; }
-        .cloud-account-option:hover { background: #eff4ff; }
-        .cloud-account-option.selected { background: #e5eeff; }
-        .cloud-account-option-head { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
-        .cloud-account-option-phone { font-size: 14px; font-weight: 600; color: #1a1a2e; }
-        .cloud-account-option-name { font-size: 13px; color: #424656; }
-        .cloud-account-option-meta { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 12px; color: #8b92a5; line-height: 1.6; }
-        .cloud-account-option-meta .meta-item { display: inline-flex; align-items: center; gap: 3px; }
-        .cloud-account-option-meta .meta-label { color: #b8bfcc; }
-        .cloud-account-option-meta .meta-value { color: #424656; font-weight: 500; }
-        .cloud-account-trigger-display { display: flex; flex-direction: column; gap: 2px; line-height: 1.4; }
+        .cloud-account-option:hover { background: #f5f9ff; }
+        .cloud-account-option.selected { background: linear-gradient(90deg, #eef4ff 0%, #e5eeff 100%); border-left: 3px solid #0050cb; padding-left: 13px !important; }
+        .cloud-account-option.selected::after { content: '✓'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #0050cb; font-size: 16px; font-weight: 700; }
+        .cloud-account-option-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; font-size: 12px; color: #8b92a5; line-height: 1.5; padding-right: 24px; }
+        .cloud-account-option-meta .meta-item { display: inline-flex; align-items: center; gap: 5px; min-width: 0; }
+        .cloud-account-option-meta .meta-label { color: #b8bfcc; flex-shrink: 0; }
+        .cloud-account-option-meta .meta-value { color: #424656; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .meta-icon { font-size: 13px; color: #b8bfcc; flex-shrink: 0; }
         .cloud-account-trigger-main { font-size: 14px; color: #1a1a2e; font-weight: 500; }
         .cloud-account-trigger-sub { font-size: 12px; color: #8b92a5; }
         [data-select-id="xaas-cloud-account"] .custom-select-value { display: flex; flex-direction: column; gap: 2px; line-height: 1.4; }
+        [data-select-id="xaas-cloud-account"] .custom-select-dropdown { min-width: 460px; width: auto; max-width: 560px; }
 
         /* 统一授权日期栏 */
         .unified-date-bar { display: flex; align-items: center; gap: 12px; background: #eff4ff; border: none; border-radius: 10px; padding: 14px 18px; margin-bottom: 15px; margin-left: 15px; margin-right: 20px; max-width: 900px; margin-left: auto; margin-right: auto; }
@@ -1693,7 +1692,6 @@
                                     </button>
                                     <div class="custom-select-dropdown">
                                         <ul class="custom-select-list">
-                                            <li class="custom-select-option selected" data-value="">请选择云图账号</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -2373,19 +2371,19 @@
 
         var mockCloudAccounts = {
             'C100001': [
-                { phone: '13800138000', realName: '马化腾', tenantId: 'tenant-001', tenantName: '腾讯科技', masterAccount: '13800138000', masterContact: '马化腾' },
-                { phone: '13912345678', realName: '张勇', tenantId: 'tenant-002', tenantName: '阿里巴巴', masterAccount: '13912345678', masterContact: '张勇' }
+                { phone: '13800138000', realName: '马化腾', tenantId: '10010010', tenantName: 'user123', masterAccount: '13800138000', masterContact: '马化腾' },
+                { phone: '13912345678', realName: '张勇', tenantId: '20020019', tenantName: 'test@example.com', masterAccount: '13912345678', masterContact: '张勇' }
             ],
             'C100010': [
-                { phone: '13612345678', realName: '王磊', tenantId: 'tenant-010', tenantName: '字节跳动', masterAccount: '13612345678', masterContact: '王磊' },
-                { phone: '13798765432', realName: '陈静', tenantId: 'tenant-011', tenantName: '字节跳动-飞书', masterAccount: '13798765432', masterContact: '陈静' },
-                { phone: '13511112222', realName: '赵岩', tenantId: 'tenant-012', tenantName: '字节跳动-TikTok', masterAccount: '13511112222', masterContact: '赵岩' }
+                { phone: '13612345678', realName: '王磊', tenantId: '30032121', tenantName: '13800138000', masterAccount: '13612345678', masterContact: '王磊' },
+                { phone: '13798765432', realName: '陈静', tenantId: '40040040', tenantName: 'user456', masterAccount: '13798765432', masterContact: '陈静' },
+                { phone: '13511112222', realName: '赵岩', tenantId: '50050055', tenantName: 'admin@bytedance.com', masterAccount: '13511112222', masterContact: '赵岩' }
             ],
             'C100004': [
-                { phone: '13900139000', realName: '李四', tenantId: 'tenant-004', tenantName: '百度科技', masterAccount: '13900139000', masterContact: '李四' }
+                { phone: '13900139000', realName: '李四', tenantId: '60060060', tenantName: 'user789', masterAccount: '13900139000', masterContact: '李四' }
             ],
             'C100003': [
-                { phone: '13200001111', realName: '任正非', tenantId: 'tenant-003', tenantName: '华为技术', masterAccount: '13200001111', masterContact: '任正非' }
+                { phone: '13200001111', realName: '任正非', tenantId: '70070077', tenantName: '13900139000', masterAccount: '13200001111', masterContact: '任正非' }
             ]
         };
 
@@ -2594,23 +2592,34 @@
             var item = document.getElementById('xaasCloudAccountItem');
             var nativeSelect = document.getElementById('xaas-cloud-account');
             if (!item || !nativeSelect) return;
+            // 保存当前选中值，防止重建 innerHTML 后丢失
+            var prevValue = nativeSelect.value;
             var accounts = (customerId && mockCloudAccounts[customerId]) || [];
-            // 更新原生select选项
+            // 更新原生select选项（带data属性）
             var optsHtml = '<option value="">请选择云图账号</option>';
             for (var i = 0; i < accounts.length; i++) {
-                optsHtml += '<option value="' + accounts[i].phone + '">' + accounts[i].phone + '（' + accounts[i].realName + '）</option>';
+                optsHtml += '<option value="' + accounts[i].phone + '" data-tenant-id="' + (accounts[i].tenantId||'') + '" data-tenant-name="' + (accounts[i].tenantName||'') + '" data-master-account="' + (accounts[i].masterAccount||'') + '" data-master-contact="' + (accounts[i].masterContact||'') + '" data-real-name="' + (accounts[i].realName||'') + '">' + accounts[i].phone + '（' + accounts[i].realName + '）</option>';
             }
             nativeSelect.innerHTML = optsHtml;
+            // 恢复之前选中的值
+            if (prevValue) nativeSelect.value = prevValue;
             // 同步自定义下拉框UI
             var valueSpan = item.querySelector('.custom-select-trigger .custom-select-value');
             var container = item.querySelector('.custom-select');
-            var list = item.querySelector('.custom-select-list');
-            if (valueSpan) { valueSpan.textContent = '请选择云图账号'; valueSpan.classList.remove('has-value'); }
+            var list = container ? container.querySelector('.custom-select-list') : null;
+            if (valueSpan) { valueSpan.innerHTML = '<span class="cloud-account-trigger-main">请选择云图账号</span>'; valueSpan.classList.remove('has-value'); }
             if (list) {
-                var lisHtml = '<li class="custom-select-option selected" data-value="">请选择云图账号</li>';
+                var lisHtml = '';
                 for (var j = 0; j < accounts.length; j++) {
-                    var display = accounts[j].phone + '（' + accounts[j].realName + '）';
-                    lisHtml += '<li class="custom-select-option" data-value="' + accounts[j].phone + '">' + display + '</li>';
+                    var a = accounts[j];
+                    lisHtml += '<li class="custom-select-option cloud-account-option" data-value="' + a.phone + '" data-tenant-id="' + (a.tenantId||'') + '" data-tenant-name="' + (a.tenantName||'') + '" data-master-account="' + (a.masterAccount||'') + '" data-master-contact="' + (a.masterContact||'') + '" data-real-name="' + (a.realName||'') + '">'
+                        + '<div class="cloud-account-option-meta">'
+                        + '<span class="meta-item"><span class="material-symbols-outlined meta-icon">domain</span><span class="meta-label">租户ID</span><span class="meta-value">' + a.tenantId + '</span></span>'
+                        + '<span class="meta-item"><span class="material-symbols-outlined meta-icon">apartment</span><span class="meta-label">租户名</span><span class="meta-value">' + a.tenantName + '</span></span>'
+                        + '<span class="meta-item"><span class="material-symbols-outlined meta-icon">account_circle</span><span class="meta-label">主账号</span><span class="meta-value">' + a.masterAccount + '</span></span>'
+                        + '<span class="meta-item"><span class="material-symbols-outlined meta-icon">contact_page</span><span class="meta-label">联系人</span><span class="meta-value">' + a.masterContact + '</span></span>'
+                        + '</div>'
+                        + '</li>';
                 }
                 list.innerHTML = lisHtml;
             }
@@ -2620,9 +2629,8 @@
                 container._resetToDefault = function() {
                     var opts = list.querySelectorAll('.custom-select-option');
                     opts.forEach(function(opt) { opt.classList.remove('selected'); });
-                    opts[0].classList.add('selected');
-                    if (valueSpan) { valueSpan.textContent = opts[0].textContent; valueSpan.classList.remove('has-value'); }
-                    if (nativeSelect) nativeSelect.value = opts[0].dataset.value;
+                    if (valueSpan) { valueSpan.innerHTML = '<span class="cloud-account-trigger-main">请选择云图账号</span>'; valueSpan.classList.remove('has-value'); }
+                    if (nativeSelect) nativeSelect.value = '';
                 };
                 container._setValue = function(val) {
                     var opts = list.querySelectorAll('.custom-select-option');
@@ -2631,7 +2639,15 @@
                     if (target) {
                         opts.forEach(function(opt) { opt.classList.remove('selected'); });
                         target.classList.add('selected');
-                        if (valueSpan) { valueSpan.textContent = target.textContent; if (val) valueSpan.classList.add('has-value'); else valueSpan.classList.remove('has-value'); }
+                        if (valueSpan) {
+                            if (val) {
+                                valueSpan.innerHTML = '<span class="cloud-account-trigger-main">' + (target.dataset.realName||'') + ' · ' + val + '</span><span class="cloud-account-trigger-sub">' + (target.dataset.tenantName||'') + ' · ' + (target.dataset.tenantId||'') + '</span>';
+                                valueSpan.classList.add('has-value');
+                            } else {
+                                valueSpan.innerHTML = '<span class="cloud-account-trigger-main">请选择云图账号</span>';
+                                valueSpan.classList.remove('has-value');
+                            }
+                        }
                         if (nativeSelect) nativeSelect.value = val;
                     }
                 };
@@ -2642,7 +2658,15 @@
                         var opts = list.querySelectorAll('.custom-select-option');
                         opts.forEach(function(opt) { opt.classList.remove('selected'); });
                         this.classList.add('selected');
-                        if (valueSpan) { valueSpan.textContent = this.textContent; if (this.dataset.value) valueSpan.classList.add('has-value'); else valueSpan.classList.remove('has-value'); }
+                        if (valueSpan) {
+                            if (this.dataset.value) {
+                                valueSpan.innerHTML = '<span class="cloud-account-trigger-main">' + (this.dataset.realName||'') + ' · ' + this.dataset.value + '</span><span class="cloud-account-trigger-sub">' + (this.dataset.tenantName||'') + ' · ' + (this.dataset.tenantId||'') + '</span>';
+                                valueSpan.classList.add('has-value');
+                            } else {
+                                valueSpan.innerHTML = '<span class="cloud-account-trigger-main">请选择云图账号</span>';
+                                valueSpan.classList.remove('has-value');
+                            }
+                        }
                         if (nativeSelect) { nativeSelect.value = this.dataset.value; nativeSelect.dispatchEvent(new Event('change', { bubbles: true })); }
                         container.classList.remove('open');
                     });
@@ -2650,6 +2674,14 @@
             }
             // 多个账号时显示，单个或无账号时隐藏
             item.classList.toggle('show', accounts.length > 1);
+            // 如果已有选中值，恢复 trigger 显示
+            if (nativeSelect.value && valueSpan) {
+                var sel = nativeSelect.options[nativeSelect.selectedIndex];
+                if (sel) {
+                    valueSpan.innerHTML = '<span class="cloud-account-trigger-main">' + (sel.dataset.realName||'') + ' · ' + sel.value + '</span><span class="cloud-account-trigger-sub">' + (sel.dataset.tenantName||'') + ' · ' + (sel.dataset.tenantId||'') + '</span>';
+                    valueSpan.classList.add('has-value');
+                }
+            }
         }
 
         function resolveCustomersByMcodes(mcodes) {
@@ -2717,19 +2749,15 @@
             
             var valueSpan = item.querySelector('.custom-select-trigger .custom-select-value');
             if (valueSpan) { valueSpan.innerHTML = '<span class="cloud-account-trigger-main">请选择云图账号</span>'; valueSpan.classList.remove('has-value'); }
-            var lisHtml = '<li class="custom-select-option selected cloud-account-option" data-value="">请选择云图账号</li>';
+            var lisHtml = '';
             for (var j = 0; j < accounts.length; j++) {
                 var a = accounts[j];
                 lisHtml += '<li class="custom-select-option cloud-account-option" data-value="' + a.phone + '" data-tenant-id="' + (a.tenantId||'') + '" data-tenant-name="' + (a.tenantName||'') + '" data-master-account="' + (a.masterAccount||'') + '" data-master-contact="' + (a.masterContact||'') + '" data-real-name="' + (a.realName||'') + '">'
-                    + '<div class="cloud-account-option-head">'
-                    + '<span class="cloud-account-option-phone">' + a.phone + '</span>'
-                    + '<span class="cloud-account-option-name">' + a.realName + '</span>'
-                    + '</div>'
                     + '<div class="cloud-account-option-meta">'
-                    + '<span class="meta-item"><span class="meta-label">租户ID:</span><span class="meta-value">' + a.tenantId + '</span></span>'
-                    + '<span class="meta-item"><span class="meta-label">租户名:</span><span class="meta-value">' + a.tenantName + '</span></span>'
-                    + '<span class="meta-item"><span class="meta-label">主账号:</span><span class="meta-value">' + a.masterAccount + '</span></span>'
-                    + '<span class="meta-item"><span class="meta-label">联系人:</span><span class="meta-value">' + a.masterContact + '</span></span>'
+                    + '<span class="meta-item"><span class="material-symbols-outlined meta-icon">domain</span><span class="meta-label">租户ID</span><span class="meta-value">' + a.tenantId + '</span></span>'
+                    + '<span class="meta-item"><span class="material-symbols-outlined meta-icon">apartment</span><span class="meta-label">租户名</span><span class="meta-value">' + a.tenantName + '</span></span>'
+                    + '<span class="meta-item"><span class="material-symbols-outlined meta-icon">account_circle</span><span class="meta-label">主账号</span><span class="meta-value">' + a.masterAccount + '</span></span>'
+                    + '<span class="meta-item"><span class="material-symbols-outlined meta-icon">contact_page</span><span class="meta-label">联系人</span><span class="meta-value">' + a.masterContact + '</span></span>'
                     + '</div>'
                     + '</li>';
             }
@@ -3632,7 +3660,7 @@ function updateXaasFamilyCounts() {
                         phone: selectedOption.value,
                         realName: selectedOption.dataset.realName || ''
                     };
-                    // 选中后在 trigger 显示结构化信息
+                    // 选中后在 trigger 显示信息
                     if (trigger) trigger.innerHTML = '<span class="cloud-account-trigger-main">' + account.realName + ' · ' + account.phone + '</span><span class="cloud-account-trigger-sub">' + account.tenantName + ' · ' + account.tenantId + '</span>';
                     
                     var cid = findCustomerIdByPhone(account.phone);
