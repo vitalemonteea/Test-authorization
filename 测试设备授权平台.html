@@ -2371,19 +2371,19 @@
 
         var mockCloudAccounts = {
             'C100001': [
-                { phone: '13800138000', realName: '马化腾', tenantId: '10010010', tenantName: 'user123', masterAccount: '腾讯科技', masterContact: '马化腾' },
-                { phone: '13912345678', realName: '张勇', tenantId: '20020019', tenantName: 'test@example.com', masterAccount: '阿里巴巴', masterContact: '张勇' }
+                { phone: '13800138000', realName: '马化腾', tenantId: '10010010', masterAccount: 'user123', enterpriseName: '腾讯科技', masterContact: '马化腾' },
+                { phone: '13912345678', realName: '张勇', tenantId: '20020019', masterAccount: 'test@example.com', enterpriseName: '阿里巴巴', masterContact: '张勇' }
             ],
             'C100010': [
-                { phone: '13612345678', realName: '王磊', tenantId: '30032121', tenantName: '13800138000', masterAccount: '字节跳动', masterContact: '王磊' },
-                { phone: '13798765432', realName: '陈静', tenantId: '40040040', tenantName: 'user456', masterAccount: '字节跳动-飞书', masterContact: '陈静' },
-                { phone: '13511112222', realName: '赵岩', tenantId: '50050055', tenantName: 'admin@bytedance.com', masterAccount: '字节跳动-TikTok', masterContact: '赵岩' }
+                { phone: '13612345678', realName: '王磊', tenantId: '30032121', masterAccount: '13800138000', enterpriseName: '字节跳动', masterContact: '王磊' },
+                { phone: '13798765432', realName: '陈静', tenantId: '40040040', masterAccount: 'user456', enterpriseName: '字节跳动-飞书', masterContact: '陈静' },
+                { phone: '13511112222', realName: '赵岩', tenantId: '50050055', masterAccount: 'admin@bytedance.com', enterpriseName: '字节跳动-TikTok', masterContact: '赵岩' }
             ],
             'C100004': [
-                { phone: '13900139000', realName: '李四', tenantId: '60060060', tenantName: 'user789', masterAccount: '百度科技', masterContact: '李四' }
+                { phone: '13900139000', realName: '李四', tenantId: '60060060', masterAccount: 'user789', enterpriseName: '百度科技', masterContact: '李四' }
             ],
             'C100003': [
-                { phone: '13200001111', realName: '任正非', tenantId: '70070077', tenantName: '13900139000', masterAccount: '华为技术', masterContact: '任正非' }
+                { phone: '13200001111', realName: '任正非', tenantId: '70070077', masterAccount: '13900139000', enterpriseName: '华为技术', masterContact: '任正非' }
             ]
         };
 
@@ -2598,7 +2598,7 @@
             // 更新原生select选项（带data属性）
             var optsHtml = '<option value="">请选择云图账号</option>';
             for (var i = 0; i < accounts.length; i++) {
-                optsHtml += '<option value="' + accounts[i].phone + '" data-tenant-id="' + (accounts[i].tenantId||'') + '" data-tenant-name="' + (accounts[i].tenantName||'') + '" data-master-account="' + (accounts[i].masterAccount||'') + '" data-master-contact="' + (accounts[i].masterContact||'') + '" data-real-name="' + (accounts[i].realName||'') + '">' + accounts[i].phone + '（' + accounts[i].realName + '）</option>';
+                optsHtml += '<option value="' + accounts[i].phone + '" data-tenant-id="' + (accounts[i].tenantId||'') + '" data-master-account="' + (accounts[i].masterAccount||'') + '" data-enterprise-name="' + (accounts[i].enterpriseName||'') + '" data-master-contact="' + (accounts[i].masterContact||'') + '" data-real-name="' + (accounts[i].realName||'') + '">' + accounts[i].phone + '（' + accounts[i].realName + '）</option>';
             }
             nativeSelect.innerHTML = optsHtml;
             // 恢复之前选中的值
@@ -2612,11 +2612,11 @@
                 var lisHtml = '';
                 for (var j = 0; j < accounts.length; j++) {
                     var a = accounts[j];
-                    lisHtml += '<li class="custom-select-option cloud-account-option" data-value="' + a.phone + '" data-tenant-id="' + (a.tenantId||'') + '" data-tenant-name="' + (a.tenantName||'') + '" data-master-account="' + (a.masterAccount||'') + '" data-master-contact="' + (a.masterContact||'') + '" data-real-name="' + (a.realName||'') + '">'
+                    lisHtml += '<li class="custom-select-option cloud-account-option" data-value="' + a.phone + '" data-tenant-id="' + (a.tenantId||'') + '" data-master-account="' + (a.masterAccount||'') + '" data-enterprise-name="' + (a.enterpriseName||'') + '" data-master-contact="' + (a.masterContact||'') + '" data-real-name="' + (a.realName||'') + '">'
                         + '<div class="cloud-account-option-meta">'
                         + '<span class="meta-item"><span class="material-symbols-outlined meta-icon">domain</span><span class="meta-label">云图ID</span><span class="meta-value">' + a.tenantId + '</span></span>'
-                        + '<span class="meta-item"><span class="material-symbols-outlined meta-icon">apartment</span><span class="meta-label">云图企业名称</span><span class="meta-value">' + a.masterAccount + '</span></span>'
-                        + '<span class="meta-item"><span class="material-symbols-outlined meta-icon">account_circle</span><span class="meta-label">主账号</span><span class="meta-value">' + a.tenantName + '</span></span>'
+                        + '<span class="meta-item"><span class="material-symbols-outlined meta-icon">apartment</span><span class="meta-label">云图企业名称</span><span class="meta-value">' + a.enterpriseName + '</span></span>'
+                        + '<span class="meta-item"><span class="material-symbols-outlined meta-icon">account_circle</span><span class="meta-label">主账号</span><span class="meta-value">' + a.masterAccount + '</span></span>'
                         + '<span class="meta-item"><span class="material-symbols-outlined meta-icon">contact_page</span><span class="meta-label">主账号联系人</span><span class="meta-value">' + a.masterContact + '</span></span>'
                         + '</div>'
                         + '</li>';
@@ -2641,7 +2641,7 @@
                         target.classList.add('selected');
                         if (valueSpan) {
                             if (val) {
-                                valueSpan.innerHTML = '<span class="cloud-account-trigger-main">' + (target.dataset.masterAccount||'') + '</span><span class="cloud-account-trigger-sub"> · ' + (target.dataset.tenantName||'') + '</span>';
+                                valueSpan.innerHTML = '<span class="cloud-account-trigger-main">' + (target.dataset.enterpriseName||'') + '</span><span class="cloud-account-trigger-sub"> · ' + (target.dataset.masterAccount||'') + '</span>';
                                 valueSpan.classList.add('has-value');
                             } else {
                                 valueSpan.innerHTML = '<span class="cloud-account-trigger-main">请选择云图账号</span>';
@@ -2660,7 +2660,7 @@
                         this.classList.add('selected');
                         if (valueSpan) {
                             if (this.dataset.value) {
-                                valueSpan.innerHTML = '<span class="cloud-account-trigger-main">' + (this.dataset.masterAccount||'') + '</span><span class="cloud-account-trigger-sub"> · ' + (this.dataset.tenantName||'') + '</span>';
+                                valueSpan.innerHTML = '<span class="cloud-account-trigger-main">' + (this.dataset.enterpriseName||'') + '</span><span class="cloud-account-trigger-sub"> · ' + (this.dataset.masterAccount||'') + '</span>';
                                 valueSpan.classList.add('has-value');
                             } else {
                                 valueSpan.innerHTML = '<span class="cloud-account-trigger-main">请选择云图账号</span>';
@@ -2678,7 +2678,7 @@
             if (nativeSelect.value && valueSpan) {
                 var sel = nativeSelect.options[nativeSelect.selectedIndex];
                 if (sel) {
-                    valueSpan.innerHTML = '<span class="cloud-account-trigger-main">' + (sel.dataset.masterAccount||'') + '</span><span class="cloud-account-trigger-sub"> · ' + (sel.dataset.tenantName||'') + '</span>';
+                    valueSpan.innerHTML = '<span class="cloud-account-trigger-main">' + (sel.dataset.enterpriseName||'') + '</span><span class="cloud-account-trigger-sub"> · ' + (sel.dataset.masterAccount||'') + '</span>';
                     valueSpan.classList.add('has-value');
                 }
             }
@@ -2743,7 +2743,7 @@
             
             var optsHtml = '<option value="">请选择云图账号</option>';
             for (var i = 0; i < accounts.length; i++) {
-                optsHtml += '<option value="' + accounts[i].phone + '" data-tenant-id="' + (accounts[i].tenantId||'') + '" data-tenant-name="' + (accounts[i].tenantName||'') + '" data-master-account="' + (accounts[i].masterAccount||'') + '" data-master-contact="' + (accounts[i].masterContact||'') + '" data-real-name="' + (accounts[i].realName||'') + '">' + accounts[i].phone + '（' + accounts[i].realName + '）</option>';
+                optsHtml += '<option value="' + accounts[i].phone + '" data-tenant-id="' + (accounts[i].tenantId||'') + '" data-master-account="' + (accounts[i].masterAccount||'') + '" data-enterprise-name="' + (accounts[i].enterpriseName||'') + '" data-master-contact="' + (accounts[i].masterContact||'') + '" data-real-name="' + (accounts[i].realName||'') + '">' + accounts[i].phone + '（' + accounts[i].realName + '）</option>';
             }
             nativeSelect.innerHTML = optsHtml;
             
@@ -2752,10 +2752,10 @@
             var lisHtml = '';
             for (var j = 0; j < accounts.length; j++) {
                 var a = accounts[j];
-                lisHtml += '<li class="custom-select-option cloud-account-option" data-value="' + a.phone + '" data-tenant-id="' + (a.tenantId||'') + '" data-tenant-name="' + (a.tenantName||'') + '" data-master-account="' + (a.masterAccount||'') + '" data-master-contact="' + (a.masterContact||'') + '" data-real-name="' + (a.realName||'') + '">'
+                lisHtml += '<li class="custom-select-option cloud-account-option" data-value="' + a.phone + '" data-tenant-id="' + (a.tenantId||'') + '" data-master-account="' + (a.masterAccount||'') + '" data-enterprise-name="' + (a.enterpriseName||'') + '" data-master-contact="' + (a.masterContact||'') + '" data-real-name="' + (a.realName||'') + '">'
                     + '<div class="cloud-account-option-meta">'
                     + '<span class="meta-item"><span class="material-symbols-outlined meta-icon">domain</span><span class="meta-label">租户ID</span><span class="meta-value">' + a.tenantId + '</span></span>'
-                    + '<span class="meta-item"><span class="material-symbols-outlined meta-icon">apartment</span><span class="meta-label">租户名</span><span class="meta-value">' + a.tenantName + '</span></span>'
+                    + '<span class="meta-item"><span class="material-symbols-outlined meta-icon">apartment</span><span class="meta-label">云图企业名称</span><span class="meta-value">' + a.enterpriseName + '</span></span>'
                     + '<span class="meta-item"><span class="material-symbols-outlined meta-icon">account_circle</span><span class="meta-label">主账号</span><span class="meta-value">' + a.masterAccount + '</span></span>'
                     + '<span class="meta-item"><span class="material-symbols-outlined meta-icon">contact_page</span><span class="meta-label">联系人</span><span class="meta-value">' + a.masterContact + '</span></span>'
                     + '</div>'
@@ -2771,7 +2771,7 @@
                     this.classList.add('selected');
                     if (valueSpan) {
                         if (this.dataset.value) {
-                            valueSpan.innerHTML = '<span class="cloud-account-trigger-main">' + this.dataset.masterAccount + '</span><span class="cloud-account-trigger-sub"> · ' + this.dataset.tenantName + '</span>';
+                            valueSpan.innerHTML = '<span class="cloud-account-trigger-main">' + this.dataset.enterpriseName + '</span><span class="cloud-account-trigger-sub"> · ' + this.dataset.masterAccount + '</span>';
                             valueSpan.classList.add('has-value');
                         } else {
                             valueSpan.innerHTML = '<span class="cloud-account-trigger-main">请选择云图账号</span>';
@@ -3654,14 +3654,14 @@ function updateXaasFamilyCounts() {
                 if (selectedOption && selectedOption.value) {
                     var account = {
                         tenantId: selectedOption.dataset.tenantId || '',
-                        tenantName: selectedOption.dataset.tenantName || '',
                         masterAccount: selectedOption.dataset.masterAccount || '',
+                        enterpriseName: selectedOption.dataset.enterpriseName || '',
                         masterContact: selectedOption.dataset.masterContact || '',
                         phone: selectedOption.value,
                         realName: selectedOption.dataset.realName || ''
                     };
                     // 选中后在 trigger 显示信息
-                    if (trigger) trigger.innerHTML = '<span class="cloud-account-trigger-main">' + account.masterAccount + '</span><span class="cloud-account-trigger-sub"> · ' + account.tenantName + '</span>';
+                    if (trigger) trigger.innerHTML = '<span class="cloud-account-trigger-main">' + account.enterpriseName + '</span><span class="cloud-account-trigger-sub"> · ' + account.masterAccount + '</span>';
                     
                     var cid = findCustomerIdByPhone(account.phone);
                     resetXaasSearchState();
