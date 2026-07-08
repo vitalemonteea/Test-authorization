@@ -2598,7 +2598,7 @@
             // 更新原生select选项（带data属性）
             var optsHtml = '<option value="">请选择云图账号</option>';
             for (var i = 0; i < accounts.length; i++) {
-                optsHtml += '<option value="' + accounts[i].phone + '" data-tenant-id="' + (accounts[i].tenantId||'') + '" data-master-account="' + (accounts[i].masterAccount||'') + '" data-enterprise-name="' + (accounts[i].enterpriseName||'') + '" data-master-contact="' + (accounts[i].masterContact||'') + '" data-real-name="' + (accounts[i].realName||'') + '">' + accounts[i].phone + '（' + accounts[i].realName + '）</option>';
+                optsHtml += '<option value="' + accounts[i].phone + '" data-customer-id="' + (customerId||'') + '" data-tenant-id="' + (accounts[i].tenantId||'') + '" data-master-account="' + (accounts[i].masterAccount||'') + '" data-enterprise-name="' + (accounts[i].enterpriseName||'') + '" data-master-contact="' + (accounts[i].masterContact||'') + '" data-real-name="' + (accounts[i].realName||'') + '">' + accounts[i].phone + '（' + accounts[i].realName + '）</option>';
             }
             nativeSelect.innerHTML = optsHtml;
             // 恢复之前选中的值
@@ -2706,7 +2706,7 @@
                     var accounts = mockCloudAccounts[cid] || [];
                     accounts.forEach(function(acc) {
                         if (!allAccounts.some(function(a) { return a.phone === acc.phone; })) {
-                            allAccounts.push(acc);
+                            allAccounts.push(Object.assign({}, acc, { cid: cid }));
                         }
                     });
                 });
@@ -2743,7 +2743,7 @@
             
             var optsHtml = '<option value="">请选择云图账号</option>';
             for (var i = 0; i < accounts.length; i++) {
-                optsHtml += '<option value="' + accounts[i].phone + '" data-tenant-id="' + (accounts[i].tenantId||'') + '" data-master-account="' + (accounts[i].masterAccount||'') + '" data-enterprise-name="' + (accounts[i].enterpriseName||'') + '" data-master-contact="' + (accounts[i].masterContact||'') + '" data-real-name="' + (accounts[i].realName||'') + '">' + accounts[i].phone + '（' + accounts[i].realName + '）</option>';
+                optsHtml += '<option value="' + accounts[i].phone + '" data-customer-id="' + (accounts[i].cid||'') + '" data-tenant-id="' + (accounts[i].tenantId||'') + '" data-master-account="' + (accounts[i].masterAccount||'') + '" data-enterprise-name="' + (accounts[i].enterpriseName||'') + '" data-master-contact="' + (accounts[i].masterContact||'') + '" data-real-name="' + (accounts[i].realName||'') + '">' + accounts[i].phone + '（' + accounts[i].realName + '）</option>';
             }
             nativeSelect.innerHTML = optsHtml;
             
@@ -3663,7 +3663,7 @@ function updateXaasFamilyCounts() {
                     // 选中后在 trigger 显示信息
                     if (trigger) trigger.innerHTML = '<span class="cloud-account-trigger-main">' + account.tenantId + '</span><span class="cloud-account-trigger-sub"> · ' + account.masterAccount + '</span>';
                     
-                    var cid = findCustomerIdByPhone(account.phone);
+                    var cid = selectedOption.dataset.customerId || findCustomerIdByPhone(account.phone);
                     resetXaasSearchState();
                     if (cid) {
                         var matchedCustomers = resolveCustomersByMcodes([cid]);
