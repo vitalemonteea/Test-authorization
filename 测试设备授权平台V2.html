@@ -811,9 +811,10 @@
                     <input type="hidden" id="renewalDeviceId" name="renewalDeviceId" value="">
                     <input type="hidden" id="renewalType" name="renewalType" value="">
 
-                    <div class="special-form-section">
+                    <div class="special-form-section basic-info-section">
                         <div class="section-title">基本信息</div>
                     <div id="section-basic">
+                    <div class="basic-two-col-row">
                     <!-- 产品线 -->
                     <div class="layui-form-item">
                         <label class="layui-form-label">产品线</label>
@@ -989,9 +990,10 @@
                             </div>
                         </div>
                     </div>
+                    </div>
 
                     <!-- 授权场景 -->
-                    <div class="layui-form-item">
+                    <div class="layui-form-item basic-full">
                         <label class="layui-form-label">授权场景</label>
                         <div class="layui-input-block">
                             <div class="custom-select" data-select-id="authScene">
@@ -1023,7 +1025,7 @@
                     </div>
 
                     <!-- 申请类型 -->
-                    <div class="layui-form-item">
+                    <div class="layui-form-item basic-full" id="planDevTypeFormItem">
                         <label class="layui-form-label">申请类型</label>
                         <div class="layui-input-block">
                             <div class="custom-select" data-select-id="planDevType">
@@ -1124,6 +1126,7 @@
                     </div>
 </div>
 
+                    <div class="basic-two-col-row">
                     <!-- 区域 -->
                     <div class="layui-form-item">
                         <label class="layui-form-label">区域</label>
@@ -1233,9 +1236,10 @@
                             </div>
                         </div>
                     </div>
+                    </div>
 
                     <!-- 接收邮箱 -->
-                    <div class="layui-form-item">
+                    <div class="layui-form-item basic-full">
                         <label class="layui-form-label">接收邮箱</label>
                         <div class="layui-input-block">
                             <input type="text" id="userEmail" name="userEmail" placeholder="请填写正确邮箱，以免邮件发送失败" class="layui-input">
@@ -1251,7 +1255,7 @@
                                 <div class="search-dropdown" id="customerDropdown"></div>
                             </div>
                             <div class="customer-info-display" id="customerInfoDisplay">
-                                客户名称：<span id="selectedCustomerName">-</span>
+                                客户名称：<span id="selectedCustomerName">-</span> <span id="selectedSales" class="sales-person-badge" style="display:none;"></span>
                                 <span style="margin-left:20px;">客户ID：<span id="selectedCustomerId">-</span></span>
                                 <span class="customer-type-badge" id="customerTypeBadge" style="display:none;"></span>
                             </div>
@@ -1259,7 +1263,7 @@
                     </div>
 
                     <!-- 设备SN（申请类型=硬件时显示） -->
-                    <div class="layui-form-item" id="devSnFormItem" style="display:none;">
+                    <div class="layui-form-item basic-full" id="devSnFormItem" style="display:none;">
                         <label class="layui-form-label">设备SN<span class="required-mark">*</span></label>
                         <div class="layui-input-block">
                             <input type="text" id="devSnNew" name="devSnNew" class="layui-input" placeholder="请输入设备序列号" value="">
@@ -1267,7 +1271,9 @@
                     </div>
 
                     <!-- 借测信息区域（value=1时显示） -->
-                    <div id="borrowTestFields" style="display:none;">
+                    <div id="borrowTestFields" class="basic-borrow-panel" style="display:none;">
+                    <div class="basic-borrow-title">借测信息</div>
+                    <div class="borrow-grid">
                     <div class="layui-form-item">
                         <label class="layui-form-label">借测单号<span class="required-mark">*</span></label>
                         <div class="layui-input-block">
@@ -1333,9 +1339,10 @@
                         </div>
                     </div>
                     </div>
+                    </div>
 
                     <!-- 设备ID -->
-                    <div class="layui-form-item" id="deviceIdFormItem">
+                    <div class="layui-form-item basic-full" id="deviceIdFormItem">
                         <label class="layui-form-label">设备ID</label>
                         <div class="layui-input-block">
                             <input type="text" id="devIdNew" name="devIdNew" class="layui-input" value="">
@@ -4925,21 +4932,21 @@
 
         // ===== 客户信息搜索 =====
         var customers = [
-            { name: '深圳市腾讯计算机系统有限公司', id: 'C100001', type: 'KA' },
-            { name: '阿里巴巴(中国)有限公司', id: 'C100002', type: 'KA' },
-            { name: '华为技术有限公司', id: 'C100003', type: 'KA' },
-            { name: '北京百度网讯科技有限公司', id: 'C100004', type: 'normal' },
-            { name: '杭州海康威视数字技术有限公司', id: 'C100005', type: 'normal' },
-            { name: '中国工商银行股份有限公司', id: 'C100006', type: 'KA' },
-            { name: '中国建设银行股份有限公司', id: 'C100007', type: 'normal' },
-            { name: '中国移动通信集团有限公司', id: 'C100008', type: 'KA' },
-            { name: '国家电网有限公司', id: 'C100009', type: 'KA' },
-            { name: '中国石油天然气集团有限公司', id: 'C100010', type: 'KA' },
-            { name: '京东集团股份有限公司', id: 'C100011', type: 'normal' },
-            { name: '广州市政府信息中心', id: 'C100012', type: 'normal' },
-            { name: '南方电网有限责任公司', id: 'C100013', type: 'normal' },
-            { name: '中兴通讯股份有限公司', id: 'C100014', type: 'normal' },
-            { name: '浙江大学信息技术中心', id: 'C100015', type: 'normal' }
+            { name: '深圳市腾讯计算机系统有限公司', id: 'C100001', type: 'KA', sales: '薛钊67911' },
+            { name: '阿里巴巴(中国)有限公司', id: 'C100002', type: 'KA', sales: '李伟58234' },
+            { name: '华为技术有限公司', id: 'C100003', type: 'KA', sales: '王芳34109' },
+            { name: '北京百度网讯科技有限公司', id: 'C100004', type: 'normal', sales: '张强21567' },
+            { name: '杭州海康威视数字技术有限公司', id: 'C100005', type: 'normal', sales: '刘洋12890' },
+            { name: '中国工商银行股份有限公司', id: 'C100006', type: 'KA', sales: '陈静45678' },
+            { name: '中国建设银行股份有限公司', id: 'C100007', type: 'normal', sales: '赵磊78901' },
+            { name: '中国移动通信集团有限公司', id: 'C100008', type: 'KA', sales: '周敏23456' },
+            { name: '国家电网有限公司', id: 'C100009', type: 'KA', sales: '吴刚89012' },
+            { name: '中国石油天然气集团有限公司', id: 'C100010', type: 'KA', sales: '孙丽34567' },
+            { name: '京东集团股份有限公司', id: 'C100011', type: 'normal', sales: '钱峰90123' },
+            { name: '广州市政府信息中心', id: 'C100012', type: 'normal', sales: '马超56789' },
+            { name: '南方电网有限责任公司', id: 'C100013', type: 'normal', sales: '黄蓉12340' },
+            { name: '中兴通讯股份有限公司', id: 'C100014', type: 'normal', sales: '林杰67890' },
+            { name: '浙江大学信息技术中心', id: 'C100015', type: 'normal', sales: '何琳43210' }
         ];
 
         // 云图账号模拟数据
@@ -5007,7 +5014,7 @@
                     var custType = c.type || 'normal';
                     var badgeClass = custType === 'KA' ? 'item-badge ka' : 'item-badge normal';
                     var badgeText = custType === 'KA' ? 'KA客户' : '普通客户';
-                    return '<div class="search-item" data-name="' + c.name + '" data-id="' + c.id + '" data-type="' + custType + '"><span class="item-left"><span class="item-name">' + c.name + '</span><span class="item-id">' + c.id + '</span></span><span class="' + badgeClass + '">' + badgeText + '</span></div>';
+                    return '<div class="search-item" data-name="' + c.name + '" data-id="' + c.id + '" data-type="' + custType + '" data-sales="' + (c.sales || '') + '"><span class="item-left"><span class="item-name">' + c.name + '</span><span class="item-id">' + c.id + '</span></span>' + (c.sales ? '<span class="sales-person-badge" style="margin-left:6px;">' + c.sales + '</span>' : '') + '<span class="' + badgeClass + '">' + badgeText + '</span></div>';
                 }).join('') + '<div class="search-item" style="cursor:default;border-top:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center;"><span style="color:#999;">没有找到需要的客户？</span><button type="button" class="hw-create-cust-item" style="background:#0050cb;color:#fff;border:none;border-radius:4px;padding:4px 12px;font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0;">+ 创建新客户</button></div>';
             }
             dropdown.classList.add('show');
@@ -5023,6 +5030,11 @@
                 searchInput.value = item.dataset.name;
                 nameSpan.textContent = item.dataset.name;
                 idSpan.textContent = item.dataset.id;
+                var salesBadge = document.getElementById('selectedSales');
+                if (salesBadge) {
+                    salesBadge.textContent = item.dataset.sales || '';
+                    salesBadge.style.display = item.dataset.sales ? 'inline-block' : 'none';
+                }
                 // 客户类别标识
                 var custType = item.dataset.type || 'normal';
                 var badge = document.getElementById('customerTypeBadge');
