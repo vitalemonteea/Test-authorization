@@ -1266,7 +1266,10 @@
                     <div class="layui-form-item basic-full" id="devSnFormItem" style="display:none;">
                         <label class="layui-form-label">设备SN<span class="required-mark">*</span></label>
                         <div class="layui-input-block">
-                            <input type="text" id="devSnNew" name="devSnNew" class="layui-input" placeholder="请输入设备序列号" value="">
+                            <div class="chip-input-container" id="snChipContainer">
+                                <input type="text" id="snChipInput" class="chip-input-field" placeholder="输入设备SN并回车添加..." autocomplete="off" onkeydown="if(event.keyCode===13){event.preventDefault();window.addSnChip(this.value);this.value='';return false}">
+                                <input type="hidden" id="devSnNew" name="devSnNew" value="">
+                            </div>
                         </div>
                     </div>
 
@@ -1345,7 +1348,10 @@
                     <div class="layui-form-item basic-full" id="deviceIdFormItem">
                         <label class="layui-form-label">设备ID</label>
                         <div class="layui-input-block">
-                            <input type="text" id="devIdNew" name="devIdNew" class="layui-input" value="">
+                            <div class="chip-input-container" id="chipContainer">
+                                <input type="text" id="chipInput" class="chip-input-field" placeholder="输入设备ID并回车添加..." autocomplete="off" onkeydown="if(event.keyCode===13){event.preventDefault();window.addChip(this.value);this.value='';return false}">
+                                <input type="hidden" id="devIdNew" name="devIdNew" value="">
+                            </div>
                         </div>
                     </div>
 
@@ -4108,7 +4114,7 @@
         function clearRenewalDetection() {
             renewalDeviceIdInput.value = '';
             renewalTypeInput.value = '';
-            if (devIdInput) devIdInput.value = '';
+            if (deviceIdChips) deviceIdChips.clear();
             renewalSummary.className = 'renewal-summary';
             renewalSummaryDevice.textContent = '-';
             renewalSummaryExpire.textContent = '-';
@@ -4126,7 +4132,7 @@
 
             renewalDeviceIdInput.value = options.deviceId;
             renewalTypeInput.value = isOverlimit ? 'overlimit' : 'normal';
-            if (devIdInput) devIdInput.value = options.deviceId;
+            if (deviceIdChips) { deviceIdChips.clear(); deviceIdChips.add(options.deviceId); }
 
             renewalSummaryTitle.textContent = options.sourceLabel + '识别完成';
             renewalSummaryStatus.textContent = typeText;
@@ -4160,8 +4166,7 @@
 
         // 重置借测字段
         function resetBorrowTestFields() {
-            var snInput = document.getElementById('devSnNew');
-            if (snInput) snInput.value = '';
+            if (deviceSnChips) deviceSnChips.clear();
             var btNoInput = document.getElementById('btNo');
             if (btNoInput) btNoInput.value = '';
             var btUserInput = document.getElementById('btUser');
@@ -4204,49 +4209,8 @@
             return null;
         }
 
-        (function() {
-            var devSnInput = document.getElementById('devSnNew');
-            if (!devSnInput) return;
-            devSnInput.addEventListener('blur', function() {
-                var sn = this.value.trim();
-                var planDevType = document.getElementById('planDevType').value;
-                var authScene = document.getElementById('authScene').value;
-
-                if (planDevType === '1') {
-                    // 申请类型=硬件：SN失焦自动关联借测数据
-                    if (!sn) {
-                        clearBtInputData();
-                        return;
-                    }
-                    var result = simulateFetchBtDataBySn(sn);
-                    if (result) {
-                        var btNoInput = document.getElementById('btNo');
-                        if (btNoInput) btNoInput.value = result.btNo;
-                        var btUserInput = document.getElementById('btUser');
-                        if (btUserInput) btUserInput.value = result.btUser;
-                        setCustomSelectValue('btStatus', result.btStatus);
-                        setCustomSelectValue('btType', result.btType);
-                    } else {
-                        clearBtInputData();
-                        var toast = document.getElementById('syncToast');
-                        if (toast) {
-                            toast.textContent = '\u26a0 \u672a\u627e\u5230\u8be5SN\u5bf9\u5e94\u7684\u501f\u6d4b\u4fe1\u606f\uff0c\u8bf7\u624b\u52a8\u586b\u5199';
-                            toast.style.background = '#ff9800';
-                            toast.style.display = 'block';
-                            setTimeout(function() { toast.style.display = 'none'; toast.style.background = '#4CAF50'; }, 3000);
-                        }
-                    }
-                } else if (authScene === '3') {
-                    // 授权场景=销售增开：SN失焦查阅销售授权记录
-                    if (!sn) {
-                        resetEaResult();
-                        return;
-                    }
-                    var authResult = simulateFetchExistingAuth(sn, 'sn');
-                    renderEaResult(authResult);
-                }
-            });
-        })();
+        // 注：设备SN 关联借测/销售增开授权记录的逻辑已迁移至 deviceSnChips 的 onAdd 回调中
+        // （见下方「设备ID / 设备SN Chip 输入 + HCI/SCP 模式」区块），单输入框 blur 事件不再适用。
 
 
         // ===== 已有授权展示区 - 模拟数据与查询逻辑 =====
@@ -4432,35 +4396,8 @@
 
         // ===== 申请类型切换（硬件/软件） =====
         planDevTypeSelect.addEventListener('change', function() {
-            var val = this.value;
-
-            // 先隐藏SN和借测字段
-            devSnFormItem.style.display = 'none';
-            borrowTestFields.style.display = 'none';
-
-            if (val === '1') {
-                // 新设备授权(硬件)：显示SN+借测+设备ID+硬件文件
-                devSnFormItem.style.display = 'flex';
-                borrowTestFields.style.display = 'grid';
-                deviceIdFormItem.style.display = 'flex';
-                toggleHwInfoSection(plnameSelect.value);
-                resetBorrowTestFields();
-                resetRenewalState();
-            } else if (val === '2') {
-                // 软件续期授权：隐藏SN+借测，显示设备ID+硬件文件
-                deviceIdFormItem.style.display = 'flex';
-                toggleHwInfoSection(plnameSelect.value);
-                resetBorrowTestFields();
-                resetRenewalState();
-            } else {
-                // 未选择
-                deviceIdFormItem.style.display = 'flex';
-                toggleHwInfoSection(plnameSelect.value);
-                resetBorrowTestFields();
-                resetRenewalState();
-            }
-            // 更新设备ID提示（与产品线联动）
-            updateDeviceIdHint(plnameSelect.value);
+            if (isHciMode) return; // HCI 模式由 applyPlMode 接管，避免重复处理（文档4.3）
+            updateHardwareFields();
         });
 
         // ===== 授权场景切换 =====
@@ -4773,17 +4710,17 @@
         };
 
         function updateDeviceIdHint(plValue) {
-            var devIdInput = document.getElementById('devIdNew');
-            if (!devIdInput) return;
+            var chipInputEl = document.getElementById('chipInput');
+            if (!chipInputEl) return;
             var config = plDeviceIdConfig[plValue] || plDeviceIdConfig['_default'];
             var planDevType = document.getElementById('planDevType').value;
             if (config.type === 'fixed') {
-                devIdInput.placeholder = config.hint;
+                chipInputEl.placeholder = config.hint;
             } else {
                 if (planDevType === '2') {
-                    devIdInput.placeholder = '请输入客户ID / KeyId / 客户名称';
+                    chipInputEl.placeholder = '请输入客户ID / KeyId / 客户名称';
                 } else {
-                    devIdInput.placeholder = '请输入设备ID 或 KeyId';
+                    chipInputEl.placeholder = '请输入设备ID 或 KeyId';
                 }
             }
         }
@@ -4890,25 +4827,227 @@
             document.querySelectorAll('.custom-select.open').forEach(function(cs) { cs.classList.remove('open'); });
         });
 
+        // ===== 设备ID / 设备SN Chip 输入 + HCI/SCP 模式（恢复 V1 联动） =====
+        function escapeHtml(str) { return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+        function createChipControl(container, input, defaultPlaceholder, onAdd, onChange) {
+            var values = [];
+            function render() {
+                container.querySelectorAll('.chip-item').forEach(function (el) { el.remove(); });
+                values.forEach(function (val) {
+                    var chip = document.createElement('span');
+                    chip.className = 'chip-item';
+                    chip.innerHTML = '<span>' + escapeHtml(val) + '</span><span class="chip-close" data-val="' + escapeHtml(val) + '">&times;</span>';
+                    container.insertBefore(chip, input);
+                    chip.querySelector('.chip-close').addEventListener('click', function () {
+                        remove(this.dataset.val);
+                    });
+                });
+                if (onChange) onChange(values.slice());
+            }
+            function add(val, options) {
+                val = (val || '').trim();
+                if (!val || values.indexOf(val) !== -1) return false;
+                values.push(val);
+                render();
+                input.value = '';
+                if (!options || !options.silent) onAdd(val);
+                return true;
+            }
+            function addMany(vals, options) {
+                (vals || []).forEach(function (val) { add(val, options); });
+            }
+            function remove(val) {
+                values = values.filter(function (v) { return v !== val; });
+                render();
+            }
+            function setFixed(vals) {
+                values = (vals || []).slice();
+                render();
+                input.disabled = true;
+                input.placeholder = '';
+                container.classList.add('is-fixed');
+            }
+            function clear() {
+                values = [];
+                render();
+                input.disabled = false;
+                input.placeholder = defaultPlaceholder;
+                container.classList.remove('is-fixed');
+            }
+            input.addEventListener('blur', function () {
+                var v = this.value.trim();
+                if (v) add(v);
+            });
+            container.addEventListener('click', function (e) {
+                if (!e.target.closest('.chip-item') && !input.disabled) input.focus();
+            });
+            return {
+                get: function () { return values.slice(); },
+                add: add,
+                addMany: addMany,
+                remove: remove,
+                setFixed: setFixed,
+                clear: clear,
+                focus: function () { input.focus(); }
+            };
+        }
+
+        function syncHiddenMirror(id, vals) {
+            var el = document.getElementById(id);
+            if (el) el.value = vals.join(',');
+        }
+
+        // V1 借测数据库（按设备ID/SN 含完整设备列表，用于 chip 级关联）
+        var mockBtDatabaseV1 = [
+            { btNo: 'BT20240615001', btUser: '张三', btStatus: '办事处借测', btType: 'POC测试',
+              devices: [ { id: 'DEV-45-AUTO-001', sn: 'SN-2024001-A' }, { id: 'DEV-45-AUTO-002', sn: 'SN-2024001-B' }, { id: 'DEV-45-AUTO-003', sn: 'SN-2024001-C' } ] },
+            { btNo: 'BT20240615002', btUser: '李四', btStatus: '渠道借测', btType: '项目测试',
+              devices: [ { id: 'DEV-NGAF-001', sn: 'SN-2024002-A' }, { id: 'DEV-NGAF-002', sn: 'SN-2024002-B' } ] },
+            { btNo: 'BT20240615003', btUser: '王五', btStatus: '自用测试', btType: '演示测试',
+              devices: [ { id: 'DEV-TEST-001', sn: 'SN-TEST-001' }, { id: 'DEV-TEST-002', sn: 'SN-TEST-002' } ] },
+            { btNo: 'BT20240615005', btUser: '孙七', btStatus: '渠道借测', btType: 'POC测试',
+              devices: [ { id: 'DEV-DEMO-001', sn: 'SN-DEMO-001' }, { id: 'DEV-DEMO-002', sn: 'SN-DEMO-002' }, { id: 'DEV-DEMO-003', sn: 'SN-DEMO-003' } ] }
+        ];
+
+        function simulateFetchBtDataByDevice(value, type) {
+            var keyword = (value || '').trim();
+            if (!keyword) return null;
+            for (var i = 0; i < mockBtDatabaseV1.length; i++) {
+                var entry = mockBtDatabaseV1[i];
+                for (var j = 0; j < entry.devices.length; j++) {
+                    var d = entry.devices[j];
+                    var target = type === 'id' ? d.id : d.sn;
+                    if (target === keyword || target.indexOf(keyword) === 0 || keyword.indexOf(target) === 0) return entry;
+                }
+            }
+            return null;
+        }
+
+        function showBorrowLookupMiss(type) {
+            var toast = document.getElementById('syncToast');
+            if (toast) {
+                toast.textContent = '⚠ 未找到该' + (type === 'id' ? '设备ID' : 'SN') + '对应的借测信息，请手动填写';
+                toast.style.background = '#ff9800';
+                toast.style.display = 'block';
+                setTimeout(function () { toast.style.display = 'none'; toast.style.background = '#4CAF50'; }, 3000);
+            }
+        }
+
+        function fillBorrowInfo(entry) {
+            var btNoInput = document.getElementById('btNo'); if (btNoInput) btNoInput.value = entry.btNo;
+            var btUserInput = document.getElementById('btUser'); if (btUserInput) btUserInput.value = entry.btUser;
+            setCustomSelectValue('btStatus', entry.btStatus);
+            setCustomSelectValue('btType', entry.btType);
+        }
+
+        function showBorrowConflict(existingBtNo, incomingBtNo) {
+            var toast = document.getElementById('syncToast');
+            if (toast) {
+                toast.textContent = '⚠ 当前设备属于多个借测单（' + existingBtNo + ' / ' + incomingBtNo + '），建议拆分申请';
+                toast.style.background = '#ff9800';
+                toast.style.display = 'block';
+                setTimeout(function () { toast.style.display = 'none'; toast.style.background = '#4CAF50'; }, 4000);
+            }
+        }
+
+        function syncBorrowInfoByDevice(value, type) {
+            if (isHciMode || planDevTypeSelect.value !== '1') return;
+            var entry = simulateFetchBtDataByDevice(value, type);
+            if (!entry) { showBorrowLookupMiss(type); return; }
+            var btNoInput = document.getElementById('btNo');
+            var currentBtNo = btNoInput ? btNoInput.value.trim() : '';
+            if (currentBtNo && currentBtNo !== entry.btNo) { showBorrowConflict(currentBtNo, entry.btNo); return; }
+            fillBorrowInfo(entry);
+            deviceIdChips.addMany(entry.devices.map(function (d) { return d.id; }), { silent: true });
+            deviceSnChips.addMany(entry.devices.map(function (d) { return d.sn; }), { silent: true });
+        }
+
+        var isHciMode = false;
+        var chipContainer = document.getElementById('chipContainer');
+        var chipInput = document.getElementById('chipInput');
+        var snChipContainer = document.getElementById('snChipContainer');
+        var snChipInput = document.getElementById('snChipInput');
+
+        var deviceIdChips = createChipControl(chipContainer, chipInput, '输入设备ID并回车添加...', function (val) {
+            syncBorrowInfoByDevice(val, 'id');
+        }, function (vals) { syncHiddenMirror('devIdNew', vals); });
+
+        var deviceSnChips = createChipControl(snChipContainer, snChipInput, '输入设备SN并回车添加...', function (val) {
+            syncBorrowInfoByDevice(val, 'sn');
+            // V2 兼容：销售增开场景(SN)查阅销售授权记录
+            var authScene = document.getElementById('authScene');
+            if (authScene && authScene.value === '3') {
+                var authResult = simulateFetchExistingAuth(val, 'sn');
+                renderEaResult(authResult);
+            }
+        }, function (vals) { syncHiddenMirror('devSnNew', vals); });
+
+        function getChips() { return deviceIdChips.get(); }
+        function getSnChips() { return deviceSnChips.get(); }
+        function setFixedChips(vals) { deviceIdChips.setFixed(vals); }
+        function clearChips() { deviceIdChips.clear(); }
+        window.addChip = function (v) { return deviceIdChips.add(v); };
+        window.addSnChip = function (v) { return deviceSnChips.add(v); };
+
+        function updateHardwareFields() {
+            var val = planDevTypeSelect.value;
+            devSnFormItem.style.display = 'none';
+            borrowTestFields.style.display = 'none';
+            if (val === '1') {
+                devSnFormItem.style.display = 'flex';
+                borrowTestFields.style.display = 'grid';
+                resetBorrowTestFields();
+                resetRenewalState();
+                toggleHwInfoSection(plnameSelect.value);
+            } else if (val === '2') {
+                toggleHwInfoSection(plnameSelect.value);
+                resetBorrowTestFields();
+                resetRenewalState();
+            } else {
+                toggleHwInfoSection(plnameSelect.value);
+                resetBorrowTestFields();
+                resetRenewalState();
+            }
+            updateDeviceIdHint(plnameSelect.value);
+        }
+
+        function applyPlMode() {
+            var isHci = (plnameSelect.value === '45' || plnameSelect.value === '19');
+            isHciMode = isHci;
+            if (isHci) {
+                planDevTypeFormItem.style.display = 'none';
+                devSnFormItem.style.display = 'none';
+                borrowTestFields.style.display = 'none';
+                hwInfoSection.style.display = 'flex';
+                setCustomSelectValue('planDevType', '1');
+                deviceIdChips.setFixed(['DEV-' + plnameSelect.value + '-AUTO-001']);
+                deviceSnChips.clear();
+            } else {
+                planDevTypeFormItem.style.display = '';
+                hwInfoSection.style.display = 'none';
+                deviceIdChips.clear();
+                deviceSnChips.clear();
+                clearHwFile();
+                setCustomSelectValue('planDevType', '');
+                updateHardwareFields();
+            }
+        }
+
         plnameSelect.addEventListener('change', function() {
             var plVal = this.value;
             // 切换产品线时重置下游字段
             setCustomSelectValue('authScene', '');
             setCustomSelectValue('planDevType', '');
-            // 隐藏条件字段
-            devSnFormItem.style.display = 'none';
-            borrowTestFields.style.display = 'none';
             existingAuthSection.classList.remove('show');
             existingAuthSection.style.display = 'none';
-            // 更新设备ID提示
-            updateDeviceIdHint(plVal);
+            // HCI/SCP 强制模式统一处理（隐藏申请类型、固定设备ID、控制硬件信息区）
+            applyPlMode();
             refreshModuleNav(plVal);
-            toggleHwInfoSection(plVal);
         });
-        // 初始化时根据默认产品线刷新导航、硬件信息区和设备ID提示
+        // 初始化时根据默认产品线应用 HCI 模式 + 刷新导航
+        applyPlMode();
         refreshModuleNav(plnameSelect.value);
-        toggleHwInfoSection(plnameSelect.value);
-        updateDeviceIdHint(plnameSelect.value);
 
         document.getElementById('formsn').addEventListener('reset', function() {
             setTimeout(function() {
@@ -5323,7 +5462,7 @@
                 alert('请填写设备SN');
                 return;
             }
-            if (devIdInput && devIdInput.offsetParent !== null && !devIdInput.value.trim()) {
+            if (devIdInput && deviceIdFormItem.offsetParent !== null && !devIdInput.value.trim()) {
                 alert('请填写设备ID');
                 return;
             }
@@ -5363,7 +5502,7 @@
         }
 
         // 公共校验：设备ID + 硬件文件
-        if (devIdInput && devIdInput.offsetParent !== null && !devIdInput.value.trim()) {
+        if (devIdInput && deviceIdFormItem.offsetParent !== null && !devIdInput.value.trim()) {
             alert('请填写设备ID');
             return;
         }
