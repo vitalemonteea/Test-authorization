@@ -714,10 +714,11 @@
         #content-records .solution-expand-wrap{border-radius:6px;background:#f0f5ff;margin:0 12px 0 44px;padding:10px 12px}
         #content-records .solution-detail-row td{position:static!important;z-index:auto;border-bottom:none!important}
         #content-records .cust-cell{display:flex;align-items:center;gap:8px;max-width:200px}
-        #content-records .cust-cell .cust-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-        #content-records .cust-cell .cust-name:hover{overflow:visible;position:relative}
-        #content-records .cust-cell .cust-name:hover::after{content:attr(data-full);position:absolute;left:0;top:100%;z-index:30;background:#1f2937;color:#f3f4f6;padding:6px 10px;border-radius:6px;font-size:12px;white-space:nowrap;pointer-events:none}
-        #content-records .cust-cell .cust-badge{flex-shrink:0}
+        #content-records .cust-cell .cust-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:default}
+        #content-records .cust-cell .cust-badge{flex-shrink:0;font-size:11px}
+        /* 全局客户名称悬浮提示，fixed 定位避免被表格行遮挡 */
+        .cust-global-tooltip{position:fixed;z-index:9999;background:#1f2937;color:#f3f4f6;padding:6px 10px;border-radius:6px;font-size:12px;line-height:1.5;max-width:260px;white-space:normal;word-break:break-all;pointer-events:none;opacity:0;transition:opacity .15s;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+        .cust-global-tooltip.show{opacity:1}
         #content-records .filter-divider{width:1px;height:20px;background:rgba(194,198,216,0.4);flex-shrink:0}
         #content-records select{appearance:none;-webkit-appearance:none;background-image:none;}
         /* 授权记录 tab：铺满内容区宽高，避免被表单专用的 200px 侧边距挤压导致比例失真 */
@@ -741,6 +742,8 @@
         };
     </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/litepicker/dist/css/litepicker.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/litepicker/dist/litepicker.js"></script>
 </head>
 <body>
     <div class="layui-layout layui-layout-admin">
@@ -2402,25 +2405,21 @@
 </div>
 <!-- Filters -->
 <div class="bg-white rounded-lg shadow-sm border border-[#c2c6d8]/30 p-5 shrink-0">
-  <div class="flex items-center gap-2 mb-6">
-    <span class="material-symbols-outlined text-[16px] text-[#424656]">search</span>
-    <h2 class="text-[13px] font-semibold text-[#0b1c30]">查询面板</h2>
-  </div>
   <div class="flex items-center gap-6">
     <!-- 字段区 -->
     <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-3">
         <label class="text-[12px] text-[#424656] whitespace-nowrap w-[84px] text-right">类型</label>
-        <select class="h-9 px-3 text-[12px] text-[#0b1c30] flex-1 max-w-[240px] border border-[#c2c6d8]/50 rounded-md bg-white focus:border-primary focus:outline-none">
+        <select class="h-9 px-3 text-[12px] text-[#0b1c30] flex-1 max-w-[300px] border border-[#c2c6d8]/50 rounded-md bg-white focus:border-primary focus:outline-none">
           <option>全部</option>
           <option>产品授权</option>
           <option>XaaS</option>
           <option>解决方案</option>
         </select>
       </div>
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-3">
         <label class="text-[12px] text-[#424656] whitespace-nowrap w-[84px] text-right">状态</label>
-        <select class="h-9 px-3 text-[12px] text-[#0b1c30] flex-1 max-w-[240px] border border-[#c2c6d8]/50 rounded-md bg-white focus:border-primary focus:outline-none">
+        <select class="h-9 px-3 text-[12px] text-[#0b1c30] flex-1 max-w-[300px] border border-[#c2c6d8]/50 rounded-md bg-white focus:border-primary focus:outline-none">
           <option>全部</option>
           <option>待审批</option>
           <option>审批中</option>
@@ -2430,26 +2429,24 @@
           <option>已驳回</option>
         </select>
       </div>
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-3">
         <label class="text-[12px] text-[#424656] whitespace-nowrap w-[84px] text-right">产品线</label>
-        <select class="h-9 px-3 text-[12px] text-[#0b1c30] flex-1 min-w-0 max-w-[240px] border border-[#c2c6d8]/50 rounded-md bg-white focus:border-primary focus:outline-none">
+        <select class="h-9 px-3 text-[12px] text-[#0b1c30] flex-1 min-w-0 max-w-[300px] border border-[#c2c6d8]/50 rounded-md bg-white focus:border-primary focus:outline-none">
           <option>全部</option>
         </select>
       </div>
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-3">
         <label class="text-[12px] text-[#424656] whitespace-nowrap w-[84px] text-right">设备ID/SN</label>
-        <input type="text" class="h-9 px-3 text-[12px] text-[#0b1c30] flex-1 max-w-[240px] border border-[#c2c6d8]/50 rounded-md bg-white focus:border-primary focus:outline-none placeholder:text-[#727687]" placeholder="请输入设备ID/SN" />
+        <input type="text" class="h-9 px-3 text-[12px] text-[#0b1c30] flex-1 max-w-[300px] border border-[#c2c6d8]/50 rounded-md bg-white focus:border-primary focus:outline-none placeholder:text-[#727687]" placeholder="请输入设备ID/SN" />
       </div>
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-3">
         <label class="text-[12px] text-[#424656] whitespace-nowrap w-[84px] text-right">申请人</label>
-        <input type="text" class="h-9 px-3 text-[12px] text-[#0b1c30] flex-1 max-w-[240px] border border-[#c2c6d8]/50 rounded-md bg-white focus:border-primary focus:outline-none placeholder:text-[#727687]" placeholder="请输入申请人" />
+        <input type="text" class="h-9 px-3 text-[12px] text-[#0b1c30] flex-1 max-w-[300px] border border-[#c2c6d8]/50 rounded-md bg-white focus:border-primary focus:outline-none placeholder:text-[#727687]" placeholder="请输入申请人" />
       </div>
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-3">
         <label class="text-[12px] text-[#424656] whitespace-nowrap w-[84px] text-right">申请日期</label>
-        <div class="flex-1 min-w-0 max-w-[240px] flex items-center gap-2">
-          <input type="text" class="h-9 px-3 text-[12px] text-[#0b1c30] flex-1 min-w-0 border border-[#c2c6d8]/50 rounded-md bg-white focus:border-primary focus:outline-none placeholder:text-[#727687]" placeholder="开始" />
-          <span class="text-[#424656] text-[12px]">~</span>
-          <input type="text" class="h-9 px-3 text-[12px] text-[#0b1c30] flex-1 border border-[#c2c6d8]/50 rounded-md bg-white focus:border-primary focus:outline-none placeholder:text-[#727687]" placeholder="结束" />
+        <div class="flex-1 min-w-0 max-w-[300px]">
+          <input type="text" id="applyDateRange" readonly class="h-9 px-3 text-[12px] text-[#0b1c30] w-full border border-[#c2c6d8]/50 rounded-md bg-white focus:border-primary focus:outline-none placeholder:text-[#727687] cursor-pointer" placeholder="请选择申请日期范围" />
         </div>
       </div>
     </div>
@@ -2468,9 +2465,9 @@
 <th class="sticky-left sticky-left-0 py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[145px]">申请编号</th>
 <th class="sticky-left sticky-left-1 py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[105px]">授权类型</th>
 <th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[90px]">申请平台</th>
-<th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap">产品线/方案</th>
+<th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[120px]">产品线/方案</th>
 <th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[120px]">版本号</th>
-<th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap">客户名称</th>
+<th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[200px]">客户名称</th>
 <th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[140px]">设备ID</th>
 <th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[75px]">区域</th>
 <th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[210px]">授权有效期</th>
@@ -5686,10 +5683,95 @@
         }
     }
 
+    function initRecordsDatePicker() {
+        var input = document.getElementById('applyDateRange');
+        if (!input) return;
+        if (typeof Litepicker === 'undefined') {
+            console.warn('Litepicker not loaded');
+            return;
+        }
+        try {
+            new Litepicker({
+                element: input,
+                singleMode: false,
+                numberOfMonths: 2,
+                numberOfColumns: 2,
+                format: 'YYYY-MM-DD',
+                delimiter: ' ~ ',
+                autoApply: true,
+                allowRepick: true,
+                lang: 'zh-CN',
+                setup: function(picker) {
+                    picker.on('selected', function(date1, date2) {
+                        var start = date1 && date1.format ? date1.format('YYYY-MM-DD') : '';
+                        var end = date2 && date2.format ? date2.format('YYYY-MM-DD') : start;
+                        input.value = start && end ? start + ' ~ ' + end : '';
+                    });
+                    picker.on('clear', function() {
+                        input.value = '';
+                    });
+                }
+            });
+        } catch (e) {
+            console.error('Litepicker init failed:', e);
+        }
+    }
+
+    function initRecordsTooltip() {
+        var tooltip = document.createElement('div');
+        tooltip.className = 'cust-global-tooltip';
+        document.body.appendChild(tooltip);
+        var activeEl = null;
+
+        function positionTooltip() {
+            if (!activeEl) return;
+            var rect = activeEl.getBoundingClientRect();
+            var tipRect = tooltip.getBoundingClientRect();
+            var top = rect.top - tipRect.height - 6;
+            var left = rect.left;
+            if (top < 6) top = rect.bottom + 6;
+            if (left + tipRect.width > window.innerWidth - 12) {
+                left = window.innerWidth - tipRect.width - 12;
+            }
+            if (left < 6) left = 6;
+            tooltip.style.top = top + 'px';
+            tooltip.style.left = left + 'px';
+        }
+
+        function showTooltip(el) {
+            var full = el.getAttribute('data-full') || el.getAttribute('title') || el.textContent;
+            if (!full) return;
+            var isClamped = el.scrollWidth > el.clientWidth;
+            if (!isClamped && full === el.textContent) return;
+            tooltip.textContent = full;
+            activeEl = el;
+            tooltip.classList.add('show');
+            positionTooltip();
+        }
+
+        function hideTooltip() {
+            tooltip.classList.remove('show');
+            activeEl = null;
+        }
+
+        document.querySelectorAll('#content-records .cust-name').forEach(function(el) {
+            el.addEventListener('mouseenter', function() { showTooltip(el); });
+            el.addEventListener('mouseleave', hideTooltip);
+        });
+        window.addEventListener('scroll', positionTooltip, true);
+        window.addEventListener('resize', positionTooltip);
+    }
+
     if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", initRecordsPagination);
+        document.addEventListener("DOMContentLoaded", function() {
+            initRecordsPagination();
+            initRecordsDatePicker();
+            initRecordsTooltip();
+        });
     } else {
         initRecordsPagination();
+        initRecordsDatePicker();
+        initRecordsTooltip();
     }
     </script>
 </body>
