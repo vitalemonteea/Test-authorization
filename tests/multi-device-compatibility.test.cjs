@@ -209,10 +209,6 @@ test('HCI 固定设备使用可信事实 SN 并可携带 info 文件成功提交
     action.value = 'open';
     fireChange(action, window);
 
-    document.getElementById('btNo').value = 'BT-HCI-AUTO-001';
-    document.getElementById('btUser').value = 'HCI测试员';
-    document.getElementById('btStatus').value = '办事处借测';
-    document.getElementById('btType').value = 'POC测试';
     const infoFile = new window.File(['hci-device-info'], 'hci-device.info', { type: 'text/plain' });
     Object.defineProperty(document.getElementById('hwFileInput'), 'files', {
       configurable: true,
@@ -227,6 +223,33 @@ test('HCI 固定设备使用可信事实 SN 并可携带 info 文件成功提交
     assert.equal(snapshot.deviceFacts[0].deviceId, 'DEV-45-AUTO-001');
     assert.equal(snapshot.deviceFacts[0].sn, 'SN-HCI-AUTO-001');
     assert.deepEqual(errors, []);
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('非强制硬件设备缺少借测字段时仍阻断提交', () => {
+  const { dom, document, window, alerts } = loadV2Dom();
+  try {
+    const product = document.getElementById('plname');
+    product.value = '22';
+    fireChange(product, window);
+    const planType = document.getElementById('planDevType');
+    planType.value = '1';
+    fireChange(planType, window);
+    window.addChip('DEV-NGAF-001');
+    const action = document.getElementById('requestAction');
+    action.value = 'open';
+    fireChange(action, window);
+    document.getElementById('btNo').value = '';
+    document.getElementById('btUser').value = '';
+    document.getElementById('btStatus').value = '';
+    document.getElementById('btType').value = '';
+
+    window.submitStandardForm();
+
+    assert.equal(alerts.at(-1), '请填写借测单号');
+    assert.equal(document.getElementById('submissionSnapshot').value, '');
   } finally {
     dom.window.close();
   }

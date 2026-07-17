@@ -5982,25 +5982,27 @@
                 alert('请填写设备SN');
                 return;
             }
-            var btNoInput = document.getElementById('btNo');
-            if (btNoInput && !btNoInput.value.trim()) {
-                alert('请填写借测单号');
-                return;
-            }
-            var btUserInput = document.getElementById('btUser');
-            if (btUserInput && !btUserInput.value.trim()) {
-                alert('请填写借测使用人');
-                return;
-            }
-            var btStatusSelect = document.getElementById('btStatus');
-            if (btStatusSelect && !btStatusSelect.value) {
-                alert('请选择借测状态');
-                return;
-            }
-            var btTypeSelect = document.getElementById('btType');
-            if (btTypeSelect && !btTypeSelect.value) {
-                alert('请选择借测类型');
-                return;
+            if (!productConfig.forcedPlanDevType) {
+                var btNoInput = document.getElementById('btNo');
+                if (btNoInput && !btNoInput.value.trim()) {
+                    alert('请填写借测单号');
+                    return;
+                }
+                var btUserInput = document.getElementById('btUser');
+                if (btUserInput && !btUserInput.value.trim()) {
+                    alert('请填写借测使用人');
+                    return;
+                }
+                var btStatusSelect = document.getElementById('btStatus');
+                if (btStatusSelect && !btStatusSelect.value) {
+                    alert('请选择借测状态');
+                    return;
+                }
+                var btTypeSelect = document.getElementById('btType');
+                if (btTypeSelect && !btTypeSelect.value) {
+                    alert('请选择借测类型');
+                    return;
+                }
             }
         }
 
