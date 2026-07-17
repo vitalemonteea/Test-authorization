@@ -199,3 +199,79 @@ test('硬件信息文件要求由产品与申请类型规则决定', () => {
   assert.equal(rules.isHardwareInfoRequired('19', '1'), true);
   assert.equal(rules.isHardwareInfoRequired('22', '2'), false);
 });
+
+test('HCI 固定设备使用可信事实 SN 并可携带 info 文件成功提交', () => {
+  const { dom, document, window, alerts, errors } = loadV2Dom();
+  try {
+    assert.equal(document.getElementById('plname').value, '45');
+    assert.equal(window.applicationState.deviceFacts[0].deviceId, 'DEV-45-AUTO-001');
+    const action = document.getElementById('requestAction');
+    action.value = 'open';
+    fireChange(action, window);
+
+    document.getElementById('btNo').value = 'BT-HCI-AUTO-001';
+    document.getElementById('btUser').value = 'HCI测试员';
+    document.getElementById('btStatus').value = '办事处借测';
+    document.getElementById('btType').value = 'POC测试';
+    const infoFile = new window.File(['hci-device-info'], 'hci-device.info', { type: 'text/plain' });
+    Object.defineProperty(document.getElementById('hwFileInput'), 'files', {
+      configurable: true,
+      value: [infoFile]
+    });
+
+    window.submitStandardForm();
+
+    assert.doesNotMatch(alerts.at(-1), /请填写设备SN/);
+    assert.match(alerts.at(-1), /表单已提交/);
+    const snapshot = JSON.parse(document.getElementById('submissionSnapshot').value);
+    assert.equal(snapshot.deviceFacts[0].deviceId, 'DEV-45-AUTO-001');
+    assert.equal(snapshot.deviceFacts[0].sn, 'SN-HCI-AUTO-001');
+    assert.deepEqual(errors, []);
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('表单重置彻底清理旧流程状态并重新应用默认 HCI 模式', async () => {
+  const { dom, document, window, alerts, errors } = loadV2Dom();
+  try {
+    const product = document.getElementById('plname');
+    product.value = '20';
+    fireChange(product, window);
+    const planType = document.getElementById('planDevType');
+    planType.value = '2';
+    fireChange(planType, window);
+    window.addChip('SALES-ATRUST-001');
+    const action = document.getElementById('requestAction');
+    action.value = 'extend';
+    fireChange(action, window);
+    window.submitStandardForm();
+    assert.match(alerts.at(-1), /表单已提交/);
+    assert.notEqual(document.getElementById('submissionSnapshot').value, '');
+    assert.equal(window.applicationState.deviceFacts[0].deviceId, 'SALES-ATRUST-001');
+
+    document.getElementById('formsn').reset();
+    await new Promise((resolve) => window.setTimeout(resolve, 20));
+
+    assert.equal(document.getElementById('plname').value, '45');
+    assert.equal(document.querySelector('[data-select-id="plname"] .custom-select-option.selected').dataset.value, '45');
+    assert.equal(document.getElementById('requestAction').value, '');
+    assert.equal(document.getElementById('authScene').value, '');
+    assert.equal(window.applicationState.requestAction, '');
+    assert.equal(window.applicationState.approvalDecision, null);
+    assert.equal(window.applicationState.compatibilityIssues.length, 0);
+    assert.equal(document.getElementById('submissionSnapshot').value, '');
+    assert.equal(document.getElementById('planDevTypeFormItem').style.display, 'none');
+    assert.deepEqual(Array.from(document.querySelectorAll('#chipContainer .chip-item')).map((chip) => chip.textContent.replace('×', '')), ['DEV-45-AUTO-001']);
+    assert.equal(window.applicationState.deviceFacts.length, 1);
+    assert.equal(window.applicationState.deviceFacts[0].deviceId, 'DEV-45-AUTO-001');
+    assert.equal(window.applicationState.deviceFacts.some((fact) => fact.deviceId === 'SALES-ATRUST-001'), false);
+
+    window.submitStandardForm();
+    assert.match(alerts.at(-1), /请选择申请事项/);
+    assert.equal(document.getElementById('submissionSnapshot').value, '');
+    assert.deepEqual(errors, []);
+  } finally {
+    dom.window.close();
+  }
+});

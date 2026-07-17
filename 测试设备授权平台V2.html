@@ -5499,24 +5499,55 @@
         applyPlMode();
         refreshModuleNav(plnameSelect.value);
 
+        function resetApplicationFlow() {
+            document.querySelectorAll('.custom-select').forEach(function(cs) {
+                if (cs._resetToDefault) cs._resetToDefault();
+            });
+
+            applicationState.deviceFacts = [];
+            applicationState.requestAction = '';
+            applicationState.approvalDecision = null;
+            applicationState.compatibilityIssues = [];
+            applicationState.productStatus = getCurrentProductStatus(plnameSelect.value);
+            applicationState.customerType = 'normal';
+
+            deviceIdChips.clear();
+            deviceSnChips.clear();
+            resetRequestSpecificState();
+            renderLookupBlocking(null);
+            renderCompatibilityIssues([]);
+            renderRequestActions([]);
+            deviceFactsSummary.textContent = '';
+            manualReviewRequired.value = '0';
+            requestActionSelect.value = '';
+            document.getElementById('authScene').value = '';
+            document.getElementById('submissionSnapshot').value = '';
+            document.getElementById('customerSearchInput').value = '';
+            document.getElementById('selectedCustomerName').textContent = '-';
+            document.getElementById('selectedCustomerId').textContent = '-';
+            document.getElementById('customerInfoDisplay').classList.remove('show');
+            var salesBadge = document.getElementById('selectedSales');
+            salesBadge.textContent = '';
+            salesBadge.style.display = 'none';
+            var customerTypeBadge = document.getElementById('customerTypeBadge');
+            customerTypeBadge.textContent = '';
+            customerTypeBadge.style.display = 'none';
+            renewalSection.style.display = 'none';
+            deviceIdFormItem.style.display = 'flex';
+            resetRenewalState();
+            resetBorrowTestFields();
+            clearHwFile();
+
+            updateProductLifecycleWarning();
+            applyPlMode();
+            refreshRecognizedDeviceFacts(deviceIdChips.get());
+            refreshModuleNav(plnameSelect.value);
+        }
+        window.resetApplicationFlow = resetApplicationFlow;
+
         document.getElementById('formsn').addEventListener('reset', function() {
             setTimeout(function() {
-                devSnFormItem.style.display = 'none';
-                borrowTestFields.style.display = 'none';
-                existingAuthSection.style.display = 'none';
-                existingAuthSection.classList.remove('show');
-                renewalSection.style.display = 'none';
-                deviceIdFormItem.style.display = 'flex';
-                // 重置所有自定义下拉框
-                document.querySelectorAll('.custom-select').forEach(function(cs) {
-                    if (cs._resetToDefault) cs._resetToDefault();
-                });
-                updateProductLifecycleWarning();
-                resetRenewalState();
-                resetBorrowTestFields();
-                resetExistingAuthSection();
-                refreshModuleNav(plnameSelect.value);
-                toggleHwInfoSection(plnameSelect.value);
+                resetApplicationFlow();
             }, 0);
         });
 
@@ -5944,7 +5975,10 @@
 
         if (planDevType === '1') {
             var devSnInput = document.getElementById('devSnNew');
-            if (devSnInput && !devSnInput.value.trim()) {
+            var productConfig = rules.PRODUCT_CONFIG[productLineId] || {};
+            var trustedFixedSnAvailable = !!productConfig.forcedPlanDevType && latestFacts.length > 0 &&
+                latestFacts.every(function(fact) { return !!fact.sn; });
+            if (devSnInput && !devSnInput.value.trim() && !trustedFixedSnAvailable) {
                 alert('请填写设备SN');
                 return;
             }
