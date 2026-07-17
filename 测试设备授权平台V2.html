@@ -1067,6 +1067,27 @@
                         </div>
                     </div>
 
+                    <div class="layui-form-item basic-full" id="requestParametersFormItem">
+                        <label class="layui-form-label">申请参数</label>
+                        <div class="layui-input-block" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;">
+                            <label>申请时长（月）<input type="number" class="layui-input" id="requestedMonths" min="0" value="3"></label>
+                            <label>目标容量<input type="number" class="layui-input" id="targetCapacity" min="0" value="0"></label>
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item basic-full approval-preview" id="approvalPreview" aria-live="polite">
+                        <label class="layui-form-label">审批预览</label>
+                        <div class="layui-input-block">
+                            <div id="approvalPreviewPending">等待设备事实与申请事项</div>
+                            <div id="approvalPreviewResult" hidden>
+                                <div>决策：<strong id="approvalDecisionType"></strong></div>
+                                <div>流程：<span id="approvalRouteKey"></span></div>
+                                <div>原因：<span id="approvalReasonTexts"></span></div>
+                                <div>规则版本：<span id="approvalRuleVersion"></span></div>
+                            </div>
+                        </div>
+                    </div>
+
 <!-- ===== 续期授权 - 历史借测数据区域 ===== -->
 <div id="renewal-section" style="display:none;">
                     <div class="layui-form-item">
@@ -5008,7 +5029,8 @@
             requestAction: '',
             approvalDecision: null,
             compatibilityIssues: [],
-            productStatus: getCurrentProductStatus(plnameSelect.value)
+            productStatus: getCurrentProductStatus(plnameSelect.value),
+            customerType: 'normal'
         };
         window.applicationState = applicationState;
 
@@ -5040,6 +5062,22 @@
                 borrowOrderId: 'BT-SCP-AUTO-001', authorizationStatus: 'none', currentModules: [],
                 currentCapacity: 0, testedMonths: 0, applicationCount: 0,
                 materialKeys: ['borrow-order'], factVersion: 'facts-scp-auto-v1'
+            },
+            'SPECIAL-FLOW-001': {
+                lookupStatus: 'success', deviceId: 'SPECIAL-FLOW-001', sn: 'SN-SPECIAL-FLOW-001',
+                productLineId: '22', productName: 'NGAF', deviceSource: 'borrowed',
+                borrowOrderId: 'BT-SPECIAL-001', authorizationStatus: 'none', currentModules: [],
+                currentCapacity: 0, testedMonths: 0, applicationCount: 0,
+                materialKeys: ['borrow-order'], factVersion: 'facts-special-v1',
+                specialFlowKey: 'CHANNEL_SECURITY_REVIEW'
+            },
+            'SELF-SERVICE-BLOCKED-001': {
+                lookupStatus: 'success', deviceId: 'SELF-SERVICE-BLOCKED-001', sn: 'SN-BLOCKED-001',
+                productLineId: '22', productName: 'NGAF', deviceSource: 'borrowed',
+                borrowOrderId: 'BT-BLOCKED-001', authorizationStatus: 'none', currentModules: [],
+                currentCapacity: 0, testedMonths: 0, applicationCount: 0,
+                materialKeys: ['borrow-order'], factVersion: 'facts-blocked-v1',
+                selfServiceAllowed: false
             }
         };
 
@@ -5051,12 +5089,58 @@
         var retryDeviceLookup = document.getElementById('retryDeviceLookup');
         var saveApplicationDraftButton = document.getElementById('saveApplicationDraft');
         var manualReviewRequired = document.getElementById('manualReviewRequired');
+        var requestedMonthsInput = document.getElementById('requestedMonths');
+        var targetCapacityInput = document.getElementById('targetCapacity');
+        var approvalPreviewPending = document.getElementById('approvalPreviewPending');
+        var approvalPreviewResult = document.getElementById('approvalPreviewResult');
+        var approvalDecisionType = document.getElementById('approvalDecisionType');
+        var approvalRouteKey = document.getElementById('approvalRouteKey');
+        var approvalReasonTexts = document.getElementById('approvalReasonTexts');
+        var approvalRuleVersion = document.getElementById('approvalRuleVersion');
+
+        function clearApprovalPreview() {
+            applicationState.approvalDecision = null;
+            approvalPreviewPending.hidden = false;
+            approvalPreviewResult.hidden = true;
+            approvalDecisionType.textContent = '';
+            approvalRouteKey.textContent = '';
+            approvalReasonTexts.textContent = '';
+            approvalRuleVersion.textContent = '';
+        }
+
+        function recalculateApprovalDecision() {
+            var factsReady = applicationState.deviceFacts.length > 0 &&
+                applicationState.deviceFacts.every(function(fact) { return fact.lookupStatus !== 'error'; });
+            if (!factsReady || !applicationState.requestAction ||
+                typeof authorizationRules.calculateApprovalDecision !== 'function') {
+                clearApprovalPreview();
+                return null;
+            }
+            var decision = authorizationRules.calculateApprovalDecision({
+                deviceFacts: applicationState.deviceFacts,
+                productLineId: plnameSelect.value,
+                productStatus: applicationState.productStatus,
+                requestAction: applicationState.requestAction,
+                customerType: applicationState.customerType,
+                requestedMonths: Number(requestedMonthsInput.value || 0),
+                targetCapacity: Number(targetCapacityInput.value || 0)
+            });
+            applicationState.approvalDecision = decision;
+            approvalPreviewPending.hidden = true;
+            approvalPreviewResult.hidden = false;
+            approvalDecisionType.textContent = decision.decisionType;
+            approvalRouteKey.textContent = decision.routeKey;
+            approvalReasonTexts.textContent = decision.reasonTexts.join('；');
+            approvalRuleVersion.textContent = decision.ruleVersion;
+            return decision;
+        }
 
         function clearRequestActionState() {
             applicationState.requestAction = '';
             requestActionSelect.value = '';
             document.getElementById('authScene').value = '';
             resetExistingAuthSection();
+            clearApprovalPreview();
         }
 
         function getCommonEligibleActions(facts) {
@@ -5157,6 +5241,7 @@
                 authorizationRules.getLookupBlockingReason(facts, plnameSelect.value) : null;
             renderLookupBlocking(blockingReason);
             renderRequestActions(blockingReason ? [] : getCommonEligibleActions(facts));
+            recalculateApprovalDecision();
         }
 
         function saveApplicationDraft() {
@@ -5183,7 +5268,13 @@
                 authorizationRules.mapLegacyAuthScene(this.value) : '';
             existingAuthSection.style.display = this.value && this.value !== 'open' ? 'block' : 'none';
             existingAuthSection.classList.toggle('show', !!this.value && this.value !== 'open');
+            recalculateApprovalDecision();
         });
+
+        requestedMonthsInput.addEventListener('change', recalculateApprovalDecision);
+        requestedMonthsInput.addEventListener('input', recalculateApprovalDecision);
+        targetCapacityInput.addEventListener('change', recalculateApprovalDecision);
+        targetCapacityInput.addEventListener('input', recalculateApprovalDecision);
 
         var isHciMode = false;
         var chipContainer = document.getElementById('chipContainer');
@@ -5418,6 +5509,8 @@
                 dropdown.classList.remove('show');
                 // 更新日期限制
                 updateDateLimit(custType);
+                applicationState.customerType = custType;
+                recalculateApprovalDecision();
             }
         });
         document.addEventListener('click', function(e) {
@@ -5445,6 +5538,8 @@
                         badge.style.display = 'inline-block';
                     }
                     infoDisplay.classList.add('show');
+                    applicationState.customerType = 'normal';
+                    recalculateApprovalDecision();
                     layer.msg('客户创建成功，已自动选中', { icon: 1 });
                 }
             });

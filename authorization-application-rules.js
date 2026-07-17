@@ -25,6 +25,17 @@
         increase_capacity: '5',
         extend: '6'
     };
+    var REASON_TEXTS = {
+        DEFAULT_AUTO_PASS: '当前申请符合自动审批条件',
+        CUMULATIVE_DURATION_LIMIT: '累计测试时长超过当前客户类型的自助申请上限',
+        ATRUST_SALES_ADD_MODULE: 'aTrust 销售设备增开模块需要人工审批',
+        MANUAL_DEVICE_VERIFICATION: '设备未查询到可信记录，需要人工核验',
+        SPECIAL_FLOW_REQUIRED: '设备命中特殊审批流程',
+        SELF_SERVICE_BLOCKED: '该设备不允许自助申请',
+        PRODUCT_LIMIT_APPROVAL: '申请容量超过产品自助申请上限',
+        APPLICATION_LIMIT_APPROVAL: '设备历史申请次数达到人工审批阈值',
+        PRODUCT_RETIRED_WARNING: '所选产品已退市，请确认继续申请的必要性'
+    };
 
     function getProductStatus(id) {
         return PRODUCT_STATUS[String(id)] || 'active';
@@ -97,13 +108,86 @@
         return null;
     }
 
+    function calculateApprovalDecision(context) {
+        context = context || {};
+        var facts = context.deviceFacts || [];
+        var decisionType = 'default';
+        var routeKey = 'AUTO_PASS';
+        var reasonCodes = ['DEFAULT_AUTO_PASS'];
+        var fact;
+
+        fact = facts.find(function(item) { return item.selfServiceAllowed === false; });
+        if (fact) {
+            decisionType = 'not_allowed';
+            routeKey = 'NOT_ALLOWED';
+            reasonCodes = ['SELF_SERVICE_BLOCKED'];
+        } else {
+            fact = facts.find(function(item) { return !!item.specialFlowKey; });
+            if (fact) {
+                decisionType = 'special_flow';
+                routeKey = fact.specialFlowKey;
+                reasonCodes = ['SPECIAL_FLOW_REQUIRED'];
+            } else if (facts.some(function(item) {
+                return item.lookupStatus === 'not_found' || item.manualReviewRequired === true;
+            })) {
+                decisionType = 'manual';
+                routeKey = 'MANUAL_DEVICE_VERIFICATION';
+                reasonCodes = ['MANUAL_DEVICE_VERIFICATION'];
+            } else if (context.requestAction === 'add_module' && facts.some(function(item) {
+                return String(item.productLineId) === '20' && item.deviceSource === 'sales';
+            })) {
+                decisionType = 'manual';
+                routeKey = 'REGION_AND_HQ_MARKETING';
+                reasonCodes = ['ATRUST_SALES_ADD_MODULE'];
+            } else if ((String(context.productLineId) === '45' || String(context.productLineId) === '19') &&
+                Number(context.targetCapacity || 0) > 20) {
+                decisionType = 'manual';
+                routeKey = 'PRODUCT_LIMIT_APPROVAL';
+                reasonCodes = ['PRODUCT_LIMIT_APPROVAL'];
+            } else {
+                var applicationLimit = String(context.productLineId) === '141' ? 1 : 2;
+                var reachesApplicationLimit = context.requestAction === 'open' && facts.some(function(item) {
+                    return Number(item.applicationCount || 0) >= applicationLimit;
+                });
+                if (reachesApplicationLimit) {
+                    decisionType = 'manual';
+                    routeKey = 'APPLICATION_LIMIT_APPROVAL';
+                    reasonCodes = ['APPLICATION_LIMIT_APPROVAL'];
+                } else {
+                    var durationLimit = context.customerType === 'KA' ? 6 : 3;
+                    var requestedMonths = Number(context.requestedMonths || 0);
+                    var exceedsDurationLimit = facts.some(function(item) {
+                        return Number(item.testedMonths || 0) + requestedMonths > durationLimit;
+                    });
+                    if (exceedsDurationLimit) {
+                        decisionType = 'manual';
+                        routeKey = context.customerType === 'KA' ? 'KA_AND_HQ_MARKETING' : 'REGION_AND_HQ_MARKETING';
+                        reasonCodes = ['CUMULATIVE_DURATION_LIMIT'];
+                    }
+                }
+            }
+        }
+
+        if (context.productStatus === 'retired') reasonCodes.push('PRODUCT_RETIRED_WARNING');
+        return {
+            decisionType: decisionType,
+            routeKey: routeKey,
+            reasonCodes: reasonCodes,
+            reasonTexts: reasonCodes.map(function(code) { return REASON_TEXTS[code]; }),
+            ruleVersion: RULE_VERSION,
+            calculatedAt: new Date().toISOString()
+        };
+    }
+
     return {
         RULE_VERSION: RULE_VERSION,
         REQUEST_ACTION_LABELS: REQUEST_ACTION_LABELS,
+        REASON_TEXTS: REASON_TEXTS,
         getProductStatus: getProductStatus,
         getEligibleRequestActions: getEligibleRequestActions,
         mapLegacyAuthScene: mapLegacyAuthScene,
         normalizeLookupResult: normalizeLookupResult,
-        getLookupBlockingReason: getLookupBlockingReason
+        getLookupBlockingReason: getLookupBlockingReason,
+        calculateApprovalDecision: calculateApprovalDecision
     };
 }));
