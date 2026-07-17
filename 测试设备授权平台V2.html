@@ -4715,6 +4715,7 @@
         }
 
         var plnameSelect = document.getElementById('plname');
+        var plnameDefaultValue = plnameSelect.value;
 
         // 产品线设备ID配置
         var plDeviceIdConfig = {
@@ -4806,7 +4807,7 @@
             var options = container.querySelectorAll('.custom-select-option');
             var hiddenSelect = document.getElementById(container.dataset.selectId);
 
-            function updateDisplay(selectedOption) {
+            function syncVisualOption(selectedOption) {
                 valueSpan.textContent = selectedOption.textContent;
                 if (selectedOption.dataset.value) {
                     valueSpan.classList.add('has-value');
@@ -4815,25 +4816,29 @@
                 }
                 options.forEach(function(opt) { opt.classList.remove('selected'); });
                 selectedOption.classList.add('selected');
+            }
+
+            function updateDisplay(selectedOption) {
+                syncVisualOption(selectedOption);
                 if (hiddenSelect) {
                     hiddenSelect.value = selectedOption.dataset.value;
                     hiddenSelect.dispatchEvent(new Event('change', { bubbles: true }));
                 }
             }
 
-            // 读取隐藏select的当前选中值，同步到视觉层
-            if (hiddenSelect) {
+            function syncFromNativeSelect() {
                 var currentVal = hiddenSelect.value;
                 var selectedOpt = null;
                 options.forEach(function(opt) {
                     if (opt.dataset.value === currentVal) selectedOpt = opt;
                 });
-                if (selectedOpt) {
-                    options.forEach(function(opt) { opt.classList.remove('selected'); });
-                    selectedOpt.classList.add('selected');
-                    valueSpan.textContent = selectedOpt.textContent;
-                    if (currentVal) valueSpan.classList.add('has-value');
-                }
+                if (selectedOpt) syncVisualOption(selectedOpt);
+            }
+
+            // 读取隐藏select的当前选中值，同步到视觉层
+            if (hiddenSelect) {
+                syncFromNativeSelect();
+                hiddenSelect.addEventListener('change', syncFromNativeSelect);
             }
 
             trigger.addEventListener('click', function(e) {
@@ -4856,15 +4861,22 @@
             });
 
             container._resetToDefault = function() {
+                var defaultOption = options[0];
+                if (!defaultOption) return;
+                if (container.dataset.selectId === 'plname') {
+                    options.forEach(function(opt) {
+                        if (opt.dataset.value === plnameDefaultValue) defaultOption = opt;
+                    });
+                }
                 options.forEach(function(opt) { opt.classList.remove('selected'); });
-                options[0].classList.add('selected');
-                valueSpan.textContent = options[0].textContent;
-                if (options[0].dataset.value) {
+                defaultOption.classList.add('selected');
+                valueSpan.textContent = defaultOption.textContent;
+                if (defaultOption.dataset.value) {
                     valueSpan.classList.add('has-value');
                 } else {
                     valueSpan.classList.remove('has-value');
                 }
-                if (hiddenSelect) hiddenSelect.value = options[0].dataset.value;
+                if (hiddenSelect) hiddenSelect.value = defaultOption.dataset.value;
             };
 
             container._setValue = function(val) {
@@ -5139,6 +5151,7 @@
                 document.querySelectorAll('.custom-select').forEach(function(cs) {
                     if (cs._resetToDefault) cs._resetToDefault();
                 });
+                updateProductLifecycleWarning();
                 resetRenewalState();
                 resetBorrowTestFields();
                 resetExistingAuthSection();
