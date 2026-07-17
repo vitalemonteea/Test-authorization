@@ -14,11 +14,26 @@ function loadRules() {
   return require(rulesPath);
 }
 
+function serializeConsoleArgument(value) {
+  if (typeof value === 'string') return value;
+  if (value && typeof value === 'object' && typeof value.message === 'string') {
+    return value.message;
+  }
+  try {
+    const serialized = JSON.stringify(value);
+    if (serialized !== undefined) return serialized;
+  } catch {}
+  return String(value);
+}
+
 function loadV2Dom(options = {}) {
   const errors = [];
   const alerts = [];
   const virtualConsole = new VirtualConsole();
   virtualConsole.on('jsdomError', (error) => errors.push(error.message));
+  virtualConsole.on('error', (...args) => {
+    errors.push(args.map(serializeConsoleArgument).join(' '));
+  });
 
   const dom = new JSDOM(fs.readFileSync(htmlPath, 'utf8'), {
     runScripts: options.runScripts === false ? undefined : 'dangerously',
