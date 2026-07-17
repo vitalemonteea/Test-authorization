@@ -166,6 +166,22 @@
             padding: 8px 12px 8px 24px; font-size: 14px; color: #424656; cursor: pointer; transition: all 0.15s; white-space: nowrap;
         }
         .custom-select-option:hover { background: #eff4ff; color: #0050cb; }
+        .product-lifecycle-group {
+            border-top: 1px solid #e3e6ee; margin-top: 6px; padding-top: 10px;
+            color: #8a5a00; font-size: 13px;
+        }
+        .retired-product-option { display: flex; align-items: center; gap: 8px; }
+        .retired-product-option::after {
+            content: "已退市"; display: inline-flex; align-items: center; height: 18px;
+            padding: 0 5px; border: 1px solid #e6b85c; border-radius: 4px;
+            background: #fff8e6; color: #8a5a00; font-size: 11px; line-height: 16px;
+        }
+        .product-lifecycle-warning {
+            display: flex; align-items: center; margin-top: 6px; padding: 6px 8px;
+            border-left: 3px solid #d99a24; background: #fff8e6; color: #754f08;
+            font-size: 13px; line-height: 20px;
+        }
+        .product-lifecycle-warning[hidden] { display: none; }
         .custom-select-option.disabled { color: #b8bfcc; cursor: not-allowed; background: #f7f8fa; }
         .custom-select-option.disabled:hover { color: #b8bfcc; background: #f7f8fa; }
         .custom-select-option.selected {
@@ -920,6 +936,7 @@
                                     </ul>
                                 </div>
                             </div>
+                            <div id="productLifecycleWarning" class="product-lifecycle-warning" role="status" hidden>该产品已退市，请确认仍需申请测试授权。</div>
                         </div>
                     </div>
 
@@ -3288,6 +3305,7 @@
     <!-- 同步提示 -->
     <div class="sync-toast" id="syncToast">✓ 已同步所有日期</div>
 
+    <script src="authorization-application-rules.js"></script>
     <script>
     (function() {
         var moduleNav = document.getElementById('moduleNav');
@@ -4722,6 +4740,55 @@
             }
         }
 
+        function applyProductLifecycleGrouping() {
+            var rules = window.AuthorizationApplicationRules;
+            var container = document.querySelector('[data-select-id="plname"]');
+            if (!rules || typeof rules.getProductStatus !== 'function' || !container) return;
+
+            var hiddenSelect = container.querySelector('#plname');
+            var list = container.querySelector('.custom-select-list');
+            if (!hiddenSelect || !list) return;
+
+            var retiredValues = [];
+            Array.prototype.slice.call(hiddenSelect.options).forEach(function(option) {
+                var status = rules.getProductStatus(option.value);
+                option.dataset.productStatus = status;
+                if (status === 'retired') {
+                    retiredValues.push(option.value);
+                    hiddenSelect.appendChild(option);
+                }
+            });
+
+            var group = list.querySelector('[data-product-group="retired"]');
+            if (!group) {
+                group = document.createElement('li');
+                group.className = 'custom-select-group-label product-lifecycle-group';
+                group.dataset.productGroup = 'retired';
+                group.textContent = '已退市产品';
+            }
+            group.remove();
+
+            var retiredItems = [];
+            list.querySelectorAll('.custom-select-option').forEach(function(item) {
+                var isRetired = retiredValues.indexOf(item.dataset.value) !== -1;
+                item.classList.toggle('retired-product-option', isRetired);
+                if (isRetired) retiredItems.push(item);
+            });
+
+            if (retiredItems.length) {
+                list.appendChild(group);
+                retiredItems.forEach(function(item) { list.appendChild(item); });
+            }
+        }
+
+        function updateProductLifecycleWarning() {
+            var rules = window.AuthorizationApplicationRules;
+            var select = document.getElementById('plname');
+            var warning = document.getElementById('productLifecycleWarning');
+            if (!rules || typeof rules.getProductStatus !== 'function' || !select || !warning) return;
+            warning.hidden = rules.getProductStatus(select.value) !== 'retired';
+        }
+
         // ===== 自定义下拉框组件初始化 =====
         function initCustomSelect(container) {
             var trigger = container.querySelector('.custom-select-trigger');
@@ -4814,10 +4881,13 @@
             }
         }
 
+        applyProductLifecycleGrouping();
+
         // 初始化所有自定义下拉框
         document.querySelectorAll('.custom-select').forEach(function(cs) {
             initCustomSelect(cs);
         });
+        updateProductLifecycleWarning();
 
         // 全局点击关闭自定义下拉框
         document.addEventListener('click', function() {
@@ -5033,6 +5103,7 @@
 
         plnameSelect.addEventListener('change', function() {
             var plVal = this.value;
+            updateProductLifecycleWarning();
             // 切换产品线时重置下游字段
             setCustomSelectValue('authScene', '');
             setCustomSelectValue('planDevType', '');
