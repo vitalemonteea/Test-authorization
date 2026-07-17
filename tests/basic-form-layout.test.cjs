@@ -87,9 +87,7 @@ test('借测信息区域应使用 basic-borrow-panel 面板与 borrow-grid 网�
   assert.ok(borrow.querySelector('.borrow-grid'), '借测信息区域应含 borrow-grid 两列网格');
 });
 
-test('授权场景/接收邮箱/设备SN/设备ID 应为全宽 basic-full', () => {
-  const authScene = doc.getElementById('authScene').closest('.layui-form-item');
-  assert.ok(authScene.classList.contains('basic-full'), '授权场景应为全宽');
+test('接收邮箱/设备SN/设备ID/申请事项 应为全宽 basic-full', () => {
   const email = doc.getElementById('userEmail').closest('.layui-form-item');
   assert.ok(email.classList.contains('basic-full'), '接收邮箱应为全宽');
   assert.ok(
@@ -99,5 +97,9 @@ test('授权场景/接收邮箱/设备SN/设备ID 应为全宽 basic-full', () =
   assert.ok(
     doc.getElementById('deviceIdFormItem').classList.contains('basic-full'),
     '设备ID 应为全宽'
+  );
+  assert.ok(
+    doc.getElementById('requestActionFormItem').classList.contains('basic-full'),
+    '申请事项应为全宽'
   );
 });

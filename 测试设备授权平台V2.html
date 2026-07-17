@@ -1012,37 +1012,7 @@
                     </div>
                     </div>
 
-                    <!-- 授权场景 -->
-                    <div class="layui-form-item basic-full">
-                        <label class="layui-form-label">授权场景</label>
-                        <div class="layui-input-block">
-                            <div class="custom-select" data-select-id="authScene">
-                                <select class="layui-select" id="authScene" name="authScene" style="display:none;">
-                                    <option value="1" selected>开通测试授权(无授权/授权过期申请)</option>
-                                    <option value="2">授权资源调整(授权有效期内调整)</option>
-                                    <option value="3">销售设备增开新模块测试授权</option>
-                                    <option value="5">销售授权扩容测试授权</option>
-                                    <option value="6">销售设备申请延长授权</option>
-                                </select>
-                                <button type="button" class="custom-select-trigger">
-                                    <span class="custom-select-value has-value">开通测试授权(无授权/授权过期申请)</span>
-                                    <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
-                                </button>
-                                <div class="custom-select-dropdown">
-                                    <ul class="custom-select-list">
-                                        <li class="custom-select-group-label">开通测试授权</li>
-                                        <li class="custom-select-option selected" data-value="1">开通测试授权(无授权/授权过期申请)</li>
-                                        <li class="custom-select-group-label">授权资源调整</li>
-                                        <li class="custom-select-option" data-value="2">授权资源调整(授权有效期内调整)</li>
-                                        <li class="custom-select-group-label">商务类</li>
-                                        <li class="custom-select-option" data-value="3">销售设备增开新模块测试授权</li>
-                                        <li class="custom-select-option" data-value="5">销售授权扩容测试授权</li>
-                                        <li class="custom-select-option" data-value="6">销售设备申请延长授权</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <input type="hidden" id="authScene" name="authScene" value="">
 
                     <!-- 申请类型 -->
                     <div class="layui-form-item basic-full" id="planDevTypeFormItem">
@@ -1066,6 +1036,28 @@
                                     </ul>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- 设备ID -->
+                    <div class="layui-form-item basic-full" id="deviceIdFormItem">
+                        <label class="layui-form-label">设备ID</label>
+                        <div class="layui-input-block">
+                            <div class="chip-input-container" id="chipContainer">
+                                <input type="text" id="chipInput" class="chip-input-field" placeholder="输入设备ID并回车添加..." autocomplete="off" onkeydown="if(event.keyCode===13){event.preventDefault();window.addChip(this.value);this.value='';return false}">
+                                <input type="hidden" id="devIdNew" name="devIdNew" value="">
+                            </div>
+                            <div id="deviceFactsSummary" class="device-facts-summary" aria-live="polite"></div>
+                        </div>
+                    </div>
+
+                    <!-- 申请事项由设备授权状态决定 -->
+                    <div class="layui-form-item basic-full" id="requestActionFormItem" hidden>
+                        <label class="layui-form-label">申请事项<span class="required-mark">*</span></label>
+                        <div class="layui-input-block">
+                            <select class="layui-select request-action-select" id="requestAction" name="requestAction">
+                                <option value="">请选择申请事项</option>
+                            </select>
                         </div>
                     </div>
 
@@ -1271,7 +1263,7 @@
                         <label class="layui-form-label">客户信息</label>
                         <div class="layui-input-block">
                             <div class="search-select-box">
-                                <input type="text" id="customerSearch" placeholder="请输入客户名称或ID搜索" class="layui-input" autocomplete="off">
+                                <input type="text" id="customerSearchInput" placeholder="请输入客户名称或ID搜索" class="layui-input" autocomplete="off">
                                 <div class="search-dropdown" id="customerDropdown"></div>
                             </div>
                             <div class="customer-info-display" id="customerInfoDisplay">
@@ -1362,17 +1354,6 @@
                         </div>
                     </div>
                     </div>
-                    </div>
-
-                    <!-- 设备ID -->
-                    <div class="layui-form-item basic-full" id="deviceIdFormItem">
-                        <label class="layui-form-label">设备ID</label>
-                        <div class="layui-input-block">
-                            <div class="chip-input-container" id="chipContainer">
-                                <input type="text" id="chipInput" class="chip-input-field" placeholder="输入设备ID并回车添加..." autocomplete="off" onkeydown="if(event.keyCode===13){event.preventDefault();window.addChip(this.value);this.value='';return false}">
-                                <input type="hidden" id="devIdNew" name="devIdNew" value="">
-                            </div>
-                        </div>
                     </div>
 
                     <!-- ===== 已有授权展示区（场景二/三时显示） ===== -->
@@ -4415,47 +4396,6 @@
             updateHardwareFields();
         });
 
-        // ===== 授权场景切换 =====
-        var authSceneSelect = document.getElementById('authScene');
-        authSceneSelect.addEventListener('change', function() {
-            var val = this.value;
-            // 切换授权场景时重置申请类型
-            setCustomSelectValue('planDevType', '');
-
-            // 先隐藏授权相关区域
-            existingAuthSection.classList.remove('show');
-            existingAuthSection.style.display = 'none';
-
-            if (val === '1') {
-                // 开通测试授权：无特殊字段控制
-                resetExistingAuthSection();
-            } else if (val === '2') {
-                // 授权资源调整：显示已有授权展示区，隐藏硬件文件
-                existingAuthSection.style.display = 'block';
-                existingAuthSection.classList.add('show');
-                hwInfoSection.style.display = 'none';
-                resetExistingAuthSection();
-            } else if (val === '3') {
-                // 销售设备增开新模块：显示SN+已有授权展示区
-                devSnFormItem.style.display = 'flex';
-                existingAuthSection.style.display = 'block';
-                existingAuthSection.classList.add('show');
-                resetExistingAuthSection();
-            } else if (val === '5' || val === '6') {
-                // 商务类（建设中）
-                var toast = document.getElementById('syncToast');
-                if (toast) {
-                    toast.textContent = '该场景正在建设中，敬请期待';
-                    toast.style.background = '#ff9800';
-                    toast.style.display = 'block';
-                    setTimeout(function() { toast.style.display = 'none'; toast.style.background = '#4CAF50'; }, 3000);
-                }
-            } else {
-                // 未选择
-                resetExistingAuthSection();
-            }
-        });
-
         // ===== 续期 Tab 切换 =====
         var renewalTabs = document.querySelectorAll('.renewal-tab');
         renewalTabs.forEach(function(tab) {
@@ -5052,6 +4992,103 @@
             deviceSnChips.addMany(entry.devices.map(function (d) { return d.sn; }), { silent: true });
         }
 
+        var authorizationRules = window.AuthorizationApplicationRules || {};
+        var applicationState = {
+            deviceFacts: [],
+            requestAction: ''
+        };
+        window.applicationState = applicationState;
+
+        var mockDeviceFactsById = {
+            'DEV-NGAF-001': {
+                lookupStatus: 'success', deviceId: 'DEV-NGAF-001', sn: 'SN-2024002-A',
+                productLineId: '22', productName: 'NGAF', deviceSource: 'borrowed',
+                borrowOrderId: 'BT20240615002', authorizationStatus: 'none',
+                currentModules: [], currentCapacity: 0, testedMonths: 0, applicationCount: 0,
+                materialKeys: ['borrow-order'], factVersion: 'facts-ngaf-001-v1'
+            },
+            'SALES-ATRUST-001': {
+                lookupStatus: 'success', deviceId: 'SALES-ATRUST-001', sn: 'SN-SALES-ATRUST-001',
+                productLineId: '20', productName: 'aTrust', deviceSource: 'sales', borrowOrderId: '',
+                authorizationStatus: 'active', currentModules: ['基础接入'], currentCapacity: 300,
+                testedMonths: 3, applicationCount: 1, materialKeys: ['sales-device-proof'],
+                factVersion: 'facts-atrust-001-v1'
+            },
+            'DEV-45-AUTO-001': {
+                lookupStatus: 'success', deviceId: 'DEV-45-AUTO-001', sn: 'SN-HCI-AUTO-001',
+                productLineId: '45', productName: 'HCI', deviceSource: 'borrowed',
+                borrowOrderId: 'BT-HCI-AUTO-001', authorizationStatus: 'none', currentModules: [],
+                currentCapacity: 0, testedMonths: 0, applicationCount: 0,
+                materialKeys: ['borrow-order'], factVersion: 'facts-hci-auto-v1'
+            },
+            'DEV-19-AUTO-001': {
+                lookupStatus: 'success', deviceId: 'DEV-19-AUTO-001', sn: 'SN-SCP-AUTO-001',
+                productLineId: '19', productName: 'SCP', deviceSource: 'borrowed',
+                borrowOrderId: 'BT-SCP-AUTO-001', authorizationStatus: 'none', currentModules: [],
+                currentCapacity: 0, testedMonths: 0, applicationCount: 0,
+                materialKeys: ['borrow-order'], factVersion: 'facts-scp-auto-v1'
+            }
+        };
+
+        var requestActionFormItem = document.getElementById('requestActionFormItem');
+        var requestActionSelect = document.getElementById('requestAction');
+        var deviceFactsSummary = document.getElementById('deviceFactsSummary');
+
+        function clearRequestActionState() {
+            applicationState.requestAction = '';
+            requestActionSelect.value = '';
+            document.getElementById('authScene').value = '';
+            resetExistingAuthSection();
+        }
+
+        function getCommonEligibleActions(facts) {
+            if (!facts.length || typeof authorizationRules.getEligibleRequestActions !== 'function') return [];
+            var common = authorizationRules.getEligibleRequestActions(facts[0]).slice();
+            for (var i = 1; i < facts.length; i++) {
+                var eligible = authorizationRules.getEligibleRequestActions(facts[i]);
+                common = common.filter(function(action) { return eligible.indexOf(action) !== -1; });
+            }
+            return common;
+        }
+
+        function renderRequestActions(actions) {
+            var previous = requestActionSelect.value;
+            requestActionSelect.textContent = '';
+            var placeholder = document.createElement('option');
+            placeholder.value = '';
+            placeholder.textContent = '请选择申请事项';
+            requestActionSelect.appendChild(placeholder);
+            actions.forEach(function(action) {
+                var option = document.createElement('option');
+                option.value = action;
+                option.textContent = authorizationRules.REQUEST_ACTION_LABELS[action] || action;
+                requestActionSelect.appendChild(option);
+            });
+            requestActionFormItem.hidden = actions.length === 0;
+            if (actions.indexOf(previous) !== -1) {
+                requestActionSelect.value = previous;
+            } else {
+                clearRequestActionState();
+            }
+        }
+
+        function refreshRecognizedDeviceFacts(deviceIds) {
+            var facts = deviceIds.map(function(id) { return mockDeviceFactsById[id] || null; }).filter(Boolean);
+            applicationState.deviceFacts = facts;
+            deviceFactsSummary.textContent = facts.map(function(fact) {
+                return fact.deviceId + ' · ' + fact.productName + ' · ' + fact.authorizationStatus;
+            }).join('；');
+            renderRequestActions(facts.length === deviceIds.length ? getCommonEligibleActions(facts) : []);
+        }
+
+        requestActionSelect.addEventListener('change', function() {
+            resetExistingAuthSection();
+            applicationState.requestAction = this.value;
+            document.getElementById('authScene').value = authorizationRules.mapLegacyAuthScene(this.value);
+            existingAuthSection.style.display = this.value && this.value !== 'open' ? 'block' : 'none';
+            existingAuthSection.classList.toggle('show', !!this.value && this.value !== 'open');
+        });
+
         var isHciMode = false;
         var chipContainer = document.getElementById('chipContainer');
         var chipInput = document.getElementById('chipInput');
@@ -5060,7 +5097,10 @@
 
         var deviceIdChips = createChipControl(chipContainer, chipInput, '输入设备ID并回车添加...', function (val) {
             syncBorrowInfoByDevice(val, 'id');
-        }, function (vals) { syncHiddenMirror('devIdNew', vals); });
+        }, function (vals) {
+            syncHiddenMirror('devIdNew', vals);
+            refreshRecognizedDeviceFacts(vals);
+        });
 
         var deviceSnChips = createChipControl(snChipContainer, snChipInput, '输入设备SN并回车添加...', function (val) {
             syncBorrowInfoByDevice(val, 'sn');
@@ -5127,7 +5167,7 @@
             var plVal = this.value;
             updateProductLifecycleWarning();
             // 切换产品线时重置下游字段
-            setCustomSelectValue('authScene', '');
+            document.getElementById('authScene').value = '';
             setCustomSelectValue('planDevType', '');
             existingAuthSection.classList.remove('show');
             existingAuthSection.style.display = 'none';
@@ -5225,7 +5265,7 @@
             'SASE-GA': '2026-07-07', '钓鱼邮件防护 GPT': '2026-07-07', '云威胁情报网关': '2026-07-07'
         };
 
-        var searchInput = document.getElementById('customerSearch');
+        var searchInput = document.getElementById('customerSearchInput');
         var dropdown = document.getElementById('customerDropdown');
         var infoDisplay = document.getElementById('customerInfoDisplay');
         var nameSpan = document.getElementById('selectedCustomerName');
@@ -5523,12 +5563,6 @@
         // 授权场景必选
         if (!authScene) {
             alert('请选择授权场景');
-            return;
-        }
-
-        // 商务类拦截
-        if (authScene === '5' || authScene === '6') {
-            alert('该场景正在建设中，敬请期待');
             return;
         }
 
