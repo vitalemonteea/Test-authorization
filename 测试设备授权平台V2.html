@@ -1075,6 +1075,11 @@
                         </div>
                     </div>
 
+                    <div class="layui-form-item basic-full device-compatibility-blocking" id="deviceCompatibilityBlocking" role="alert" hidden>
+                        <label class="layui-form-label">设备兼容性</label>
+                        <div class="layui-input-block" id="deviceCompatibilityIssueList"></div>
+                    </div>
+
                     <div class="layui-form-item basic-full approval-preview" id="approvalPreview" aria-live="polite">
                         <label class="layui-form-label">审批预览</label>
                         <div class="layui-input-block">
@@ -1087,6 +1092,7 @@
                             </div>
                         </div>
                     </div>
+                    <input type="hidden" id="submissionSnapshot" name="submissionSnapshot" value="">
 
 <!-- ===== 续期授权 - 历史借测数据区域 ===== -->
 <div id="renewal-section" style="display:none;">
@@ -1895,7 +1901,7 @@
                     <!-- 提交按钮 -->
                     <div class="layui-form-item">
                         <div class="layui-input-block" style="text-align: center;">
-                            <button type="button" class="layui-btn" onclick="submitStandardForm()">立即获取</button>
+                            <button type="button" class="layui-btn" id="standardSubmitButton" onclick="submitStandardForm()">立即获取</button>
                             <button type="reset" class="layui-btn layui-btn-primary">重置</button>
                         </div>
                     </div>
@@ -4886,7 +4892,7 @@
         // ===== 设备ID / 设备SN Chip 输入 + HCI/SCP 模式（恢复 V1 联动） =====
         function escapeHtml(str) { return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 
-        function createChipControl(container, input, defaultPlaceholder, onAdd, onChange) {
+        function createChipControl(container, input, defaultPlaceholder, onAdd, onChange, onRemove) {
             var values = [];
             function render() {
                 container.querySelectorAll('.chip-item').forEach(function (el) { el.remove(); });
@@ -4914,8 +4920,11 @@
                 (vals || []).forEach(function (val) { add(val, options); });
             }
             function remove(val) {
+                if (values.indexOf(val) === -1) return false;
                 values = values.filter(function (v) { return v !== val; });
                 render();
+                if (onRemove) onRemove(val);
+                return true;
             }
             function setFixed(vals) {
                 values = (vals || []).slice();
@@ -5042,6 +5051,20 @@
                 currentModules: [], currentCapacity: 0, testedMonths: 0, applicationCount: 0,
                 materialKeys: ['borrow-order'], factVersion: 'facts-ngaf-001-v1'
             },
+            'DEV-NGAF-002': {
+                lookupStatus: 'success', deviceId: 'DEV-NGAF-002', sn: 'SN-2024002-B',
+                productLineId: '22', productName: 'NGAF', deviceSource: 'borrowed',
+                borrowOrderId: 'BT20240615002', authorizationStatus: 'none',
+                currentModules: [], currentCapacity: 0, testedMonths: 0, applicationCount: 0,
+                materialKeys: ['borrow-order'], factVersion: 'facts-ngaf-002-v1'
+            },
+            'DEV-TEST-001': {
+                lookupStatus: 'success', deviceId: 'DEV-TEST-001', sn: 'SN-TEST-001',
+                productLineId: '22', productName: 'NGAF', deviceSource: 'borrowed',
+                borrowOrderId: 'BT20240615003', authorizationStatus: 'none',
+                currentModules: [], currentCapacity: 0, testedMonths: 0, applicationCount: 0,
+                materialKeys: ['borrow-order'], factVersion: 'facts-test-001-v1'
+            },
             'SALES-ATRUST-001': {
                 lookupStatus: 'success', deviceId: 'SALES-ATRUST-001', sn: 'SN-SALES-ATRUST-001',
                 productLineId: '20', productName: 'aTrust', deviceSource: 'sales', borrowOrderId: '',
@@ -5097,6 +5120,57 @@
         var approvalRouteKey = document.getElementById('approvalRouteKey');
         var approvalReasonTexts = document.getElementById('approvalReasonTexts');
         var approvalRuleVersion = document.getElementById('approvalRuleVersion');
+        var deviceCompatibilityBlocking = document.getElementById('deviceCompatibilityBlocking');
+        var deviceCompatibilityIssueList = document.getElementById('deviceCompatibilityIssueList');
+        var standardSubmitButton = document.getElementById('standardSubmitButton');
+        var compatibilityIssueLabels = {
+            PRODUCT_LINE_MISMATCH: '实际产品不同',
+            REQUEST_ACTION_MISMATCH: '申请事项不同',
+            DEVICE_SOURCE_MISMATCH: '设备来源不同',
+            BORROW_ORDER_MISMATCH: '借测单不同',
+            MATERIAL_KEYS_MISMATCH: '所需材料不同',
+            DECISION_TYPE_MISMATCH: '审批决策类型不同',
+            APPROVAL_ROUTE_MISMATCH: '审批路线不同'
+        };
+
+        function renderCompatibilityIssues(issues) {
+            applicationState.compatibilityIssues = issues;
+            deviceCompatibilityBlocking.hidden = issues.length === 0;
+            deviceCompatibilityIssueList.textContent = '';
+            issues.forEach(function(issue) {
+                var row = document.createElement('div');
+                row.textContent = issue.deviceId + '：' + (compatibilityIssueLabels[issue.code] || issue.code);
+                deviceCompatibilityIssueList.appendChild(row);
+            });
+            standardSubmitButton.disabled = issues.some(function(issue) { return issue.hard; });
+        }
+
+        function buildDeviceApplications(facts) {
+            if (!applicationState.requestAction || typeof authorizationRules.calculateApprovalDecision !== 'function') return [];
+            return facts.map(function(fact) {
+                return {
+                    deviceFacts: fact,
+                    requestAction: applicationState.requestAction,
+                    approvalDecision: authorizationRules.calculateApprovalDecision({
+                        deviceFacts: [fact],
+                        productLineId: plnameSelect.value,
+                        productStatus: applicationState.productStatus,
+                        requestAction: applicationState.requestAction,
+                        customerType: applicationState.customerType,
+                        requestedMonths: Number(requestedMonthsInput.value || 0),
+                        targetCapacity: Number(targetCapacityInput.value || 0)
+                    })
+                };
+            });
+        }
+
+        function recalculateCompatibilityIssues(facts) {
+            facts = facts || applicationState.deviceFacts;
+            var issues = typeof authorizationRules.findCompatibilityIssues === 'function' ?
+                authorizationRules.findCompatibilityIssues(buildDeviceApplications(facts)) : [];
+            renderCompatibilityIssues(issues);
+            return issues;
+        }
 
         function clearApprovalPreview() {
             applicationState.approvalDecision = null;
@@ -5106,6 +5180,7 @@
             approvalRouteKey.textContent = '';
             approvalReasonTexts.textContent = '';
             approvalRuleVersion.textContent = '';
+            recalculateCompatibilityIssues();
         }
 
         function recalculateApprovalDecision() {
@@ -5132,6 +5207,7 @@
             approvalRouteKey.textContent = decision.routeKey;
             approvalReasonTexts.textContent = decision.reasonTexts.join('；');
             approvalRuleVersion.textContent = decision.ruleVersion;
+            recalculateCompatibilityIssues();
             return decision;
         }
 
@@ -5217,12 +5293,12 @@
             }
         }
 
-        function refreshRecognizedDeviceFacts(deviceIds) {
+        function getTrustedDeviceFactsForIds(deviceIds) {
             var identifiers = {
                 productLineId: plnameSelect.value,
                 productName: getSelectedProductName()
             };
-            var facts = deviceIds.map(function(id) {
+            return deviceIds.map(function(id) {
                 var rawFacts = lookupDeviceFacts(id);
                 if (typeof authorizationRules.normalizeLookupResult !== 'function') {
                     return rawFacts || { lookupStatus: 'not_found', deviceId: id, manualReviewRequired: true };
@@ -5233,6 +5309,10 @@
                     productName: identifiers.productName
                 });
             });
+        }
+
+        function refreshRecognizedDeviceFacts(deviceIds) {
+            var facts = getTrustedDeviceFactsForIds(deviceIds);
             applicationState.deviceFacts = facts;
             applicationState.approvalDecision = null;
             renderDeviceFactsSummary(facts);
@@ -5281,12 +5361,28 @@
         var chipInput = document.getElementById('chipInput');
         var snChipContainer = document.getElementById('snChipContainer');
         var snChipInput = document.getElementById('snChipInput');
+        var pairRemovalInProgress = false;
+
+        function findDeviceFactsBySn(sn) {
+            var ids = Object.keys(mockDeviceFactsById);
+            for (var i = 0; i < ids.length; i++) {
+                if (mockDeviceFactsById[ids[i]].sn === sn) return mockDeviceFactsById[ids[i]];
+            }
+            return null;
+        }
 
         var deviceIdChips = createChipControl(chipContainer, chipInput, '输入设备ID并回车添加...', function (val) {
             syncBorrowInfoByDevice(val, 'id');
         }, function (vals) {
             syncHiddenMirror('devIdNew', vals);
             refreshRecognizedDeviceFacts(vals);
+        }, function(id) {
+            if (pairRemovalInProgress) return;
+            var fact = mockDeviceFactsById[id];
+            if (!fact || !fact.sn) return;
+            pairRemovalInProgress = true;
+            deviceSnChips.remove(fact.sn);
+            pairRemovalInProgress = false;
         });
 
         var deviceSnChips = createChipControl(snChipContainer, snChipInput, '输入设备SN并回车添加...', function (val) {
@@ -5297,7 +5393,14 @@
                 var authResult = simulateFetchExistingAuth(val, 'sn');
                 renderEaResult(authResult);
             }
-        }, function (vals) { syncHiddenMirror('devSnNew', vals); });
+        }, function (vals) { syncHiddenMirror('devSnNew', vals); }, function(sn) {
+            if (pairRemovalInProgress) return;
+            var fact = findDeviceFactsBySn(sn);
+            if (!fact) return;
+            pairRemovalInProgress = true;
+            deviceIdChips.remove(fact.deviceId);
+            pairRemovalInProgress = false;
+        });
 
         function getChips() { return deviceIdChips.get(); }
         function getSnChips() { return deviceSnChips.get(); }
@@ -5306,6 +5409,12 @@
         window.addChip = function (v) { return deviceIdChips.add(v); };
         window.addSnChip = function (v) { return deviceSnChips.add(v); };
         window.removeDeviceChip = function (v) { return deviceIdChips.remove(v); };
+        window.getTrustedDeviceFacts = function() {
+            return getTrustedDeviceFactsForIds(deviceIdChips.get());
+        };
+        window.buildCurrentDeviceApplications = function(facts) {
+            return buildDeviceApplications(facts || window.getTrustedDeviceFacts());
+        };
 
         function updateHardwareFields() {
             var val = planDevTypeSelect.value;
@@ -5748,14 +5857,15 @@
     function submitStandardForm() {
         var rules = window.AuthorizationApplicationRules || {};
         var state = window.applicationState || { deviceFacts: [] };
-        var authScene = document.getElementById('authScene').value;
+        var latestFacts = typeof window.getTrustedDeviceFacts === 'function' ?
+            window.getTrustedDeviceFacts() : state.deviceFacts;
+        var productLineId = document.getElementById('plname').value;
         var planDevType = document.getElementById('planDevType').value;
-        var devIdInput = document.getElementById('devIdNew');
         var hwInfoSection = document.getElementById('hwInfoSection');
         var hwFileInput = document.getElementById('hwFileInput');
         var hwUploadResult = document.getElementById('hwUploadResult');
         var lookupBlockingReason = rules.getLookupBlockingReason ?
-            rules.getLookupBlockingReason(state.deviceFacts, document.getElementById('plname').value) : null;
+            rules.getLookupBlockingReason(latestFacts, productLineId) : null;
 
         if (lookupBlockingReason) {
             alert(lookupBlockingReason.code === 'LOOKUP_ERROR' ?
@@ -5764,32 +5874,38 @@
             return;
         }
 
-        // 授权场景必选
-        if (!authScene) {
-            alert('请选择授权场景');
+        var currentApplications = typeof window.buildCurrentDeviceApplications === 'function' ?
+            window.buildCurrentDeviceApplications(latestFacts) : [];
+        var compatibilityIssues = rules.findCompatibilityIssues ?
+            rules.findCompatibilityIssues(currentApplications) : [];
+        if (compatibilityIssues.some(function(issue) { return issue.hard; })) {
+            alert('设备之间存在不兼容项，请拆分申请');
             return;
         }
 
-        // 申请类型必选
+        if (!latestFacts.length) {
+            alert('请先添加并查询设备事实');
+            return;
+        }
+
+        if (!state.requestAction) {
+            alert('请选择申请事项');
+            return;
+        }
+
         if (!planDevType) {
             alert('请选择申请类型');
             return;
         }
 
-        // 授权场景=3（销售增开）：SN + 设备ID
-        if (authScene === '3') {
+        if (state.requestAction === 'add_module') {
             var devSnInput = document.getElementById('devSnNew');
             if (devSnInput && !devSnInput.value.trim()) {
                 alert('请填写设备SN');
                 return;
             }
-            if (devIdInput && deviceIdFormItem.offsetParent !== null && !devIdInput.value.trim()) {
-                alert('请填写设备ID');
-                return;
-            }
         }
 
-        // 申请类型=1（硬件）：校验SN + 借测4字段
         if (planDevType === '1') {
             var devSnInput = document.getElementById('devSnNew');
             if (devSnInput && !devSnInput.value.trim()) {
@@ -5818,11 +5934,6 @@
             }
         }
 
-        // 公共校验：设备ID + 硬件文件
-        if (devIdInput && deviceIdFormItem.offsetParent !== null && !devIdInput.value.trim()) {
-            alert('请填写设备ID');
-            return;
-        }
         if (hwInfoSection && hwInfoSection.style.display !== 'none') {
             var hwFile = hwFileInput.files[0];
             if (!hwFile) {
@@ -5838,6 +5949,37 @@
                 return;
             }
         }
+
+        if (!state.approvalDecision || state.approvalDecision.ruleVersion !== rules.RULE_VERSION) {
+            alert('审批规则已更新，请重新确认审批预览');
+            return;
+        }
+
+        var staleDeviceIds = rules.findStaleDeviceFacts ?
+            rules.findStaleDeviceFacts(state.deviceFacts, latestFacts) : [];
+        if (staleDeviceIds.length) {
+            alert('设备事实已更新，请重新查询后提交');
+            return;
+        }
+
+        var currentDecision = rules.calculateApprovalDecision({
+            deviceFacts: latestFacts,
+            productLineId: productLineId,
+            productStatus: rules.getProductStatus(productLineId),
+            requestAction: state.requestAction,
+            customerType: state.customerType,
+            requestedMonths: Number(document.getElementById('requestedMonths').value || 0),
+            targetCapacity: Number(document.getElementById('targetCapacity').value || 0)
+        });
+        var snapshot = rules.buildSubmissionSnapshot({
+            productLineId: productLineId,
+            productStatus: rules.getProductStatus(productLineId),
+            requestAction: state.requestAction,
+            deviceFacts: latestFacts,
+            approvalDecision: currentDecision
+        });
+        document.getElementById('authScene').value = snapshot.authScene;
+        document.getElementById('submissionSnapshot').value = JSON.stringify(snapshot);
 
         var mockId = 'AUTH-' + Date.now().toString().slice(-8);
         alert('表单已提交，ID: ' + mockId);

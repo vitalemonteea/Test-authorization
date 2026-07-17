@@ -179,6 +179,67 @@
         };
     }
 
+    function normalizedMaterialKeys(fact) {
+        return (fact.materialKeys || []).slice().sort().join('|');
+    }
+
+    function findCompatibilityIssues(deviceApplications) {
+        var applications = deviceApplications || [];
+        if (applications.length < 2) return [];
+        var reference = applications[0];
+        var referenceFact = reference.deviceFacts || reference.fact || {};
+        var referenceDecision = reference.approvalDecision || {};
+        var issues = [];
+
+        function addIssue(code, fact) {
+            issues.push({
+                code: code,
+                deviceId: fact.deviceId || '',
+                referenceDeviceId: referenceFact.deviceId || '',
+                hard: true
+            });
+        }
+
+        applications.slice(1).forEach(function(application) {
+            var fact = application.deviceFacts || application.fact || {};
+            var decision = application.approvalDecision || {};
+            if (String(fact.productLineId) !== String(referenceFact.productLineId)) addIssue('PRODUCT_LINE_MISMATCH', fact);
+            if (application.requestAction !== reference.requestAction) addIssue('REQUEST_ACTION_MISMATCH', fact);
+            if (fact.deviceSource !== referenceFact.deviceSource) addIssue('DEVICE_SOURCE_MISMATCH', fact);
+            if ((fact.borrowOrderId || '') !== (referenceFact.borrowOrderId || '')) addIssue('BORROW_ORDER_MISMATCH', fact);
+            if (normalizedMaterialKeys(fact) !== normalizedMaterialKeys(referenceFact)) addIssue('MATERIAL_KEYS_MISMATCH', fact);
+            if (decision.decisionType !== referenceDecision.decisionType) addIssue('DECISION_TYPE_MISMATCH', fact);
+            if (decision.routeKey !== referenceDecision.routeKey) addIssue('APPROVAL_ROUTE_MISMATCH', fact);
+        });
+        return issues;
+    }
+
+    function cloneJson(value) {
+        return value == null ? value : JSON.parse(JSON.stringify(value));
+    }
+
+    function buildSubmissionSnapshot(input) {
+        input = input || {};
+        return {
+            productLineId: String(input.productLineId || ''),
+            productStatus: input.productStatus || 'active',
+            requestAction: input.requestAction || '',
+            authScene: mapLegacyAuthScene(input.requestAction),
+            deviceFacts: cloneJson(input.deviceFacts || []),
+            approvalDecision: cloneJson(input.approvalDecision || null),
+            ruleVersion: RULE_VERSION
+        };
+    }
+
+    function findStaleDeviceFacts(snapshotFacts, latestFacts) {
+        var latestById = {};
+        (latestFacts || []).forEach(function(fact) { latestById[fact.deviceId] = fact; });
+        return (snapshotFacts || []).filter(function(fact) {
+            var latest = latestById[fact.deviceId];
+            return !latest || latest.factVersion !== fact.factVersion;
+        }).map(function(fact) { return fact.deviceId; });
+    }
+
     return {
         RULE_VERSION: RULE_VERSION,
         REQUEST_ACTION_LABELS: REQUEST_ACTION_LABELS,
@@ -188,6 +249,9 @@
         mapLegacyAuthScene: mapLegacyAuthScene,
         normalizeLookupResult: normalizeLookupResult,
         getLookupBlockingReason: getLookupBlockingReason,
-        calculateApprovalDecision: calculateApprovalDecision
+        calculateApprovalDecision: calculateApprovalDecision,
+        findCompatibilityIssues: findCompatibilityIssues,
+        buildSubmissionSnapshot: buildSubmissionSnapshot,
+        findStaleDeviceFacts: findStaleDeviceFacts
     };
 }));
