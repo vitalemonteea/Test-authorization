@@ -1048,6 +1048,12 @@
                                 <input type="hidden" id="devIdNew" name="devIdNew" value="">
                             </div>
                             <div id="deviceFactsSummary" class="device-facts-summary" aria-live="polite"></div>
+                            <div id="deviceLookupBlocking" class="device-lookup-blocking" role="alert" hidden>
+                                <span id="deviceLookupBlockingText"></span>
+                                <button type="button" class="layui-btn layui-btn-primary" id="retryDeviceLookup" hidden>重试查询</button>
+                                <button type="button" class="layui-btn layui-btn-primary" id="saveApplicationDraft" hidden>保存草稿</button>
+                            </div>
+                            <input type="hidden" id="manualReviewRequired" name="manualReviewRequired" value="0">
                         </div>
                     </div>
 
@@ -4993,9 +4999,16 @@
         }
 
         var authorizationRules = window.AuthorizationApplicationRules || {};
+        function getCurrentProductStatus(productLineId) {
+            return typeof authorizationRules.getProductStatus === 'function' ?
+                authorizationRules.getProductStatus(productLineId) : 'active';
+        }
         var applicationState = {
             deviceFacts: [],
-            requestAction: ''
+            requestAction: '',
+            approvalDecision: null,
+            compatibilityIssues: [],
+            productStatus: getCurrentProductStatus(plnameSelect.value)
         };
         window.applicationState = applicationState;
 
@@ -5033,6 +5046,11 @@
         var requestActionFormItem = document.getElementById('requestActionFormItem');
         var requestActionSelect = document.getElementById('requestAction');
         var deviceFactsSummary = document.getElementById('deviceFactsSummary');
+        var deviceLookupBlocking = document.getElementById('deviceLookupBlocking');
+        var deviceLookupBlockingText = document.getElementById('deviceLookupBlockingText');
+        var retryDeviceLookup = document.getElementById('retryDeviceLookup');
+        var saveApplicationDraftButton = document.getElementById('saveApplicationDraft');
+        var manualReviewRequired = document.getElementById('manualReviewRequired');
 
         function clearRequestActionState() {
             applicationState.requestAction = '';
@@ -5072,19 +5090,97 @@
             }
         }
 
-        function refreshRecognizedDeviceFacts(deviceIds) {
-            var facts = deviceIds.map(function(id) { return mockDeviceFactsById[id] || null; }).filter(Boolean);
-            applicationState.deviceFacts = facts;
-            deviceFactsSummary.textContent = facts.map(function(fact) {
-                return fact.deviceId + ' · ' + fact.productName + ' · ' + fact.authorizationStatus;
-            }).join('；');
-            renderRequestActions(facts.length === deviceIds.length ? getCommonEligibleActions(facts) : []);
+        function getSelectedProductName() {
+            var option = plnameSelect.options[plnameSelect.selectedIndex];
+            return option ? option.textContent.trim() : '';
         }
+
+        function lookupDeviceFacts(deviceId) {
+            if (deviceId === 'ERR-TIMEOUT-001') return { status: 'error', errorCode: 'TIMEOUT' };
+            return mockDeviceFactsById[deviceId] || null;
+        }
+
+        function renderDeviceFactsSummary(facts) {
+            deviceFactsSummary.textContent = '';
+            facts.forEach(function(fact) {
+                var row = document.createElement('div');
+                row.className = 'device-facts-row';
+                var sourceLabel = fact.deviceSource === 'borrowed' ? '借测设备' :
+                    (fact.deviceSource === 'sales' ? '销售设备' : '来源待人工确认');
+                var authorizationLabel = fact.authorizationStatus === 'active' ? '有效授权' :
+                    (fact.authorizationStatus === 'expired' ? '授权已过期' : '无授权');
+                var modules = fact.currentModules && fact.currentModules.length ? fact.currentModules.join('、') : '无';
+                row.textContent = fact.deviceId + '｜实际产品：' + (fact.productName || '待人工确认') +
+                    '｜来源：' + sourceLabel + '｜授权：' + authorizationLabel +
+                    '｜当前模块：' + modules + '｜当前容量：' + (fact.currentCapacity || 0) +
+                    '｜累计测试：' + (fact.testedMonths || 0) + '个月｜历史申请：' +
+                    (fact.applicationCount || 0) + '次';
+                deviceFactsSummary.appendChild(row);
+            });
+        }
+
+        function renderLookupBlocking(reason) {
+            deviceLookupBlocking.hidden = !reason;
+            retryDeviceLookup.hidden = !reason || reason.code !== 'LOOKUP_ERROR';
+            saveApplicationDraftButton.hidden = !reason || reason.code !== 'LOOKUP_ERROR';
+            if (!reason) {
+                deviceLookupBlockingText.textContent = '';
+            } else if (reason.code === 'LOOKUP_ERROR') {
+                deviceLookupBlockingText.textContent = '设备事实查询失败：' + reason.deviceId + '，请重试';
+            } else {
+                deviceLookupBlockingText.textContent = '设备实际产品与所选产品不一致：' +
+                    reason.deviceId + ' 实际为 ' + reason.productName;
+            }
+        }
+
+        function refreshRecognizedDeviceFacts(deviceIds) {
+            var identifiers = {
+                productLineId: plnameSelect.value,
+                productName: getSelectedProductName()
+            };
+            var facts = deviceIds.map(function(id) {
+                var rawFacts = lookupDeviceFacts(id);
+                if (typeof authorizationRules.normalizeLookupResult !== 'function') {
+                    return rawFacts || { lookupStatus: 'not_found', deviceId: id, manualReviewRequired: true };
+                }
+                return authorizationRules.normalizeLookupResult(rawFacts, {
+                    deviceId: id,
+                    productLineId: identifiers.productLineId,
+                    productName: identifiers.productName
+                });
+            });
+            applicationState.deviceFacts = facts;
+            applicationState.approvalDecision = null;
+            renderDeviceFactsSummary(facts);
+            manualReviewRequired.value = facts.some(function(fact) { return fact.manualReviewRequired; }) ? '1' : '0';
+            var blockingReason = typeof authorizationRules.getLookupBlockingReason === 'function' ?
+                authorizationRules.getLookupBlockingReason(facts, plnameSelect.value) : null;
+            renderLookupBlocking(blockingReason);
+            renderRequestActions(blockingReason ? [] : getCommonEligibleActions(facts));
+        }
+
+        function saveApplicationDraft() {
+            var draft = {
+                deviceIdentifiers: deviceIdChips.get(),
+                productLineId: plnameSelect.value,
+                ruleVersion: authorizationRules.RULE_VERSION || ''
+            };
+            localStorage.setItem('authorization-application-draft', JSON.stringify(draft));
+            alert('申请草稿已保存');
+            return draft;
+        }
+
+        window.saveApplicationDraft = saveApplicationDraft;
+        retryDeviceLookup.addEventListener('click', function() {
+            refreshRecognizedDeviceFacts(deviceIdChips.get());
+        });
+        saveApplicationDraftButton.addEventListener('click', saveApplicationDraft);
 
         requestActionSelect.addEventListener('change', function() {
             resetExistingAuthSection();
             applicationState.requestAction = this.value;
-            document.getElementById('authScene').value = authorizationRules.mapLegacyAuthScene(this.value);
+            document.getElementById('authScene').value = typeof authorizationRules.mapLegacyAuthScene === 'function' ?
+                authorizationRules.mapLegacyAuthScene(this.value) : '';
             existingAuthSection.style.display = this.value && this.value !== 'open' ? 'block' : 'none';
             existingAuthSection.classList.toggle('show', !!this.value && this.value !== 'open');
         });
@@ -5118,6 +5214,7 @@
         function clearChips() { deviceIdChips.clear(); }
         window.addChip = function (v) { return deviceIdChips.add(v); };
         window.addSnChip = function (v) { return deviceSnChips.add(v); };
+        window.removeDeviceChip = function (v) { return deviceIdChips.remove(v); };
 
         function updateHardwareFields() {
             var val = planDevTypeSelect.value;
@@ -5165,6 +5262,7 @@
 
         plnameSelect.addEventListener('change', function() {
             var plVal = this.value;
+            applicationState.productStatus = getCurrentProductStatus(plVal);
             updateProductLifecycleWarning();
             // 切换产品线时重置下游字段
             document.getElementById('authScene').value = '';
@@ -5553,12 +5651,23 @@
 
     // 提交表单（模拟）
     function submitStandardForm() {
+        var rules = window.AuthorizationApplicationRules || {};
+        var state = window.applicationState || { deviceFacts: [] };
         var authScene = document.getElementById('authScene').value;
         var planDevType = document.getElementById('planDevType').value;
         var devIdInput = document.getElementById('devIdNew');
         var hwInfoSection = document.getElementById('hwInfoSection');
         var hwFileInput = document.getElementById('hwFileInput');
         var hwUploadResult = document.getElementById('hwUploadResult');
+        var lookupBlockingReason = rules.getLookupBlockingReason ?
+            rules.getLookupBlockingReason(state.deviceFacts, document.getElementById('plname').value) : null;
+
+        if (lookupBlockingReason) {
+            alert(lookupBlockingReason.code === 'LOOKUP_ERROR' ?
+                '设备事实查询失败，请重试或保存草稿' :
+                '设备实际产品与所选产品不一致，请更正后继续');
+            return;
+        }
 
         // 授权场景必选
         if (!authScene) {
@@ -5572,15 +5681,7 @@
             return;
         }
 
-        // 授权场景=2（授权资源调整）：必须查询到已有授权数据
-        if (authScene === '2') {
-            if (!eaQueryFound) {
-                alert('请先查询设备当前授权信息（通过设备ID、SN或上传.info文件）');
-                return;
-            }
-        }
-
-        // 授权场景=3（销售增开）：SN + 设备ID + 已有授权查询结果
+        // 授权场景=3（销售增开）：SN + 设备ID
         if (authScene === '3') {
             var devSnInput = document.getElementById('devSnNew');
             if (devSnInput && !devSnInput.value.trim()) {
@@ -5589,10 +5690,6 @@
             }
             if (devIdInput && deviceIdFormItem.offsetParent !== null && !devIdInput.value.trim()) {
                 alert('请填写设备ID');
-                return;
-            }
-            if (!eaQueryFound) {
-                alert('请先通过SN查询该设备的销售授权记录');
                 return;
             }
         }

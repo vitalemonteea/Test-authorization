@@ -93,3 +93,137 @@ test('切换申请事项同步旧场景并清理上一事项状态', () => {
     dom.window.close();
   }
 });
+
+test('查询结果归一化并给出设备事实阻断原因', () => {
+  assert.deepEqual(
+    rules.normalizeLookupResult({ status: 'error', errorCode: 'TIMEOUT' }, { deviceId: 'ERR-TIMEOUT-001' }),
+    {
+      lookupStatus: 'error',
+      deviceId: 'ERR-TIMEOUT-001',
+      errorCode: 'TIMEOUT',
+      manualReviewRequired: false
+    }
+  );
+  assert.equal(rules.getLookupBlockingReason([
+    { lookupStatus: 'error', deviceId: 'ERR-TIMEOUT-001' }
+  ], '22').code, 'LOOKUP_ERROR');
+  assert.equal(rules.getLookupBlockingReason([
+    fixtures.noAuthBorrowed
+  ], '20').code, 'PRODUCT_MISMATCH');
+});
+
+test('只读设备事实摘要展示实际产品、来源、授权、资源和历史', () => {
+  const { dom, document, window, errors } = loadV2Dom();
+  try {
+    const product = document.getElementById('plname');
+    product.value = '22';
+    fireChange(product, window);
+    window.addChip('DEV-NGAF-001');
+
+    const summary = document.getElementById('deviceFactsSummary');
+    assert.match(summary.textContent, /NGAF/);
+    assert.match(summary.textContent, /借测设备/);
+    assert.match(summary.textContent, /无授权/);
+    assert.match(summary.textContent, /当前模块：无/);
+    assert.match(summary.textContent, /当前容量：0/);
+    assert.match(summary.textContent, /累计测试：0个月/);
+    assert.match(summary.textContent, /历史申请：0次/);
+    assert.equal(summary.querySelector('input, select, textarea, button'), null);
+    assert.deepEqual(errors, []);
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('查询超时阻断事项和提交，并可重试或保存草稿', () => {
+  const { dom, document, window, alerts, errors } = loadV2Dom();
+  try {
+    const product = document.getElementById('plname');
+    product.value = '22';
+    fireChange(product, window);
+    window.addChip('ERR-TIMEOUT-001');
+
+    const blocking = document.getElementById('deviceLookupBlocking');
+    assert.equal(blocking.hidden, false);
+    assert.match(blocking.textContent, /查询失败/);
+    assert.equal(document.getElementById('requestActionFormItem').hidden, true);
+    assert.equal(document.getElementById('retryDeviceLookup').hidden, false);
+    assert.equal(document.getElementById('saveApplicationDraft').hidden, false);
+
+    window.submitStandardForm();
+    assert.match(alerts.at(-1), /设备事实查询失败/);
+
+    document.getElementById('saveApplicationDraft').click();
+    const draft = JSON.parse(window.localStorage.getItem('authorization-application-draft'));
+    assert.deepEqual(draft.deviceIdentifiers, ['ERR-TIMEOUT-001']);
+    assert.equal(draft.productLineId, '22');
+    assert.equal(draft.ruleVersion, rules.RULE_VERSION);
+    assert.match(alerts.at(-1), /草稿已保存/);
+    assert.deepEqual(errors, []);
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('无记录设备进入人工复核但仍允许选择开通事项', () => {
+  const { dom, document, window } = loadV2Dom();
+  try {
+    const product = document.getElementById('plname');
+    product.value = '22';
+    fireChange(product, window);
+    window.addChip('UNKNOWN-001');
+
+    assert.equal(window.applicationState.deviceFacts[0].lookupStatus, 'not_found');
+    assert.equal(window.applicationState.deviceFacts[0].manualReviewRequired, true);
+    assert.equal(document.getElementById('manualReviewRequired').value, '1');
+    assert.equal(document.getElementById('deviceLookupBlocking').hidden, true);
+    assert.equal(document.getElementById('requestActionFormItem').hidden, false);
+    assert.deepEqual(Array.from(document.getElementById('requestAction').options).map((option) => option.value), ['', 'open']);
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('设备实际产品与所选产品不一致时阻断并显示实际产品名', () => {
+  const { dom, document, window } = loadV2Dom();
+  try {
+    const product = document.getElementById('plname');
+    product.value = '20';
+    fireChange(product, window);
+    window.addChip('DEV-NGAF-001');
+
+    const blocking = document.getElementById('deviceLookupBlocking');
+    assert.equal(blocking.hidden, false);
+    assert.match(blocking.textContent, /产品不一致/);
+    assert.match(blocking.textContent, /NGAF/);
+    assert.equal(document.getElementById('requestActionFormItem').hidden, true);
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('移除查询失败或产品不一致设备后失效旧事实和事项', () => {
+  const { dom, document, window } = loadV2Dom();
+  try {
+    const product = document.getElementById('plname');
+    product.value = '22';
+    fireChange(product, window);
+    window.addChip('ERR-TIMEOUT-001');
+    assert.equal(document.getElementById('deviceLookupBlocking').hidden, false);
+    window.removeDeviceChip('ERR-TIMEOUT-001');
+    assert.equal(document.getElementById('deviceLookupBlocking').hidden, true);
+    assert.equal(window.applicationState.deviceFacts.length, 0);
+    assert.equal(document.getElementById('requestActionFormItem').hidden, true);
+
+    product.value = '20';
+    fireChange(product, window);
+    window.addChip('DEV-NGAF-001');
+    assert.equal(document.getElementById('deviceLookupBlocking').hidden, false);
+    window.removeDeviceChip('DEV-NGAF-001');
+    assert.equal(document.getElementById('deviceLookupBlocking').hidden, true);
+    assert.equal(window.applicationState.deviceFacts.length, 0);
+    assert.equal(document.getElementById('requestActionFormItem').hidden, true);
+  } finally {
+    dom.window.close();
+  }
+});
