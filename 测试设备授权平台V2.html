@@ -4750,14 +4750,24 @@
             if (!hiddenSelect || !list) return;
 
             var retiredValues = [];
+            var retiredOptions = [];
             Array.prototype.slice.call(hiddenSelect.options).forEach(function(option) {
                 var status = rules.getProductStatus(option.value);
                 option.dataset.productStatus = status;
                 if (status === 'retired') {
                     retiredValues.push(option.value);
-                    hiddenSelect.appendChild(option);
+                    retiredOptions.push(option);
                 }
             });
+
+            var nativeGroup = hiddenSelect.querySelector('optgroup[data-product-group="retired"]')
+                || hiddenSelect.querySelector('optgroup[label="已退市产品"]');
+            if (!nativeGroup) nativeGroup = document.createElement('optgroup');
+            nativeGroup.label = '已退市产品';
+            nativeGroup.dataset.productGroup = 'retired';
+            nativeGroup.remove();
+            retiredOptions.forEach(function(option) { nativeGroup.appendChild(option); });
+            if (retiredOptions.length) hiddenSelect.appendChild(nativeGroup);
 
             var group = list.querySelector('[data-product-group="retired"]');
             if (!group) {

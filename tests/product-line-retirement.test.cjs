@@ -22,7 +22,10 @@ test('产品线下拉将 WOC 放入底部退市分组且保持可选', () => {
     const retiredGroup = list.querySelector('[data-product-group="retired"]');
     const woc = list.querySelector('[data-value="6"]');
     const abdi = list.querySelector('[data-value="27"]');
+    const nativeSelect = document.getElementById('plname');
+    const nativeRetiredGroup = nativeSelect.querySelector('optgroup[label="已退市产品"]');
     const nativeWoc = document.querySelector('#plname option[value="6"]');
+    const nativeAbdi = document.querySelector('#plname option[value="27"]');
 
     assert.ok(retiredGroup, '应存在退市产品分组');
     assert.equal(retiredGroup.textContent.trim(), '已退市产品');
@@ -30,7 +33,12 @@ test('产品线下拉将 WOC 放入底部退市分组且保持可选', () => {
     assert.equal(list.lastElementChild, woc, '退市分组及 WOC 应位于列表底部');
     assert.ok(abdi.compareDocumentPosition(retiredGroup) & 4, 'aBDI 应位于退市分组之前');
     assert.ok(woc.classList.contains('retired-product-option'));
+    assert.ok(nativeRetiredGroup, '原生产品线下拉应存在退市 optgroup');
+    assert.equal(nativeRetiredGroup.dataset.productGroup, 'retired');
+    assert.equal(nativeRetiredGroup.querySelector('option[value="6"]'), nativeWoc, '原生 WOC 应位于退市 optgroup 内');
+    assert.equal(nativeSelect.lastElementChild, nativeRetiredGroup, '原生退市 optgroup 应位于下拉底部');
     assert.equal(nativeWoc.disabled, false, 'WOC 不应禁用');
+    assert.notEqual(nativeAbdi.parentElement, nativeRetiredGroup, 'aBDI 不应位于退市 optgroup 内');
 
     woc.dispatchEvent(new dom.window.MouseEvent('click', { bubbles: true }));
     assert.equal(document.getElementById('plname').value, '6', 'WOC 应可通过自定义下拉选择');
