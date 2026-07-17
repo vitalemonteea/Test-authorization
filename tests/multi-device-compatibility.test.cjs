@@ -169,3 +169,33 @@ test('设备事实版本变化会被识别为陈旧事实', () => {
     [fixtures.noAuthBorrowed, { ...fixtures.sameBorrowOrderPeer, factVersion: 'facts-ngaf-002-v2' }]
   ), ['DEV-NGAF-002']);
 });
+
+test('不可自助决策硬阻断提交且不生成快照或成功提示', () => {
+  const { dom, document, window, alerts } = loadV2Dom();
+  try {
+    const product = document.getElementById('plname');
+    product.value = '22';
+    fireChange(product, window);
+    const planType = document.getElementById('planDevType');
+    planType.value = '2';
+    fireChange(planType, window);
+    window.addChip('SELF-SERVICE-BLOCKED-001');
+    const action = document.getElementById('requestAction');
+    action.value = 'open';
+    fireChange(action, window);
+
+    window.submitStandardForm();
+
+    assert.match(alerts.at(-1), /当前申请不允许自助提交/);
+    assert.equal(document.getElementById('submissionSnapshot').value, '');
+    assert.equal(alerts.some((message) => /表单已提交/.test(message)), false);
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('硬件信息文件要求由产品与申请类型规则决定', () => {
+  assert.equal(rules.isHardwareInfoRequired('45', '1'), true);
+  assert.equal(rules.isHardwareInfoRequired('19', '1'), true);
+  assert.equal(rules.isHardwareInfoRequired('22', '2'), false);
+});

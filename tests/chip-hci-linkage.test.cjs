@@ -22,6 +22,7 @@ const { JSDOM, VirtualConsole } = require('jsdom');
 
 const htmlPath = path.join(__dirname, '..', '测试设备授权平台V2.html');
 const html = fs.readFileSync(htmlPath, 'utf8');
+const authorizationRules = require(path.join(__dirname, '..', 'authorization-application-rules.js'));
 
 function loadDom() {
   const vc = new VirtualConsole();
@@ -37,6 +38,7 @@ function loadDom() {
     beforeParse(window) {
       // Tailwind CDN 在 jsdom 中未加载，注入 stub 避免内联 tailwind.config 报错中断脚本
       window.tailwind = { config: {} };
+      window.AuthorizationApplicationRules = authorizationRules;
     }
   });
   return { dom, errors };

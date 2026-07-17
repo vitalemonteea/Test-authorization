@@ -16,10 +16,17 @@ test('设备授权状态决定可申请事项', () => {
 
 test('申请事项完整映射旧授权场景值', () => {
   assert.equal(rules.mapLegacyAuthScene('open'), '1');
-  assert.equal(rules.mapLegacyAuthScene('adjust'), '2');
-  assert.equal(rules.mapLegacyAuthScene('add_module'), '3');
-  assert.equal(rules.mapLegacyAuthScene('increase_capacity'), '5');
-  assert.equal(rules.mapLegacyAuthScene('extend'), '6');
+  assert.equal(rules.mapLegacyAuthScene('adjust', fixtures.noAuthBorrowed), '2');
+  assert.equal(rules.mapLegacyAuthScene('add_module', fixtures.activeSales), '3');
+  assert.equal(rules.mapLegacyAuthScene('increase_capacity', fixtures.activeSales), '5');
+  assert.equal(rules.mapLegacyAuthScene('extend', fixtures.activeSales), '6');
+});
+
+test('非销售设备的有效期内事项统一映射资源调整场景', () => {
+  const activeBorrowed = { ...fixtures.noAuthBorrowed, authorizationStatus: 'active' };
+  assert.equal(rules.mapLegacyAuthScene('extend', activeBorrowed), '2');
+  assert.equal(rules.mapLegacyAuthScene('add_module', activeBorrowed), '2');
+  assert.equal(rules.mapLegacyAuthScene('increase_capacity', activeBorrowed), '2');
 });
 
 test('旧授权场景仅保留隐藏兼容字段', () => {
@@ -89,6 +96,41 @@ test('切换申请事项同步旧场景并清理上一事项状态', () => {
     assert.equal(legacy.value, '5');
     assert.equal(priorQuery.value, '');
     assert.equal(window.applicationState.requestAction, 'increase_capacity');
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('切换申请事项清空时长、容量、授权查询结果和模块选择后重新预览', () => {
+  const { dom, document, window, errors } = loadV2Dom();
+  try {
+    const product = document.getElementById('plname');
+    product.value = '20';
+    fireChange(product, window);
+    window.addChip('SALES-ATRUST-001');
+
+    const action = document.getElementById('requestAction');
+    action.value = 'add_module';
+    fireChange(action, window);
+    document.getElementById('requestedMonths').value = '9';
+    document.getElementById('targetCapacity').value = '999';
+    document.getElementById('eaQueryDevId').value = 'stale-query';
+    document.getElementById('eaResultArea').style.display = 'block';
+    document.getElementById('eaResultDevice').textContent = 'stale-result';
+    const moduleToggle = document.querySelector('.module-item .toggle-switch');
+    moduleToggle.classList.add('active');
+
+    action.value = 'extend';
+    fireChange(action, window);
+
+    assert.equal(document.getElementById('requestedMonths').value, '');
+    assert.equal(document.getElementById('targetCapacity').value, '');
+    assert.equal(document.getElementById('eaQueryDevId').value, '');
+    assert.equal(document.getElementById('eaResultArea').style.display, 'none');
+    assert.equal(document.getElementById('eaResultDevice').textContent, '');
+    assert.equal(document.querySelectorAll('.module-item .toggle-switch.active').length, 0);
+    assert.equal(window.applicationState.approvalDecision.routeKey, 'AUTO_PASS');
+    assert.deepEqual(errors, []);
   } finally {
     dom.window.close();
   }

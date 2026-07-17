@@ -4545,8 +4545,6 @@
         }
 
         // ===== 硬件信息文件上传 =====
-        // 需要上传硬件信息文件的产品线 ID
-        var hwInfoProductLines = ['45', '19']; // HCI, SCP
         var hwInfoSection = document.getElementById('hwInfoSection');
         var hwFileInput = document.getElementById('hwFileInput');
         var hwUploadResult = document.getElementById('hwUploadResult');
@@ -4577,7 +4575,7 @@
         }
 
         function toggleHwInfoSection(plnameValue) {
-            if (hwInfoProductLines.indexOf(plnameValue) > -1) {
+            if (authorizationRules.isHardwareInfoRequired(plnameValue, planDevTypeSelect.value)) {
                 hwInfoSection.style.display = 'flex';
             } else {
                 hwInfoSection.style.display = 'none';
@@ -5341,11 +5339,34 @@
         });
         saveApplicationDraftButton.addEventListener('click', saveApplicationDraft);
 
-        requestActionSelect.addEventListener('change', function() {
+        function resetRequestSpecificState() {
+            requestedMonthsInput.value = '';
+            targetCapacityInput.value = '';
             resetExistingAuthSection();
+            document.querySelectorAll('.module-item').forEach(function(card) {
+                var toggle = card.querySelector('.toggle-switch');
+                if (toggle) toggle.classList.remove('active');
+                card.classList.add('disabled');
+                var body = card.querySelector('.module-body');
+                if (body) body.classList.add('hidden');
+                var chevron = card.querySelector('.module-chevron');
+                if (chevron) chevron.classList.add('collapsed');
+                var status = card.querySelector('.module-status');
+                if (status) {
+                    status.className = 'module-status off';
+                    status.textContent = '已禁用';
+                }
+                var navItem = document.querySelector('.module-nav-item[data-target="' + card.id + '"]');
+                if (navItem) navItem.classList.remove('enabled');
+            });
+        }
+        window.resetRequestSpecificState = resetRequestSpecificState;
+
+        requestActionSelect.addEventListener('change', function() {
+            resetRequestSpecificState();
             applicationState.requestAction = this.value;
             document.getElementById('authScene').value = typeof authorizationRules.mapLegacyAuthScene === 'function' ?
-                authorizationRules.mapLegacyAuthScene(this.value) : '';
+                authorizationRules.mapLegacyAuthScene(this.value, applicationState.deviceFacts[0]) : '';
             existingAuthSection.style.display = this.value && this.value !== 'open' ? 'block' : 'none';
             existingAuthSection.classList.toggle('show', !!this.value && this.value !== 'open');
             recalculateApprovalDecision();
@@ -5439,14 +5460,15 @@
         }
 
         function applyPlMode() {
-            var isHci = (plnameSelect.value === '45' || plnameSelect.value === '19');
+            var productConfig = authorizationRules.PRODUCT_CONFIG[plnameSelect.value];
+            var isHci = !!(productConfig && productConfig.forcedPlanDevType);
             isHciMode = isHci;
             if (isHci) {
                 planDevTypeFormItem.style.display = 'none';
                 devSnFormItem.style.display = 'none';
                 borrowTestFields.style.display = 'none';
-                hwInfoSection.style.display = 'flex';
-                setCustomSelectValue('planDevType', '1');
+                setCustomSelectValue('planDevType', productConfig.forcedPlanDevType);
+                toggleHwInfoSection(plnameSelect.value);
                 deviceIdChips.setFixed(['DEV-' + plnameSelect.value + '-AUTO-001']);
                 deviceSnChips.clear();
             } else {
@@ -5893,6 +5915,20 @@
             return;
         }
 
+        var currentDecision = rules.calculateApprovalDecision({
+            deviceFacts: latestFacts,
+            productLineId: productLineId,
+            productStatus: rules.getProductStatus(productLineId),
+            requestAction: state.requestAction,
+            customerType: state.customerType,
+            requestedMonths: Number(document.getElementById('requestedMonths').value || 0),
+            targetCapacity: Number(document.getElementById('targetCapacity').value || 0)
+        });
+        if (currentDecision.decisionType === 'not_allowed') {
+            alert('当前申请不允许自助提交，请联系管理员处理');
+            return;
+        }
+
         if (!planDevType) {
             alert('请选择申请类型');
             return;
@@ -5934,7 +5970,7 @@
             }
         }
 
-        if (hwInfoSection && hwInfoSection.style.display !== 'none') {
+        if (rules.isHardwareInfoRequired(productLineId, planDevType)) {
             var hwFile = hwFileInput.files[0];
             if (!hwFile) {
                 hwUploadResult.textContent = '请上传硬件信息文件';
@@ -5962,15 +5998,6 @@
             return;
         }
 
-        var currentDecision = rules.calculateApprovalDecision({
-            deviceFacts: latestFacts,
-            productLineId: productLineId,
-            productStatus: rules.getProductStatus(productLineId),
-            requestAction: state.requestAction,
-            customerType: state.customerType,
-            requestedMonths: Number(document.getElementById('requestedMonths').value || 0),
-            targetCapacity: Number(document.getElementById('targetCapacity').value || 0)
-        });
         var snapshot = rules.buildSubmissionSnapshot({
             productLineId: productLineId,
             productStatus: rules.getProductStatus(productLineId),

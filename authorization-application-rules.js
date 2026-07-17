@@ -11,6 +11,10 @@
     var PRODUCT_STATUS = {
         '6': 'retired'
     };
+    var PRODUCT_CONFIG = {
+        '45': { hardwareInfoRequired: true, forcedPlanDevType: '1', capacityLimit: 20 },
+        '19': { hardwareInfoRequired: true, forcedPlanDevType: '1', capacityLimit: 20 }
+    };
     var REQUEST_ACTION_LABELS = {
         open: '开通测试授权',
         adjust: '调整授权资源',
@@ -48,8 +52,18 @@
         return [];
     }
 
-    function mapLegacyAuthScene(requestAction) {
+    function mapLegacyAuthScene(requestAction, deviceFact) {
+        if (requestAction === 'open') return '1';
+        if (requestAction === 'adjust') return '2';
+        if (!deviceFact || deviceFact.deviceSource !== 'sales') {
+            return requestAction === 'extend' || requestAction === 'add_module' || requestAction === 'increase_capacity' ? '2' : '';
+        }
         return LEGACY_AUTH_SCENES[requestAction] || '';
+    }
+
+    function isHardwareInfoRequired(productLineId, planDevType) {
+        var config = PRODUCT_CONFIG[String(productLineId)];
+        return !!config && config.hardwareInfoRequired === true && String(planDevType) === config.forcedPlanDevType;
     }
 
     function normalizeLookupResult(rawResult, identifiers) {
@@ -139,8 +153,8 @@
                 decisionType = 'manual';
                 routeKey = 'REGION_AND_HQ_MARKETING';
                 reasonCodes = ['ATRUST_SALES_ADD_MODULE'];
-            } else if ((String(context.productLineId) === '45' || String(context.productLineId) === '19') &&
-                Number(context.targetCapacity || 0) > 20) {
+            } else if (PRODUCT_CONFIG[String(context.productLineId)] &&
+                Number(context.targetCapacity || 0) > PRODUCT_CONFIG[String(context.productLineId)].capacityLimit) {
                 decisionType = 'manual';
                 routeKey = 'PRODUCT_LIMIT_APPROVAL';
                 reasonCodes = ['PRODUCT_LIMIT_APPROVAL'];
@@ -224,7 +238,7 @@
             productLineId: String(input.productLineId || ''),
             productStatus: input.productStatus || 'active',
             requestAction: input.requestAction || '',
-            authScene: mapLegacyAuthScene(input.requestAction),
+            authScene: mapLegacyAuthScene(input.requestAction, (input.deviceFacts || [])[0]),
             deviceFacts: cloneJson(input.deviceFacts || []),
             approvalDecision: cloneJson(input.approvalDecision || null),
             ruleVersion: RULE_VERSION
@@ -244,9 +258,11 @@
         RULE_VERSION: RULE_VERSION,
         REQUEST_ACTION_LABELS: REQUEST_ACTION_LABELS,
         REASON_TEXTS: REASON_TEXTS,
+        PRODUCT_CONFIG: PRODUCT_CONFIG,
         getProductStatus: getProductStatus,
         getEligibleRequestActions: getEligibleRequestActions,
         mapLegacyAuthScene: mapLegacyAuthScene,
+        isHardwareInfoRequired: isHardwareInfoRequired,
         normalizeLookupResult: normalizeLookupResult,
         getLookupBlockingReason: getLookupBlockingReason,
         calculateApprovalDecision: calculateApprovalDecision,
