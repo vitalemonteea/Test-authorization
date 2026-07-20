@@ -1012,7 +1012,7 @@
                     </div>
                     </div>
 
-                    <input type="hidden" id="authScene" name="authScene" value="">
+                    <input type="hidden" id="requestAction" name="requestAction" value="">
 
                     <!-- 申请类型 -->
                     <div class="layui-form-item basic-full" id="planDevTypeFormItem">
@@ -1054,44 +1054,25 @@
                                 <button type="button" class="layui-btn layui-btn-primary" id="saveApplicationDraft" hidden>保存草稿</button>
                             </div>
                             <input type="hidden" id="manualReviewRequired" name="manualReviewRequired" value="0">
+                            <div class="device-compatibility-blocking" id="deviceCompatibilityBlocking" role="alert" hidden>
+                                <div id="deviceCompatibilityIssueList"></div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- 申请事项由设备授权状态决定 -->
-                    <div class="layui-form-item basic-full" id="requestActionFormItem" hidden>
-                        <label class="layui-form-label">申请事项<span class="required-mark">*</span></label>
+                    <!-- 授权场景由设备事实过滤，最终由申请人确认 -->
+                    <div class="layui-form-item basic-full" id="authSceneFormItem" hidden>
+                        <label class="layui-form-label">授权场景<span class="required-mark">*</span></label>
                         <div class="layui-input-block">
-                            <select class="layui-select request-action-select" id="requestAction" name="requestAction">
-                                <option value="">请选择申请事项</option>
+                            <select class="layui-select" id="authScene" name="authScene">
+                                <option value="">请选择授权场景</option>
                             </select>
                         </div>
                     </div>
 
-                    <div class="layui-form-item basic-full" id="requestParametersFormItem">
-                        <label class="layui-form-label">申请参数</label>
-                        <div class="layui-input-block" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;">
-                            <label>申请时长（月）<input type="number" class="layui-input" id="requestedMonths" min="0" value="3"></label>
-                            <label>目标容量<input type="number" class="layui-input" id="targetCapacity" min="0" value="0"></label>
-                        </div>
-                    </div>
-
-                    <div class="layui-form-item basic-full device-compatibility-blocking" id="deviceCompatibilityBlocking" role="alert" hidden>
-                        <label class="layui-form-label">设备兼容性</label>
-                        <div class="layui-input-block" id="deviceCompatibilityIssueList"></div>
-                    </div>
-
-                    <div class="layui-form-item basic-full approval-preview" id="approvalPreview" aria-live="polite">
-                        <label class="layui-form-label">审批预览</label>
-                        <div class="layui-input-block">
-                            <div id="approvalPreviewPending">等待设备事实与申请事项</div>
-                            <div id="approvalPreviewResult" hidden>
-                                <div>决策：<strong id="approvalDecisionType"></strong></div>
-                                <div>流程：<span id="approvalRouteKey"></span></div>
-                                <div>原因：<span id="approvalReasonTexts"></span></div>
-                                <div>规则版本：<span id="approvalRuleVersion"></span></div>
-                            </div>
-                        </div>
-                    </div>
+                    <input type="hidden" id="requestedMonths" value="3">
+                    <input type="hidden" id="targetCapacity" value="0">
+                    <div id="approvalPreview" hidden aria-hidden="true"></div>
                     <input type="hidden" id="submissionSnapshot" name="submissionSnapshot" value="">
 
 <!-- ===== 续期授权 - 历史借测数据区域 ===== -->
@@ -5102,8 +5083,9 @@
             }
         };
 
-        var requestActionFormItem = document.getElementById('requestActionFormItem');
-        var requestActionSelect = document.getElementById('requestAction');
+        var authSceneFormItem = document.getElementById('authSceneFormItem');
+        var authSceneSelect = document.getElementById('authScene');
+        var requestActionInput = document.getElementById('requestAction');
         var deviceFactsSummary = document.getElementById('deviceFactsSummary');
         var deviceLookupBlocking = document.getElementById('deviceLookupBlocking');
         var deviceLookupBlockingText = document.getElementById('deviceLookupBlockingText');
@@ -5112,12 +5094,6 @@
         var manualReviewRequired = document.getElementById('manualReviewRequired');
         var requestedMonthsInput = document.getElementById('requestedMonths');
         var targetCapacityInput = document.getElementById('targetCapacity');
-        var approvalPreviewPending = document.getElementById('approvalPreviewPending');
-        var approvalPreviewResult = document.getElementById('approvalPreviewResult');
-        var approvalDecisionType = document.getElementById('approvalDecisionType');
-        var approvalRouteKey = document.getElementById('approvalRouteKey');
-        var approvalReasonTexts = document.getElementById('approvalReasonTexts');
-        var approvalRuleVersion = document.getElementById('approvalRuleVersion');
         var deviceCompatibilityBlocking = document.getElementById('deviceCompatibilityBlocking');
         var deviceCompatibilityIssueList = document.getElementById('deviceCompatibilityIssueList');
         var standardSubmitButton = document.getElementById('standardSubmitButton');
@@ -5172,12 +5148,6 @@
 
         function clearApprovalPreview() {
             applicationState.approvalDecision = null;
-            approvalPreviewPending.hidden = false;
-            approvalPreviewResult.hidden = true;
-            approvalDecisionType.textContent = '';
-            approvalRouteKey.textContent = '';
-            approvalReasonTexts.textContent = '';
-            approvalRuleVersion.textContent = '';
             recalculateCompatibilityIssues();
         }
 
@@ -5199,50 +5169,44 @@
                 targetCapacity: Number(targetCapacityInput.value || 0)
             });
             applicationState.approvalDecision = decision;
-            approvalPreviewPending.hidden = true;
-            approvalPreviewResult.hidden = false;
-            approvalDecisionType.textContent = decision.decisionType;
-            approvalRouteKey.textContent = decision.routeKey;
-            approvalReasonTexts.textContent = decision.reasonTexts.join('；');
-            approvalRuleVersion.textContent = decision.ruleVersion;
             recalculateCompatibilityIssues();
             return decision;
         }
 
         function clearRequestActionState() {
             applicationState.requestAction = '';
-            requestActionSelect.value = '';
-            document.getElementById('authScene').value = '';
+            requestActionInput.value = '';
+            authSceneSelect.value = '';
             resetExistingAuthSection();
             clearApprovalPreview();
         }
 
-        function getCommonEligibleActions(facts) {
-            if (!facts.length || typeof authorizationRules.getEligibleRequestActions !== 'function') return [];
-            var common = authorizationRules.getEligibleRequestActions(facts[0]).slice();
+        function getCommonEligibleAuthScenes(facts) {
+            if (!facts.length || typeof authorizationRules.getEligibleAuthScenes !== 'function') return [];
+            var common = authorizationRules.getEligibleAuthScenes(facts[0]).slice();
             for (var i = 1; i < facts.length; i++) {
-                var eligible = authorizationRules.getEligibleRequestActions(facts[i]);
-                common = common.filter(function(action) { return eligible.indexOf(action) !== -1; });
+                var eligible = authorizationRules.getEligibleAuthScenes(facts[i]);
+                common = common.filter(function(scene) { return eligible.indexOf(scene) !== -1; });
             }
             return common;
         }
 
-        function renderRequestActions(actions) {
-            var previous = requestActionSelect.value;
-            requestActionSelect.textContent = '';
+        function renderAuthScenes(scenes) {
+            var previous = authSceneSelect.value;
+            authSceneSelect.textContent = '';
             var placeholder = document.createElement('option');
             placeholder.value = '';
-            placeholder.textContent = '请选择申请事项';
-            requestActionSelect.appendChild(placeholder);
-            actions.forEach(function(action) {
+            placeholder.textContent = '请选择授权场景';
+            authSceneSelect.appendChild(placeholder);
+            scenes.forEach(function(scene) {
                 var option = document.createElement('option');
-                option.value = action;
-                option.textContent = authorizationRules.REQUEST_ACTION_LABELS[action] || action;
-                requestActionSelect.appendChild(option);
+                option.value = scene;
+                option.textContent = authorizationRules.AUTH_SCENE_LABELS[scene] || scene;
+                authSceneSelect.appendChild(option);
             });
-            requestActionFormItem.hidden = actions.length === 0;
-            if (actions.indexOf(previous) !== -1) {
-                requestActionSelect.value = previous;
+            authSceneFormItem.hidden = scenes.length === 0;
+            if (scenes.indexOf(previous) !== -1) {
+                authSceneSelect.value = previous;
             } else {
                 clearRequestActionState();
             }
@@ -5318,7 +5282,7 @@
             var blockingReason = typeof authorizationRules.getLookupBlockingReason === 'function' ?
                 authorizationRules.getLookupBlockingReason(facts, plnameSelect.value) : null;
             renderLookupBlocking(blockingReason);
-            renderRequestActions(blockingReason ? [] : getCommonEligibleActions(facts));
+            renderAuthScenes(blockingReason ? [] : getCommonEligibleAuthScenes(facts));
             recalculateApprovalDecision();
         }
 
@@ -5362,13 +5326,13 @@
         }
         window.resetRequestSpecificState = resetRequestSpecificState;
 
-        requestActionSelect.addEventListener('change', function() {
+        authSceneSelect.addEventListener('change', function() {
             resetRequestSpecificState();
-            applicationState.requestAction = this.value;
-            document.getElementById('authScene').value = typeof authorizationRules.mapLegacyAuthScene === 'function' ?
-                authorizationRules.mapLegacyAuthScene(this.value, applicationState.deviceFacts[0]) : '';
-            existingAuthSection.style.display = this.value && this.value !== 'open' ? 'block' : 'none';
-            existingAuthSection.classList.toggle('show', !!this.value && this.value !== 'open');
+            applicationState.requestAction = typeof authorizationRules.mapAuthSceneToRequestAction === 'function' ?
+                authorizationRules.mapAuthSceneToRequestAction(this.value) : '';
+            requestActionInput.value = applicationState.requestAction;
+            existingAuthSection.style.display = applicationState.requestAction && applicationState.requestAction !== 'open' ? 'block' : 'none';
+            existingAuthSection.classList.toggle('show', !!applicationState.requestAction && applicationState.requestAction !== 'open');
             recalculateApprovalDecision();
         });
 
@@ -5516,11 +5480,11 @@
             resetRequestSpecificState();
             renderLookupBlocking(null);
             renderCompatibilityIssues([]);
-            renderRequestActions([]);
+            renderAuthScenes([]);
             deviceFactsSummary.textContent = '';
             manualReviewRequired.value = '0';
-            requestActionSelect.value = '';
-            document.getElementById('authScene').value = '';
+            requestActionInput.value = '';
+            authSceneSelect.value = '';
             document.getElementById('submissionSnapshot').value = '';
             document.getElementById('customerSearchInput').value = '';
             document.getElementById('selectedCustomerName').textContent = '-';
@@ -5942,7 +5906,7 @@
         }
 
         if (!state.requestAction) {
-            alert('请选择申请事项');
+            alert('请选择授权场景');
             return;
         }
 
@@ -6023,7 +5987,7 @@
         }
 
         if (!state.approvalDecision || state.approvalDecision.ruleVersion !== rules.RULE_VERSION) {
-            alert('审批规则已更新，请重新确认审批预览');
+            alert('审批规则已更新，请重新选择授权场景');
             return;
         }
 
@@ -6037,11 +6001,11 @@
         var snapshot = rules.buildSubmissionSnapshot({
             productLineId: productLineId,
             productStatus: rules.getProductStatus(productLineId),
+            authScene: document.getElementById('authScene').value,
             requestAction: state.requestAction,
             deviceFacts: latestFacts,
             approvalDecision: currentDecision
         });
-        document.getElementById('authScene').value = snapshot.authScene;
         document.getElementById('submissionSnapshot').value = JSON.stringify(snapshot);
 
         var mockId = 'AUTH-' + Date.now().toString().slice(-8);

@@ -38,7 +38,7 @@ test('授权场景恢复为设备识别后的可见业务字段', () => {
     const authScene = document.getElementById('authScene');
     assert.ok(authScene);
     assert.equal(authScene.tagName, 'SELECT');
-    assert.equal(authScene.closest('#authSceneFormItem').querySelector('.layui-form-label').textContent.trim(), '授权场景');
+    assert.match(authScene.closest('#authSceneFormItem').querySelector('.layui-form-label').textContent.trim(), /^授权场景/);
     assert.equal(document.getElementById('requestAction').type, 'hidden');
     assert.equal(document.getElementById('requestActionFormItem'), null);
   } finally {

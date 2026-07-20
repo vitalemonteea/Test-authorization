@@ -22,6 +22,20 @@
         add_module: '增开模块',
         increase_capacity: '扩大授权容量'
     };
+    var AUTH_SCENE_LABELS = {
+        '1': '开通测试授权（无授权/授权过期申请）',
+        '2': '授权资源调整（授权有效期内调整）',
+        '3': '销售设备增开新模块测试授权',
+        '5': '销售授权扩容测试授权',
+        '6': '销售设备申请延长授权'
+    };
+    var AUTH_SCENE_ACTIONS = {
+        '1': 'open',
+        '2': 'adjust',
+        '3': 'add_module',
+        '5': 'increase_capacity',
+        '6': 'extend'
+    };
     var LEGACY_AUTH_SCENES = {
         open: '1',
         adjust: '2',
@@ -50,6 +64,18 @@
         if (status === 'none' || status === 'expired') return ['open'];
         if (status === 'active') return ['extend', 'add_module', 'increase_capacity'];
         return [];
+    }
+
+    function getEligibleAuthScenes(deviceFacts) {
+        var status = deviceFacts && deviceFacts.authorizationStatus;
+        if (status === 'none' || status === 'expired') return ['1'];
+        if (status === 'active' && deviceFacts.deviceSource === 'sales') return ['3', '5', '6'];
+        if (status === 'active') return ['2'];
+        return [];
+    }
+
+    function mapAuthSceneToRequestAction(authScene) {
+        return AUTH_SCENE_ACTIONS[String(authScene || '')] || '';
     }
 
     function mapLegacyAuthScene(requestAction, deviceFact) {
@@ -238,7 +264,7 @@
             productLineId: String(input.productLineId || ''),
             productStatus: input.productStatus || 'active',
             requestAction: input.requestAction || '',
-            authScene: mapLegacyAuthScene(input.requestAction, (input.deviceFacts || [])[0]),
+            authScene: String(input.authScene || mapLegacyAuthScene(input.requestAction, (input.deviceFacts || [])[0])),
             deviceFacts: cloneJson(input.deviceFacts || []),
             approvalDecision: cloneJson(input.approvalDecision || null),
             ruleVersion: RULE_VERSION
@@ -257,10 +283,13 @@
     return {
         RULE_VERSION: RULE_VERSION,
         REQUEST_ACTION_LABELS: REQUEST_ACTION_LABELS,
+        AUTH_SCENE_LABELS: AUTH_SCENE_LABELS,
         REASON_TEXTS: REASON_TEXTS,
         PRODUCT_CONFIG: PRODUCT_CONFIG,
         getProductStatus: getProductStatus,
         getEligibleRequestActions: getEligibleRequestActions,
+        getEligibleAuthScenes: getEligibleAuthScenes,
+        mapAuthSceneToRequestAction: mapAuthSceneToRequestAction,
         mapLegacyAuthScene: mapLegacyAuthScene,
         isHardwareInfoRequired: isHardwareInfoRequired,
         normalizeLookupResult: normalizeLookupResult,
