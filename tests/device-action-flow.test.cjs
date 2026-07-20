@@ -56,6 +56,7 @@ test('销售设备识别后仅显示符合状态的授权场景', () => {
     product.value = '20';
     fireChange(product, window);
     assert.equal(sceneItem.hidden, true);
+    assert.equal(window.getComputedStyle(sceneItem).display, 'none', '未识别设备时授权场景不应占据页面空间');
 
     window.addChip('SALES-ATRUST-001');
     assert.equal(sceneItem.hidden, false);
