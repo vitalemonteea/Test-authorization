@@ -9,6 +9,7 @@
  *  - 产品线+版本、区域+办事处 使用 basic-two-col-row 两列布局
  *  - 关键字段使用 basic-full 全宽
  *  - 申请类型带 planDevTypeFormItem 包装
+ *  - 授权场景在设备识别后显示，系统校验不伪装成常驻表单字段
  *  - 借测信息区域使用 basic-borrow-panel + borrow-grid 面板
  *  - 客户信息展示销售负责人徽章 selectedSales
  *
@@ -87,7 +88,7 @@ test('借测信息区域应使用 basic-borrow-panel 面板与 borrow-grid 网�
   assert.ok(borrow.querySelector('.borrow-grid'), '借测信息区域应含 borrow-grid 两列网格');
 });
 
-test('接收邮箱/设备SN/设备ID/申请事项 应为全宽 basic-full', () => {
+test('接收邮箱/设备SN/设备ID/授权场景 应为全宽 basic-full', () => {
   const email = doc.getElementById('userEmail').closest('.layui-form-item');
   assert.ok(email.classList.contains('basic-full'), '接收邮箱应为全宽');
   assert.ok(
@@ -99,7 +100,23 @@ test('接收邮箱/设备SN/设备ID/申请事项 应为全宽 basic-full', () =
     '设备ID 应为全宽'
   );
   assert.ok(
-    doc.getElementById('requestActionFormItem').classList.contains('basic-full'),
-    '申请事项应为全宽'
+    doc.getElementById('authSceneFormItem').classList.contains('basic-full'),
+    '授权场景应为全宽'
   );
+});
+
+test('申请参数与审批明细不作为申请人可见字段', () => {
+  assert.equal(doc.getElementById('requestParametersFormItem'), null, '不应保留常驻申请参数表单项');
+  const preview = doc.getElementById('approvalPreview');
+  assert.ok(preview, '内部审批状态容器应存在');
+  assert.equal(preview.hidden, true, '内部审批状态容器应始终隐藏');
+  assert.equal(preview.querySelector('.layui-form-label'), null, '不应展示审批预览字段标签');
+});
+
+test('设备兼容性仅作为设备ID下方的异常提示', () => {
+  const deviceItem = doc.getElementById('deviceIdFormItem');
+  const blocking = doc.getElementById('deviceCompatibilityBlocking');
+  assert.ok(deviceItem.contains(blocking), '兼容性提示应位于设备ID表单项内');
+  assert.equal(blocking.hidden, true, '无冲突时兼容性提示应隐藏');
+  assert.equal(blocking.querySelector('.layui-form-label'), null, '兼容性提示不应伪装成字段');
 });

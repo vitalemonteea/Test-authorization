@@ -75,9 +75,9 @@ test('页面列出冲突设备和原因，提交时要求拆分且不会成功',
     window.addChip('DEV-NGAF-001');
     window.addChip('DEV-TEST-001');
 
-    const action = document.getElementById('requestAction');
-    action.value = 'open';
-    fireChange(action, window);
+    const scene = document.getElementById('authScene');
+    scene.value = '1';
+    fireChange(scene, window);
     const blocking = document.getElementById('deviceCompatibilityBlocking');
     assert.equal(blocking.hidden, false);
     assert.match(blocking.textContent, /DEV-TEST-001/);
@@ -113,9 +113,9 @@ test('同借测单自动扩展设备支持 ID/SN 成对删除且提交仅保留�
     assert.doesNotMatch(document.getElementById('devIdNew').value, /DEV-NGAF-002/);
     assert.doesNotMatch(document.getElementById('devSnNew').value, /SN-2024002-B/);
 
-    const action = document.getElementById('requestAction');
-    action.value = 'open';
-    fireChange(action, window);
+    const scene = document.getElementById('authScene');
+    scene.value = '1';
+    fireChange(scene, window);
     const infoFile = new window.File(['device-info'], 'device.info', { type: 'text/plain' });
     Object.defineProperty(document.getElementById('hwFileInput'), 'files', {
       configurable: true,
@@ -180,9 +180,9 @@ test('不可自助决策硬阻断提交且不生成快照或成功提示', () =>
     planType.value = '2';
     fireChange(planType, window);
     window.addChip('SELF-SERVICE-BLOCKED-001');
-    const action = document.getElementById('requestAction');
-    action.value = 'open';
-    fireChange(action, window);
+    const scene = document.getElementById('authScene');
+    scene.value = '1';
+    fireChange(scene, window);
 
     window.submitStandardForm();
 
@@ -205,9 +205,9 @@ test('HCI 固定设备使用可信事实 SN 并可携带 info 文件成功提交
   try {
     assert.equal(document.getElementById('plname').value, '45');
     assert.equal(window.applicationState.deviceFacts[0].deviceId, 'DEV-45-AUTO-001');
-    const action = document.getElementById('requestAction');
-    action.value = 'open';
-    fireChange(action, window);
+    const scene = document.getElementById('authScene');
+    scene.value = '1';
+    fireChange(scene, window);
 
     const infoFile = new window.File(['hci-device-info'], 'hci-device.info', { type: 'text/plain' });
     Object.defineProperty(document.getElementById('hwFileInput'), 'files', {
@@ -238,9 +238,9 @@ test('非强制硬件设备缺少借测字段时仍阻断提交', () => {
     planType.value = '1';
     fireChange(planType, window);
     window.addChip('DEV-NGAF-001');
-    const action = document.getElementById('requestAction');
-    action.value = 'open';
-    fireChange(action, window);
+    const scene = document.getElementById('authScene');
+    scene.value = '1';
+    fireChange(scene, window);
     document.getElementById('btNo').value = '';
     document.getElementById('btUser').value = '';
     document.getElementById('btStatus').value = '';
@@ -265,9 +265,9 @@ test('表单重置彻底清理旧流程状态并重新应用默认 HCI 模式', 
     planType.value = '2';
     fireChange(planType, window);
     window.addChip('SALES-ATRUST-001');
-    const action = document.getElementById('requestAction');
-    action.value = 'extend';
-    fireChange(action, window);
+    const scene = document.getElementById('authScene');
+    scene.value = '6';
+    fireChange(scene, window);
     window.submitStandardForm();
     assert.match(alerts.at(-1), /表单已提交/);
     assert.notEqual(document.getElementById('submissionSnapshot').value, '');
@@ -278,8 +278,8 @@ test('表单重置彻底清理旧流程状态并重新应用默认 HCI 模式', 
 
     assert.equal(document.getElementById('plname').value, '45');
     assert.equal(document.querySelector('[data-select-id="plname"] .custom-select-option.selected').dataset.value, '45');
-    assert.equal(document.getElementById('requestAction').value, '');
     assert.equal(document.getElementById('authScene').value, '');
+    assert.equal(document.getElementById('requestAction').value, '');
     assert.equal(window.applicationState.requestAction, '');
     assert.equal(window.applicationState.approvalDecision, null);
     assert.equal(window.applicationState.compatibilityIssues.length, 0);
@@ -291,7 +291,7 @@ test('表单重置彻底清理旧流程状态并重新应用默认 HCI 模式', 
     assert.equal(window.applicationState.deviceFacts.some((fact) => fact.deviceId === 'SALES-ATRUST-001'), false);
 
     window.submitStandardForm();
-    assert.match(alerts.at(-1), /请选择申请事项/);
+    assert.match(alerts.at(-1), /请选择授权场景/);
     assert.equal(document.getElementById('submissionSnapshot').value, '');
     assert.deepEqual(errors, []);
   } finally {

@@ -122,7 +122,7 @@ test('退市产品只追加警告原因，不单独改变审批路线', () => {
   assertSnapshotShape(decision);
 });
 
-test('审批决策预览随事项、客户、时长、容量和设备事实失效或重算', () => {
+test('内部审批决策随场景、客户、时长、容量和设备事实失效或重算', () => {
   const { dom, document, window, errors } = loadV2Dom();
   try {
     const product = document.getElementById('plname');
@@ -130,20 +130,20 @@ test('审批决策预览随事项、客户、时长、容量和设备事实失�
     fireChange(product, window);
     window.addChip('SALES-ATRUST-001');
 
-    const action = document.getElementById('requestAction');
+    const scene = document.getElementById('authScene');
     const requestedMonths = document.getElementById('requestedMonths');
-    action.value = 'extend';
-    fireChange(action, window);
+    scene.value = '6';
+    fireChange(scene, window);
     requestedMonths.value = '0';
     fireChange(requestedMonths, window);
     assert.equal(window.applicationState.approvalDecision.routeKey, 'AUTO_PASS');
 
-    action.value = 'add_module';
-    fireChange(action, window);
+    scene.value = '3';
+    fireChange(scene, window);
     assert.equal(window.applicationState.approvalDecision.routeKey, 'REGION_AND_HQ_MARKETING');
 
-    action.value = 'extend';
-    fireChange(action, window);
+    scene.value = '6';
+    fireChange(scene, window);
     requestedMonths.value = '3';
     fireChange(requestedMonths, window);
     assert.equal(window.applicationState.approvalDecision.routeKey, 'REGION_AND_HQ_MARKETING');
@@ -156,8 +156,8 @@ test('审批决策预览随事项、客户、时长、容量和设备事实失�
 
     product.value = '45';
     fireChange(product, window);
-    action.value = 'open';
-    fireChange(action, window);
+    scene.value = '1';
+    fireChange(scene, window);
     const capacity = document.getElementById('targetCapacity');
     capacity.value = '21';
     fireChange(capacity, window);
@@ -165,14 +165,14 @@ test('审批决策预览随事项、客户、时长、容量和设备事实失�
 
     window.removeDeviceChip('DEV-45-AUTO-001');
     assert.equal(window.applicationState.approvalDecision, null);
-    assert.match(document.getElementById('approvalPreview').textContent, /等待/);
+    assert.equal(document.getElementById('approvalPreview').hidden, true);
     assert.deepEqual(errors, []);
   } finally {
     dom.window.close();
   }
 });
 
-test('审批预览可渲染默认、人工、特殊流程和不可自助四种状态', () => {
+test('内部审批可计算四种状态但不向申请人展示预览', () => {
   const { dom, document, window } = loadV2Dom();
   try {
     const product = document.getElementById('plname');
@@ -187,11 +187,11 @@ test('审批预览可渲染默认、人工、特殊流程和不可自助四种�
     ];
     for (const [deviceId, expectedType] of cases) {
       window.addChip(deviceId);
-      const action = document.getElementById('requestAction');
-      action.value = 'open';
-      fireChange(action, window);
-      assert.equal(document.getElementById('approvalDecisionType').textContent, expectedType);
+      const scene = document.getElementById('authScene');
+      scene.value = '1';
+      fireChange(scene, window);
       assert.equal(window.applicationState.approvalDecision.decisionType, expectedType);
+      assert.equal(document.getElementById('approvalPreview').hidden, true);
       window.removeDeviceChip(deviceId);
     }
   } finally {
