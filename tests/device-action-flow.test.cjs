@@ -80,6 +80,42 @@ test('设备、授权场景和客户字段按业务顺序排列', () => {
   }
 });
 
+test('HCI 首次加载不显示当前授权信息', () => {
+  const { dom, document, window, errors } = loadV2Dom();
+  try {
+    const section = document.getElementById('existingAuthSection');
+    assert.equal(document.getElementById('plname').value, '45');
+    assert.equal(window.getComputedStyle(section).display, 'none');
+    assert.equal(section.classList.contains('show'), false);
+    assert.deepEqual(errors, []);
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('设备移除导致授权场景失效后隐藏当前授权信息', () => {
+  const { dom, document, window, errors } = loadV2Dom();
+  try {
+    const product = document.getElementById('plname');
+    product.value = '20';
+    fireChange(product, window);
+    window.addChip('SALES-ATRUST-001');
+
+    const scene = document.getElementById('authScene');
+    scene.value = '5';
+    fireChange(scene, window);
+    const section = document.getElementById('existingAuthSection');
+    assert.equal(window.getComputedStyle(section).display, 'block');
+
+    window.removeDeviceChip('SALES-ATRUST-001');
+    assert.equal(window.getComputedStyle(section).display, 'none');
+    assert.equal(section.classList.contains('show'), false);
+    assert.deepEqual(errors, []);
+  } finally {
+    dom.window.close();
+  }
+});
+
 test('切换授权场景同步内部动作并清理上一场景状态', () => {
   const { dom, document, window } = loadV2Dom();
   try {
