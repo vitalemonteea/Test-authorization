@@ -62,17 +62,17 @@ test('销售设备识别后仅显示符合状态的授权场景', () => {
     const product = document.getElementById('plname');
     const sceneItem = document.getElementById('authSceneFormItem');
     const scene = document.getElementById('authScene');
-    const affiliationRow = sceneItem.closest('.basic-affiliation-row');
+    const sceneRow = document.getElementById('authSceneRow');
 
     product.value = '20';
     fireChange(product, window);
     assert.equal(sceneItem.hidden, true);
-    assert.equal(affiliationRow.classList.contains('has-auth-scene'), false);
+    assert.equal(sceneRow.hidden, true);
     assert.equal(window.getComputedStyle(sceneItem).display, 'none', '未识别设备时授权场景不应占据页面空间');
 
     window.addChip('SALES-ATRUST-001');
     assert.equal(sceneItem.hidden, false);
-    assert.equal(affiliationRow.classList.contains('has-auth-scene'), true);
+    assert.equal(sceneRow.hidden, false);
     assert.deepEqual(Array.from(scene.options).map((option) => option.value), ['', '3', '5', '6']);
     assert.deepEqual(errors, []);
   } finally {
@@ -93,21 +93,21 @@ test('设备、授权场景和客户字段按业务顺序排列', () => {
   }
 });
 
-test('HCI 与 DMP 切换同步归属行的三列和两列对齐状态', () => {
+test('HCI 与 DMP 切换同步授权场景独立行的显隐', () => {
   const { dom, document, window, errors } = loadV2Dom();
   try {
     const product = document.getElementById('plname');
     const sceneItem = document.getElementById('authSceneFormItem');
-    const affiliationRow = sceneItem.closest('.basic-affiliation-row');
+    const sceneRow = document.getElementById('authSceneRow');
 
     assert.equal(product.value, '45');
     assert.equal(sceneItem.hidden, false, 'HCI 固定设备识别后应显示授权场景');
-    assert.equal(affiliationRow.classList.contains('has-auth-scene'), true, 'HCI 应使用三列场景状态');
+    assert.equal(sceneRow.hidden, false, 'HCI 应显示授权场景独立行');
 
     product.value = '24';
     fireChange(product, window);
     assert.equal(sceneItem.hidden, true, 'DMP 未识别设备时应隐藏授权场景');
-    assert.equal(affiliationRow.classList.contains('has-auth-scene'), false, 'DMP 应恢复与主表单一致的两列状态');
+    assert.equal(sceneRow.hidden, true, 'DMP 应隐藏授权场景独立行且不留空白');
     assert.deepEqual(errors, []);
   } finally {
     dom.window.close();

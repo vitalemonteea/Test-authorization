@@ -9,7 +9,7 @@
  *  - 标题下包含 basic-title-accent 强调线
  *  - 产品线+版本使用 basic-two-col-row 两列布局
  *  - 申请类型使用 basic-half-row 半栏布局
- *  - 无授权场景时复用两列主表单对齐，显示场景时使用三列紧凑布局
+ *  - 授权场景独立半行，区域+办事处使用标准两列布局
  *  - 设备 ID、接收邮箱和设备 SN 使用 basic-full 全宽
  *  - 授权场景在设备识别后显示，系统校验不伪装成常驻表单字段
  *  - 借测信息区域使用 basic-borrow-panel + borrow-grid 面板
@@ -153,42 +153,6 @@ test('桌面端基础布局与标题强调线应符合样式合同', () => {
     /^(?:repeat\(2,minmax\(0,1fr\)\)|minmax\(0,1fr\)minmax\(0,1fr\))$/,
     '.basic-half-row 应为两列，使单个申请类型占半栏'
   );
-  assertRuleProperty(
-    '.basic-affiliation-row',
-    'grid-template-columns',
-    /^(?:repeat\(2,minmax\(0,1fr\)\)|minmax\(0,1fr\)minmax\(0,1fr\))$/,
-    '隐藏授权场景时归属行应复用主表单两列布局'
-  );
-  assertRuleProperty(
-    '.basic-affiliation-row.has-auth-scene',
-    'grid-template-columns',
-    /^repeat\(3,minmax\(0,1fr\)\)$/,
-    '显示授权场景时归属行应使用三列布局'
-  );
-  assertRuleProperty(
-    '.basic-affiliation-row .layui-form-item',
-    'display',
-    /^grid$/,
-    '桌面端归属字段应使用紧凑行内网格'
-  );
-  assertRuleProperty(
-    '.basic-affiliation-row .layui-form-item',
-    'grid-template-columns',
-    /^120pxminmax\(0,1fr\)$/,
-    '桌面端归属字段应复用 120px 标签轨道，与其他表单控件起点对齐'
-  );
-  assertRuleProperty(
-    '.basic-affiliation-row .layui-form-item',
-    'gap',
-    /^0(?:px)?$/,
-    '归属字段标签轨道不应额外增加间距'
-  );
-  assertRuleProperty(
-    '.basic-affiliation-row.has-auth-scene .layui-form-item',
-    'grid-template-columns',
-    /^72pxminmax\(0,1fr\)$/,
-    '三列场景下应使用统一的 72px 标签轨道'
-  );
 
   const accentRules = getCssRuleBodies('.basic-title-accent');
   assert.ok(accentRules.length > 0, '.basic-title-accent 应有样式规则');
@@ -202,25 +166,11 @@ test('桌面端基础布局与标题强调线应符合样式合同', () => {
   );
 });
 
-test('移动端半栏与归属布局应折为单列', () => {
+test('移动端半栏布局应折为单列', () => {
   const mobileCss = getMobileCss().replace(/\s+/g, '');
   assert.ok(
     /\.basic-half-row(?:,[^{}]+)*\{[^{}]*grid-template-columns:1fr(?:;|})/.test(mobileCss),
     '移动端 .basic-half-row 应为 1fr'
-  );
-  assert.ok(
-    /\.basic-affiliation-row(?:,[^{}]+)*\{[^{}]*grid-template-columns:1fr(?:;|})/.test(mobileCss),
-    '移动端 .basic-affiliation-row 应为 1fr'
-  );
-  assert.ok(
-    getCssRuleBodies('.basic-affiliation-row.has-auth-scene', mobileCssText)
-      .some((body) => getCssProperty(body, 'grid-template-columns') === '1fr'),
-    '移动端显示授权场景时也应覆盖桌面三列规则'
-  );
-  assert.ok(
-    getCssRuleBodies('.basic-affiliation-row .layui-form-item', mobileCssText)
-      .some((body) => getCssProperty(body, 'grid-template-columns') === '1fr'),
-    '移动端归属字段标签与控件应恢复单列上置布局'
   );
 });
 
@@ -299,18 +249,20 @@ test('产品线与版本应在同一 basic-two-col-row 两列布局中', () => {
   assert.ok(row.querySelector('#cloudVersion'), '同一行应包含版本 cloudVersion');
 });
 
-test('授权场景、区域与办事处应在同一 basic-affiliation-row 动态布局中', () => {
+test('授权场景应独立成行，区域与办事处保持标准两列布局', () => {
   const authSceneItem = doc.getElementById('authSceneFormItem');
+  const authSceneRow = doc.getElementById('authSceneRow');
   const area = doc.getElementById('area');
   const office = doc.getElementById('office');
   const areaItem = area.closest('.layui-form-item');
   const officeItem = office.closest('.layui-form-item');
-  const row = areaItem.parentElement;
-  assert.ok(row, '区域应位于 .basic-affiliation-row 内');
-  assert.ok(row.classList.contains('basic-affiliation-row'), '区域应位于 .basic-affiliation-row 内');
-  assert.strictEqual(authSceneItem.parentElement, row, '授权场景应为归属行的直接子项');
-  assert.strictEqual(areaItem.parentElement, row, '区域应为归属行的直接子项');
-  assert.strictEqual(officeItem.parentElement, row, '办事处应为归属行的直接子项');
+  const officeRow = areaItem.parentElement;
+  assert.ok(authSceneRow.classList.contains('basic-two-col-row'), '授权场景应使用标准两列轨道的首列');
+  assert.strictEqual(authSceneItem.parentElement, authSceneRow, '授权场景应为独立行的直接子项');
+  assert.ok(officeRow.classList.contains('basic-two-col-row'), '区域与办事处应使用标准两列布局');
+  assert.notStrictEqual(officeRow, authSceneRow, '授权场景不应再与区域、办事处挤在同一行');
+  assert.strictEqual(areaItem.parentElement, officeRow, '区域应为两列行的直接子项');
+  assert.strictEqual(officeItem.parentElement, officeRow, '办事处应为两列行的直接子项');
 });
 
 test('客户信息应展示销售负责人徽章 selectedSales', () => {

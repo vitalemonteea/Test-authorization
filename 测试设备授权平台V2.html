@@ -283,12 +283,10 @@
         #section-basic .basic-half-row,
         #section-basic .borrow-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px 36px; margin: 0 0 18px; overflow: visible; }
         #section-basic #planDevTypeRow[hidden] { display: none; }
-        #section-basic .basic-affiliation-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px 36px; margin: 0 0 18px; overflow: visible; }
-        #section-basic .basic-affiliation-row.has-auth-scene { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+        #section-basic #authSceneRow[hidden] { display: none; }
         #section-basic .layui-form-item { max-width: none; margin: 0 0 18px; clear: none; }
         #section-basic .basic-two-col-row .layui-form-item,
         #section-basic .basic-half-row .layui-form-item,
-        #section-basic .basic-affiliation-row .layui-form-item,
         #section-basic .borrow-grid .layui-form-item { margin-bottom: 0; }
         #section-basic .basic-half-row .layui-form-item { min-width: 0; }
         #section-basic .basic-half-row .custom-select-value { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -300,11 +298,6 @@
         #section-basic .search-select-box,
         #section-basic .chip-input-container { width: 100%; max-width: none; box-sizing: border-box; }
         #section-basic .basic-full { max-width: none; margin-left: 0; margin-right: 0; }
-        #section-basic .basic-affiliation-row .layui-form-item { display: grid; grid-template-columns: 120px minmax(0, 1fr); align-items: center; gap: 0; min-width: 0; }
-        #section-basic .basic-affiliation-row.has-auth-scene .layui-form-item { grid-template-columns: 72px minmax(0, 1fr); }
-        #section-basic .basic-affiliation-row .layui-form-item[hidden] { display: none; }
-        #section-basic .basic-affiliation-row .layui-form-label { display: block; width: auto; padding: 0; line-height: 20px; text-align: left; white-space: nowrap; }
-        #section-basic .basic-affiliation-row .layui-input-block { margin-left: 0; width: 100%; }
         #section-basic .device-facts-summary { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; margin-top: 12px; }
         #section-basic .device-facts-summary:empty { display: none; }
         #section-basic .device-facts-panel { min-width: 0; padding: 14px 16px; background: #edf5ff; border: 1px solid #d6e6fb; border-radius: 8px; }
@@ -604,10 +597,6 @@
             #section-basic .basic-two-col-row,
             #section-basic .borrow-grid { grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
             #section-basic .basic-half-row { grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
-            #section-basic .basic-affiliation-row,
-            #section-basic .basic-affiliation-row.has-auth-scene { grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
-            #section-basic .basic-affiliation-row .layui-form-item,
-            #section-basic .basic-affiliation-row.has-auth-scene .layui-form-item { grid-template-columns: 1fr; gap: 6px; }
             #section-basic .device-facts-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
             #section-basic .layui-form-label,
             #section-basic .basic-borrow-panel .layui-form-label { width: auto; padding: 0 0 6px 0; }
@@ -1179,7 +1168,7 @@
                     </div>
 </div>
 
-                    <div class="basic-affiliation-row">
+                    <div class="basic-two-col-row" id="authSceneRow" hidden>
                     <!-- 授权场景由设备事实过滤，最终由申请人确认 -->
                     <div class="layui-form-item" id="authSceneFormItem" hidden>
                         <label class="layui-form-label">授权场景<span class="required-mark">*</span></label>
@@ -1189,7 +1178,9 @@
                             </select>
                         </div>
                     </div>
+                    </div>
 
+                    <div class="basic-two-col-row">
                     <!-- 区域 -->
                     <div class="layui-form-item">
                         <label class="layui-form-label">区域</label>
@@ -5125,7 +5116,7 @@
         };
 
         var authSceneFormItem = document.getElementById('authSceneFormItem');
-        var basicAffiliationRow = authSceneFormItem.closest('.basic-affiliation-row');
+        var authSceneRow = document.getElementById('authSceneRow');
         var authSceneSelect = document.getElementById('authScene');
         var requestActionInput = document.getElementById('requestAction');
         var deviceFactsSummary = document.getElementById('deviceFactsSummary');
@@ -5247,8 +5238,8 @@
                 authSceneSelect.appendChild(option);
             });
             var hasAuthScenes = scenes.length > 0;
+            authSceneRow.hidden = !hasAuthScenes;
             authSceneFormItem.hidden = !hasAuthScenes;
-            basicAffiliationRow.classList.toggle('has-auth-scene', hasAuthScenes);
             if (scenes.indexOf(previous) !== -1) {
                 authSceneSelect.value = previous;
             } else {
