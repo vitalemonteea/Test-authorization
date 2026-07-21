@@ -282,6 +282,7 @@
         #section-basic .basic-two-col-row,
         #section-basic .basic-half-row,
         #section-basic .borrow-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px 36px; margin: 0 0 18px; overflow: visible; }
+        #section-basic #planDevTypeRow[hidden] { display: none; }
         #section-basic .basic-affiliation-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin: 0 0 18px; overflow: visible; }
         #section-basic .layui-form-item { max-width: none; margin: 0 0 18px; clear: none; }
         #section-basic .basic-two-col-row .layui-form-item,
@@ -1042,7 +1043,7 @@
                     <input type="hidden" id="requestAction" name="requestAction" value="">
 
                     <!-- 申请类型 -->
-                    <div class="basic-half-row">
+                    <div class="basic-half-row" id="planDevTypeRow">
                     <div class="layui-form-item" id="planDevTypeFormItem">
                         <label class="layui-form-label">申请类型</label>
                         <div class="layui-input-block">
@@ -4119,6 +4120,8 @@
 
         // ===== 申请类型切换（三种场景差异化） =====
         var planDevTypeSelect = document.getElementById('planDevType');
+        var planDevTypeRow = document.getElementById('planDevTypeRow');
+        var planDevTypeFormItem = document.getElementById('planDevTypeFormItem');
         var renewalSection = document.getElementById('renewal-section');
         var overlimitFields = document.getElementById('overlimit-fields');
         var deviceIdFormItem = document.getElementById('deviceIdFormItem');
@@ -5258,8 +5261,23 @@
             facts.forEach(function(fact) {
                 var sourceLabel = fact.deviceSource === 'borrowed' ? '借测设备' :
                     (fact.deviceSource === 'sales' ? '销售设备' : '来源待人工确认');
-                var authorizationLabel = fact.authorizationStatus === 'active' ? '有效授权' :
-                    (fact.authorizationStatus === 'expired' ? '授权已过期' : '无授权');
+                var hasReliableAuthorizationStatus = ['active', 'expired', 'none']
+                    .indexOf(fact.authorizationStatus) !== -1;
+                var authorizationLabel;
+                if (fact.lookupStatus === 'error') {
+                    authorizationLabel = '查询失败';
+                } else if (fact.lookupStatus === 'not_found' ||
+                    (fact.manualReviewRequired && !hasReliableAuthorizationStatus)) {
+                    authorizationLabel = '待人工确认';
+                } else if (fact.authorizationStatus === 'active') {
+                    authorizationLabel = '有效授权';
+                } else if (fact.authorizationStatus === 'expired') {
+                    authorizationLabel = '授权已过期';
+                } else if (fact.authorizationStatus === 'none') {
+                    authorizationLabel = '无授权';
+                } else {
+                    authorizationLabel = '待人工确认';
+                }
                 var modules = fact.currentModules && fact.currentModules.length ? fact.currentModules.join('、') : '无';
                 var values = [
                     ['实际产品', fact.productName || '待人工确认'],
@@ -5281,6 +5299,7 @@
                 var status = document.createElement('span');
                 status.className = 'device-facts-status';
                 status.textContent = authorizationLabel;
+                status.setAttribute('aria-hidden', 'true');
                 header.appendChild(deviceId);
                 header.appendChild(status);
                 panel.appendChild(header);
@@ -5492,6 +5511,7 @@
             var isHci = !!(productConfig && productConfig.forcedPlanDevType);
             isHciMode = isHci;
             if (isHci) {
+                planDevTypeRow.hidden = true;
                 planDevTypeFormItem.style.display = 'none';
                 devSnFormItem.style.display = 'none';
                 borrowTestFields.style.display = 'none';
@@ -5500,6 +5520,7 @@
                 deviceIdChips.setFixed(['DEV-' + plnameSelect.value + '-AUTO-001']);
                 deviceSnChips.clear();
             } else {
+                planDevTypeRow.hidden = false;
                 planDevTypeFormItem.style.display = '';
                 hwInfoSection.style.display = 'none';
                 deviceIdChips.clear();
