@@ -232,7 +232,7 @@ test('查询结果归一化并给出设备事实阻断原因', () => {
   ], '20').code, 'PRODUCT_MISMATCH');
 });
 
-test('只读设备事实摘要展示实际产品、来源、授权、资源和历史', () => {
+test('只读设备事实摘要仅展示来源、授权状态和历史', () => {
   const { dom, document, window, errors } = loadV2Dom();
   try {
     const product = document.getElementById('plname');
@@ -250,16 +250,24 @@ test('只读设备事实摘要展示实际产品、来源、授权、资源和�
     const grid = panel.querySelector('.device-facts-grid');
     assert.ok(grid, '事实面板应包含 .device-facts-grid');
     const items = Array.from(grid.querySelectorAll('.device-fact-item'));
-    assert.equal(items.length, 7, '事实面板应正好展示 7 项事实');
+    assert.equal(items.length, 4, '事实面板应正好展示 4 项事实');
     assert.deepEqual(
       items.map((item) => item.querySelector('.device-fact-label').textContent.trim()),
-      ['实际产品', '来源', '授权状态', '当前模块', '当前容量', '累计测试', '历史申请']
+      ['来源', '授权状态', '累计测试', '历史申请']
     );
     assert.deepEqual(
       items.map((item) => item.querySelector('.device-fact-value').textContent.trim()),
-      ['NGAF', '借测设备', '无授权', '无', '0', '0个月', '0次']
+      ['借测设备', '无授权', '0个月', '0次']
     );
+    assert.doesNotMatch(panel.textContent, /实际产品|当前模块|当前容量/);
     assert.equal(panel.querySelector('input, select, textarea, button'), null);
+
+    const overview = document.getElementById('currentAuthorizationOverview');
+    assert.equal(overview.hidden, false, '设备识别后模块配置区应显示当前授权概况');
+    const overviewItem = overview.querySelector('.current-auth-overview-item');
+    assert.equal(overviewItem.querySelector('.current-auth-device').textContent.trim(), 'DEV-NGAF-001');
+    assert.match(overviewItem.textContent, /当前模块：无/);
+    assert.match(overviewItem.textContent, /当前容量：0/);
     assert.deepEqual(errors, []);
   } finally {
     dom.window.close();

@@ -204,6 +204,10 @@ test('申请类型长选中值应安全截断而不撑宽半栏', () => {
 });
 
 test('设备事实面板应纵向堆叠并符合桌面与移动样式合同', () => {
+  const summary = doc.getElementById('deviceFactsSummary');
+  const borrow = doc.getElementById('borrowTestFields');
+  assert.strictEqual(summary.parentElement, borrow.parentElement, '设备事实与借测信息应位于同一全宽层级');
+
   const summaryBodies = [
     ...getCssRuleBodies('#deviceFactsSummary'),
     ...getCssRuleBodies('.device-facts-summary')

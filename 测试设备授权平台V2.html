@@ -298,9 +298,10 @@
         #section-basic .search-select-box,
         #section-basic .chip-input-container { width: 100%; max-width: none; box-sizing: border-box; }
         #section-basic .basic-full { max-width: none; margin-left: 0; margin-right: 0; }
-        #section-basic .device-facts-summary { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; margin-top: 12px; }
+        #section-basic .device-facts-summary { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; margin: 0 0 18px; }
         #section-basic .device-facts-summary:empty { display: none; }
-        #section-basic .device-facts-panel { min-width: 0; padding: 14px 16px; background: #edf5ff; border: 1px solid #d6e6fb; border-radius: 8px; }
+        #section-basic .device-facts-panel,
+        #section-basic .basic-borrow-panel { min-width: 0; padding: 16px 20px 20px; background: #edf5ff; border: 1px solid #d6e6fb; border-radius: 8px; box-sizing: border-box; }
         #section-basic .device-facts-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
         #section-basic .device-facts-id { min-width: 0; color: #0f1f3d; font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }
         #section-basic .device-facts-status { flex: 0 0 auto; padding: 3px 9px; color: #0050cb; background: #fff; border: 1px solid #c9dcf7; border-radius: 8px; font-size: 12px; font-weight: 600; }
@@ -310,7 +311,7 @@
         #section-basic .device-fact-value { display: block; overflow-wrap: anywhere; word-break: break-word; }
         #section-basic .device-fact-label { margin-bottom: 4px; color: #6b7890; font-size: 12px; }
         #section-basic .device-fact-value { color: #1a1a2e; font-size: 13px; line-height: 1.45; }
-        #section-basic .basic-borrow-panel { grid-template-columns: minmax(0, 1fr); margin: 8px 0 18px; padding: 16px 20px 20px; background: rgba(255,255,255,.46); border: 1px solid #dbe7ff; border-radius: 8px; }
+        #section-basic .basic-borrow-panel { grid-template-columns: minmax(0, 1fr); margin: 0 0 18px; }
         #section-basic .basic-borrow-title { display: block; margin: 0 0 16px; padding: 0; color: #0f1f3d; font-size: 15px; font-weight: 600; line-height: 22px; }
         #section-basic #hwInfoSection .hw-upload-area { width: 100%; }
 
@@ -383,6 +384,14 @@
         /* 全局操作栏 */
         .module-toolbar { display: flex; align-items: center; padding: 10px 0; margin-bottom: 8px; border-bottom: 1px solid #eff4ff; max-width: 900px; margin-left: auto; margin-right: auto; }
         .module-toolbar-title { font-size: 15px; font-weight: 600; color: #1a1a2e; flex: 1; }
+        .current-auth-overview { max-width: 900px; margin: 0 auto 12px; padding: 14px 16px; background: #f7faff; border: 1px solid #dbe7ff; border-radius: 8px; box-sizing: border-box; }
+        .current-auth-overview[hidden] { display: none; }
+        .current-auth-overview-title { margin-bottom: 10px; color: #0f1f3d; font-size: 14px; font-weight: 600; }
+        .current-auth-overview-list { display: grid; gap: 8px; }
+        .current-auth-overview-item { display: grid; grid-template-columns: minmax(160px, 1fr) minmax(0, 2fr) minmax(120px, 1fr); gap: 12px; align-items: center; padding: 8px 10px; background: #fff; border: 1px solid #e5eeff; border-radius: 6px; }
+        .current-auth-device { min-width: 0; color: #0f1f3d; font-size: 13px; font-weight: 600; overflow-wrap: anywhere; }
+        .current-auth-detail { min-width: 0; color: #6b7890; font-size: 12px; }
+        .current-auth-detail strong { color: #1a1a2e; font-size: 13px; font-weight: 500; overflow-wrap: anywhere; }
         .toolbar-btn { height: 28px; line-height: 26px; padding: 0 12px; background: #eff4ff; color: #0050cb; border: none; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 500; margin-left: 8px; transition: all 0.2s; }
         .toolbar-btn:hover { background: #dae1ff; }
 
@@ -602,6 +611,8 @@
             #section-basic .basic-borrow-panel .layui-form-label { width: auto; padding: 0 0 6px 0; }
             #section-basic .basic-borrow-panel { padding: 16px 14px 14px; }
             #section-basic .basic-borrow-title { margin: 0 0 14px; }
+            .current-auth-overview { padding: 12px; }
+            .current-auth-overview-item { grid-template-columns: 1fr; gap: 6px; }
 
             .unified-date-bar { flex-wrap: wrap; }
             .module-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -1073,7 +1084,6 @@
                                 <input type="text" id="chipInput" class="chip-input-field" placeholder="输入设备ID并回车添加..." autocomplete="off" onkeydown="if(event.keyCode===13){event.preventDefault();window.addChip(this.value);this.value='';return false}">
                                 <input type="hidden" id="devIdNew" name="devIdNew" value="">
                             </div>
-                            <div id="deviceFactsSummary" class="device-facts-summary" aria-live="polite"></div>
                             <div id="deviceLookupBlocking" class="device-lookup-blocking" role="alert" hidden>
                                 <span id="deviceLookupBlockingText"></span>
                                 <button type="button" class="layui-btn layui-btn-primary" id="retryDeviceLookup" hidden>重试查询</button>
@@ -1085,6 +1095,8 @@
                             </div>
                         </div>
                     </div>
+
+                    <div id="deviceFactsSummary" class="device-facts-summary" aria-live="polite"></div>
 
                     <!-- 设备SN（申请类型=硬件时显示） -->
                     <div class="layui-form-item basic-full" id="devSnFormItem" style="display:none;">
@@ -1489,6 +1501,8 @@
                             <button type="button" class="toolbar-btn" id="expandAll">全部展开</button>
                             <button type="button" class="toolbar-btn" id="collapseAll">全部折叠</button>
                         </div>
+
+                        <div class="current-auth-overview" id="currentAuthorizationOverview" hidden></div>
 
                         <!-- 1. 计算虚拟化 -->
                         <div class="module-item" id="module-aSV" data-module="计算虚拟化">
@@ -5120,6 +5134,7 @@
         var authSceneSelect = document.getElementById('authScene');
         var requestActionInput = document.getElementById('requestAction');
         var deviceFactsSummary = document.getElementById('deviceFactsSummary');
+        var currentAuthorizationOverview = document.getElementById('currentAuthorizationOverview');
         var deviceLookupBlocking = document.getElementById('deviceLookupBlocking');
         var deviceLookupBlockingText = document.getElementById('deviceLookupBlockingText');
         var retryDeviceLookup = document.getElementById('retryDeviceLookup');
@@ -5257,6 +5272,53 @@
             return mockDeviceFactsById[deviceId] || null;
         }
 
+        function renderCurrentAuthorizationOverview(facts) {
+            currentAuthorizationOverview.textContent = '';
+            currentAuthorizationOverview.hidden = facts.length === 0;
+            if (!facts.length) return;
+
+            var title = document.createElement('div');
+            title.className = 'current-auth-overview-title';
+            title.textContent = '当前授权概况';
+            currentAuthorizationOverview.appendChild(title);
+
+            var list = document.createElement('div');
+            list.className = 'current-auth-overview-list';
+            facts.forEach(function(fact) {
+                var factsAvailable = fact.lookupStatus === 'success';
+                var modules = factsAvailable ?
+                    (fact.currentModules && fact.currentModules.length ? fact.currentModules.join('、') : '无') :
+                    '待人工确认';
+                var capacity = factsAvailable ? String(fact.currentCapacity || 0) : '待人工确认';
+                var item = document.createElement('div');
+                item.className = 'current-auth-overview-item';
+
+                var device = document.createElement('span');
+                device.className = 'current-auth-device';
+                device.textContent = fact.deviceId;
+
+                var moduleDetail = document.createElement('span');
+                moduleDetail.className = 'current-auth-detail';
+                moduleDetail.textContent = '当前模块：';
+                var moduleValue = document.createElement('strong');
+                moduleValue.textContent = modules;
+                moduleDetail.appendChild(moduleValue);
+
+                var capacityDetail = document.createElement('span');
+                capacityDetail.className = 'current-auth-detail';
+                capacityDetail.textContent = '当前容量：';
+                var capacityValue = document.createElement('strong');
+                capacityValue.textContent = capacity;
+                capacityDetail.appendChild(capacityValue);
+
+                item.appendChild(device);
+                item.appendChild(moduleDetail);
+                item.appendChild(capacityDetail);
+                list.appendChild(item);
+            });
+            currentAuthorizationOverview.appendChild(list);
+        }
+
         function renderDeviceFactsSummary(facts) {
             deviceFactsSummary.textContent = '';
             facts.forEach(function(fact) {
@@ -5279,13 +5341,9 @@
                 } else {
                     authorizationLabel = '待人工确认';
                 }
-                var modules = fact.currentModules && fact.currentModules.length ? fact.currentModules.join('、') : '无';
                 var values = [
-                    ['实际产品', fact.productName || '待人工确认'],
                     ['来源', sourceLabel],
                     ['授权状态', authorizationLabel],
-                    ['当前模块', modules],
-                    ['当前容量', String(fact.currentCapacity || 0)],
                     ['累计测试', (fact.testedMonths || 0) + '个月'],
                     ['历史申请', (fact.applicationCount || 0) + '次']
                 ];
@@ -5323,6 +5381,7 @@
                 panel.appendChild(grid);
                 deviceFactsSummary.appendChild(panel);
             });
+            renderCurrentAuthorizationOverview(facts);
         }
 
         function renderLookupBlocking(reason) {
