@@ -9,7 +9,7 @@
  *  - 标题下包含 basic-title-accent 强调线
  *  - 产品线+版本使用 basic-two-col-row 两列布局
  *  - 申请类型使用 basic-half-row 半栏布局
- *  - 归属信息桌面端固定三列轨道，字段显隐不改变单列宽度
+ *  - 无授权场景时复用两列主表单对齐，显示场景时使用三列紧凑布局
  *  - 设备 ID、接收邮箱和设备 SN 使用 basic-full 全宽
  *  - 授权场景在设备识别后显示，系统校验不伪装成常驻表单字段
  *  - 借测信息区域使用 basic-borrow-panel + borrow-grid 面板
@@ -156,8 +156,14 @@ test('桌面端基础布局与标题强调线应符合样式合同', () => {
   assertRuleProperty(
     '.basic-affiliation-row',
     'grid-template-columns',
+    /^(?:repeat\(2,minmax\(0,1fr\)\)|minmax\(0,1fr\)minmax\(0,1fr\))$/,
+    '隐藏授权场景时归属行应复用主表单两列布局'
+  );
+  assertRuleProperty(
+    '.basic-affiliation-row.has-auth-scene',
+    'grid-template-columns',
     /^repeat\(3,minmax\(0,1fr\)\)$/,
-    '.basic-affiliation-row 应固定为三列，隐藏场景时也不拉宽其余字段'
+    '显示授权场景时归属行应使用三列布局'
   );
   assertRuleProperty(
     '.basic-affiliation-row .layui-form-item',
@@ -176,6 +182,12 @@ test('桌面端基础布局与标题强调线应符合样式合同', () => {
     'gap',
     /^0(?:px)?$/,
     '归属字段标签轨道不应额外增加间距'
+  );
+  assertRuleProperty(
+    '.basic-affiliation-row.has-auth-scene .layui-form-item',
+    'grid-template-columns',
+    /^autominmax\(0,1fr\)$/,
+    '三列场景下应使用紧凑标签轨道'
   );
 
   const accentRules = getCssRuleBodies('.basic-title-accent');
@@ -199,6 +211,11 @@ test('移动端半栏与归属布局应折为单列', () => {
   assert.ok(
     /\.basic-affiliation-row(?:,[^{}]+)*\{[^{}]*grid-template-columns:1fr(?:;|})/.test(mobileCss),
     '移动端 .basic-affiliation-row 应为 1fr'
+  );
+  assert.ok(
+    getCssRuleBodies('.basic-affiliation-row.has-auth-scene', mobileCssText)
+      .some((body) => getCssProperty(body, 'grid-template-columns') === '1fr'),
+    '移动端显示授权场景时也应覆盖桌面三列规则'
   );
   assert.ok(
     getCssRuleBodies('.basic-affiliation-row .layui-form-item', mobileCssText)
