@@ -8,6 +8,16 @@ const fixtures = require('./fixtures/authorization-fixtures.cjs');
 
 const rules = require(path.join(__dirname, '..', 'authorization-application-rules.js'));
 
+function getDeviceFactValue(panel, label) {
+  const item = Array.from(panel.querySelectorAll('.device-fact-item')).find((candidate) =>
+    candidate.querySelector('.device-fact-label')?.textContent.trim() === label
+  );
+  assert.ok(item, `设备事实面板应包含“${label}”项`);
+  const value = item.querySelector('.device-fact-value');
+  assert.ok(value, `设备事实“${label}”应包含值`);
+  return value.textContent.trim();
+}
+
 test('设备状态和来源决定可选授权场景', () => {
   assert.equal(typeof rules.getEligibleAuthScenes, 'function');
   assert.deepEqual(rules.getEligibleAuthScenes(fixtures.noAuthBorrowed), ['1']);
@@ -288,6 +298,26 @@ test('查询超时阻断事项和提交，并可重试或保存草稿', () => {
     fireChange(product, window);
     window.addChip('ERR-TIMEOUT-001');
 
+    const summary = document.getElementById('deviceFactsSummary');
+    const panel = summary.querySelector('.device-facts-panel');
+    assert.ok(panel, '查询失败设备仍应展示事实面板');
+    const status = panel.querySelector('.device-facts-status');
+    assert.ok(status, '查询失败设备面板应展示头部状态');
+    assert.deepEqual(
+      {
+        headerStatus: status.textContent.trim(),
+        authorizationFact: getDeviceFactValue(panel, '授权状态'),
+        headerAriaHidden: status.getAttribute('aria-hidden')
+      },
+      {
+        headerStatus: '查询失败',
+        authorizationFact: '查询失败',
+        headerAriaHidden: 'true'
+      },
+      '查询失败状态应一致展示，且头部状态应避免与事实网格重复播报'
+    );
+    assert.doesNotMatch(panel.textContent, /无授权/);
+
     const blocking = document.getElementById('deviceLookupBlocking');
     assert.equal(blocking.hidden, false);
     assert.match(blocking.textContent, /查询失败/);
@@ -317,6 +347,26 @@ test('无记录设备进入人工复核但仍允许选择开通事项', () => {
     product.value = '22';
     fireChange(product, window);
     window.addChip('UNKNOWN-001');
+
+    const summary = document.getElementById('deviceFactsSummary');
+    const panel = summary.querySelector('.device-facts-panel');
+    assert.ok(panel, '无记录设备仍应展示事实面板');
+    const status = panel.querySelector('.device-facts-status');
+    assert.ok(status, '无记录设备面板应展示头部状态');
+    assert.deepEqual(
+      {
+        headerStatus: status.textContent.trim(),
+        authorizationFact: getDeviceFactValue(panel, '授权状态'),
+        headerAriaHidden: status.getAttribute('aria-hidden')
+      },
+      {
+        headerStatus: '待人工确认',
+        authorizationFact: '待人工确认',
+        headerAriaHidden: 'true'
+      },
+      '待人工确认状态应一致展示，且头部状态应避免与事实网格重复播报'
+    );
+    assert.doesNotMatch(panel.textContent, /无授权/);
 
     assert.equal(window.applicationState.deviceFacts[0].lookupStatus, 'not_found');
     assert.equal(window.applicationState.deviceFacts[0].manualReviewRequired, true);

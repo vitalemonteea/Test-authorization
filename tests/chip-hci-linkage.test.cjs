@@ -88,6 +88,13 @@ test('HCI 产品线(默认45)下：申请类型隐藏、设备ID固定、硬件�
   await delay(40);
   const pdt = doc.getElementById('planDevTypeFormItem');
   assert.strictEqual(pdt.style.display, 'none', 'HCI 模式下申请类型应隐藏');
+  const pdtRow = doc.getElementById('planDevTypeRow');
+  assert.ok(pdtRow, '申请类型半栏应使用稳定 wrapper #planDevTypeRow');
+  assert.ok(pdtRow.classList.contains('basic-half-row'), '#planDevTypeRow 应带 basic-half-row 类');
+  assert.ok(
+    pdtRow.hidden || dom.window.getComputedStyle(pdtRow).display === 'none',
+    'HCI 模式下申请类型半栏不应占据布局空间'
+  );
   const hw = doc.getElementById('hwInfoSection');
   assert.notStrictEqual(hw.style.display, 'none', 'HCI 模式下硬件信息区应显示');
   const input = doc.getElementById('chipInput');
@@ -109,6 +116,15 @@ test('切换至非 HCI 产品线(22)：申请类型显示、硬件信息隐藏�
   await delay(10);
   const pdt = doc.getElementById('planDevTypeFormItem');
   assert.notStrictEqual(pdt.style.display, 'none', '非 HCI 模式下申请类型应显示');
+  const pdtRow = doc.getElementById('planDevTypeRow');
+  assert.ok(pdtRow, '申请类型半栏应使用稳定 wrapper #planDevTypeRow');
+  assert.ok(pdtRow.classList.contains('basic-half-row'), '#planDevTypeRow 应带 basic-half-row 类');
+  assert.strictEqual(pdtRow.hidden, false, '非 HCI 模式下申请类型半栏不应 hidden');
+  assert.notStrictEqual(
+    dom.window.getComputedStyle(pdtRow).display,
+    'none',
+    '非 HCI 模式下申请类型半栏应恢复布局'
+  );
   const hw = doc.getElementById('hwInfoSection');
   assert.strictEqual(hw.style.display, 'none', '非 HCI 模式下硬件信息区应隐藏');
   const input = doc.getElementById('chipInput');
