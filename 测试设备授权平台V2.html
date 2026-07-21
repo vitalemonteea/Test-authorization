@@ -1086,6 +1086,88 @@
                         </div>
                     </div>
 
+                    <!-- 设备SN（申请类型=硬件时显示） -->
+                    <div class="layui-form-item basic-full" id="devSnFormItem" style="display:none;">
+                        <label class="layui-form-label">设备SN<span class="required-mark">*</span></label>
+                        <div class="layui-input-block">
+                            <div class="chip-input-container" id="snChipContainer">
+                                <input type="text" id="snChipInput" class="chip-input-field" placeholder="输入设备SN并回车添加..." autocomplete="off" onkeydown="if(event.keyCode===13){event.preventDefault();window.addSnChip(this.value);this.value='';return false}">
+                                <input type="hidden" id="devSnNew" name="devSnNew" value="">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 借测信息区域（value=1时显示） -->
+                    <div id="borrowTestFields" class="basic-borrow-panel" style="display:none;">
+                    <div class="basic-borrow-title">借测信息</div>
+                    <div class="borrow-grid">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">借测单号<span class="required-mark">*</span></label>
+                        <div class="layui-input-block">
+                            <input type="text" id="btNo" name="btNo" class="layui-input" placeholder="请输入借测单号（订单号）">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">借测使用人<span class="required-mark">*</span></label>
+                        <div class="layui-input-block">
+                            <input type="text" id="btUser" name="btUser" class="layui-input" placeholder="请输入借测使用人">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">借测状态<span class="required-mark">*</span></label>
+                        <div class="layui-input-block">
+                            <div class="custom-select" data-select-id="btStatus">
+                                <select class="layui-select" id="btStatus" name="btStatus" style="display:none;">
+                                    <option value="">请选择借测状态</option>
+                                    <option value="办事处借测">办事处借测</option>
+                                    <option value="渠道借测">渠道借测</option>
+                                    <option value="自用测试">自用测试</option>
+                                </select>
+                                <button type="button" class="custom-select-trigger">
+                                    <span class="custom-select-value">请选择借测状态</span>
+                                    <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                </button>
+                                <div class="custom-select-dropdown">
+                                    <ul class="custom-select-list">
+                                        <li class="custom-select-option selected" data-value="">请选择借测状态</li>
+                                        <li class="custom-select-option" data-value="办事处借测">办事处借测</li>
+                                        <li class="custom-select-option" data-value="渠道借测">渠道借测</li>
+                                        <li class="custom-select-option" data-value="自用测试">自用测试</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">借测类型<span class="required-mark">*</span></label>
+                        <div class="layui-input-block">
+                            <div class="custom-select" data-select-id="btType">
+                                <select class="layui-select" id="btType" name="btType" style="display:none;">
+                                    <option value="">请选择借测类型</option>
+                                    <option value="POC测试">POC测试</option>
+                                    <option value="项目测试">项目测试</option>
+                                    <option value="演示测试">演示测试</option>
+                                    <option value="培训测试">培训测试</option>
+                                </select>
+                                <button type="button" class="custom-select-trigger">
+                                    <span class="custom-select-value">请选择借测类型</span>
+                                    <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                </button>
+                                <div class="custom-select-dropdown">
+                                    <ul class="custom-select-list">
+                                        <li class="custom-select-option selected" data-value="">请选择借测类型</li>
+                                        <li class="custom-select-option" data-value="POC测试">POC测试</li>
+                                        <li class="custom-select-option" data-value="项目测试">项目测试</li>
+                                        <li class="custom-select-option" data-value="演示测试">演示测试</li>
+                                        <li class="custom-select-option" data-value="培训测试">培训测试</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                    </div>
+
                     <input type="hidden" id="requestedMonths" value="3">
                     <input type="hidden" id="targetCapacity" value="0">
                     <div id="approvalPreview" hidden aria-hidden="true"></div>
@@ -1314,88 +1396,6 @@
                                 <span class="customer-type-badge" id="customerTypeBadge" style="display:none;"></span>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- 设备SN（申请类型=硬件时显示） -->
-                    <div class="layui-form-item basic-full" id="devSnFormItem" style="display:none;">
-                        <label class="layui-form-label">设备SN<span class="required-mark">*</span></label>
-                        <div class="layui-input-block">
-                            <div class="chip-input-container" id="snChipContainer">
-                                <input type="text" id="snChipInput" class="chip-input-field" placeholder="输入设备SN并回车添加..." autocomplete="off" onkeydown="if(event.keyCode===13){event.preventDefault();window.addSnChip(this.value);this.value='';return false}">
-                                <input type="hidden" id="devSnNew" name="devSnNew" value="">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 借测信息区域（value=1时显示） -->
-                    <div id="borrowTestFields" class="basic-borrow-panel" style="display:none;">
-                    <div class="basic-borrow-title">借测信息</div>
-                    <div class="borrow-grid">
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">借测单号<span class="required-mark">*</span></label>
-                        <div class="layui-input-block">
-                            <input type="text" id="btNo" name="btNo" class="layui-input" placeholder="请输入借测单号（订单号）">
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">借测使用人<span class="required-mark">*</span></label>
-                        <div class="layui-input-block">
-                            <input type="text" id="btUser" name="btUser" class="layui-input" placeholder="请输入借测使用人">
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">借测状态<span class="required-mark">*</span></label>
-                        <div class="layui-input-block">
-                            <div class="custom-select" data-select-id="btStatus">
-                                <select class="layui-select" id="btStatus" name="btStatus" style="display:none;">
-                                    <option value="">请选择借测状态</option>
-                                    <option value="办事处借测">办事处借测</option>
-                                    <option value="渠道借测">渠道借测</option>
-                                    <option value="自用测试">自用测试</option>
-                                </select>
-                                <button type="button" class="custom-select-trigger">
-                                    <span class="custom-select-value">请选择借测状态</span>
-                                    <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
-                                </button>
-                                <div class="custom-select-dropdown">
-                                    <ul class="custom-select-list">
-                                        <li class="custom-select-option selected" data-value="">请选择借测状态</li>
-                                        <li class="custom-select-option" data-value="办事处借测">办事处借测</li>
-                                        <li class="custom-select-option" data-value="渠道借测">渠道借测</li>
-                                        <li class="custom-select-option" data-value="自用测试">自用测试</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">借测类型<span class="required-mark">*</span></label>
-                        <div class="layui-input-block">
-                            <div class="custom-select" data-select-id="btType">
-                                <select class="layui-select" id="btType" name="btType" style="display:none;">
-                                    <option value="">请选择借测类型</option>
-                                    <option value="POC测试">POC测试</option>
-                                    <option value="项目测试">项目测试</option>
-                                    <option value="演示测试">演示测试</option>
-                                    <option value="培训测试">培训测试</option>
-                                </select>
-                                <button type="button" class="custom-select-trigger">
-                                    <span class="custom-select-value">请选择借测类型</span>
-                                    <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
-                                </button>
-                                <div class="custom-select-dropdown">
-                                    <ul class="custom-select-list">
-                                        <li class="custom-select-option selected" data-value="">请选择借测类型</li>
-                                        <li class="custom-select-option" data-value="POC测试">POC测试</li>
-                                        <li class="custom-select-option" data-value="项目测试">项目测试</li>
-                                        <li class="custom-select-option" data-value="演示测试">演示测试</li>
-                                        <li class="custom-select-option" data-value="培训测试">培训测试</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    </div>
                     </div>
 
                     <!-- ===== 已有授权展示区（场景二/三时显示） ===== -->

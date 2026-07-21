@@ -80,13 +80,17 @@ test('销售设备识别后仅显示符合状态的授权场景', () => {
   }
 });
 
-test('设备、授权场景和客户字段按业务顺序排列', () => {
+test('设备、借测信息、授权场景和客户字段按业务顺序排列', () => {
   const { dom, document } = loadV2Dom({ runScripts: false });
   try {
     const device = document.getElementById('deviceIdFormItem');
+    const deviceSn = document.getElementById('devSnFormItem');
+    const borrow = document.getElementById('borrowTestFields');
     const scene = document.getElementById('authSceneFormItem');
     const customer = document.getElementById('customerSearchInput');
-    assert.ok(device.compareDocumentPosition(scene) & 4);
+    assert.ok(device.compareDocumentPosition(deviceSn) & 4);
+    assert.ok(deviceSn.compareDocumentPosition(borrow) & 4);
+    assert.ok(borrow.compareDocumentPosition(scene) & 4);
     assert.ok(scene.compareDocumentPosition(customer) & 4);
   } finally {
     dom.window.close();
