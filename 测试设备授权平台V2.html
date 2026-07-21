@@ -283,8 +283,7 @@
         #section-basic .basic-half-row,
         #section-basic .borrow-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px 36px; margin: 0 0 18px; overflow: visible; }
         #section-basic #planDevTypeRow[hidden] { display: none; }
-        #section-basic .basic-affiliation-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin: 0 0 18px; overflow: visible; }
-        #section-basic .basic-affiliation-row.has-auth-scene { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        #section-basic .basic-affiliation-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin: 0 0 18px; overflow: visible; }
         #section-basic .layui-form-item { max-width: none; margin: 0 0 18px; clear: none; }
         #section-basic .basic-two-col-row .layui-form-item,
         #section-basic .basic-half-row .layui-form-item,
@@ -603,8 +602,7 @@
             #section-basic .basic-two-col-row,
             #section-basic .borrow-grid { grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
             #section-basic .basic-half-row { grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
-            #section-basic .basic-affiliation-row,
-            #section-basic .basic-affiliation-row.has-auth-scene { grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
+            #section-basic .basic-affiliation-row { grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
             #section-basic .basic-affiliation-row .layui-form-item { grid-template-columns: 1fr; gap: 6px; }
             #section-basic .device-facts-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
             #section-basic .layui-form-label,
@@ -5123,7 +5121,6 @@
         };
 
         var authSceneFormItem = document.getElementById('authSceneFormItem');
-        var basicAffiliationRow = authSceneFormItem.closest('.basic-affiliation-row');
         var authSceneSelect = document.getElementById('authScene');
         var requestActionInput = document.getElementById('requestAction');
         var deviceFactsSummary = document.getElementById('deviceFactsSummary');
@@ -5246,7 +5243,6 @@
             });
             var hasAuthScenes = scenes.length > 0;
             authSceneFormItem.hidden = !hasAuthScenes;
-            basicAffiliationRow.classList.toggle('has-auth-scene', hasAuthScenes);
             if (scenes.indexOf(previous) !== -1) {
                 authSceneSelect.value = previous;
             } else {
