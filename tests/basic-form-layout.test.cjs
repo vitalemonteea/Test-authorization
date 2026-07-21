@@ -168,8 +168,14 @@ test('桌面端基础布局与标题强调线应符合样式合同', () => {
   assertRuleProperty(
     '.basic-affiliation-row .layui-form-item',
     'grid-template-columns',
-    /^autominmax\(0,1fr\)$/,
-    '桌面端归属字段标签与控件应为 auto + 1fr'
+    /^120pxminmax\(0,1fr\)$/,
+    '桌面端归属字段应复用 120px 标签轨道，与其他表单控件起点对齐'
+  );
+  assertRuleProperty(
+    '.basic-affiliation-row .layui-form-item',
+    'gap',
+    /^0(?:px)?$/,
+    '归属字段标签轨道不应额外增加间距'
   );
 
   const accentRules = getCssRuleBodies('.basic-title-accent');
