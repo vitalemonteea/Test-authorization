@@ -9,7 +9,7 @@
  *  - 标题下包含 basic-title-accent 强调线
  *  - 产品线+版本使用 basic-two-col-row 两列布局
  *  - 申请类型使用 basic-half-row 半栏布局
- *  - 归属信息无授权场景时两列铺满，有授权场景时切换为三列
+ *  - 归属信息桌面端固定三列轨道，字段显隐不改变单列宽度
  *  - 设备 ID、接收邮箱和设备 SN 使用 basic-full 全宽
  *  - 授权场景在设备识别后显示，系统校验不伪装成常驻表单字段
  *  - 借测信息区域使用 basic-borrow-panel + borrow-grid 面板
@@ -156,14 +156,8 @@ test('桌面端基础布局与标题强调线应符合样式合同', () => {
   assertRuleProperty(
     '.basic-affiliation-row',
     'grid-template-columns',
-    /^repeat\(2,minmax\(0,1fr\)\)$/,
-    '授权场景隐藏时 .basic-affiliation-row 应为两列'
-  );
-  assertRuleProperty(
-    '.basic-affiliation-row.has-auth-scene',
-    'grid-template-columns',
     /^repeat\(3,minmax\(0,1fr\)\)$/,
-    '授权场景显示时 .basic-affiliation-row 应为三列'
+    '.basic-affiliation-row 应固定为三列，隐藏场景时也不拉宽其余字段'
   );
   assertRuleProperty(
     '.basic-affiliation-row .layui-form-item',
@@ -199,11 +193,6 @@ test('移动端半栏与归属布局应折为单列', () => {
   assert.ok(
     /\.basic-affiliation-row(?:,[^{}]+)*\{[^{}]*grid-template-columns:1fr(?:;|})/.test(mobileCss),
     '移动端 .basic-affiliation-row 应为 1fr'
-  );
-  assert.ok(
-    getCssRuleBodies('.basic-affiliation-row.has-auth-scene', mobileCssText)
-      .some((body) => getCssProperty(body, 'grid-template-columns') === '1fr'),
-    '移动端显示授权场景时也必须覆盖桌面三列规则并恢复 1fr'
   );
   assert.ok(
     getCssRuleBodies('.basic-affiliation-row .layui-form-item', mobileCssText)
