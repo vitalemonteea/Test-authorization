@@ -277,10 +277,16 @@
         .required-mark { color: #ba1a1a; margin-right: 3px; }
         #content-hardware .basic-info-section { max-width: 900px; }
         #section-basic { max-width: 860px; margin: 0 auto; }
+        .basic-title-accent { position: relative; width: 100%; height: 3px; margin: -17px 0 18px; background: #dbe7ff; border-radius: 3px; }
+        .basic-title-accent::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 72px; background: #0050cb; border-radius: 3px; }
         #section-basic .basic-two-col-row,
+        #section-basic .basic-half-row,
         #section-basic .borrow-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px 36px; margin: 0 0 18px; overflow: visible; }
+        #section-basic .basic-affiliation-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin: 0 0 18px; overflow: visible; }
         #section-basic .layui-form-item { max-width: none; margin: 0 0 18px; clear: none; }
         #section-basic .basic-two-col-row .layui-form-item,
+        #section-basic .basic-half-row .layui-form-item,
+        #section-basic .basic-affiliation-row .layui-form-item,
         #section-basic .borrow-grid .layui-form-item { margin-bottom: 0; }
         #section-basic .layui-form-label { width: 120px; padding-left: 0; box-sizing: border-box; color: #0f1f3d; font-weight: 600; }
         #section-basic .layui-input-block { min-width: 0; }
@@ -290,8 +296,24 @@
         #section-basic .search-select-box,
         #section-basic .chip-input-container { width: 100%; max-width: none; box-sizing: border-box; }
         #section-basic .basic-full { max-width: none; margin-left: 0; margin-right: 0; }
-        #section-basic .basic-borrow-panel { margin: 8px 0 18px; padding: 18px 20px 20px; background: rgba(255,255,255,.46); border: 1px solid #dbe7ff; border-radius: 10px; position: relative; }
-        #section-basic .basic-borrow-title { display: inline-block; margin: -30px 0 18px; padding: 0 12px 0 0; background: #f8f9ff; color: #0f1f3d; font-size: 15px; font-weight: 600; }
+        #section-basic .basic-affiliation-row .layui-form-item { display: block; min-width: 0; }
+        #section-basic .basic-affiliation-row .layui-form-item[hidden] { display: none; }
+        #section-basic .basic-affiliation-row .layui-form-label { display: block; width: auto; padding: 0 0 7px; line-height: 20px; text-align: left; }
+        #section-basic .basic-affiliation-row .layui-input-block { margin-left: 0; width: 100%; }
+        #section-basic .device-facts-summary { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; margin-top: 12px; }
+        #section-basic .device-facts-summary:empty { display: none; }
+        #section-basic .device-facts-panel { min-width: 0; padding: 14px 16px; background: #edf5ff; border: 1px solid #d6e6fb; border-radius: 8px; }
+        #section-basic .device-facts-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+        #section-basic .device-facts-id { min-width: 0; color: #0f1f3d; font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }
+        #section-basic .device-facts-status { flex: 0 0 auto; padding: 3px 9px; color: #0050cb; background: #fff; border: 1px solid #c9dcf7; border-radius: 8px; font-size: 12px; font-weight: 600; }
+        #section-basic .device-facts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; }
+        #section-basic .device-fact-item { min-width: 0; padding: 9px 10px; background: rgba(255,255,255,.78); border: 1px solid rgba(214,230,251,.82); border-radius: 6px; }
+        #section-basic .device-fact-label,
+        #section-basic .device-fact-value { display: block; overflow-wrap: anywhere; word-break: break-word; }
+        #section-basic .device-fact-label { margin-bottom: 4px; color: #6b7890; font-size: 12px; }
+        #section-basic .device-fact-value { color: #1a1a2e; font-size: 13px; line-height: 1.45; }
+        #section-basic .basic-borrow-panel { grid-template-columns: minmax(0, 1fr); margin: 8px 0 18px; padding: 16px 20px 20px; background: rgba(255,255,255,.46); border: 1px solid #dbe7ff; border-radius: 8px; }
+        #section-basic .basic-borrow-title { display: block; margin: 0 0 16px; padding: 0; color: #0f1f3d; font-size: 15px; font-weight: 600; line-height: 22px; }
         #section-basic #hwInfoSection .hw-upload-area { width: 100%; }
 
         /* 硬件信息文件上传区 */
@@ -576,10 +598,13 @@
             #section-basic .search-select-box { max-width: none; }
             #section-basic .basic-two-col-row,
             #section-basic .borrow-grid { grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
+            #section-basic .basic-half-row { grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
+            #section-basic .basic-affiliation-row { grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
+            #section-basic .device-facts-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
             #section-basic .layui-form-label,
             #section-basic .basic-borrow-panel .layui-form-label { width: auto; padding: 0 0 6px 0; }
             #section-basic .basic-borrow-panel { padding: 16px 14px 14px; }
-            #section-basic .basic-borrow-title { margin: -28px 0 14px; background: #f8f9ff; }
+            #section-basic .basic-borrow-title { margin: 0 0 14px; }
 
             .unified-date-bar { flex-wrap: wrap; }
             .module-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -833,6 +858,7 @@
 
                     <div class="special-form-section basic-info-section">
                         <div class="section-title">基本信息</div>
+                        <div class="basic-title-accent" aria-hidden="true"></div>
                     <div id="section-basic">
                     <div class="basic-two-col-row">
                     <!-- 产品线 -->
@@ -1016,7 +1042,8 @@
                     <input type="hidden" id="requestAction" name="requestAction" value="">
 
                     <!-- 申请类型 -->
-                    <div class="layui-form-item basic-full" id="planDevTypeFormItem">
+                    <div class="basic-half-row">
+                    <div class="layui-form-item" id="planDevTypeFormItem">
                         <label class="layui-form-label">申请类型</label>
                         <div class="layui-input-block">
                             <div class="custom-select" data-select-id="planDevType">
@@ -1039,6 +1066,7 @@
                             </div>
                         </div>
                     </div>
+                    </div>
 
                     <!-- 设备ID -->
                     <div class="layui-form-item basic-full" id="deviceIdFormItem">
@@ -1058,16 +1086,6 @@
                             <div class="device-compatibility-blocking" id="deviceCompatibilityBlocking" role="alert" hidden>
                                 <div id="deviceCompatibilityIssueList"></div>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- 授权场景由设备事实过滤，最终由申请人确认 -->
-                    <div class="layui-form-item basic-full" id="authSceneFormItem" hidden>
-                        <label class="layui-form-label">授权场景<span class="required-mark">*</span></label>
-                        <div class="layui-input-block">
-                            <select class="layui-select" id="authScene" name="authScene">
-                                <option value="">请选择授权场景</option>
-                            </select>
                         </div>
                     </div>
 
@@ -1153,7 +1171,17 @@
                     </div>
 </div>
 
-                    <div class="basic-two-col-row">
+                    <div class="basic-affiliation-row">
+                    <!-- 授权场景由设备事实过滤，最终由申请人确认 -->
+                    <div class="layui-form-item" id="authSceneFormItem" hidden>
+                        <label class="layui-form-label">授权场景<span class="required-mark">*</span></label>
+                        <div class="layui-input-block">
+                            <select class="layui-select" id="authScene" name="authScene">
+                                <option value="">请选择授权场景</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <!-- 区域 -->
                     <div class="layui-form-item">
                         <label class="layui-form-label">区域</label>
@@ -5228,19 +5256,52 @@
         function renderDeviceFactsSummary(facts) {
             deviceFactsSummary.textContent = '';
             facts.forEach(function(fact) {
-                var row = document.createElement('div');
-                row.className = 'device-facts-row';
                 var sourceLabel = fact.deviceSource === 'borrowed' ? '借测设备' :
                     (fact.deviceSource === 'sales' ? '销售设备' : '来源待人工确认');
                 var authorizationLabel = fact.authorizationStatus === 'active' ? '有效授权' :
                     (fact.authorizationStatus === 'expired' ? '授权已过期' : '无授权');
                 var modules = fact.currentModules && fact.currentModules.length ? fact.currentModules.join('、') : '无';
-                row.textContent = fact.deviceId + '｜实际产品：' + (fact.productName || '待人工确认') +
-                    '｜来源：' + sourceLabel + '｜授权：' + authorizationLabel +
-                    '｜当前模块：' + modules + '｜当前容量：' + (fact.currentCapacity || 0) +
-                    '｜累计测试：' + (fact.testedMonths || 0) + '个月｜历史申请：' +
-                    (fact.applicationCount || 0) + '次';
-                deviceFactsSummary.appendChild(row);
+                var values = [
+                    ['实际产品', fact.productName || '待人工确认'],
+                    ['来源', sourceLabel],
+                    ['授权状态', authorizationLabel],
+                    ['当前模块', modules],
+                    ['当前容量', String(fact.currentCapacity || 0)],
+                    ['累计测试', (fact.testedMonths || 0) + '个月'],
+                    ['历史申请', (fact.applicationCount || 0) + '次']
+                ];
+                var panel = document.createElement('div');
+                panel.className = 'device-facts-panel';
+
+                var header = document.createElement('div');
+                header.className = 'device-facts-header';
+                var deviceId = document.createElement('span');
+                deviceId.className = 'device-facts-id';
+                deviceId.textContent = fact.deviceId;
+                var status = document.createElement('span');
+                status.className = 'device-facts-status';
+                status.textContent = authorizationLabel;
+                header.appendChild(deviceId);
+                header.appendChild(status);
+                panel.appendChild(header);
+
+                var grid = document.createElement('div');
+                grid.className = 'device-facts-grid';
+                values.forEach(function(entry) {
+                    var item = document.createElement('div');
+                    item.className = 'device-fact-item';
+                    var label = document.createElement('span');
+                    label.className = 'device-fact-label';
+                    label.textContent = entry[0];
+                    var value = document.createElement('span');
+                    value.className = 'device-fact-value';
+                    value.textContent = entry[1];
+                    item.appendChild(label);
+                    item.appendChild(value);
+                    grid.appendChild(item);
+                });
+                panel.appendChild(grid);
+                deviceFactsSummary.appendChild(panel);
             });
         }
 
