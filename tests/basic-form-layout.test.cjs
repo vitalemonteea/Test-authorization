@@ -61,6 +61,20 @@ function getCssRuleBodies(selector, source = desktopCssText) {
     .map((match) => match[2].replace(/\s+/g, ''));
 }
 
+function getMatchingCssRuleBodies(element) {
+  return [desktopCssText, mobileCssText].flatMap((source) =>
+    Array.from(source.matchAll(/([^{}]+)\{([^{}]*)\}/g))
+      .filter((match) => match[1].split(',').some((candidate) => {
+        try {
+          return element.matches(candidate.trim());
+        } catch {
+          return false;
+        }
+      }))
+      .map((match) => match[2].replace(/\s+/g, ''))
+  );
+}
+
 function getCssProperty(ruleBody, property) {
   const match = ruleBody.match(new RegExp(`(?:^|;)${property}:([^;]+)`));
   return match?.[1] ?? '';
@@ -69,6 +83,11 @@ function getCssProperty(ruleBody, property) {
 function assertRuleProperty(selector, property, valuePattern, message) {
   const values = getCssRuleBodies(selector).map((body) => getCssProperty(body, property));
   assert.ok(values.some((value) => valuePattern.test(value)), message);
+}
+
+function elementHasCssProperty(element, property, valuePattern) {
+  return getMatchingCssRuleBodies(element)
+    .some((body) => valuePattern.test(getCssProperty(body, property)));
 }
 
 function getMobileCss() {
@@ -162,6 +181,35 @@ test('移动端半栏与归属布局应折为单列', () => {
   assert.ok(
     /\.basic-affiliation-row(?:,[^{}]+)*\{[^{}]*grid-template-columns:1fr(?:;|})/.test(mobileCss),
     '移动端 .basic-affiliation-row 应为 1fr'
+  );
+});
+
+test('申请类型半栏网格项应允许内容安全收缩', () => {
+  const item = doc.getElementById('planDevTypeFormItem');
+  assert.ok(item.closest('.basic-half-row'), '申请类型应位于 .basic-half-row 内');
+  assert.ok(
+    elementHasCssProperty(item, 'min-width', /^0(?:px)?$/),
+    '申请类型半栏内的 .layui-form-item 应设置 min-width: 0'
+  );
+});
+
+test('申请类型长选中值应安全截断而不撑宽半栏', () => {
+  const value = doc.querySelector('#planDevTypeFormItem .custom-select-value');
+  assert.ok(value, '申请类型应包含 .custom-select-value');
+  assert.deepStrictEqual(
+    {
+      minWidth: elementHasCssProperty(value, 'min-width', /^0(?:px)?$/),
+      overflow: elementHasCssProperty(value, 'overflow', /^hidden$/),
+      textOverflow: elementHasCssProperty(value, 'text-overflow', /^ellipsis$/),
+      whiteSpace: elementHasCssProperty(value, 'white-space', /^nowrap$/)
+    },
+    {
+      minWidth: true,
+      overflow: true,
+      textOverflow: true,
+      whiteSpace: true
+    },
+    '申请类型选中值应具备完整的单行省略规则'
   );
 });
 
