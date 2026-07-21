@@ -186,8 +186,8 @@ test('桌面端基础布局与标题强调线应符合样式合同', () => {
   assertRuleProperty(
     '.basic-affiliation-row.has-auth-scene .layui-form-item',
     'grid-template-columns',
-    /^autominmax\(0,1fr\)$/,
-    '三列场景下应使用紧凑标签轨道'
+    /^72pxminmax\(0,1fr\)$/,
+    '三列场景下应使用统一的 72px 标签轨道'
   );
 
   const accentRules = getCssRuleBodies('.basic-title-accent');
