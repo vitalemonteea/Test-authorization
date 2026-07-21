@@ -201,6 +201,11 @@ test('移动端半栏与归属布局应折为单列', () => {
     '移动端 .basic-affiliation-row 应为 1fr'
   );
   assert.ok(
+    getCssRuleBodies('.basic-affiliation-row.has-auth-scene', mobileCssText)
+      .some((body) => getCssProperty(body, 'grid-template-columns') === '1fr'),
+    '移动端显示授权场景时也必须覆盖桌面三列规则并恢复 1fr'
+  );
+  assert.ok(
     getCssRuleBodies('.basic-affiliation-row .layui-form-item', mobileCssText)
       .some((body) => getCssProperty(body, 'grid-template-columns') === '1fr'),
     '移动端归属字段标签与控件应恢复单列上置布局'
