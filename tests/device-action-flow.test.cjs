@@ -202,15 +202,55 @@ test('只读设备事实摘要展示实际产品、来源、授权、资源和�
     fireChange(product, window);
     window.addChip('DEV-NGAF-001');
 
-    const summary = document.getElementById('deviceFactsSummary');
-    assert.match(summary.textContent, /NGAF/);
-    assert.match(summary.textContent, /借测设备/);
-    assert.match(summary.textContent, /无授权/);
-    assert.match(summary.textContent, /当前模块：无/);
-    assert.match(summary.textContent, /当前容量：0/);
-    assert.match(summary.textContent, /累计测试：0个月/);
-    assert.match(summary.textContent, /历史申请：0次/);
-    assert.equal(summary.querySelector('input, select, textarea, button'), null);
+    const panel = document.querySelector('.device-facts-panel');
+    assert.ok(panel, '查询后应渲染独立的 .device-facts-panel');
+    assert.ok(panel.querySelector('.device-facts-header'), '事实面板应包含头部');
+    assert.equal(panel.querySelector('.device-facts-id').textContent.trim(), 'DEV-NGAF-001');
+    assert.equal(panel.querySelector('.device-facts-status').textContent.trim(), '无授权');
+
+    const grid = panel.querySelector('.device-facts-grid');
+    assert.ok(grid, '事实面板应包含 .device-facts-grid');
+    const items = Array.from(grid.querySelectorAll('.device-fact-item'));
+    assert.equal(items.length, 7, '事实面板应正好展示 7 项事实');
+    assert.deepEqual(
+      items.map((item) => item.querySelector('.device-fact-label').textContent.trim()),
+      ['实际产品', '来源', '授权状态', '当前模块', '当前容量', '累计测试', '历史申请']
+    );
+    assert.deepEqual(
+      items.map((item) => item.querySelector('.device-fact-value').textContent.trim()),
+      ['NGAF', '借测设备', '无授权', '无', '0', '0个月', '0次']
+    );
+    assert.equal(panel.querySelector('input, select, textarea, button'), null);
+    assert.deepEqual(errors, []);
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('多设备查询分别渲染事实面板并在逐个移除后同步清理', () => {
+  const { dom, document, window, errors } = loadV2Dom();
+  try {
+    const product = document.getElementById('plname');
+    product.value = '22';
+    fireChange(product, window);
+
+    window.addChip('DEV-NGAF-001');
+    window.addChip('DEV-NGAF-002');
+
+    let panels = Array.from(document.querySelectorAll('.device-facts-panel'));
+    assert.equal(panels.length, 2, '两个设备应分别渲染事实面板');
+    assert.deepEqual(
+      panels.map((panel) => panel.querySelector('.device-facts-id').textContent.trim()),
+      ['DEV-NGAF-001', 'DEV-NGAF-002']
+    );
+
+    window.removeDeviceChip('DEV-NGAF-001');
+    panels = Array.from(document.querySelectorAll('.device-facts-panel'));
+    assert.equal(panels.length, 1, '移除一个设备后应只保留一个事实面板');
+    assert.equal(panels[0].querySelector('.device-facts-id').textContent.trim(), 'DEV-NGAF-002');
+
+    window.removeDeviceChip('DEV-NGAF-002');
+    assert.equal(document.querySelectorAll('.device-facts-panel').length, 0);
     assert.deepEqual(errors, []);
   } finally {
     dom.window.close();

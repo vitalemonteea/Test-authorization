@@ -1,14 +1,16 @@
 'use strict';
 
 /**
- * 基本信息表单布局对齐测试（V1 -> V2）
+ * 基本信息卡片新版布局测试
  *
  * 目标：验证 `测试设备授权平台V2.html` 中「申请产品授权」Tab 下的
- * 基本信息表单，已恢复与 V1（测试设备授权平台.html）一致的布局结构：
+ * 基本信息表单，符合已确认的新版卡片布局结构：
  *  - 外层容器带 basic-info-section
- *  - 产品线+版本、区域+办事处 使用 basic-two-col-row 两列布局
- *  - 关键字段使用 basic-full 全宽
- *  - 申请类型带 planDevTypeFormItem 包装
+ *  - 标题下包含 basic-title-accent 强调线
+ *  - 产品线+版本使用 basic-two-col-row 两列布局
+ *  - 申请类型使用 basic-half-row 半栏布局
+ *  - 授权场景+区域+办事处使用 basic-affiliation-row 三列布局
+ *  - 设备 ID、接收邮箱和设备 SN 使用 basic-full 全宽
  *  - 授权场景在设备识别后显示，系统校验不伪装成常驻表单字段
  *  - 借测信息区域使用 basic-borrow-panel + borrow-grid 面板
  *  - 客户信息展示销售负责人徽章 selectedSales
@@ -42,6 +44,16 @@ test('基本信息外层容器应带 basic-info-section 类', () => {
   );
 });
 
+test('基本信息标题下应包含 basic-title-accent 强调线', () => {
+  const section = sectionBasic.closest('.basic-info-section');
+  const title = section.querySelector('.section-title');
+  assert.ok(title, '基本信息标题应存在');
+  assert.ok(
+    title.nextElementSibling?.classList.contains('basic-title-accent'),
+    '基本信息标题下应紧跟 .basic-title-accent'
+  );
+});
+
 test('产品线与版本应在同一 basic-two-col-row 两列布局中', () => {
   const plname = doc.getElementById('plname');
   const row = plname.closest('.basic-two-col-row');
@@ -49,10 +61,11 @@ test('产品线与版本应在同一 basic-two-col-row 两列布局中', () => {
   assert.ok(row.querySelector('#cloudVersion'), '同一行应包含版本 cloudVersion');
 });
 
-test('区域与办事处应在同一 basic-two-col-row 两列布局中', () => {
+test('授权场景、区域与办事处应在同一 basic-affiliation-row 三列布局中', () => {
   const area = doc.getElementById('area');
-  const row = area.closest('.basic-two-col-row');
-  assert.ok(row, '区域应位于 .basic-two-col-row 内');
+  const row = area.closest('.basic-affiliation-row');
+  assert.ok(row, '区域应位于 .basic-affiliation-row 内');
+  assert.ok(row.querySelector('#authSceneFormItem'), '同一行应包含授权场景 authSceneFormItem');
   assert.ok(row.querySelector('#office'), '同一行应包含办事处 office');
 });
 
@@ -67,14 +80,15 @@ test('客户信息应展示销售负责人徽章 selectedSales', () => {
   assert.ok(display.contains(sales), 'selectedSales 应位于客户信息展示区内');
 });
 
-test('申请类型表单项应有 planDevTypeFormItem 包装且为全宽', () => {
+test('申请类型表单项应位于 basic-half-row 且不再为全宽', () => {
   const item = doc.getElementById('planDevTypeFormItem');
   assert.ok(item, 'planDevTypeFormItem 应存在');
   assert.ok(
     item.querySelector('[data-select-id="planDevType"]'),
     'planDevTypeFormItem 应包裹申请类型下拉'
   );
-  assert.ok(item.classList.contains('basic-full'), '申请类型应为全宽 basic-full');
+  assert.ok(item.closest('.basic-half-row'), '申请类型应位于 .basic-half-row 内');
+  assert.equal(item.classList.contains('basic-full'), false, '申请类型不应带 basic-full');
 });
 
 test('借测信息区域应使用 basic-borrow-panel 面板与 borrow-grid 网格', () => {
@@ -88,7 +102,7 @@ test('借测信息区域应使用 basic-borrow-panel 面板与 borrow-grid 网�
   assert.ok(borrow.querySelector('.borrow-grid'), '借测信息区域应含 borrow-grid 两列网格');
 });
 
-test('接收邮箱/设备SN/设备ID/授权场景 应为全宽 basic-full', () => {
+test('接收邮箱、设备SN和设备ID应为全宽 basic-full', () => {
   const email = doc.getElementById('userEmail').closest('.layui-form-item');
   assert.ok(email.classList.contains('basic-full'), '接收邮箱应为全宽');
   assert.ok(
@@ -98,10 +112,6 @@ test('接收邮箱/设备SN/设备ID/授权场景 应为全宽 basic-full', () =
   assert.ok(
     doc.getElementById('deviceIdFormItem').classList.contains('basic-full'),
     '设备ID 应为全宽'
-  );
-  assert.ok(
-    doc.getElementById('authSceneFormItem').classList.contains('basic-full'),
-    '授权场景应为全宽'
   );
 });
 
