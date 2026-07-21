@@ -26,6 +26,32 @@ const { JSDOM, VirtualConsole } = require('jsdom');
 
 const htmlPath = path.join(__dirname, '..', '测试设备授权平台V2.html');
 const html = fs.readFileSync(htmlPath, 'utf8');
+const cssText = Array.from(html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi))
+  .map((match) => match[1])
+  .join('\n')
+  .replace(/\/\*[\s\S]*?\*\//g, '');
+
+function getCssRuleBodies(selector) {
+  return Array.from(cssText.matchAll(/([^{}]+)\{([^{}]*)\}/g))
+    .filter((match) => match[1].split(',').some((candidate) => candidate.trim().endsWith(selector)))
+    .map((match) => match[2].replace(/\s+/g, ''));
+}
+
+function getCssProperty(ruleBody, property) {
+  const match = ruleBody.match(new RegExp(`(?:^|;)${property}:([^;]+)`));
+  return match?.[1] ?? '';
+}
+
+function assertRuleProperty(selector, property, valuePattern, message) {
+  const values = getCssRuleBodies(selector).map((body) => getCssProperty(body, property));
+  assert.ok(values.some((value) => valuePattern.test(value)), message);
+}
+
+function getMobileCss() {
+  const mediaStart = cssText.search(/@media\s*(?:screen\s+and\s*)?\(max-width\s*:\s*768px\)/i);
+  assert.notEqual(mediaStart, -1, '应存在 max-width: 768px 移动断点');
+  return cssText.slice(mediaStart, cssText.indexOf('</style>', mediaStart) === -1 ? undefined : cssText.indexOf('</style>', mediaStart));
+}
 
 // 静默虚拟控制台，避免外部 CSS/资源解析告警污染测试输出
 const virtualConsole = new VirtualConsole();
@@ -48,9 +74,110 @@ test('基本信息标题下应包含 basic-title-accent 强调线', () => {
   const section = sectionBasic.closest('.basic-info-section');
   const title = section.querySelector('.section-title');
   assert.ok(title, '基本信息标题应存在');
+  assert.strictEqual(title.textContent.trim(), '基本信息');
   assert.ok(
     title.nextElementSibling?.classList.contains('basic-title-accent'),
     '基本信息标题下应紧跟 .basic-title-accent'
+  );
+});
+
+test('所有既有基本信息字段仍应存在', () => {
+  const fieldIds = [
+    'plname',
+    'cloudVersion',
+    'planDevTypeFormItem',
+    'deviceIdFormItem',
+    'authSceneFormItem',
+    'area',
+    'office',
+    'userEmail',
+    'customerSearchInput',
+    'devSnFormItem',
+    'borrowTestFields'
+  ];
+  fieldIds.forEach((id) => assert.ok(doc.getElementById(id), `既有基本信息字段 #${id} 应保留`));
+});
+
+test('桌面端基础布局与标题强调线应符合样式合同', () => {
+  assertRuleProperty(
+    '.basic-two-col-row',
+    'grid-template-columns',
+    /^(?:repeat\(2,minmax\(0,1fr\)\)|minmax\(0,1fr\)minmax\(0,1fr\))$/,
+    '.basic-two-col-row 应为两列'
+  );
+  assertRuleProperty(
+    '.basic-half-row',
+    'grid-template-columns',
+    /^(?:repeat\(2,minmax\(0,1fr\)\)|minmax\(0,1fr\)minmax\(0,1fr\))$/,
+    '.basic-half-row 应为两列，使单个申请类型占半栏'
+  );
+  assertRuleProperty(
+    '.basic-affiliation-row',
+    'grid-template-columns',
+    /^repeat\(3,minmax\(0,1fr\)\)$/,
+    '.basic-affiliation-row 应为三列'
+  );
+
+  const accentRules = getCssRuleBodies('.basic-title-accent');
+  assert.ok(accentRules.length > 0, '.basic-title-accent 应有样式规则');
+  assert.ok(
+    accentRules.some((body) => {
+      const height = getCssProperty(body, 'height');
+      const background = getCssProperty(body, 'background') || getCssProperty(body, 'background-color');
+      return /^(?!0(?:px|rem|em)?$)\d*\.?\d+(?:px|rem|em)$/.test(height) && background.length > 0;
+    }),
+    '.basic-title-accent 应有可见高度和背景'
+  );
+});
+
+test('移动端半栏与归属布局应折为单列', () => {
+  const mobileCss = getMobileCss().replace(/\s+/g, '');
+  assert.ok(
+    /\.basic-half-row(?:,[^{}]+)*\{[^{}]*grid-template-columns:1fr(?:;|})/.test(mobileCss),
+    '移动端 .basic-half-row 应为 1fr'
+  );
+  assert.ok(
+    /\.basic-affiliation-row(?:,[^{}]+)*\{[^{}]*grid-template-columns:1fr(?:;|})/.test(mobileCss),
+    '移动端 .basic-affiliation-row 应为 1fr'
+  );
+});
+
+test('设备事实面板应纵向堆叠并符合桌面与移动样式合同', () => {
+  const summaryBodies = [
+    ...getCssRuleBodies('#deviceFactsSummary'),
+    ...getCssRuleBodies('.device-facts-summary')
+  ];
+  assert.ok(
+    summaryBodies.some((body) =>
+      getCssProperty(body, 'display') === 'grid' ||
+      (getCssProperty(body, 'display') === 'flex' && getCssProperty(body, 'flex-direction') === 'column')
+    ),
+    '设备事实摘要容器应采用纵向 grid 或 column flex 堆叠'
+  );
+
+  const panelBackgrounds = getCssRuleBodies('.device-facts-panel')
+    .map((body) => getCssProperty(body, 'background') || getCssProperty(body, 'background-color'));
+  assert.ok(
+    panelBackgrounds.some((value) => {
+      if (/^var\(--[^)]*(?:blue|primary|info)[^)]*\)$/.test(value)) return true;
+      const hex = value.match(/^#([0-9a-f]{6})$/i);
+      if (!hex) return false;
+      const channels = hex[1].match(/.{2}/g).map((channel) => Number.parseInt(channel, 16));
+      return channels.every((channel) => channel >= 220) && channels[2] > channels[0] && channels[2] >= channels[1];
+    }),
+    '.device-facts-panel 应使用浅蓝背景或浅蓝色变量'
+  );
+  assertRuleProperty(
+    '.device-facts-grid',
+    'grid-template-columns',
+    /^repeat\((?:auto-fit|auto-fill),minmax\(/,
+    '桌面端 .device-facts-grid 应使用自适应网格'
+  );
+
+  const mobileCss = getMobileCss().replace(/\s+/g, '');
+  assert.ok(
+    /\.device-facts-grid(?:,[^{}]+)*\{[^{}]*grid-template-columns:(?:repeat\(2,minmax\(0,1fr\)\)|1fr1fr)(?:;|})/.test(mobileCss),
+    '移动端 .device-facts-grid 应为两列'
   );
 });
 
