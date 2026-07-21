@@ -9,7 +9,7 @@
  *  - 标题下包含 basic-title-accent 强调线
  *  - 产品线+版本使用 basic-two-col-row 两列布局
  *  - 申请类型使用 basic-half-row 半栏布局
- *  - 授权场景+区域+办事处使用 basic-affiliation-row 三列布局
+ *  - 归属信息无授权场景时两列铺满，有授权场景时切换为三列
  *  - 设备 ID、接收邮箱和设备 SN 使用 basic-full 全宽
  *  - 授权场景在设备识别后显示，系统校验不伪装成常驻表单字段
  *  - 借测信息区域使用 basic-borrow-panel + borrow-grid 面板
@@ -156,8 +156,26 @@ test('桌面端基础布局与标题强调线应符合样式合同', () => {
   assertRuleProperty(
     '.basic-affiliation-row',
     'grid-template-columns',
+    /^repeat\(2,minmax\(0,1fr\)\)$/,
+    '授权场景隐藏时 .basic-affiliation-row 应为两列'
+  );
+  assertRuleProperty(
+    '.basic-affiliation-row.has-auth-scene',
+    'grid-template-columns',
     /^repeat\(3,minmax\(0,1fr\)\)$/,
-    '.basic-affiliation-row 应为三列'
+    '授权场景显示时 .basic-affiliation-row 应为三列'
+  );
+  assertRuleProperty(
+    '.basic-affiliation-row .layui-form-item',
+    'display',
+    /^grid$/,
+    '桌面端归属字段应使用紧凑行内网格'
+  );
+  assertRuleProperty(
+    '.basic-affiliation-row .layui-form-item',
+    'grid-template-columns',
+    /^autominmax\(0,1fr\)$/,
+    '桌面端归属字段标签与控件应为 auto + 1fr'
   );
 
   const accentRules = getCssRuleBodies('.basic-title-accent');
@@ -181,6 +199,10 @@ test('移动端半栏与归属布局应折为单列', () => {
   assert.ok(
     /\.basic-affiliation-row(?:,[^{}]+)*\{[^{}]*grid-template-columns:1fr(?:;|})/.test(mobileCss),
     '移动端 .basic-affiliation-row 应为 1fr'
+  );
+  assert.ok(
+    /\.basic-affiliation-row \.layui-form-item(?:,[^{}]+)*\{[^{}]*grid-template-columns:1fr(?:;|})/.test(mobileCss),
+    '移动端归属字段标签与控件应恢复单列上置布局'
   );
 });
 
@@ -259,7 +281,7 @@ test('产品线与版本应在同一 basic-two-col-row 两列布局中', () => {
   assert.ok(row.querySelector('#cloudVersion'), '同一行应包含版本 cloudVersion');
 });
 
-test('授权场景、区域与办事处应在同一 basic-affiliation-row 三列布局中', () => {
+test('授权场景、区域与办事处应在同一 basic-affiliation-row 动态布局中', () => {
   const authSceneItem = doc.getElementById('authSceneFormItem');
   const area = doc.getElementById('area');
   const office = doc.getElementById('office');

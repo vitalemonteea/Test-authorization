@@ -62,14 +62,17 @@ test('销售设备识别后仅显示符合状态的授权场景', () => {
     const product = document.getElementById('plname');
     const sceneItem = document.getElementById('authSceneFormItem');
     const scene = document.getElementById('authScene');
+    const affiliationRow = sceneItem.closest('.basic-affiliation-row');
 
     product.value = '20';
     fireChange(product, window);
     assert.equal(sceneItem.hidden, true);
+    assert.equal(affiliationRow.classList.contains('has-auth-scene'), false);
     assert.equal(window.getComputedStyle(sceneItem).display, 'none', '未识别设备时授权场景不应占据页面空间');
 
     window.addChip('SALES-ATRUST-001');
     assert.equal(sceneItem.hidden, false);
+    assert.equal(affiliationRow.classList.contains('has-auth-scene'), true);
     assert.deepEqual(Array.from(scene.options).map((option) => option.value), ['', '3', '5', '6']);
     assert.deepEqual(errors, []);
   } finally {
@@ -85,6 +88,27 @@ test('设备、授权场景和客户字段按业务顺序排列', () => {
     const customer = document.getElementById('customerSearchInput');
     assert.ok(device.compareDocumentPosition(scene) & 4);
     assert.ok(scene.compareDocumentPosition(customer) & 4);
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('HCI 与 DMP 切换时归属布局跟随授权场景切换列数状态', () => {
+  const { dom, document, window, errors } = loadV2Dom();
+  try {
+    const product = document.getElementById('plname');
+    const sceneItem = document.getElementById('authSceneFormItem');
+    const affiliationRow = sceneItem.closest('.basic-affiliation-row');
+
+    assert.equal(product.value, '45');
+    assert.equal(sceneItem.hidden, false, 'HCI 固定设备识别后应显示授权场景');
+    assert.equal(affiliationRow.classList.contains('has-auth-scene'), true, 'HCI 应使用三列归属状态');
+
+    product.value = '24';
+    fireChange(product, window);
+    assert.equal(sceneItem.hidden, true, 'DMP 未识别设备时应隐藏授权场景');
+    assert.equal(affiliationRow.classList.contains('has-auth-scene'), false, 'DMP 应恢复两列归属状态');
+    assert.deepEqual(errors, []);
   } finally {
     dom.window.close();
   }
