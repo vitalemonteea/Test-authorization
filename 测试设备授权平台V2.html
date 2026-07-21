@@ -1372,7 +1372,7 @@
                     </div>
 
                     <!-- ===== 已有授权展示区（场景二/三时显示） ===== -->
-                    <div class="existing-auth-section" id="existingAuthSection">
+                    <div class="existing-auth-section" id="existingAuthSection" style="display:none;">
                         <div class="layui-form-item">
                             <label class="layui-form-label">当前授权信息</label>
                             <div class="layui-input-block">
@@ -4297,6 +4297,8 @@
         }
 
         function resetExistingAuthSection() {
+            existingAuthSection.classList.remove('show');
+            existingAuthSection.style.display = 'none';
             var eaQueryDevId = document.getElementById('eaQueryDevId');
             if (eaQueryDevId) eaQueryDevId.value = '';
             var eaQuerySn = document.getElementById('eaQuerySn');
