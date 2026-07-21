@@ -202,7 +202,8 @@ test('只读设备事实摘要展示实际产品、来源、授权、资源和�
     fireChange(product, window);
     window.addChip('DEV-NGAF-001');
 
-    const panel = document.querySelector('.device-facts-panel');
+    const summary = document.getElementById('deviceFactsSummary');
+    const panel = summary.querySelector('.device-facts-panel');
     assert.ok(panel, '查询后应渲染独立的 .device-facts-panel');
     assert.ok(panel.querySelector('.device-facts-header'), '事实面板应包含头部');
     assert.equal(panel.querySelector('.device-facts-id').textContent.trim(), 'DEV-NGAF-001');
@@ -233,11 +234,12 @@ test('多设备查询分别渲染事实面板并在逐个移除后同步清理',
     const product = document.getElementById('plname');
     product.value = '22';
     fireChange(product, window);
+    const summary = document.getElementById('deviceFactsSummary');
 
     window.addChip('DEV-NGAF-001');
     window.addChip('DEV-NGAF-002');
 
-    let panels = Array.from(document.querySelectorAll('.device-facts-panel'));
+    let panels = Array.from(summary.querySelectorAll('.device-facts-panel'));
     assert.equal(panels.length, 2, '两个设备应分别渲染事实面板');
     assert.deepEqual(
       panels.map((panel) => panel.querySelector('.device-facts-id').textContent.trim()),
@@ -245,12 +247,33 @@ test('多设备查询分别渲染事实面板并在逐个移除后同步清理',
     );
 
     window.removeDeviceChip('DEV-NGAF-001');
-    panels = Array.from(document.querySelectorAll('.device-facts-panel'));
+    panels = Array.from(summary.querySelectorAll('.device-facts-panel'));
     assert.equal(panels.length, 1, '移除一个设备后应只保留一个事实面板');
     assert.equal(panels[0].querySelector('.device-facts-id').textContent.trim(), 'DEV-NGAF-002');
 
     window.removeDeviceChip('DEV-NGAF-002');
-    assert.equal(document.querySelectorAll('.device-facts-panel').length, 0);
+    assert.equal(summary.querySelectorAll('.device-facts-panel').length, 0);
+    assert.deepEqual(errors, []);
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('切换产品后清空设备事实面板和应用状态', () => {
+  const { dom, document, window, errors } = loadV2Dom();
+  try {
+    const product = document.getElementById('plname');
+    const summary = document.getElementById('deviceFactsSummary');
+    product.value = '22';
+    fireChange(product, window);
+    window.addChip('DEV-NGAF-001');
+    assert.equal(summary.querySelectorAll('.device-facts-panel').length, 1);
+
+    product.value = '20';
+    fireChange(product, window);
+    assert.equal(summary.querySelectorAll('.device-facts-panel').length, 0);
+    assert.equal(summary.textContent.trim(), '');
+    assert.equal(window.applicationState.deviceFacts.length, 0);
     assert.deepEqual(errors, []);
   } finally {
     dom.window.close();

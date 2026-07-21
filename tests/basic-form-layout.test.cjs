@@ -31,8 +31,32 @@ const cssText = Array.from(html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi))
   .join('\n')
   .replace(/\/\*[\s\S]*?\*\//g, '');
 
-function getCssRuleBodies(selector) {
-  return Array.from(cssText.matchAll(/([^{}]+)\{([^{}]*)\}/g))
+function findCssBlockRange(source, startIndex) {
+  const openBrace = source.indexOf('{', startIndex);
+  if (startIndex < 0 || openBrace === -1) return null;
+
+  let depth = 0;
+  for (let index = openBrace; index < source.length; index += 1) {
+    if (source[index] === '{') depth += 1;
+    if (source[index] === '}') depth -= 1;
+    if (depth === 0) {
+      return { start: startIndex, contentStart: openBrace + 1, contentEnd: index, end: index + 1 };
+    }
+  }
+  return null;
+}
+
+const mobileMediaMatch = /@media\s*(?:screen\s+and\s*)?\(max-width\s*:\s*768px\)/i.exec(cssText);
+const mobileMediaRange = findCssBlockRange(cssText, mobileMediaMatch?.index ?? -1);
+const mobileCssText = mobileMediaRange
+  ? cssText.slice(mobileMediaRange.contentStart, mobileMediaRange.contentEnd)
+  : '';
+const desktopCssText = mobileMediaRange
+  ? cssText.slice(0, mobileMediaRange.start) + cssText.slice(mobileMediaRange.end)
+  : cssText;
+
+function getCssRuleBodies(selector, source = desktopCssText) {
+  return Array.from(source.matchAll(/([^{}]+)\{([^{}]*)\}/g))
     .filter((match) => match[1].split(',').some((candidate) => candidate.trim().endsWith(selector)))
     .map((match) => match[2].replace(/\s+/g, ''));
 }
@@ -48,9 +72,8 @@ function assertRuleProperty(selector, property, valuePattern, message) {
 }
 
 function getMobileCss() {
-  const mediaStart = cssText.search(/@media\s*(?:screen\s+and\s*)?\(max-width\s*:\s*768px\)/i);
-  assert.notEqual(mediaStart, -1, '应存在 max-width: 768px 移动断点');
-  return cssText.slice(mediaStart, cssText.indexOf('</style>', mediaStart) === -1 ? undefined : cssText.indexOf('</style>', mediaStart));
+  assert.ok(mobileMediaRange, '应存在完整的 max-width: 768px 移动断点');
+  return mobileCssText;
 }
 
 // 静默虚拟控制台，避免外部 CSS/资源解析告警污染测试输出
@@ -189,11 +212,17 @@ test('产品线与版本应在同一 basic-two-col-row 两列布局中', () => {
 });
 
 test('授权场景、区域与办事处应在同一 basic-affiliation-row 三列布局中', () => {
+  const authSceneItem = doc.getElementById('authSceneFormItem');
   const area = doc.getElementById('area');
-  const row = area.closest('.basic-affiliation-row');
+  const office = doc.getElementById('office');
+  const areaItem = area.closest('.layui-form-item');
+  const officeItem = office.closest('.layui-form-item');
+  const row = areaItem.parentElement;
   assert.ok(row, '区域应位于 .basic-affiliation-row 内');
-  assert.ok(row.querySelector('#authSceneFormItem'), '同一行应包含授权场景 authSceneFormItem');
-  assert.ok(row.querySelector('#office'), '同一行应包含办事处 office');
+  assert.ok(row.classList.contains('basic-affiliation-row'), '区域应位于 .basic-affiliation-row 内');
+  assert.strictEqual(authSceneItem.parentElement, row, '授权场景应为归属行的直接子项');
+  assert.strictEqual(areaItem.parentElement, row, '区域应为归属行的直接子项');
+  assert.strictEqual(officeItem.parentElement, row, '办事处应为归属行的直接子项');
 });
 
 test('客户信息应展示销售负责人徽章 selectedSales', () => {
@@ -214,7 +243,9 @@ test('申请类型表单项应位于 basic-half-row 且不再为全宽', () => {
     item.querySelector('[data-select-id="planDevType"]'),
     'planDevTypeFormItem 应包裹申请类型下拉'
   );
-  assert.ok(item.closest('.basic-half-row'), '申请类型应位于 .basic-half-row 内');
+  const row = item.closest('.basic-half-row');
+  assert.ok(row, '申请类型应位于 .basic-half-row 内');
+  assert.strictEqual(item.parentElement, row, '申请类型应为 .basic-half-row 的直接子项');
   assert.equal(item.classList.contains('basic-full'), false, '申请类型不应带 basic-full');
 });
 
