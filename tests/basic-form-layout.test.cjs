@@ -201,7 +201,8 @@ test('移动端半栏与归属布局应折为单列', () => {
     '移动端 .basic-affiliation-row 应为 1fr'
   );
   assert.ok(
-    /\.basic-affiliation-row \.layui-form-item(?:,[^{}]+)*\{[^{}]*grid-template-columns:1fr(?:;|})/.test(mobileCss),
+    getCssRuleBodies('.basic-affiliation-row .layui-form-item', mobileCssText)
+      .some((body) => getCssProperty(body, 'grid-template-columns') === '1fr'),
     '移动端归属字段标签与控件应恢复单列上置布局'
   );
 });
