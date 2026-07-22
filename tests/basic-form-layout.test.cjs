@@ -193,6 +193,15 @@ test('桌面布局应约束顶部账号入口并始终保留模块导航', () =>
   assert.match(compactCss, /\.content-body\{padding:12px188px12px32px;/, '紧凑桌面应为右侧模块导航保留空间');
 });
 
+test('首屏应通过硬件授权 Tab 状态入口显示右侧模块导航', () => {
+  const switchTabDefinition = html.indexOf('function switchTab(tabName)');
+  const switchTabInitialization = html.indexOf("switchTab('hardware');", switchTabDefinition);
+  const xaasSection = html.indexOf('// ===== XaaS 授权场景切换 =====', switchTabDefinition);
+  assert.ok(switchTabDefinition >= 0, '应存在统一的 switchTab 状态入口');
+  assert.ok(switchTabInitialization > switchTabDefinition, '首屏应显式初始化 hardware Tab');
+  assert.ok(switchTabInitialization < xaasSection, 'hardware Tab 初始化应在其他业务逻辑启动前完成');
+});
+
 test('申请类型全行网格项应允许内容安全收缩', () => {
   const item = doc.getElementById('planDevTypeFormItem');
   assert.ok(item.closest('.basic-full-row'), '申请类型应位于 .basic-full-row 内');

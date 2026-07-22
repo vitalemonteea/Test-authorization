@@ -3415,6 +3415,9 @@
             });
         });
 
+        // 首屏统一走 Tab 状态入口，确保产品授权页的右侧模块导航可见
+        switchTab('hardware');
+
         // ===== XaaS 授权场景切换 =====
         var xaasScene = document.getElementById('xaas-scene');
         var xaasScene2Fields = document.getElementById('xaas-scene2-fields');
