@@ -200,6 +200,21 @@ test('首屏应通过硬件授权 Tab 状态入口显示右侧模块导航', () 
   assert.ok(switchTabDefinition >= 0, '应存在统一的 switchTab 状态入口');
   assert.ok(switchTabInitialization > switchTabDefinition, '首屏应显式初始化 hardware Tab');
   assert.ok(switchTabInitialization < xaasSection, 'hardware Tab 初始化应在其他业务逻辑启动前完成');
+  assert.match(
+    html,
+    /function switchTab\(tabName\)\s*\{\s*document\.body\.dataset\.activeTab\s*=\s*tabName;/,
+    '切换 Tab 时应同步 body 的 activeTab 页面状态'
+  );
+  const hardwareNavRules = getCssRuleBodies('body[data-active-tab="hardware"] .module-nav');
+  assert.ok(
+    hardwareNavRules.some((body) =>
+      getCssProperty(body, 'display') === 'block!important' &&
+      getCssProperty(body, 'visibility') === 'visible!important' &&
+      getCssProperty(body, 'opacity') === '1!important'
+    ),
+    '硬件授权状态应强制显示右侧模块导航'
+  );
+  assertRuleProperty('.module-nav', 'z-index', /^2100$/, '右侧模块导航应位于固定正文层之上');
 });
 
 test('申请类型全行网格项应允许内容安全收缩', () => {
