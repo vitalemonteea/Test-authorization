@@ -132,6 +132,11 @@ test('产品线下拉与触发器等宽并复用公共选中态', () => {
     '产品线选中项不应覆盖公共选中样式'
   );
   assert.doesNotMatch(html, /product-selected-check/, '产品线选中项不应显示专属勾选图标');
+  assert.match(
+    compactCss,
+    /\.retired-product-option\s+\.product-retired-badge\s*\{[^}]*margin-left:\s*auto/,
+    '退市标签应在产品选项内右对齐'
+  );
 });
 
 test('选择 WOC 持续显示退市提示，切回 aBDI 后隐藏', () => {
