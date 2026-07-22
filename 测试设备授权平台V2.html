@@ -311,11 +311,19 @@
         #section-basic .device-facts-summary { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; margin: 0 0 18px; }
         #section-basic .device-facts-summary:empty { display: none; }
         #section-basic .device-facts-panel,
-        #section-basic .basic-borrow-panel { min-width: 0; padding: 16px 20px 20px; background: #eff4ff; border: 1px solid rgba(194,198,216,.5); border-radius: 12px; box-sizing: border-box; }
-        #section-basic .device-facts-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+        #section-basic .basic-borrow-panel { min-width: 0; background: #eff4ff; border: 1px solid rgba(194,198,216,.5); border-radius: 12px; box-sizing: border-box; }
+        #section-basic .device-facts-panel { overflow: hidden; }
+        #section-basic .basic-borrow-panel { padding: 16px 20px 20px; }
+        #section-basic .device-facts-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; padding: 0 20px; box-sizing: border-box; cursor: pointer; list-style: none; }
+        #section-basic .device-facts-header::-webkit-details-marker { display: none; }
+        #section-basic .device-facts-header:hover { background: rgba(255,255,255,.42); }
+        #section-basic .device-facts-header:focus-visible { outline: 2px solid #0050cb; outline-offset: -2px; border-radius: 12px; }
         #section-basic .device-facts-id { min-width: 0; color: #0b1c30; font-size: 14px; font-weight: 600; overflow-wrap: anywhere; }
+        #section-basic .device-facts-header-meta { display: inline-flex; align-items: center; gap: 8px; flex: 0 0 auto; }
         #section-basic .device-facts-status { flex: 0 0 auto; padding: 3px 10px; color: #0050cb; background: #e5eeff; border: none; border-radius: 9999px; font-size: 12px; font-weight: 600; }
-        #section-basic .device-facts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; }
+        #section-basic .device-facts-toggle { color: #424656; font-size: 20px; transition: transform .2s ease; }
+        #section-basic .device-facts-panel[open] .device-facts-toggle { transform: rotate(180deg); }
+        #section-basic .device-facts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; padding: 4px 20px 20px; }
         #section-basic .device-fact-item { min-width: 0; padding: 9px 10px; background: #fff; border: 1px solid rgba(194,198,216,.4); border-radius: 8px; }
         #section-basic .device-fact-label,
         #section-basic .device-fact-value { display: block; overflow-wrap: anywhere; word-break: break-word; }
@@ -5555,20 +5563,28 @@
                     ['累计测试', (fact.testedMonths || 0) + '个月'],
                     ['历史申请', (fact.applicationCount || 0) + '次']
                 ];
-                var panel = document.createElement('div');
+                var panel = document.createElement('details');
                 panel.className = 'device-facts-panel';
 
-                var header = document.createElement('div');
+                var header = document.createElement('summary');
                 header.className = 'device-facts-header';
                 var deviceId = document.createElement('span');
                 deviceId.className = 'device-facts-id';
                 deviceId.textContent = fact.deviceId;
+                var headerMeta = document.createElement('span');
+                headerMeta.className = 'device-facts-header-meta';
                 var status = document.createElement('span');
                 status.className = 'device-facts-status';
                 status.textContent = authorizationLabel;
                 status.setAttribute('aria-hidden', 'true');
+                var toggle = document.createElement('span');
+                toggle.className = 'material-symbols-outlined device-facts-toggle';
+                toggle.textContent = 'expand_more';
+                toggle.setAttribute('aria-hidden', 'true');
+                headerMeta.appendChild(status);
+                headerMeta.appendChild(toggle);
                 header.appendChild(deviceId);
-                header.appendChild(status);
+                header.appendChild(headerMeta);
                 panel.appendChild(header);
 
                 var grid = document.createElement('div');

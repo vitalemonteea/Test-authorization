@@ -243,9 +243,12 @@ test('只读设备事实摘要仅展示来源、授权状态和历史', () => {
     const summary = document.getElementById('deviceFactsSummary');
     const panel = summary.querySelector('.device-facts-panel');
     assert.ok(panel, '查询后应渲染独立的 .device-facts-panel');
-    assert.ok(panel.querySelector('.device-facts-header'), '事实面板应包含头部');
+    assert.equal(panel.tagName, 'DETAILS', '设备事实面板应使用原生 details 披露控件');
+    assert.equal(panel.open, false, '设备事实面板默认应为收起状态');
+    assert.equal(panel.querySelector('.device-facts-header').tagName, 'SUMMARY', '事实面板头部应为可交互 summary');
     assert.equal(panel.querySelector('.device-facts-id').textContent.trim(), 'DEV-NGAF-001');
     assert.equal(panel.querySelector('.device-facts-status').textContent.trim(), '无授权');
+    assert.equal(panel.querySelector('.device-facts-toggle').textContent.trim(), 'expand_more');
 
     const grid = panel.querySelector('.device-facts-grid');
     assert.ok(grid, '事实面板应包含 .device-facts-grid');
