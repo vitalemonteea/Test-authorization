@@ -415,6 +415,14 @@
         .module-nav-item:hover { background: #eff4ff; color: #0050cb; }
         .module-nav-item.active { color: #fff; font-weight: 600; background: #0050cb; }
 
+        /* 紧凑桌面：避免右侧浮层与顶部账号入口争夺有限的横向空间 */
+        @media (max-width: 1366px) and (min-width: 769px) {
+            .content-body { padding: 12px 32px; }
+            .module-nav { display: none; }
+            .layui-header { padding: 0 16px; }
+            .header-user-dropdown, .header-user { flex-shrink: 0; }
+        }
+
         /* XaaS 表单样式 */
         .required-star { color: #c62828; margin-left: 2px; }
         .xaas-product-list { border: 1px solid #d1d5db; border-radius: 8px; max-width: 600px; overflow: visible; }

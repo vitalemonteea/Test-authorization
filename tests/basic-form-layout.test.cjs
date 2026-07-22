@@ -174,6 +174,16 @@ test('移动端全行布局应保持单列', () => {
   );
 });
 
+test('紧凑桌面宽度应隐藏右侧模块导航并保留顶部账号入口空间', () => {
+  const compactMediaMatch = /@media\s*\(max-width\s*:\s*1366px\)\s*and\s*\(min-width\s*:\s*769px\)/i.exec(cssText);
+  const compactMediaRange = findCssBlockRange(cssText, compactMediaMatch?.index ?? -1);
+  assert.ok(compactMediaRange, '应存在 769px 至 1366px 的紧凑桌面断点');
+  const compactCss = cssText.slice(compactMediaRange.contentStart, compactMediaRange.contentEnd).replace(/\s+/g, '');
+  assert.match(compactCss, /\.module-nav\{display:none;/, '紧凑桌面应隐藏右侧模块导航');
+  assert.match(compactCss, /\.content-body\{padding:12px32px;/, '紧凑桌面应释放正文两侧预留空间');
+  assert.match(compactCss, /\.header-user-dropdown,\.header-user\{flex-shrink:0;/, '账号入口在紧凑桌面不得被压缩');
+});
+
 test('申请类型全行网格项应允许内容安全收缩', () => {
   const item = doc.getElementById('planDevTypeFormItem');
   assert.ok(item.closest('.basic-full-row'), '申请类型应位于 .basic-full-row 内');
