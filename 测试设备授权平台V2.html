@@ -18,13 +18,13 @@
 
         /* 布局容器 */
         .layui-layout-admin { position: relative; height: 100%; }
-        .layui-layout-admin .layui-header { position: fixed; top: 0; left: 200px; right: 0; z-index: 2000; }
+        .layui-layout-admin .layui-header { position: fixed; top: 0; left: 200px; right: 0; width: auto; min-width: 0; box-sizing: border-box; z-index: 2000; }
         .layui-layout-admin .layui-side { position: fixed; top: 0; bottom: 0; left: 0; width: 200px; z-index: 1000; overflow: hidden; }
         .layui-layout-admin .layui-body { position: fixed; top: 40px; bottom: 44px; left: 200px; right: 0; overflow: hidden; background: #fff; }
         .layui-layout-admin .layui-footer { position: fixed; bottom: 0; left: 0; right: 0; height: 44px; z-index: 999; }
 
         /* ===== Header 顶部栏 - 浅色现代风格 ===== */
-        .layui-header { height: 40px; background: #fff; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: flex-end; padding: 0 24px; gap: 4px; }
+        .layui-header { height: 40px; background: #fff; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: flex-end; padding: 0 24px; gap: 4px; overflow: visible; }
         .header-icon-btn { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border: none; background: transparent; border-radius: 8px; cursor: pointer; color: #5f6368; transition: background 0.2s ease, color 0.2s ease; position: relative; font-family: inherit; font-size: 14px; }
         .header-icon-btn:hover { background: rgba(0,0,0,.04); color: #0050cb; }
         .header-icon-btn .material-symbols-outlined { font-size: 24px; }
@@ -32,7 +32,7 @@
         .header-user:hover { background: rgba(0,0,0,.04); }
 .header-user .dropdown-arrow { font-size: 20px; margin-left: -4px; transition: transform 0.2s ease; }
         .header-user.open .dropdown-arrow { transform: rotate(180deg); }
-.header-user-dropdown { position: relative; }
+.header-user-dropdown { position: relative; flex: 0 0 auto; }
 .header-menu-btn { display: none; align-items: center; justify-content: center; width: 40px; height: 40px; border: none; background: transparent; border-radius: 8px; cursor: pointer; color: #5f6368; }
 .header-menu-btn:hover { background: rgba(0,0,0,.04); }
 .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,.5); z-index: 2500; }
@@ -415,12 +415,11 @@
         .module-nav-item:hover { background: #eff4ff; color: #0050cb; }
         .module-nav-item.active { color: #fff; font-weight: 600; background: #0050cb; }
 
-        /* 紧凑桌面：避免右侧浮层与顶部账号入口争夺有限的横向空间 */
+        /* 紧凑桌面：保留模块导航，并为其预留正文空间 */
         @media (max-width: 1366px) and (min-width: 769px) {
-            .content-body { padding: 12px 32px; }
-            .module-nav { display: none; }
+            .content-body { padding: 12px 188px 12px 32px; }
+            .module-nav { display: block; }
             .layui-header { padding: 0 16px; }
-            .header-user-dropdown, .header-user { flex-shrink: 0; }
         }
 
         /* XaaS 表单样式 */
