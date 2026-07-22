@@ -7,13 +7,26 @@
 }(typeof self !== 'undefined' ? self : this, function () {
     'use strict';
 
-    var RULE_VERSION = '2026-07-16.1';
+    var RULE_VERSION = '2026-07-22.1';
     var PRODUCT_STATUS = {
         '6': 'retired'
     };
     var PRODUCT_CONFIG = {
-        '45': { hardwareInfoRequired: true, forcedPlanDevType: '1', capacityLimit: 20 },
-        '19': { hardwareInfoRequired: true, forcedPlanDevType: '1', capacityLimit: 20 }
+        '45': { hardwareInfoRequired: true, forcedPlanDevType: '1', capacityLimit: 20, historyScope: 'customer_product' },
+        '19': { hardwareInfoRequired: true, forcedPlanDevType: '1', capacityLimit: 20, historyScope: 'customer_product' }
+    };
+    var DEFAULT_HISTORY_SCOPE = 'customer_product_identifier';
+    var BASE_SCENE_LABELS = {
+        first_open: '首次开通测试授权',
+        reopen: '重新开通测试授权',
+        adjust: '调整当前测试授权'
+    };
+    var REQUEST_CONTENT_LABELS = {
+        open: '开通测试授权',
+        reopen: '重新开通授权',
+        extend: '延长授权时间',
+        add_module: '增开模块',
+        increase_capacity: '扩大容量/规格'
     };
     var REQUEST_ACTION_LABELS = {
         open: '开通测试授权',
@@ -57,6 +70,46 @@
 
     function getProductStatus(id) {
         return PRODUCT_STATUS[String(id)] || 'active';
+    }
+
+    function getHistoryScope(productLineId) {
+        var config = PRODUCT_CONFIG[String(productLineId)] || {};
+        return config.historyScope || DEFAULT_HISTORY_SCOPE;
+    }
+
+    function deriveBaseScene(deviceFacts, historyScope) {
+        if (!deviceFacts) return '';
+        if ((historyScope || getHistoryScope(deviceFacts.productLineId)) === 'none') return 'first_open';
+        if (deviceFacts.authorizationStatus === 'none') return 'first_open';
+        if (deviceFacts.authorizationStatus === 'expired') return 'reopen';
+        if (deviceFacts.authorizationStatus === 'active') return 'adjust';
+        return '';
+    }
+
+    function getEligibleRequestContents(deviceFacts, historyScope) {
+        var baseScene = deriveBaseScene(deviceFacts, historyScope);
+        if (baseScene === 'first_open') return ['open'];
+        if (baseScene === 'reopen') return ['reopen'];
+        if (baseScene === 'adjust') return ['extend', 'add_module', 'increase_capacity'];
+        return [];
+    }
+
+    function getPrimaryRequestAction(baseScene) {
+        if (baseScene === 'first_open') return 'open';
+        if (baseScene === 'reopen') return 'reopen';
+        if (baseScene === 'adjust') return 'adjust';
+        return '';
+    }
+
+    function getDurationLimitMonths(customerType) {
+        return customerType === 'KA' ? 6 : 3;
+    }
+
+    function getOverdueTier(deviceFacts, context) {
+        context = context || {};
+        var testedMonths = Number((deviceFacts || {}).testedMonths || 0);
+        var requestedMonths = Number(context.requestedMonths || 0);
+        return testedMonths + requestedMonths > getDurationLimitMonths(context.customerType) ? 'overdue' : 'normal';
     }
 
     function getEligibleRequestActions(deviceFacts) {
@@ -103,6 +156,25 @@
             };
         }
         if (!rawResult || rawResult.status === 'not_found' || rawResult.lookupStatus === 'not_found') {
+            if (identifiers.strictAssetLookup !== true) {
+                return {
+                    lookupStatus: 'success',
+                    deviceId: identifiers.deviceId || '',
+                    sn: identifiers.sn || '',
+                    productLineId: identifiers.productLineId || '',
+                    productName: identifiers.productName || '',
+                    deviceSource: 'customer_owned',
+                    borrowOrderId: '',
+                    authorizationStatus: 'none',
+                    currentModules: [],
+                    currentCapacity: 0,
+                    testedMonths: 0,
+                    applicationCount: 0,
+                    materialKeys: [],
+                    factVersion: 'history-none-' + (identifiers.deviceId || identifiers.sn || 'unknown'),
+                    manualReviewRequired: false
+                };
+            }
             return {
                 lookupStatus: 'not_found',
                 deviceId: identifiers.deviceId || '',
@@ -118,7 +190,9 @@
                 applicationCount: 0,
                 materialKeys: [],
                 factVersion: '',
-                manualReviewRequired: true
+                manualReviewRequired: false,
+                assetValidationRequired: true,
+                selfServiceAllowed: false
             };
         }
         var normalized = {};
@@ -133,6 +207,12 @@
         var lookupError = facts.find(function(fact) { return fact.lookupStatus === 'error'; });
         if (lookupError) {
             return { code: 'LOOKUP_ERROR', deviceId: lookupError.deviceId, errorCode: lookupError.errorCode || '' };
+        }
+        var unknownBorrowedDevice = facts.find(function(fact) {
+            return fact.lookupStatus === 'not_found' && fact.assetValidationRequired === true;
+        });
+        if (unknownBorrowedDevice) {
+            return { code: 'UNKNOWN_BORROWED_DEVICE', deviceId: unknownBorrowedDevice.deviceId };
         }
         var mismatch = facts.find(function(fact) {
             return fact.lookupStatus === 'success' && String(fact.productLineId) !== String(selectedProductLineId);
@@ -173,7 +253,7 @@
                 decisionType = 'manual';
                 routeKey = 'MANUAL_DEVICE_VERIFICATION';
                 reasonCodes = ['MANUAL_DEVICE_VERIFICATION'];
-            } else if (context.requestAction === 'add_module' && facts.some(function(item) {
+            } else if ((context.requestAction === 'add_module' || (context.requestContents || []).indexOf('add_module') !== -1) && facts.some(function(item) {
                 return String(item.productLineId) === '20' && item.deviceSource === 'sales';
             })) {
                 decisionType = 'manual';
@@ -186,7 +266,7 @@
                 reasonCodes = ['PRODUCT_LIMIT_APPROVAL'];
             } else {
                 var applicationLimit = String(context.productLineId) === '141' ? 1 : 2;
-                var reachesApplicationLimit = context.requestAction === 'open' && facts.some(function(item) {
+                var reachesApplicationLimit = (context.requestAction === 'open' || context.requestAction === 'reopen') && facts.some(function(item) {
                     return Number(item.applicationCount || 0) >= applicationLimit;
                 });
                 if (reachesApplicationLimit) {
@@ -194,7 +274,7 @@
                     routeKey = 'APPLICATION_LIMIT_APPROVAL';
                     reasonCodes = ['APPLICATION_LIMIT_APPROVAL'];
                 } else {
-                    var durationLimit = context.customerType === 'KA' ? 6 : 3;
+                    var durationLimit = getDurationLimitMonths(context.customerType);
                     var requestedMonths = Number(context.requestedMonths || 0);
                     var exceedsDurationLimit = facts.some(function(item) {
                         return Number(item.testedMonths || 0) + requestedMonths > durationLimit;
@@ -223,6 +303,10 @@
         return (fact.materialKeys || []).slice().sort().join('|');
     }
 
+    function normalizedRequestContents(application) {
+        return (application.requestContents || []).slice().sort().join('|');
+    }
+
     function findCompatibilityIssues(deviceApplications) {
         var applications = deviceApplications || [];
         if (applications.length < 2) return [];
@@ -244,7 +328,11 @@
             var fact = application.deviceFacts || application.fact || {};
             var decision = application.approvalDecision || {};
             if (String(fact.productLineId) !== String(referenceFact.productLineId)) addIssue('PRODUCT_LINE_MISMATCH', fact);
+            if ((application.baseScene || deriveBaseScene(fact)) !==
+                (reference.baseScene || deriveBaseScene(referenceFact))) addIssue('BASE_SCENE_MISMATCH', fact);
             if (application.requestAction !== reference.requestAction) addIssue('REQUEST_ACTION_MISMATCH', fact);
+            if (normalizedRequestContents(application) !== normalizedRequestContents(reference)) addIssue('REQUEST_CONTENTS_MISMATCH', fact);
+            if ((application.overdueTier || 'normal') !== (reference.overdueTier || 'normal')) addIssue('OVERDUE_TIER_MISMATCH', fact);
             if (fact.deviceSource !== referenceFact.deviceSource) addIssue('DEVICE_SOURCE_MISMATCH', fact);
             if ((fact.borrowOrderId || '') !== (referenceFact.borrowOrderId || '')) addIssue('BORROW_ORDER_MISMATCH', fact);
             if (normalizedMaterialKeys(fact) !== normalizedMaterialKeys(referenceFact)) addIssue('MATERIAL_KEYS_MISMATCH', fact);
@@ -263,7 +351,9 @@
         return {
             productLineId: String(input.productLineId || ''),
             productStatus: input.productStatus || 'active',
+            baseScene: input.baseScene || deriveBaseScene((input.deviceFacts || [])[0]),
             requestAction: input.requestAction || '',
+            requestContents: cloneJson(input.requestContents || []),
             authScene: String(input.authScene || mapLegacyAuthScene(input.requestAction, (input.deviceFacts || [])[0])),
             deviceFacts: cloneJson(input.deviceFacts || []),
             approvalDecision: cloneJson(input.approvalDecision || null),
@@ -282,11 +372,19 @@
 
     return {
         RULE_VERSION: RULE_VERSION,
+        BASE_SCENE_LABELS: BASE_SCENE_LABELS,
+        REQUEST_CONTENT_LABELS: REQUEST_CONTENT_LABELS,
         REQUEST_ACTION_LABELS: REQUEST_ACTION_LABELS,
         AUTH_SCENE_LABELS: AUTH_SCENE_LABELS,
         REASON_TEXTS: REASON_TEXTS,
         PRODUCT_CONFIG: PRODUCT_CONFIG,
         getProductStatus: getProductStatus,
+        getHistoryScope: getHistoryScope,
+        deriveBaseScene: deriveBaseScene,
+        getEligibleRequestContents: getEligibleRequestContents,
+        getPrimaryRequestAction: getPrimaryRequestAction,
+        getDurationLimitMonths: getDurationLimitMonths,
+        getOverdueTier: getOverdueTier,
         getEligibleRequestActions: getEligibleRequestActions,
         getEligibleAuthScenes: getEligibleAuthScenes,
         mapAuthSceneToRequestAction: mapAuthSceneToRequestAction,

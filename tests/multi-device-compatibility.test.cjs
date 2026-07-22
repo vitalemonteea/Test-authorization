@@ -39,6 +39,20 @@ test('不同借测单生成点名冲突设备的硬问题', () => {
   assert.equal(mismatch.hard, true);
 });
 
+test('基础场景或超期层级不同必须拆单', () => {
+  const sceneIssues = rules.findCompatibilityIssues([
+    applicationFor(fixtures.noAuthBorrowed, { baseScene: 'first_open' }),
+    applicationFor({ ...fixtures.sameBorrowOrderPeer, authorizationStatus: 'expired' }, { baseScene: 'reopen' })
+  ]);
+  assert.ok(sceneIssues.some((issue) => issue.code === 'BASE_SCENE_MISMATCH'));
+
+  const overdueIssues = rules.findCompatibilityIssues([
+    applicationFor(fixtures.noAuthBorrowed, { overdueTier: 'normal' }),
+    applicationFor(fixtures.sameBorrowOrderPeer, { overdueTier: 'overdue' })
+  ]);
+  assert.ok(overdueIssues.some((issue) => issue.code === 'OVERDUE_TIER_MISMATCH'));
+});
+
 test('材料、决策类型或审批路线不同均生成硬问题', () => {
   const materialIssues = rules.findCompatibilityIssues([
     applicationFor(fixtures.noAuthBorrowed),

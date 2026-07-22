@@ -182,10 +182,13 @@ test('内部审批可计算四种状态但不向申请人展示预览', () => {
     const product = document.getElementById('plname');
     product.value = '22';
     fireChange(product, window);
+    const planType = document.getElementById('planDevType');
+    planType.value = '2';
+    fireChange(planType, window);
 
     const cases = [
       ['DEV-NGAF-001', 'default'],
-      ['UNKNOWN-001', 'manual'],
+      ['UNKNOWN-001', 'default'],
       ['SPECIAL-FLOW-001', 'special_flow'],
       ['SELF-SERVICE-BLOCKED-001', 'not_allowed']
     ];

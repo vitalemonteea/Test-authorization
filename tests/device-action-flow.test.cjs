@@ -97,6 +97,48 @@ test('设备、借测信息、授权场景和客户字段按业务顺序排列',
   }
 });
 
+test('设备授权状态派生唯一基础场景和可申请内容', () => {
+  assert.equal(rules.deriveBaseScene(fixtures.noAuthBorrowed), 'first_open');
+  assert.equal(rules.deriveBaseScene({ ...fixtures.noAuthBorrowed, authorizationStatus: 'expired' }), 'reopen');
+  assert.equal(rules.deriveBaseScene({ ...fixtures.noAuthBorrowed, authorizationStatus: 'active' }), 'adjust');
+  assert.deepEqual(rules.getEligibleRequestContents(fixtures.noAuthBorrowed), ['open']);
+  assert.deepEqual(
+    rules.getEligibleRequestContents(fixtures.activeSales),
+    ['extend', 'add_module', 'increase_capacity'],
+    '销售属性不应限制首次、重开或有效期内调整内容'
+  );
+});
+
+test('纯软无历史直接按首次开通处理，硬件借测无资产记录必须阻断', () => {
+  const softwareFact = rules.normalizeLookupResult(null, {
+    deviceId: 'CUSTOMER-SOFT-001',
+    productLineId: '22',
+    productName: 'NGAF',
+    strictAssetLookup: false
+  });
+  assert.equal(softwareFact.lookupStatus, 'success');
+  assert.equal(softwareFact.deviceSource, 'customer_owned');
+  assert.equal(softwareFact.manualReviewRequired, false);
+  assert.equal(rules.deriveBaseScene(softwareFact), 'first_open');
+
+  const hardwareFact = rules.normalizeLookupResult(null, {
+    deviceId: 'UNKNOWN-BORROWED-001',
+    productLineId: '22',
+    productName: 'NGAF',
+    strictAssetLookup: true
+  });
+  assert.equal(hardwareFact.lookupStatus, 'not_found');
+  assert.equal(hardwareFact.selfServiceAllowed, false);
+  assert.equal(rules.getLookupBlockingReason([hardwareFact], '22').code, 'UNKNOWN_BORROWED_DEVICE');
+});
+
+test('客户类型决定累计时长层级，KA按六个月计算', () => {
+  assert.equal(rules.getDurationLimitMonths('normal'), 3);
+  assert.equal(rules.getDurationLimitMonths('KA'), 6);
+  assert.equal(rules.getOverdueTier({ testedMonths: 5 }, { customerType: 'KA', requestedMonths: 1 }), 'normal');
+  assert.equal(rules.getOverdueTier({ testedMonths: 5 }, { customerType: 'KA', requestedMonths: 2 }), 'overdue');
+});
+
 test('HCI 上传硬件信息文件后显示授权场景，切换 DMP 后清空', () => {
   const { dom, document, window, errors } = loadV2Dom();
   try {
@@ -386,12 +428,15 @@ test('查询超时阻断事项和提交，并可重试或保存草稿', () => {
   }
 });
 
-test('无记录设备进入人工复核但仍允许选择开通事项', () => {
+test('纯软无历史设备直接识别为首次开通且不要求人工确认', () => {
   const { dom, document, window } = loadV2Dom();
   try {
     const product = document.getElementById('plname');
     product.value = '22';
     fireChange(product, window);
+    const planType = document.getElementById('planDevType');
+    planType.value = '2';
+    fireChange(planType, window);
     window.addChip('UNKNOWN-001');
 
     const summary = document.getElementById('deviceFactsSummary');
@@ -406,17 +451,17 @@ test('无记录设备进入人工复核但仍允许选择开通事项', () => {
         headerAriaHidden: status.getAttribute('aria-hidden')
       },
       {
-        headerStatus: '待人工确认',
-        authorizationFact: '待人工确认',
+        headerStatus: '无授权',
+        authorizationFact: '无授权',
         headerAriaHidden: 'true'
       },
-      '待人工确认状态应一致展示，且头部状态应避免与事实网格重复播报'
+      '纯软无历史应按无授权展示，且头部状态应避免与事实网格重复播报'
     );
-    assert.doesNotMatch(panel.textContent, /无授权/);
 
-    assert.equal(window.applicationState.deviceFacts[0].lookupStatus, 'not_found');
-    assert.equal(window.applicationState.deviceFacts[0].manualReviewRequired, true);
-    assert.equal(document.getElementById('manualReviewRequired').value, '1');
+    assert.equal(window.applicationState.deviceFacts[0].lookupStatus, 'success');
+    assert.equal(window.applicationState.deviceFacts[0].deviceSource, 'customer_owned');
+    assert.equal(window.applicationState.deviceFacts[0].manualReviewRequired, false);
+    assert.equal(document.getElementById('manualReviewRequired').value, '0');
     assert.equal(document.getElementById('deviceLookupBlocking').hidden, true);
     assert.equal(document.getElementById('authSceneFormItem').hidden, false);
     assert.deepEqual(Array.from(document.getElementById('authScene').options).map((option) => option.value), ['', '1']);
