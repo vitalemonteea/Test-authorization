@@ -1062,6 +1062,23 @@
                     </div>
                     </div>
 
+                    <!-- HCI/SCP 通过硬件信息文件识别设备与授权信息 -->
+                    <div class="layui-form-item basic-full" id="hwInfoSection" style="align-items: center;">
+                        <label class="layui-form-label">硬件信息文件<span class="required-mark">*</span></label>
+                        <div class="layui-input-block">
+                            <div class="hw-upload-area">
+                                <input type="file" id="hwFileInput" accept=".info">
+                                <div class="hw-file-info" id="hwFileInfo">
+                                    <span class="hw-file-name empty" id="hwFileName">未选择文件（支持 .info 格式）</span>
+                                    <span class="hw-file-meta" id="hwFileMeta"></span>
+                                    <span class="hw-file-clear" id="hwFileClear" title="删除文件">&times;</span>
+                                </div>
+                                <label class="hw-upload-btn" for="hwFileInput"><span class="upload-icon">&#8679;</span> 上传文件</label>
+                                <div class="hw-upload-result" id="hwUploadResult"></div>
+                            </div>
+                        </div>
+                    </div>
+
                     <input type="hidden" id="requestAction" name="requestAction" value="">
 
                     <!-- 申请类型 -->
@@ -1476,23 +1493,6 @@
                                     </div>
                                     <div class="ea-hint" id="eaHint"></div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 硬件信息文件 -->
-                    <div class="layui-form-item" id="hwInfoSection" style="align-items: center;">
-                        <label class="layui-form-label">硬件信息文件</label>
-                        <div class="layui-input-block">
-                            <div class="hw-upload-area">
-                                <input type="file" id="hwFileInput" accept=".info">
-                                <div class="hw-file-info" id="hwFileInfo">
-                                    <span class="hw-file-name empty" id="hwFileName">未选择文件（支持 .info 格式）</span>
-                                    <span class="hw-file-meta" id="hwFileMeta"></span>
-                                    <span class="hw-file-clear" id="hwFileClear" title="删除文件">&times;</span>
-                                </div>
-                                <label class="hw-upload-btn" for="hwFileInput"><span class="upload-icon">&#8679;</span> 上传文件</label>
-                                <div class="hw-upload-result" id="hwUploadResult"></div>
                             </div>
                         </div>
                     </div>
@@ -4467,7 +4467,7 @@
 
         // ===== 申请类型切换（硬件/软件） =====
         planDevTypeSelect.addEventListener('change', function() {
-            if (isHciMode) return; // HCI 模式由 applyPlMode 接管，避免重复处理（文档4.3）
+            if (isHardwareFileModeActive) return;
             updateHardwareFields();
         });
 
@@ -4599,6 +4599,7 @@
         hwFileClear.addEventListener('click', function() {
             hwFileInput.value = '';
             clearHwFile();
+            clearHardwareInfoRecognition();
         });
 
         function formatFileSize(bytes) {
@@ -4617,7 +4618,7 @@
         }
 
         function toggleHwInfoSection(plnameValue) {
-            if (authorizationRules.isHardwareInfoRequired(plnameValue, planDevTypeSelect.value)) {
+            if (isHardwareInfoFileMode(plnameValue)) {
                 hwInfoSection.style.display = 'flex';
             } else {
                 hwInfoSection.style.display = 'none';
@@ -4630,6 +4631,7 @@
             var file = this.files[0];
             if (!file) {
                 clearHwFile();
+                clearHardwareInfoRecognition();
                 return;
             }
             hwFileName.textContent = file.name;
@@ -4640,11 +4642,12 @@
             if (!file.name.toLowerCase().endsWith('.info')) {
                 hwUploadResult.textContent = '仅支持 .info 格式文件';
                 hwUploadResult.className = 'hw-upload-result fail';
+                clearHardwareInfoRecognition();
                 return;
             }
-            // 格式校验通过，静默通过，不显示提示
             hwUploadResult.textContent = '';
             hwUploadResult.className = 'hw-upload-result';
+            recognizeHardwareInfoFile(file);
         });
 
         // ===== 产品线切换动态刷新模块导航 =====
@@ -4730,9 +4733,12 @@
         var plnameSelect = document.getElementById('plname');
         var plnameDefaultValue = plnameSelect.value;
 
+        function isHardwareInfoFileMode(plValue) {
+            return ['45', '19'].indexOf(String(plValue || plnameSelect.value)) !== -1;
+        }
+
         // 产品线设备ID配置
         var plDeviceIdConfig = {
-            '45': { type: 'fixed', hint: '设备ID已自动生成' },
             '41': { type: 'fixed', hint: '设备ID已自动生成' },
             '44': { type: 'fixed', hint: '设备ID已自动生成' },
             '_default': { type: 'soft-hard' }
@@ -5199,7 +5205,7 @@
         // V1 借测数据库（按设备ID/SN 含完整设备列表，用于 chip 级关联）
         var mockBtDatabaseV1 = [
             { btNo: 'BT20240615001', btUser: '张三', btStatus: '办事处借测', btType: 'POC测试',
-              devices: [ { id: 'DEV-45-AUTO-001', sn: 'SN-2024001-A' }, { id: 'DEV-45-AUTO-002', sn: 'SN-2024001-B' }, { id: 'DEV-45-AUTO-003', sn: 'SN-2024001-C' } ] },
+              devices: [ { id: 'DEV-BORROW-001', sn: 'SN-2024001-A' }, { id: 'DEV-BORROW-002', sn: 'SN-2024001-B' }, { id: 'DEV-BORROW-003', sn: 'SN-2024001-C' } ] },
             { btNo: 'BT20240615002', btUser: '李四', btStatus: '渠道借测', btType: '项目测试',
               devices: [ { id: 'DEV-NGAF-001', sn: 'SN-2024002-A' }, { id: 'DEV-NGAF-002', sn: 'SN-2024002-B' } ] },
             { btNo: 'BT20240615003', btUser: '王五', btStatus: '自用测试', btType: '演示测试',
@@ -5250,7 +5256,7 @@
         }
 
         function syncBorrowInfoByDevice(value, type) {
-            if (isHciMode || planDevTypeSelect.value !== '1') return;
+            if (isHardwareFileModeActive || planDevTypeSelect.value !== '1') return;
             var entry = simulateFetchBtDataByDevice(value, type);
             if (!entry) { showBorrowLookupMiss(type); return; }
             var btNoInput = document.getElementById('btNo');
@@ -5304,20 +5310,6 @@
                 authorizationStatus: 'active', currentModules: ['基础接入'], currentCapacity: 300,
                 testedMonths: 3, applicationCount: 1, materialKeys: ['sales-device-proof'],
                 factVersion: 'facts-atrust-001-v1'
-            },
-            'DEV-45-AUTO-001': {
-                lookupStatus: 'success', deviceId: 'DEV-45-AUTO-001', sn: 'SN-HCI-AUTO-001',
-                productLineId: '45', productName: 'HCI', deviceSource: 'borrowed',
-                borrowOrderId: 'BT-HCI-AUTO-001', authorizationStatus: 'none', currentModules: [],
-                currentCapacity: 0, testedMonths: 0, applicationCount: 0,
-                materialKeys: ['borrow-order'], factVersion: 'facts-hci-auto-v1'
-            },
-            'DEV-19-AUTO-001': {
-                lookupStatus: 'success', deviceId: 'DEV-19-AUTO-001', sn: 'SN-SCP-AUTO-001',
-                productLineId: '19', productName: 'SCP', deviceSource: 'borrowed',
-                borrowOrderId: 'BT-SCP-AUTO-001', authorizationStatus: 'none', currentModules: [],
-                currentCapacity: 0, testedMonths: 0, applicationCount: 0,
-                materialKeys: ['borrow-order'], factVersion: 'facts-scp-auto-v1'
             },
             'SPECIAL-FLOW-001': {
                 lookupStatus: 'success', deviceId: 'SPECIAL-FLOW-001', sn: 'SN-SPECIAL-FLOW-001',
@@ -5632,8 +5624,7 @@
             });
         }
 
-        function refreshRecognizedDeviceFacts(deviceIds) {
-            var facts = getTrustedDeviceFactsForIds(deviceIds);
+        function applyRecognizedDeviceFacts(facts) {
             applicationState.deviceFacts = facts;
             applicationState.approvalDecision = null;
             renderDeviceFactsSummary(facts);
@@ -5643,6 +5634,46 @@
             renderLookupBlocking(blockingReason);
             renderAuthScenes(blockingReason ? [] : getCommonEligibleAuthScenes(facts));
             recalculateApprovalDecision();
+        }
+
+        function refreshRecognizedDeviceFacts(deviceIds) {
+            applyRecognizedDeviceFacts(getTrustedDeviceFactsForIds(deviceIds));
+        }
+
+        function buildHardwareInfoFacts(file) {
+            var productLineId = plnameSelect.value;
+            var productName = getSelectedProductName();
+            var fileKey = file.name.replace(/\.info$/i, '').replace(/[^a-zA-Z0-9_-]/g, '').toUpperCase();
+            if (!fileKey) fileKey = 'DEVICE';
+            var recognizedId = productName.toUpperCase() + '-INFO-' + fileKey.slice(0, 16);
+            return [{
+                lookupStatus: 'success',
+                deviceId: recognizedId,
+                sn: 'SN-' + productLineId + '-' + fileKey.slice(0, 16),
+                productLineId: productLineId,
+                productName: productName,
+                deviceSource: 'borrowed',
+                borrowOrderId: '',
+                authorizationStatus: 'none',
+                currentModules: [],
+                currentCapacity: 0,
+                testedMonths: 0,
+                applicationCount: 0,
+                materialKeys: ['hardware-info-file'],
+                factVersion: 'info-' + productLineId + '-' + file.name + '-' + file.size
+            }];
+        }
+
+        function recognizeHardwareInfoFile(file) {
+            if (!isHardwareInfoFileMode() || !file || !file.name.toLowerCase().endsWith('.info')) {
+                clearHardwareInfoRecognition();
+                return;
+            }
+            applyRecognizedDeviceFacts(buildHardwareInfoFacts(file));
+        }
+
+        function clearHardwareInfoRecognition() {
+            if (applicationState) applyRecognizedDeviceFacts([]);
         }
 
         function saveApplicationDraft() {
@@ -5700,7 +5731,7 @@
         targetCapacityInput.addEventListener('change', recalculateApprovalDecision);
         targetCapacityInput.addEventListener('input', recalculateApprovalDecision);
 
-        var isHciMode = false;
+        var isHardwareFileModeActive = false;
         var chipContainer = document.getElementById('chipContainer');
         var chipInput = document.getElementById('chipInput');
         var snChipContainer = document.getElementById('snChipContainer');
@@ -5750,10 +5781,17 @@
         function getSnChips() { return deviceSnChips.get(); }
         function setFixedChips(vals) { deviceIdChips.setFixed(vals); }
         function clearChips() { deviceIdChips.clear(); }
-        window.addChip = function (v) { return deviceIdChips.add(v); };
-        window.addSnChip = function (v) { return deviceSnChips.add(v); };
+        window.addChip = function (v) {
+            if (isHardwareInfoFileMode()) return false;
+            return deviceIdChips.add(v);
+        };
+        window.addSnChip = function (v) {
+            if (isHardwareInfoFileMode()) return false;
+            return deviceSnChips.add(v);
+        };
         window.removeDeviceChip = function (v) { return deviceIdChips.remove(v); };
         window.getTrustedDeviceFacts = function() {
+            if (isHardwareInfoFileMode()) return applicationState.deviceFacts.slice();
             return getTrustedDeviceFactsForIds(deviceIdChips.get());
         };
         window.buildCurrentDeviceApplications = function(facts) {
@@ -5784,23 +5822,31 @@
 
         function applyPlMode() {
             var productConfig = authorizationRules.PRODUCT_CONFIG[plnameSelect.value];
-            var isHci = !!(productConfig && productConfig.forcedPlanDevType);
-            isHciMode = isHci;
-            if (isHci) {
+            var isFileMode = isHardwareInfoFileMode(plnameSelect.value);
+            isHardwareFileModeActive = isFileMode;
+            if (isFileMode) {
                 planDevTypeRow.hidden = true;
                 planDevTypeFormItem.style.display = 'none';
+                deviceIdFormItem.hidden = true;
+                deviceIdFormItem.style.display = 'none';
                 devSnFormItem.style.display = 'none';
                 borrowTestFields.style.display = 'none';
                 setCustomSelectValue('planDevType', productConfig.forcedPlanDevType);
                 toggleHwInfoSection(plnameSelect.value);
-                deviceIdChips.setFixed(['DEV-' + plnameSelect.value + '-AUTO-001']);
+                deviceIdChips.clear();
                 deviceSnChips.clear();
+                chipInput.disabled = true;
+                snChipInput.disabled = true;
+                devIdInput.disabled = true;
             } else {
                 planDevTypeRow.hidden = false;
                 planDevTypeFormItem.style.display = '';
+                deviceIdFormItem.hidden = false;
+                deviceIdFormItem.style.display = 'flex';
                 hwInfoSection.style.display = 'none';
                 deviceIdChips.clear();
                 deviceSnChips.clear();
+                devIdInput.disabled = false;
                 clearHwFile();
                 setCustomSelectValue('planDevType', '');
                 updateHardwareFields();
@@ -5816,11 +5862,13 @@
             setCustomSelectValue('planDevType', '');
             existingAuthSection.classList.remove('show');
             existingAuthSection.style.display = 'none';
-            // HCI/SCP 强制模式统一处理（隐藏申请类型、固定设备ID、控制硬件信息区）
+            hwFileInput.value = '';
+            clearHwFile();
+            clearHardwareInfoRecognition();
             applyPlMode();
             refreshModuleNav(plVal);
         });
-        // 初始化时根据默认产品线应用 HCI 模式 + 刷新导航
+        // 初始化时根据默认产品线应用设备识别模式并刷新导航
         applyPlMode();
         refreshModuleNav(plnameSelect.value);
 
@@ -6242,6 +6290,25 @@
         var hwInfoSection = document.getElementById('hwInfoSection');
         var hwFileInput = document.getElementById('hwFileInput');
         var hwUploadResult = document.getElementById('hwUploadResult');
+        var hardwareInfoRequired = rules.isHardwareInfoRequired &&
+            rules.isHardwareInfoRequired(productLineId, planDevType);
+
+        if (hardwareInfoRequired) {
+            var hwFile = hwFileInput.files[0];
+            if (!hwFile) {
+                hwUploadResult.textContent = '请上传硬件信息文件';
+                hwUploadResult.className = 'hw-upload-result fail';
+                alert('请上传硬件信息文件');
+                return;
+            }
+            if (!hwFile.name.toLowerCase().endsWith('.info')) {
+                hwUploadResult.textContent = '仅支持 .info 格式文件';
+                hwUploadResult.className = 'hw-upload-result fail';
+                alert('硬件信息文件仅支持 .info 格式');
+                return;
+            }
+        }
+
         var lookupBlockingReason = rules.getLookupBlockingReason ?
             rules.getLookupBlockingReason(latestFacts, productLineId) : null;
 
@@ -6290,7 +6357,7 @@
             return;
         }
 
-        if (state.requestAction === 'add_module') {
+        if (state.requestAction === 'add_module' && !hardwareInfoRequired) {
             var devSnInput = document.getElementById('devSnNew');
             if (devSnInput && !devSnInput.value.trim()) {
                 alert('请填写设备SN');
@@ -6298,51 +6365,30 @@
             }
         }
 
-        if (planDevType === '1') {
+        if (planDevType === '1' && !hardwareInfoRequired) {
             var devSnInput = document.getElementById('devSnNew');
-            var productConfig = rules.PRODUCT_CONFIG[productLineId] || {};
-            var trustedFixedSnAvailable = !!productConfig.forcedPlanDevType && latestFacts.length > 0 &&
-                latestFacts.every(function(fact) { return !!fact.sn; });
-            if (devSnInput && !devSnInput.value.trim() && !trustedFixedSnAvailable) {
+            if (devSnInput && !devSnInput.value.trim()) {
                 alert('请填写设备SN');
                 return;
             }
-            if (!productConfig.forcedPlanDevType) {
-                var btNoInput = document.getElementById('btNo');
-                if (btNoInput && !btNoInput.value.trim()) {
-                    alert('请填写借测单号');
-                    return;
-                }
-                var btUserInput = document.getElementById('btUser');
-                if (btUserInput && !btUserInput.value.trim()) {
-                    alert('请填写借测使用人');
-                    return;
-                }
-                var btStatusSelect = document.getElementById('btStatus');
-                if (btStatusSelect && !btStatusSelect.value) {
-                    alert('请选择借测状态');
-                    return;
-                }
-                var btTypeSelect = document.getElementById('btType');
-                if (btTypeSelect && !btTypeSelect.value) {
-                    alert('请选择借测类型');
-                    return;
-                }
-            }
-        }
-
-        if (rules.isHardwareInfoRequired(productLineId, planDevType)) {
-            var hwFile = hwFileInput.files[0];
-            if (!hwFile) {
-                hwUploadResult.textContent = '请上传硬件信息文件';
-                hwUploadResult.className = 'hw-upload-result fail';
-                alert('请上传硬件信息文件');
+            var btNoInput = document.getElementById('btNo');
+            if (btNoInput && !btNoInput.value.trim()) {
+                alert('请填写借测单号');
                 return;
             }
-            if (!hwFile.name.toLowerCase().endsWith('.info')) {
-                hwUploadResult.textContent = '仅支持 .info 格式文件';
-                hwUploadResult.className = 'hw-upload-result fail';
-                alert('硬件信息文件仅支持 .info 格式');
+            var btUserInput = document.getElementById('btUser');
+            if (btUserInput && !btUserInput.value.trim()) {
+                alert('请填写借测使用人');
+                return;
+            }
+            var btStatusSelect = document.getElementById('btStatus');
+            if (btStatusSelect && !btStatusSelect.value) {
+                alert('请选择借测状态');
+                return;
+            }
+            var btTypeSelect = document.getElementById('btType');
+            if (btTypeSelect && !btTypeSelect.value) {
+                alert('请选择借测类型');
                 return;
             }
         }

@@ -6,8 +6,8 @@
  * 目标：验证 `测试设备授权平台V2.html` 已恢复 V1 的：
  *  1. 设备ID / 设备SN 多 Chip 输入（#chipContainer / #snChipContainer）
  *  2. window.addChip / window.addSnChip 暴露
- *  3. HCI/SCP 产品线(45/19) applyPlMode 强制模式：
- *     申请类型隐藏、设备ID固定为 DEV-<pl>-AUTO-001 且禁用、硬件信息区显示
+ *  3. HCI/SCP 产品线(45/19) 文件识别模式：
+ *     申请类型和设备ID隐藏、硬件信息区显示
  *  4. 非 HCI 产品线：申请类型显示、硬件信息隐藏、设备ID清空可编辑
  *  5. 硬件申请类型下输入设备ID Chip 自动关联借测信息（syncBorrowInfoByDevice）
  *
@@ -73,6 +73,10 @@ test('调用 addChip 后设备ID chip 渲染并同步隐藏字段', async () => 
   const doc = dom.window.document;
   const w = dom.window;
   await delay(40);
+  const plname = doc.getElementById('plname');
+  plname.value = '22';
+  fireChange(plname, w);
+  await delay(10);
   w.addChip('DEV-TEST-001');
   const chips = doc.querySelectorAll('#chipContainer .chip-item');
   assert.ok(chips.length >= 1, 'chipContainer 内应至少渲染 1 个 chip-item（实际 ' + chips.length + '）');
@@ -82,7 +86,7 @@ test('调用 addChip 后设备ID chip 渲染并同步隐藏字段', async () => 
   assert.ok(mirror && mirror.value.indexOf('DEV-TEST-001') > -1, '隐藏 #devIdNew 应同步设备ID值');
 });
 
-test('HCI 产品线(默认45)下：申请类型隐藏、设备ID固定、硬件信息显示', async () => {
+test('HCI 产品线(默认45)下：申请类型和设备ID隐藏，仅显示硬件信息文件', async () => {
   const { dom, errors } = loadDom();
   const doc = dom.window.document;
   await delay(40);
@@ -97,12 +101,36 @@ test('HCI 产品线(默认45)下：申请类型隐藏、设备ID固定、硬件�
   );
   const hw = doc.getElementById('hwInfoSection');
   assert.notStrictEqual(hw.style.display, 'none', 'HCI 模式下硬件信息区应显示');
-  const input = doc.getElementById('chipInput');
-  assert.strictEqual(input.disabled, true, 'HCI 模式下设备ID 输入应禁用（固定）');
+  const deviceItem = doc.getElementById('deviceIdFormItem');
+  assert.equal(deviceItem.hidden, true, 'HCI 模式下设备ID字段应隐藏');
+  assert.equal(dom.window.getComputedStyle(deviceItem).display, 'none', 'HCI 模式下设备ID字段不应占据布局空间');
   const chips = doc.querySelectorAll('#chipContainer .chip-item');
-  const texts = Array.from(chips).map((c) => c.textContent);
-  assert.ok(texts.some((t) => t.indexOf('DEV-45-AUTO-001') > -1), '设备ID 应固定为 DEV-45-AUTO-001');
+  assert.equal(chips.length, 0, 'HCI 模式下不应生成默认设备ID');
+  assert.equal(doc.getElementById('devIdNew').value, '', 'HCI 模式下隐藏字段不应保留默认设备ID');
+  assert.equal(doc.getElementById('devIdNew').disabled, true, 'HCI 模式下设备ID隐藏字段不应参与提交');
+  assert.equal(dom.window.addChip('SHOULD-NOT-BE-ADDED'), false, 'HCI 模式下旧设备ID接口不应写入数据');
+  assert.equal(doc.querySelectorAll('#chipContainer .chip-item').length, 0);
+  assert.equal(dom.window.applicationState.deviceFacts.length, 0, '上传文件前不应生成设备事实');
   assert.strictEqual(errors.length, 0, '运行期间不应有脚本错误（实际 ' + errors.join('|') + '）');
+});
+
+test('SCP 产品线(19)与 HCI 使用相同的硬件信息文件识别模式', async () => {
+  const { dom, errors } = loadDom();
+  const doc = dom.window.document;
+  const w = dom.window;
+  await delay(40);
+
+  const plname = doc.getElementById('plname');
+  plname.value = '19';
+  fireChange(plname, w);
+  await delay(10);
+
+  assert.equal(doc.getElementById('planDevTypeRow').hidden, true);
+  assert.equal(doc.getElementById('deviceIdFormItem').hidden, true);
+  assert.notEqual(doc.getElementById('hwInfoSection').style.display, 'none');
+  assert.equal(doc.querySelectorAll('#chipContainer .chip-item').length, 0);
+  assert.equal(doc.getElementById('devIdNew').value, '');
+  assert.deepEqual(errors, []);
 });
 
 test('切换至非 HCI 产品线(22)：申请类型显示、硬件信息隐藏、设备ID清空可编辑', async () => {
@@ -146,7 +174,7 @@ test('硬件申请类型下输入设备ID chip 应自动关联借测信息', asy
   pdt.value = '1';
   fireChange(pdt, w);
   await delay(10);
-  w.addChip('DEV-45-AUTO-001');
+  w.addChip('DEV-BORROW-001');
   await delay(10);
   const btNo = doc.getElementById('btNo');
   assert.strictEqual(btNo.value, 'BT20240615001', '应自动填充匹配借测单号（实际 ' + btNo.value + '）');

@@ -156,6 +156,10 @@ test('内部审批决策随场景、客户、时长、容量和设备事实失�
 
     product.value = '45';
     fireChange(product, window);
+    const infoFile = new window.File(['hci-device-info'], 'hci-device.info', { type: 'text/plain' });
+    const fileInput = document.getElementById('hwFileInput');
+    Object.defineProperty(fileInput, 'files', { configurable: true, value: [infoFile] });
+    fireChange(fileInput, window);
     scene.value = '1';
     fireChange(scene, window);
     const capacity = document.getElementById('targetCapacity');
@@ -163,7 +167,7 @@ test('内部审批决策随场景、客户、时长、容量和设备事实失�
     fireChange(capacity, window);
     assert.equal(window.applicationState.approvalDecision.routeKey, 'PRODUCT_LIMIT_APPROVAL');
 
-    window.removeDeviceChip('DEV-45-AUTO-001');
+    document.getElementById('hwFileClear').click();
     assert.equal(window.applicationState.approvalDecision, null);
     assert.equal(document.getElementById('approvalPreview').hidden, true);
     assert.deepEqual(errors, []);

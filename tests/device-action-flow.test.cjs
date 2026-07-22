@@ -97,7 +97,7 @@ test('设备、借测信息、授权场景和客户字段按业务顺序排列',
   }
 });
 
-test('HCI 与 DMP 切换同步授权场景独立行的显隐', () => {
+test('HCI 上传硬件信息文件后显示授权场景，切换 DMP 后清空', () => {
   const { dom, document, window, errors } = loadV2Dom();
   try {
     const product = document.getElementById('plname');
@@ -105,8 +105,15 @@ test('HCI 与 DMP 切换同步授权场景独立行的显隐', () => {
     const sceneRow = document.getElementById('authSceneRow');
 
     assert.equal(product.value, '45');
-    assert.equal(sceneItem.hidden, false, 'HCI 固定设备识别后应显示授权场景');
-    assert.equal(sceneRow.hidden, false, 'HCI 应显示授权场景独立行');
+    assert.equal(sceneItem.hidden, true, 'HCI 上传文件前不应显示授权场景');
+    assert.equal(sceneRow.hidden, true, 'HCI 上传文件前不应保留授权场景空行');
+
+    const infoFile = new window.File(['hci-device-info'], 'hci-device.info', { type: 'text/plain' });
+    const fileInput = document.getElementById('hwFileInput');
+    Object.defineProperty(fileInput, 'files', { configurable: true, value: [infoFile] });
+    fireChange(fileInput, window);
+    assert.equal(sceneItem.hidden, false, 'HCI 文件识别后应显示授权场景');
+    assert.equal(sceneRow.hidden, false, 'HCI 文件识别后应显示授权场景独立行');
 
     product.value = '24';
     fireChange(product, window);
