@@ -55,7 +55,7 @@ test('HCI 按客户、产品线和集群标识聚合授权历史', () => {
   assert.equal(resolved.testedDays, 150);
   assert.deepEqual(resolved.currentModules, ['虚拟化', '存储']);
   assert.equal(resolved.currentCapacity, 16);
-  assert.match(resolved.recognitionBasis, /客户 \+ 产品线 \+ 设备标识.*2 条/);
+  assert.match(resolved.recognitionBasis, /客户 \+ 产品线 \+ 集群标识.*2 条/);
   assert.equal(rules.deriveBaseScene(resolved), 'adjust');
 });
 

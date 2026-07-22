@@ -3411,7 +3411,7 @@
     <!-- 同步提示 -->
     <div class="sync-toast" id="syncToast">✓ 已同步所有日期</div>
 
-    <script src="authorization-application-rules.js?v=20260722-2"></script>
+    <script src="authorization-application-rules.js?v=20260722-3"></script>
     <script>
     (function() {
         var moduleNav = document.getElementById('moduleNav');
@@ -5359,6 +5359,7 @@
                 authorizationRules.getProductStatus(productLineId) : 'active';
         }
         var applicationState = {
+            rawDeviceFacts: [],
             deviceFacts: [],
             baseScene: '',
             requestAction: '',
@@ -5366,13 +5367,15 @@
             approvalDecision: null,
             compatibilityIssues: [],
             productStatus: getCurrentProductStatus(plnameSelect.value),
-            customerType: 'normal'
+            customerType: 'normal',
+            customerId: ''
         };
         window.applicationState = applicationState;
 
         var mockDeviceFactsById = {
             'DEV-NGAF-001': {
                 lookupStatus: 'success', deviceId: 'DEV-NGAF-001', sn: 'SN-2024002-A',
+                customerId: 'C100001',
                 productLineId: '22', productName: 'NGAF', deviceSource: 'borrowed',
                 borrowOrderId: 'BT20240615002', authorizationStatus: 'none',
                 currentModules: [], currentCapacity: 0, testedMonths: 0, applicationCount: 0,
@@ -5380,6 +5383,7 @@
             },
             'DEV-NGAF-002': {
                 lookupStatus: 'success', deviceId: 'DEV-NGAF-002', sn: 'SN-2024002-B',
+                customerId: 'C100001',
                 productLineId: '22', productName: 'NGAF', deviceSource: 'borrowed',
                 borrowOrderId: 'BT20240615002', authorizationStatus: 'none',
                 currentModules: [], currentCapacity: 0, testedMonths: 0, applicationCount: 0,
@@ -5387,6 +5391,7 @@
             },
             'DEV-TEST-001': {
                 lookupStatus: 'success', deviceId: 'DEV-TEST-001', sn: 'SN-TEST-001',
+                customerId: 'C100001',
                 productLineId: '22', productName: 'NGAF', deviceSource: 'borrowed',
                 borrowOrderId: 'BT20240615003', authorizationStatus: 'none',
                 currentModules: [], currentCapacity: 0, testedMonths: 0, applicationCount: 0,
@@ -5394,6 +5399,7 @@
             },
             'SALES-ATRUST-001': {
                 lookupStatus: 'success', deviceId: 'SALES-ATRUST-001', sn: 'SN-SALES-ATRUST-001',
+                customerId: 'C100001',
                 productLineId: '20', productName: 'aTrust', deviceSource: 'sales', borrowOrderId: '',
                 authorizationStatus: 'active', currentModules: ['基础接入'], currentCapacity: 300,
                 testedMonths: 3, applicationCount: 1, materialKeys: ['sales-device-proof'],
@@ -5401,13 +5407,23 @@
             },
             'SALES-ATRUST-FIRST': {
                 lookupStatus: 'success', deviceId: 'SALES-ATRUST-FIRST', sn: 'SN-SALES-ATRUST-FIRST',
+                customerId: 'C100001',
                 productLineId: '20', productName: 'aTrust', deviceSource: 'sales', borrowOrderId: '',
                 authorizationStatus: 'none', currentModules: [], currentCapacity: 0,
                 testedMonths: 0, applicationCount: 0, materialKeys: ['sales-device-proof'],
                 factVersion: 'facts-atrust-first-v1'
             },
+            'SALES-ATRUST-REOPEN': {
+                lookupStatus: 'success', deviceId: 'SALES-ATRUST-REOPEN', sn: 'SN-SALES-ATRUST-REOPEN',
+                customerId: 'C100001', productLineId: '20', productName: 'aTrust',
+                deviceSource: 'sales', borrowOrderId: '', authorizationStatus: 'expired',
+                currentModules: ['基础接入'], currentCapacity: 200, testedMonths: 3,
+                applicationCount: 1, materialKeys: ['sales-device-proof'],
+                factVersion: 'facts-atrust-reopen-v1'
+            },
             'REOPEN-NGAF-001': {
                 lookupStatus: 'success', deviceId: 'REOPEN-NGAF-001', sn: 'SN-REOPEN-NGAF-001',
+                customerId: 'C100001',
                 productLineId: '22', productName: 'NGAF', deviceSource: 'borrowed',
                 borrowOrderId: 'BT20240118001', authorizationStatus: 'expired',
                 currentModules: ['基础防护', 'IPS'], currentCapacity: 100, currentAuthEndDate: '2026-01-20',
@@ -5416,6 +5432,7 @@
             },
             'ACTIVE-NGAF-001': {
                 lookupStatus: 'success', deviceId: 'ACTIVE-NGAF-001', sn: 'SN-ACTIVE-NGAF-001',
+                customerId: 'C100001',
                 productLineId: '22', productName: 'NGAF', deviceSource: 'borrowed',
                 borrowOrderId: 'BT20260618001', authorizationStatus: 'active',
                 currentModules: ['基础防护', 'IPS', '应用控制'], currentCapacity: 200, currentAuthEndDate: '2026-08-31',
@@ -5424,13 +5441,29 @@
             },
             'SOFT-FIRST-001': {
                 lookupStatus: 'success', deviceId: 'SOFT-FIRST-001', sn: 'SN-SOFT-FIRST-001',
+                customerId: 'C100001',
                 productLineId: '22', productName: 'NGAF', deviceSource: 'customer_owned',
                 borrowOrderId: '', authorizationStatus: 'none', currentModules: [], currentCapacity: 0,
                 testedMonths: 0, applicationCount: 0, materialKeys: [],
                 factVersion: 'facts-soft-first-v1'
             },
+            'SOFT-REOPEN-001': {
+                lookupStatus: 'success', deviceId: 'SOFT-REOPEN-001', sn: 'SN-SOFT-REOPEN-001',
+                customerId: 'C100001', productLineId: '22', productName: 'NGAF',
+                deviceSource: 'customer_owned', borrowOrderId: '', authorizationStatus: 'expired',
+                currentModules: ['基础防护'], currentCapacity: 100, testedMonths: 4,
+                applicationCount: 1, materialKeys: [], factVersion: 'facts-soft-reopen-v1'
+            },
+            'OVERDUE-NGAF-001': {
+                lookupStatus: 'success', deviceId: 'OVERDUE-NGAF-001', sn: 'SN-OVERDUE-NGAF-001',
+                customerId: 'C100001', productLineId: '22', productName: 'NGAF',
+                deviceSource: 'borrowed', borrowOrderId: 'BT20251101001', authorizationStatus: 'expired',
+                currentModules: ['基础防护'], currentCapacity: 100, testedMonths: 7,
+                applicationCount: 3, materialKeys: ['borrow-order'], factVersion: 'facts-ngaf-overdue-v1'
+            },
             'SPECIAL-FLOW-001': {
                 lookupStatus: 'success', deviceId: 'SPECIAL-FLOW-001', sn: 'SN-SPECIAL-FLOW-001',
+                customerId: 'C100001',
                 productLineId: '22', productName: 'NGAF', deviceSource: 'borrowed',
                 borrowOrderId: 'BT-SPECIAL-001', authorizationStatus: 'none', currentModules: [],
                 currentCapacity: 0, testedMonths: 0, applicationCount: 0,
@@ -5439,6 +5472,7 @@
             },
             'SELF-SERVICE-BLOCKED-001': {
                 lookupStatus: 'success', deviceId: 'SELF-SERVICE-BLOCKED-001', sn: 'SN-BLOCKED-001',
+                customerId: 'C100001',
                 productLineId: '22', productName: 'NGAF', deviceSource: 'borrowed',
                 borrowOrderId: 'BT-BLOCKED-001', authorizationStatus: 'none', currentModules: [],
                 currentCapacity: 0, testedMonths: 0, applicationCount: 0,
@@ -5446,6 +5480,21 @@
                 selfServiceAllowed: false
             }
         };
+
+        var mockAuthorizationHistoryRecords = [
+            { customerId: 'C100001', productLineId: '20', deviceId: 'SALES-ATRUST-001', authorizationStatus: 'active', durationDays: 90, endDate: '2026-10-31', modules: ['基础接入'], capacity: 300 },
+            { customerId: 'C100001', productLineId: '20', deviceId: 'SALES-ATRUST-REOPEN', authorizationStatus: 'expired', durationDays: 90, endDate: '2026-02-28', modules: ['基础接入'], capacity: 200 },
+            { customerId: 'C100001', productLineId: '22', deviceId: 'REOPEN-NGAF-001', authorizationStatus: 'expired', durationDays: 60, endDate: '2025-10-31', modules: ['基础防护'], capacity: 100 },
+            { customerId: 'C100001', productLineId: '22', deviceId: 'REOPEN-NGAF-001', authorizationStatus: 'expired', durationDays: 60, endDate: '2026-01-20', modules: ['基础防护', 'IPS'], capacity: 100 },
+            { customerId: 'C100001', productLineId: '22', deviceId: 'ACTIVE-NGAF-001', authorizationStatus: 'active', durationDays: 60, endDate: '2026-08-31', modules: ['基础防护', 'IPS', '应用控制'], capacity: 200 },
+            { customerId: 'C100001', productLineId: '22', deviceId: 'SOFT-REOPEN-001', authorizationStatus: 'expired', durationDays: 120, endDate: '2026-03-31', modules: ['基础防护'], capacity: 100 },
+            { customerId: 'C100001', productLineId: '22', deviceId: 'OVERDUE-NGAF-001', authorizationStatus: 'expired', durationDays: 70, endDate: '2025-06-30', modules: ['基础防护'], capacity: 100 },
+            { customerId: 'C100001', productLineId: '22', deviceId: 'OVERDUE-NGAF-001', authorizationStatus: 'expired', durationDays: 70, endDate: '2025-10-31', modules: ['基础防护'], capacity: 100 },
+            { customerId: 'C100001', productLineId: '22', deviceId: 'OVERDUE-NGAF-001', authorizationStatus: 'expired', durationDays: 70, endDate: '2026-03-31', modules: ['基础防护'], capacity: 100 },
+            { customerId: 'C100001', productLineId: '45', clusterId: 'CLUSTER-HCI-ACTIVE', authorizationStatus: 'active', durationDays: 90, endDate: '2026-10-31', modules: ['计算虚拟化', '分布式存储'], capacity: 16 },
+            { customerId: 'C100001', productLineId: '45', clusterId: 'CLUSTER-HCI-EXPIRED', authorizationStatus: 'expired', durationDays: 90, endDate: '2026-01-31', modules: ['计算虚拟化'], capacity: 12 },
+            { customerId: 'C100001', productLineId: '19', clusterId: 'CLUSTER-SCP-ACTIVE', authorizationStatus: 'active', durationDays: 90, endDate: '2026-10-31', modules: ['云管平台'], capacity: 10 }
+        ];
 
         var authSceneFormItem = document.getElementById('authSceneFormItem');
         var authSceneRow = document.getElementById('authSceneRow');
@@ -5499,6 +5548,7 @@
                 var overdueTier = typeof authorizationRules.getOverdueTier === 'function' ?
                     authorizationRules.getOverdueTier(fact, {
                         customerType: applicationState.customerType,
+                        productLineId: plnameSelect.value,
                         requestedMonths: Number(requestedMonthsInput.value || 0)
                     }) : 'normal';
                 return {
@@ -5554,6 +5604,7 @@
                 targetCapacity: Number(targetCapacityInput.value || 0)
             });
             applicationState.approvalDecision = decision;
+            renderAuthorizationSceneTags(applicationState.deviceFacts);
             recalculateCompatibilityIssues();
             return decision;
         }
@@ -5669,7 +5720,17 @@
                 reopen: '历史授权已结束，本次将重新开通测试授权。',
                 adjust: '当前授权仍在有效期内，可按需组合调整授权内容。'
             };
-            authSceneDescription.textContent = descriptions[baseScene] || '';
+            var recognitionBasis = facts[0].recognitionBasis || '';
+            authSceneDescription.textContent = (descriptions[baseScene] || '') +
+                (recognitionBasis ? ' 识别依据：' + recognitionBasis + '。' : '');
+            renderAuthorizationSceneTags(facts);
+            authSceneRow.hidden = false;
+            authSceneFormItem.hidden = false;
+            resetExistingAuthSection();
+            renderRequestContents(baseScene, facts);
+        }
+
+        function renderAuthorizationSceneTags(facts) {
             authSceneTags.textContent = '';
             if (facts.some(function(fact) { return fact.deviceSource === 'sales'; })) {
                 var salesTag = document.createElement('span');
@@ -5677,16 +5738,19 @@
                 salesTag.textContent = '销售设备';
                 authSceneTags.appendChild(salesTag);
             }
-            if (facts.some(function(fact) { return Number(fact.testedMonths || 0) > 6; })) {
+            if (facts.some(function(fact) {
+                return typeof authorizationRules.getOverdueTier === 'function' &&
+                    authorizationRules.getOverdueTier(fact, {
+                        customerType: applicationState.customerType,
+                        productLineId: plnameSelect.value,
+                        requestedMonths: Number(requestedMonthsInput.value || 0)
+                    }) === 'overdue';
+            })) {
                 var overdueTag = document.createElement('span');
                 overdueTag.className = 'auth-scene-tag warning';
                 overdueTag.textContent = '累计测试超期';
                 authSceneTags.appendChild(overdueTag);
             }
-            authSceneRow.hidden = false;
-            authSceneFormItem.hidden = false;
-            resetExistingAuthSection();
-            renderRequestContents(baseScene, facts);
         }
 
         function getSelectedProductName() {
@@ -5862,7 +5926,20 @@
             });
         }
 
-        function applyRecognizedDeviceFacts(facts) {
+        function resolveFactsWithRuleHistory(rawFacts) {
+            if (typeof authorizationRules.resolveDeviceFacts !== 'function') return rawFacts.slice();
+            return rawFacts.map(function(fact) {
+                if (fact.lookupStatus !== 'success') return fact;
+                return authorizationRules.resolveDeviceFacts(fact, mockAuthorizationHistoryRecords, {
+                    customerId: applicationState.customerId || fact.customerId || '',
+                    productLineId: plnameSelect.value
+                });
+            });
+        }
+
+        function applyRecognizedDeviceFacts(rawFacts) {
+            applicationState.rawDeviceFacts = rawFacts.slice();
+            var facts = resolveFactsWithRuleHistory(rawFacts);
             applicationState.deviceFacts = facts;
             applicationState.approvalDecision = null;
             renderDeviceFactsSummary(facts);
@@ -5885,9 +5962,13 @@
             var fileKey = file.name.replace(/\.info$/i, '').replace(/[^a-zA-Z0-9_-]/g, '').toUpperCase();
             if (!fileKey) fileKey = 'DEVICE';
             var recognizedId = productName.toUpperCase() + '-INFO-' + fileKey.slice(0, 16);
+            var historyVariant = fileKey.indexOf('ACTIVE') !== -1 ? 'ACTIVE' :
+                (fileKey.indexOf('EXPIRED') !== -1 ? 'EXPIRED' : 'FIRST');
             return [{
                 lookupStatus: 'success',
                 deviceId: recognizedId,
+                customerId: 'C100001',
+                clusterId: 'CLUSTER-' + productName.toUpperCase() + '-' + historyVariant,
                 sn: 'SN-' + productLineId + '-' + fileKey.slice(0, 16),
                 productLineId: productLineId,
                 productName: productName,
@@ -6015,7 +6096,7 @@
         window.removeDeviceChip = function (v) { return deviceIdChips.remove(v); };
         window.getTrustedDeviceFacts = function() {
             if (isHardwareInfoFileMode()) return applicationState.deviceFacts.slice();
-            return getTrustedDeviceFactsForIds(deviceIdChips.get());
+            return resolveFactsWithRuleHistory(getTrustedDeviceFactsForIds(deviceIdChips.get()));
         };
         window.buildCurrentDeviceApplications = function(facts) {
             return buildDeviceApplications(facts || window.getTrustedDeviceFacts());
@@ -6093,6 +6174,7 @@
         plnameSelect.addEventListener('change', function() {
             var plVal = this.value;
             applicationState.productStatus = getCurrentProductStatus(plVal);
+            updateDateLimit(applicationState.customerType);
             updateProductLifecycleWarning();
             // 切换产品线时重置下游字段
             authSceneInput.value = '';
@@ -6114,6 +6196,7 @@
                 if (cs._resetToDefault) cs._resetToDefault();
             });
 
+            applicationState.rawDeviceFacts = [];
             applicationState.deviceFacts = [];
             applicationState.baseScene = '';
             applicationState.requestAction = '';
@@ -6122,6 +6205,7 @@
             applicationState.compatibilityIssues = [];
             applicationState.productStatus = getCurrentProductStatus(plnameSelect.value);
             applicationState.customerType = 'normal';
+            applicationState.customerId = '';
 
             deviceIdChips.clear();
             deviceSnChips.clear();
@@ -6285,7 +6369,12 @@
                 // 更新日期限制
                 updateDateLimit(custType);
                 applicationState.customerType = custType;
-                recalculateApprovalDecision();
+                applicationState.customerId = item.dataset.id;
+                if (applicationState.rawDeviceFacts.length) {
+                    applyRecognizedDeviceFacts(applicationState.rawDeviceFacts);
+                } else {
+                    recalculateApprovalDecision();
+                }
             }
         });
         document.addEventListener('click', function(e) {
@@ -6305,7 +6394,8 @@
                     layer.close(index);
                     searchInput.value = newName;
                     nameSpan.textContent = newName;
-                    idSpan.textContent = 'C' + (100020 + Math.floor(Math.random() * 100));
+                    var newCustomerId = 'C' + (100020 + Math.floor(Math.random() * 100));
+                    idSpan.textContent = newCustomerId;
                     var badge = document.getElementById('customerTypeBadge');
                     if (badge) {
                         badge.textContent = '普通客户';
@@ -6314,7 +6404,12 @@
                     }
                     infoDisplay.classList.add('show');
                     applicationState.customerType = 'normal';
-                    recalculateApprovalDecision();
+                    applicationState.customerId = newCustomerId;
+                    if (applicationState.rawDeviceFacts.length) {
+                        applyRecognizedDeviceFacts(applicationState.rawDeviceFacts);
+                    } else {
+                        recalculateApprovalDecision();
+                    }
                     layer.msg('客户创建成功，已自动选中', { icon: 1 });
                 }
             });
@@ -6430,7 +6525,9 @@
         }
 
         function updateDateLimit(customerType) {
-            var newMax = (customerType === 'KA') ? 180 : 90;
+            var newMax = typeof authorizationRules.getDurationLimitDays === 'function' ?
+                authorizationRules.getDurationLimitDays(customerType, plnameSelect.value) :
+                ((customerType === 'KA') ? 180 : 90);
             currentMaxDays = newMax;
             // 更新日期输入框的 max 属性
             var maxDate = getMaxDate(newMax);

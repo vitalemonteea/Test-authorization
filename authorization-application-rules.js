@@ -239,9 +239,11 @@
         resolved.historyScope = rule.historyScope;
         resolved.identifierKind = rule.identifierKind;
         resolved.historyMatchedCount = matched.length;
+        var scopeLabel = rule.historyScope === 'customer_product_identifier' && rule.identifierKind === 'cluster' ?
+            '客户 + 产品线 + 集群标识' : (HISTORY_SCOPE_LABELS[rule.historyScope] || rule.historyScope);
         resolved.recognitionBasis = rule.historyScope === 'none' ?
             '该产品不累计历史，按首次申请识别' :
-            '按' + (HISTORY_SCOPE_LABELS[rule.historyScope] || rule.historyScope) + '查询，匹配 ' + matched.length + ' 条授权记录';
+            '按' + scopeLabel + '查询，匹配 ' + matched.length + ' 条授权记录';
         return resolved;
     }
 

@@ -147,6 +147,81 @@ test('客户类型决定累计时长层级，KA按六个月计算', () => {
   assert.equal(rules.getOverdueTier({ testedMonths: 5 }, { customerType: 'KA', requestedMonths: 2 }), 'overdue');
 });
 
+test('纯软设备只查授权历史并可识别重新开通场景', () => {
+  const { dom, document, window, errors } = loadV2Dom();
+  try {
+    const product = document.getElementById('plname');
+    product.value = '22';
+    fireChange(product, window);
+    const planType = document.getElementById('planDevType');
+    planType.value = '2';
+    fireChange(planType, window);
+
+    window.addChip('SOFT-REOPEN-001');
+    assert.equal(document.getElementById('authScene').value, 'reopen');
+    assert.match(document.getElementById('authSceneDescription').textContent, /匹配 1 条授权记录/);
+    assert.doesNotMatch(document.getElementById('deviceFactsSummary').textContent, /待人工确认/);
+    assert.deepEqual(errors, []);
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('重新开通与累计超期可以在场景卡中同时显示', () => {
+  const { dom, document, window, errors } = loadV2Dom();
+  try {
+    const product = document.getElementById('plname');
+    product.value = '22';
+    fireChange(product, window);
+    window.addChip('OVERDUE-NGAF-001');
+
+    assert.equal(document.getElementById('authScene').value, 'reopen');
+    assert.match(document.getElementById('authSceneTags').textContent, /累计测试超期/);
+    assert.match(document.getElementById('authSceneDescription').textContent, /匹配 3 条授权记录/);
+    assert.deepEqual(errors, []);
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('HCI 硬件信息文件按客户与集群历史识别有效授权', () => {
+  const { dom, document, window, errors } = loadV2Dom();
+  try {
+    const infoFile = new window.File(['hci-active'], 'hci-active-demo.info', { type: 'text/plain' });
+    const fileInput = document.getElementById('hwFileInput');
+    Object.defineProperty(fileInput, 'files', { configurable: true, value: [infoFile] });
+    fireChange(fileInput, window);
+
+    assert.equal(document.getElementById('authScene').value, 'adjust');
+    assert.match(document.getElementById('authSceneDescription').textContent, /客户 \+ 产品线 \+ 集群标识/);
+    assert.match(document.getElementById('currentAuthorizationOverview').textContent, /分布式存储/);
+    assert.deepEqual(errors, []);
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('切换客户后按新的历史范围重新派生基础场景', () => {
+  const { dom, document, window, errors } = loadV2Dom();
+  try {
+    const product = document.getElementById('plname');
+    product.value = '22';
+    fireChange(product, window);
+    window.addChip('ACTIVE-NGAF-001');
+    assert.equal(document.getElementById('authScene').value, 'adjust');
+
+    const customer = document.getElementById('customerSearchInput');
+    customer.value = 'C100002';
+    customer.dispatchEvent(new window.Event('input', { bubbles: true }));
+    document.querySelector('#customerDropdown [data-id="C100002"]').click();
+    assert.equal(document.getElementById('authScene').value, 'first_open');
+    assert.match(document.getElementById('authSceneDescription').textContent, /匹配 0 条授权记录/);
+    assert.deepEqual(errors, []);
+  } finally {
+    dom.window.close();
+  }
+});
+
 test('HCI 上传硬件信息文件后显示授权场景，切换 DMP 后清空', () => {
   const { dom, document, window, errors } = loadV2Dom();
   try {
