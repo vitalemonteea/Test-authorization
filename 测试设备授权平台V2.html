@@ -133,6 +133,7 @@
             cursor: pointer; transition: all 0.2s; outline: none; font-family: inherit;
         }
         .custom-select-trigger:hover { border-color: #0050cb; }
+        .custom-select-trigger:focus-visible { border-color: #0050cb; box-shadow: 0 0 0 3px rgba(0,80,203,.12); }
         .custom-select.open .custom-select-trigger {
             border: 2px solid #0050cb; box-shadow: 0 0 0 3px #b3c5ff; padding: 0 11px;
         }
@@ -160,11 +161,13 @@
         }
         .custom-select-option:hover { background: #eff4ff; color: #0050cb; }
         .custom-select[data-select-id="plname"] .custom-select-value { display: flex; align-items: center; gap: 8px; min-width: 0; }
+        .custom-select[data-select-id="plname"].open .custom-select-value { display: none; }
         .product-trigger-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .product-select-search { position: relative; padding: 10px 10px 8px; border-bottom: 1px solid #eff1f5; background: #fff; }
-        .product-select-search .material-symbols-outlined { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #737b8c; font-size: 18px; pointer-events: none; }
-        .product-select-search-input { width: 100%; height: 36px; padding: 0 12px 0 36px; border: 1px solid #c2c6d8; border-radius: 6px; background: #fff; color: #0b1c30; font: inherit; font-size: 13px; outline: none; box-sizing: border-box; }
-        .product-select-search-input:focus { border-color: #0050cb; box-shadow: 0 0 0 3px rgba(0,80,203,.08); }
+        .product-select-search-inline { display: none; align-items: center; flex: 1; min-width: 0; gap: 8px; }
+        .custom-select[data-select-id="plname"].open .product-select-search-inline { display: flex; }
+        .product-select-search-inline .material-symbols-outlined { flex: 0 0 auto; color: #737b8c; font-size: 18px; pointer-events: none; }
+        .product-select-search-input { flex: 1; min-width: 0; height: 36px; padding: 0; border: none; background: transparent; color: #0b1c30; font: inherit; font-size: 14px; outline: none; box-sizing: border-box; }
+        .product-select-search-input::placeholder { color: #8b92a5; }
         .custom-select[data-select-id="plname"] .custom-select-list { padding: 0 0 4px; max-height: 336px; }
         .product-select-group { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; gap: 7px; min-height: 38px; margin: 0; padding: 0 12px; background: #f7f9fc; color: #424656; font-size: 12px; font-weight: 600; line-height: 38px; }
         .product-select-group .material-symbols-outlined { color: #596174; font-size: 17px; }
@@ -929,16 +932,16 @@
                                     <option value="41">独立在线授权</option>
                                     <option value="44">统一在线授权</option>
                                 </select>
-                                <button type="button" class="custom-select-trigger">
+                                <div class="custom-select-trigger product-combobox-trigger" tabindex="0">
                                     <span class="custom-select-value">aBDI</span>
-                                    <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
-                                </button>
-                                <div class="custom-select-dropdown">
-                                    <div class="product-select-search" role="search">
+                                    <div class="product-select-search-inline" role="search">
                                         <span class="material-symbols-outlined" aria-hidden="true">search</span>
-                                        <input type="search" id="productLineSearch" class="product-select-search-input" placeholder="搜索产品线" aria-label="搜索产品线" autocomplete="off">
+                                        <input type="search" id="productLineSearch" class="product-select-search-input" placeholder="输入产品线名称" aria-label="搜索产品线" autocomplete="off">
                                     </div>
-                                    <ul class="custom-select-list">
+                                    <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                </div>
+                                <div class="custom-select-dropdown">
+                                    <ul class="custom-select-list" id="productLineOptions">
                                         <li class="custom-select-option selected" data-value="27">aBDI</li>
                                         <li class="custom-select-option" data-value="1">AC</li>
                                         <li class="custom-select-option" data-value="7">AD</li>
@@ -4975,7 +4978,34 @@
 
             function closeProductSelect() {
                 container.classList.remove('open');
-                if (isProductSelect) trigger.setAttribute('aria-expanded', 'false');
+                if (isProductSelect) {
+                    trigger.setAttribute('aria-expanded', 'false');
+                    if (productSearch) {
+                        productSearch.value = '';
+                        filterProductOptions('');
+                    }
+                }
+            }
+
+            function openProductSelect() {
+                document.querySelectorAll('.custom-select.open').forEach(function(cs) {
+                    if (cs !== container) {
+                        cs.classList.remove('open');
+                        var openTrigger = cs.querySelector('.custom-select-trigger[aria-expanded]');
+                        if (openTrigger) openTrigger.setAttribute('aria-expanded', 'false');
+                    }
+                });
+                container.classList.add('open');
+                trigger.setAttribute('aria-expanded', 'true');
+                if (productSearch) {
+                    productSearch.value = '';
+                    filterProductOptions('');
+                    productSearch.focus();
+                }
+                var selected = container.querySelector('.custom-select-option.selected');
+                if (selected && typeof selected.scrollIntoView === 'function') {
+                    selected.scrollIntoView({ block: 'nearest' });
+                }
             }
 
             function chooseProductOption(option) {
@@ -4986,14 +5016,17 @@
             }
 
             if (isProductSelect) {
+                trigger.setAttribute('role', 'combobox');
                 trigger.setAttribute('aria-haspopup', 'listbox');
                 trigger.setAttribute('aria-expanded', 'false');
+                trigger.setAttribute('aria-controls', 'productLineOptions');
                 options.forEach(function(option) {
                     option.setAttribute('role', 'option');
                     option.tabIndex = -1;
                 });
                 if (productSearch) {
-                    productSearch.addEventListener('click', function(e) { e.stopPropagation(); });
+                    var inlineSearch = productSearch.closest('.product-select-search-inline');
+                    if (inlineSearch) inlineSearch.addEventListener('click', function(e) { e.stopPropagation(); });
                     productSearch.addEventListener('input', function() { filterProductOptions(this.value); });
                     productSearch.addEventListener('keydown', function(e) {
                         if (e.key === 'Escape') {
@@ -5036,6 +5069,16 @@
                         }
                     });
                 });
+                trigger.addEventListener('keydown', function(e) {
+                    if (e.target !== trigger) return;
+                    if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        openProductSelect();
+                    } else if (e.key === 'Escape') {
+                        e.preventDefault();
+                        closeProductSelect();
+                    }
+                });
             }
 
             trigger.addEventListener('click', function(e) {
@@ -5043,17 +5086,10 @@
                 var isOpen = container.classList.contains('open');
                 document.querySelectorAll('.custom-select.open').forEach(function(cs) { cs.classList.remove('open'); });
                 if (!isOpen) {
-                    container.classList.add('open');
-                    if (isProductSelect) trigger.setAttribute('aria-expanded', 'true');
-                    if (productSearch) {
-                        productSearch.value = '';
-                        filterProductOptions('');
-                        productSearch.focus();
-                    }
-                    var sel = container.querySelector('.custom-select-option.selected');
-                    if (sel) sel.scrollIntoView({ block: 'nearest' });
+                    if (isProductSelect) openProductSelect();
+                    else container.classList.add('open');
                 } else if (isProductSelect) {
-                    trigger.setAttribute('aria-expanded', 'false');
+                    closeProductSelect();
                 }
             });
 
@@ -5101,6 +5137,10 @@
                     if (hiddenSelect) hiddenSelect.value = val;
                 }
             };
+            container._closeDropdown = function() {
+                if (isProductSelect) closeProductSelect();
+                else container.classList.remove('open');
+            };
         }
 
         // 编程式设置自定义下拉框值（不触发change事件）
@@ -5122,9 +5162,8 @@
         // 全局点击关闭自定义下拉框
         document.addEventListener('click', function() {
             document.querySelectorAll('.custom-select.open').forEach(function(cs) {
-                cs.classList.remove('open');
-                var trigger = cs.querySelector('.custom-select-trigger[aria-expanded]');
-                if (trigger) trigger.setAttribute('aria-expanded', 'false');
+                if (cs._closeDropdown) cs._closeDropdown();
+                else cs.classList.remove('open');
             });
         });
 

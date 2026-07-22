@@ -81,6 +81,9 @@ test('产品线搜索同时过滤在售和退市分区，并展示空结果', ()
     const empty = container.querySelector('.product-select-empty');
 
     assert.ok(input, '产品线下拉应提供搜索输入框');
+    assert.equal(input.closest('.custom-select-trigger'), container.querySelector('.custom-select-trigger'), '搜索框应复用顶部选择框');
+    assert.equal(input.closest('.custom-select-dropdown'), null, '下拉列表内部不应重复显示搜索框');
+    assert.equal(container.querySelector('.custom-select-dropdown .product-select-search-input'), null);
     input.value = 'WOC';
     input.dispatchEvent(new window.Event('input', { bubbles: true }));
     assert.equal(woc.hidden, false);
@@ -99,6 +102,29 @@ test('产品线搜索同时过滤在售和退市分区，并展示空结果', ()
     assert.equal(activeGroup.hidden, true);
     assert.equal(retiredGroup.hidden, true);
     assert.equal(empty.hidden, false);
+    assert.deepEqual(errors, []);
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('产品线组合框展开时在原位置切换为搜索态', () => {
+  const { dom, document, window, errors } = loadV2Dom();
+  try {
+    const container = document.querySelector('[data-select-id="plname"]');
+    const trigger = container.querySelector('.custom-select-trigger');
+    const input = document.getElementById('productLineSearch');
+
+    trigger.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    assert.equal(container.classList.contains('open'), true);
+    assert.equal(trigger.getAttribute('role'), 'combobox');
+    assert.equal(trigger.getAttribute('aria-expanded'), 'true');
+    assert.equal(trigger.getAttribute('aria-controls'), 'productLineOptions');
+    assert.equal(document.activeElement, input, '展开后焦点应进入顶部搜索框');
+
+    input.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    assert.equal(container.classList.contains('open'), false);
+    assert.equal(trigger.getAttribute('aria-expanded'), 'false');
     assert.deepEqual(errors, []);
   } finally {
     dom.window.close();
