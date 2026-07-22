@@ -7,15 +7,51 @@
 }(typeof self !== 'undefined' ? self : this, function () {
     'use strict';
 
-    var RULE_VERSION = '2026-07-22.1';
+    var RULE_VERSION = '2026-07-22.2';
     var PRODUCT_STATUS = {
         '6': 'retired'
     };
-    var PRODUCT_CONFIG = {
-        '45': { hardwareInfoRequired: true, forcedPlanDevType: '1', capacityLimit: 20, historyScope: 'customer_product' },
-        '19': { hardwareInfoRequired: true, forcedPlanDevType: '1', capacityLimit: 20, historyScope: 'customer_product' }
+    var DEFAULT_PRODUCT_RULE = {
+        historyScope: 'customer_product_identifier',
+        identifierKind: 'device',
+        normalMaxDays: 90,
+        kaMaxDays: 180,
+        normalCumulativeLimitDays: 180,
+        kaCumulativeLimitDays: 180,
+        applicationLimit: 2,
+        allowedRequestContents: ['extend', 'add_module', 'increase_capacity']
     };
-    var DEFAULT_HISTORY_SCOPE = 'customer_product_identifier';
+    var PRODUCT_CONFIG = {
+        '45': {
+            hardwareInfoRequired: true,
+            forcedPlanDevType: '1',
+            capacityLimit: 20,
+            historyScope: 'customer_product_identifier',
+            identifierKind: 'cluster'
+        },
+        '19': {
+            hardwareInfoRequired: true,
+            forcedPlanDevType: '1',
+            capacityLimit: 20,
+            historyScope: 'customer_product_identifier',
+            identifierKind: 'cluster'
+        },
+        '20': { capacityLimit: 500 },
+        '141': {
+            historyScope: 'identifier_only',
+            normalMaxDays: 90,
+            kaMaxDays: 90,
+            normalCumulativeLimitDays: 90,
+            kaCumulativeLimitDays: 90,
+            applicationLimit: 1
+        }
+    };
+    var HISTORY_SCOPE_LABELS = {
+        customer_product: '客户 + 产品线',
+        customer_product_identifier: '客户 + 产品线 + 设备标识',
+        identifier_only: '设备标识',
+        none: '不累计历史'
+    };
     var BASE_SCENE_LABELS = {
         first_open: '首次开通测试授权',
         reopen: '重新开通测试授权',
@@ -58,6 +94,7 @@
     };
     var REASON_TEXTS = {
         DEFAULT_AUTO_PASS: '当前申请符合自动审批条件',
+        REQUEST_DURATION_LIMIT: '本次申请时长超过当前产品与客户类型的单次申请上限',
         CUMULATIVE_DURATION_LIMIT: '累计测试时长超过当前客户类型的自助申请上限',
         ATRUST_SALES_ADD_MODULE: 'aTrust 销售设备增开模块需要人工审批',
         MANUAL_DEVICE_VERIFICATION: '设备未查询到可信记录，需要人工核验',
@@ -72,9 +109,22 @@
         return PRODUCT_STATUS[String(id)] || 'active';
     }
 
-    function getHistoryScope(productLineId) {
+    function getProductRule(productLineId) {
         var config = PRODUCT_CONFIG[String(productLineId)] || {};
-        return config.historyScope || DEFAULT_HISTORY_SCOPE;
+        var rule = {};
+        Object.keys(DEFAULT_PRODUCT_RULE).forEach(function(key) {
+            rule[key] = Array.isArray(DEFAULT_PRODUCT_RULE[key]) ?
+                DEFAULT_PRODUCT_RULE[key].slice() : DEFAULT_PRODUCT_RULE[key];
+        });
+        Object.keys(config).forEach(function(key) {
+            rule[key] = Array.isArray(config[key]) ? config[key].slice() : config[key];
+        });
+        rule.productLineId = String(productLineId || '');
+        return rule;
+    }
+
+    function getHistoryScope(productLineId) {
+        return getProductRule(productLineId).historyScope;
     }
 
     function deriveBaseScene(deviceFacts, historyScope) {
@@ -90,7 +140,7 @@
         var baseScene = deriveBaseScene(deviceFacts, historyScope);
         if (baseScene === 'first_open') return ['open'];
         if (baseScene === 'reopen') return ['reopen'];
-        if (baseScene === 'adjust') return ['extend', 'add_module', 'increase_capacity'];
+        if (baseScene === 'adjust') return getProductRule(deviceFacts.productLineId).allowedRequestContents;
         return [];
     }
 
@@ -101,15 +151,98 @@
         return '';
     }
 
-    function getDurationLimitMonths(customerType) {
-        return customerType === 'KA' ? 6 : 3;
+    function getDurationLimitDays(customerType, productLineId) {
+        var rule = getProductRule(productLineId);
+        return customerType === 'KA' ? rule.kaMaxDays : rule.normalMaxDays;
+    }
+
+    function getDurationLimitMonths(customerType, productLineId) {
+        return getDurationLimitDays(customerType, productLineId) / 30;
+    }
+
+    function getCumulativeLimitDays(customerType, productLineId) {
+        var rule = getProductRule(productLineId);
+        return customerType === 'KA' ? rule.kaCumulativeLimitDays : rule.normalCumulativeLimitDays;
     }
 
     function getOverdueTier(deviceFacts, context) {
         context = context || {};
-        var testedMonths = Number((deviceFacts || {}).testedMonths || 0);
-        var requestedMonths = Number(context.requestedMonths || 0);
-        return testedMonths + requestedMonths > getDurationLimitMonths(context.customerType) ? 'overdue' : 'normal';
+        var facts = deviceFacts || {};
+        var testedDays = facts.testedDays == null ? Number(facts.testedMonths || 0) * 30 : Number(facts.testedDays || 0);
+        var requestedDays = context.requestedDays == null ? Number(context.requestedMonths || 0) * 30 : Number(context.requestedDays || 0);
+        var productLineId = context.productLineId || facts.productLineId;
+        return testedDays + requestedDays > getCumulativeLimitDays(context.customerType, productLineId) ? 'overdue' : 'normal';
+    }
+
+    function getHistoryIdentifier(value, identifierKind) {
+        if (!value) return '';
+        if (identifierKind === 'cluster') return value.clusterId || value.identifier || value.deviceId || value.sn || '';
+        return value.identifier || value.deviceId || value.sn || '';
+    }
+
+    function historyRecordMatches(record, context, productRule) {
+        context = context || {};
+        productRule = productRule || getProductRule(context.productLineId);
+        var scope = productRule.historyScope;
+        if (scope === 'none') return false;
+        var customerId = context.customerId || '';
+        var productLineId = String(context.productLineId || '');
+        var identifier = getHistoryIdentifier(context, productRule.identifierKind);
+        if (scope === 'customer_product') {
+            return !!customerId && record.customerId === customerId && String(record.productLineId) === productLineId;
+        }
+        if (scope === 'identifier_only') {
+            return !!identifier && getHistoryIdentifier(record, productRule.identifierKind) === identifier;
+        }
+        return !!customerId && !!identifier && record.customerId === customerId &&
+            String(record.productLineId) === productLineId &&
+            getHistoryIdentifier(record, productRule.identifierKind) === identifier;
+    }
+
+    function resolveDeviceFacts(rawFact, historyRecords, context) {
+        rawFact = rawFact || {};
+        context = context || {};
+        var resolved = {};
+        Object.keys(rawFact).forEach(function(key) { resolved[key] = cloneJson(rawFact[key]); });
+        var productLineId = context.productLineId || rawFact.productLineId;
+        var rule = getProductRule(productLineId);
+        var identifier = getHistoryIdentifier(rawFact, rule.identifierKind);
+        var matchContext = {
+            customerId: context.customerId || rawFact.customerId || '',
+            productLineId: productLineId,
+            deviceId: rawFact.deviceId,
+            sn: rawFact.sn,
+            clusterId: rawFact.clusterId,
+            identifier: identifier
+        };
+        var matched = rule.historyScope === 'none' ? [] : (historyRecords || []).filter(function(record) {
+            return historyRecordMatches(record, matchContext, rule);
+        });
+        var active = matched.filter(function(record) { return record.authorizationStatus === 'active'; })[0];
+        var latest = active || matched.slice().sort(function(a, b) {
+            return String(b.endDate || '').localeCompare(String(a.endDate || ''));
+        })[0];
+
+        if (Array.isArray(historyRecords)) {
+            resolved.authorizationStatus = active ? 'active' : (matched.length ? 'expired' : 'none');
+            resolved.testedDays = matched.reduce(function(total, record) {
+                return total + Number(record.durationDays || 0);
+            }, 0);
+            resolved.testedMonths = resolved.testedDays / 30;
+            resolved.applicationCount = matched.length;
+            if (latest) {
+                resolved.currentModules = cloneJson(latest.modules || []);
+                resolved.currentCapacity = Number(latest.capacity || 0);
+                resolved.currentAuthEndDate = latest.endDate || '';
+            }
+        }
+        resolved.historyScope = rule.historyScope;
+        resolved.identifierKind = rule.identifierKind;
+        resolved.historyMatchedCount = matched.length;
+        resolved.recognitionBasis = rule.historyScope === 'none' ?
+            '该产品不累计历史，按首次申请识别' :
+            '按' + (HISTORY_SCOPE_LABELS[rule.historyScope] || rule.historyScope) + '查询，匹配 ' + matched.length + ' 条授权记录';
+        return resolved;
     }
 
     function getEligibleRequestActions(deviceFacts) {
@@ -259,13 +392,14 @@
                 decisionType = 'manual';
                 routeKey = 'REGION_AND_HQ_MARKETING';
                 reasonCodes = ['ATRUST_SALES_ADD_MODULE'];
-            } else if (PRODUCT_CONFIG[String(context.productLineId)] &&
-                Number(context.targetCapacity || 0) > PRODUCT_CONFIG[String(context.productLineId)].capacityLimit) {
+            } else if (getProductRule(context.productLineId).capacityLimit &&
+                Number(context.targetCapacity || 0) > getProductRule(context.productLineId).capacityLimit) {
                 decisionType = 'manual';
                 routeKey = 'PRODUCT_LIMIT_APPROVAL';
                 reasonCodes = ['PRODUCT_LIMIT_APPROVAL'];
             } else {
-                var applicationLimit = String(context.productLineId) === '141' ? 1 : 2;
+                var productRule = getProductRule(context.productLineId);
+                var applicationLimit = productRule.applicationLimit;
                 var reachesApplicationLimit = (context.requestAction === 'open' || context.requestAction === 'reopen') && facts.some(function(item) {
                     return Number(item.applicationCount || 0) >= applicationLimit;
                 });
@@ -274,15 +408,20 @@
                     routeKey = 'APPLICATION_LIMIT_APPROVAL';
                     reasonCodes = ['APPLICATION_LIMIT_APPROVAL'];
                 } else {
-                    var durationLimit = getDurationLimitMonths(context.customerType);
                     var requestedMonths = Number(context.requestedMonths || 0);
-                    var exceedsDurationLimit = facts.some(function(item) {
-                        return Number(item.testedMonths || 0) + requestedMonths > durationLimit;
+                    var exceedsRequestDuration = requestedMonths >
+                        getDurationLimitMonths(context.customerType, context.productLineId);
+                    var exceedsCumulativeDuration = facts.some(function(item) {
+                        return getOverdueTier(item, {
+                            customerType: context.customerType,
+                            productLineId: context.productLineId,
+                            requestedMonths: requestedMonths
+                        }) === 'overdue';
                     });
-                    if (exceedsDurationLimit) {
+                    if (exceedsRequestDuration || exceedsCumulativeDuration) {
                         decisionType = 'manual';
                         routeKey = context.customerType === 'KA' ? 'KA_AND_HQ_MARKETING' : 'REGION_AND_HQ_MARKETING';
-                        reasonCodes = ['CUMULATIVE_DURATION_LIMIT'];
+                        reasonCodes = [exceedsRequestDuration ? 'REQUEST_DURATION_LIMIT' : 'CUMULATIVE_DURATION_LIMIT'];
                     }
                 }
             }
@@ -378,13 +517,20 @@
         AUTH_SCENE_LABELS: AUTH_SCENE_LABELS,
         REASON_TEXTS: REASON_TEXTS,
         PRODUCT_CONFIG: PRODUCT_CONFIG,
+        DEFAULT_PRODUCT_RULE: DEFAULT_PRODUCT_RULE,
+        HISTORY_SCOPE_LABELS: HISTORY_SCOPE_LABELS,
         getProductStatus: getProductStatus,
+        getProductRule: getProductRule,
         getHistoryScope: getHistoryScope,
         deriveBaseScene: deriveBaseScene,
         getEligibleRequestContents: getEligibleRequestContents,
         getPrimaryRequestAction: getPrimaryRequestAction,
         getDurationLimitMonths: getDurationLimitMonths,
+        getDurationLimitDays: getDurationLimitDays,
+        getCumulativeLimitDays: getCumulativeLimitDays,
         getOverdueTier: getOverdueTier,
+        historyRecordMatches: historyRecordMatches,
+        resolveDeviceFacts: resolveDeviceFacts,
         getEligibleRequestActions: getEligibleRequestActions,
         getEligibleAuthScenes: getEligibleAuthScenes,
         mapAuthSceneToRequestAction: mapAuthSceneToRequestAction,

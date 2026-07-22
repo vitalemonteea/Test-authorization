@@ -50,7 +50,7 @@ test('普通与 KA 客户按累计测试月数决定自动或人工审批', () =
 
 test('累计时长包含设备已测试月份', () => {
   const decision = decide({
-    deviceFacts: [{ ...fixtures.noAuthBorrowed, testedMonths: 2 }],
+    deviceFacts: [{ ...fixtures.noAuthBorrowed, testedMonths: 5 }],
     requestedMonths: 2
   });
   assert.equal(decision.routeKey, 'REGION_AND_HQ_MARKETING');
@@ -152,7 +152,7 @@ test('内部审批决策随场景、客户、时长、容量和设备事实失�
     fireChange(extend, window);
     requestedMonths.value = '3';
     fireChange(requestedMonths, window);
-    assert.equal(window.applicationState.approvalDecision.routeKey, 'REGION_AND_HQ_MARKETING');
+    assert.equal(window.applicationState.approvalDecision.routeKey, 'AUTO_PASS');
 
     const customer = document.getElementById('customerSearchInput');
     customer.value = 'C100001';
