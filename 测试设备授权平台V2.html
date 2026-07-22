@@ -167,16 +167,29 @@
             padding: 8px 12px 8px 24px; font-size: 14px; color: #424656; cursor: pointer; transition: all 0.15s; white-space: nowrap;
         }
         .custom-select-option:hover { background: #eff4ff; color: #0050cb; }
-        .product-lifecycle-group {
-            border-top: 1px solid #e3e6ee; margin-top: 6px; padding-top: 10px;
-            color: #8a5a00; font-size: 13px;
-        }
-        .retired-product-option { display: flex; align-items: center; gap: 8px; }
-        .retired-product-option::after {
-            content: "已退市"; display: inline-flex; align-items: center; height: 18px;
-            padding: 0 5px; border: 1px solid #e6b85c; border-radius: 4px;
-            background: #fff8e6; color: #8a5a00; font-size: 11px; line-height: 16px;
-        }
+        .custom-select[data-select-id="plname"] .custom-select-dropdown { right: auto; width: min(360px, calc(100vw - 32px)); }
+        .custom-select[data-select-id="plname"] .custom-select-value { display: flex; align-items: center; gap: 8px; min-width: 0; }
+        .product-trigger-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .product-select-search { position: relative; padding: 10px 10px 8px; border-bottom: 1px solid #eff1f5; background: #fff; }
+        .product-select-search .material-symbols-outlined { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: #737b8c; font-size: 18px; pointer-events: none; }
+        .product-select-search-input { width: 100%; height: 36px; padding: 0 12px 0 36px; border: 1px solid #c2c6d8; border-radius: 6px; background: #fff; color: #0b1c30; font: inherit; font-size: 13px; outline: none; box-sizing: border-box; }
+        .product-select-search-input:focus { border-color: #0050cb; box-shadow: 0 0 0 3px rgba(0,80,203,.08); }
+        .custom-select[data-select-id="plname"] .custom-select-list { padding: 0 0 4px; max-height: 336px; }
+        .product-select-group { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; gap: 7px; min-height: 38px; margin: 0; padding: 0 12px; background: #f7f9fc; color: #424656; font-size: 12px; font-weight: 600; line-height: 38px; }
+        .product-select-group .material-symbols-outlined { color: #596174; font-size: 17px; }
+        .product-select-group-count { margin-left: auto; color: #8b92a5; font-weight: 500; }
+        .product-lifecycle-group { margin-top: 6px; border-top: 1px solid #e3e6ee; background: #fffaf0; color: #754f08; }
+        .product-lifecycle-group .material-symbols-outlined { color: #9a680e; }
+        .custom-select[data-select-id="plname"] .custom-select-option { position: relative; display: flex; align-items: center; gap: 10px; min-height: 38px; padding: 0 40px 0 14px; }
+        .custom-select[data-select-id="plname"] .custom-select-option[hidden],
+        .product-select-group[hidden],
+        .product-select-empty[hidden] { display: none; }
+        .custom-select[data-select-id="plname"] .custom-select-option.selected { padding-left: 14px; border-left: none; }
+        .product-selected-check { display: none; position: absolute; right: 14px; color: #0050cb; font-size: 18px; }
+        .custom-select[data-select-id="plname"] .custom-select-option.selected .product-selected-check { display: inline-flex; }
+        .product-option-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .product-retired-badge { display: inline-flex; align-items: center; flex: 0 0 auto; height: 20px; padding: 0 6px; border: 1px solid #e6b85c; border-radius: 4px; background: #fff8e6; color: #8a5a00; font-size: 11px; line-height: 18px; }
+        .product-select-empty { padding: 18px 12px; color: #8b92a5; font-size: 13px; text-align: center; }
         .product-lifecycle-warning {
             display: flex; align-items: center; margin-top: 6px; padding: 6px 8px;
             border-left: 3px solid #d99a24; background: #fff8e6; color: #754f08;
@@ -924,6 +937,10 @@
                                     <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
                                 </button>
                                 <div class="custom-select-dropdown">
+                                    <div class="product-select-search" role="search">
+                                        <span class="material-symbols-outlined" aria-hidden="true">search</span>
+                                        <input type="search" id="productLineSearch" class="product-select-search-input" placeholder="搜索产品线" aria-label="搜索产品线" autocomplete="off">
+                                    </div>
                                     <ul class="custom-select-list">
                                         <li class="custom-select-option selected" data-value="27">aBDI</li>
                                         <li class="custom-select-option" data-value="1">AC</li>
@@ -968,6 +985,7 @@
                                         <li class="custom-select-option" data-value="127">信服云工具</li>
                                         <li class="custom-select-option" data-value="41">独立在线授权</li>
                                         <li class="custom-select-option" data-value="44">统一在线授权</li>
+                                        <li class="product-select-empty" hidden>未找到匹配产品</li>
                                     </ul>
                                 </div>
                             </div>
@@ -4747,7 +4765,10 @@
             var hiddenSelect = container.querySelector('#plname');
             var list = container.querySelector('.custom-select-list');
             if (!hiddenSelect || !list) return;
+            var selectedValue = hiddenSelect.value;
 
+            var activeValues = [];
+            var activeOptions = [];
             var retiredValues = [];
             var retiredOptions = [];
             Array.prototype.slice.call(hiddenSelect.options).forEach(function(option) {
@@ -4756,8 +4777,18 @@
                 if (status === 'retired') {
                     retiredValues.push(option.value);
                     retiredOptions.push(option);
+                } else {
+                    activeValues.push(option.value);
+                    activeOptions.push(option);
                 }
             });
+
+            var nativeActiveGroup = hiddenSelect.querySelector('optgroup[data-product-group="active"]')
+                || hiddenSelect.querySelector('optgroup[label="在售产品"]');
+            if (!nativeActiveGroup) nativeActiveGroup = document.createElement('optgroup');
+            nativeActiveGroup.label = '在售产品';
+            nativeActiveGroup.dataset.productGroup = 'active';
+            nativeActiveGroup.remove();
 
             var nativeGroup = hiddenSelect.querySelector('optgroup[data-product-group="retired"]')
                 || hiddenSelect.querySelector('optgroup[label="已退市产品"]');
@@ -4765,29 +4796,78 @@
             nativeGroup.label = '已退市产品';
             nativeGroup.dataset.productGroup = 'retired';
             nativeGroup.remove();
+            activeOptions.forEach(function(option) { nativeActiveGroup.appendChild(option); });
             retiredOptions.forEach(function(option) { nativeGroup.appendChild(option); });
+            if (activeOptions.length) hiddenSelect.appendChild(nativeActiveGroup);
             if (retiredOptions.length) hiddenSelect.appendChild(nativeGroup);
+            hiddenSelect.value = selectedValue;
 
-            var group = list.querySelector('[data-product-group="retired"]');
-            if (!group) {
-                group = document.createElement('li');
-                group.className = 'custom-select-group-label product-lifecycle-group';
-                group.dataset.productGroup = 'retired';
-                group.textContent = '已退市产品';
+            function createGroup(groupType, label, icon, count, extraClass) {
+                var group = list.querySelector('[data-product-group="' + groupType + '"]');
+                if (!group) group = document.createElement('li');
+                group.className = 'custom-select-group-label product-select-group' + (extraClass ? ' ' + extraClass : '');
+                group.dataset.productGroup = groupType;
+                group.setAttribute('role', 'presentation');
+                group.textContent = '';
+                var iconNode = document.createElement('span');
+                iconNode.className = 'material-symbols-outlined';
+                iconNode.setAttribute('aria-hidden', 'true');
+                iconNode.textContent = icon;
+                var labelNode = document.createElement('span');
+                labelNode.className = 'product-select-group-name';
+                labelNode.textContent = label;
+                var countNode = document.createElement('span');
+                countNode.className = 'product-select-group-count';
+                countNode.textContent = String(count);
+                group.appendChild(iconNode);
+                group.appendChild(labelNode);
+                group.appendChild(countNode);
+                return group;
             }
-            group.remove();
 
+            var activeGroup = createGroup('active', '在售产品', 'inventory_2', activeValues.length, 'active-product-group');
+            var retiredGroup = createGroup('retired', '已退市产品', 'archive', retiredValues.length, 'product-lifecycle-group');
+            activeGroup.remove();
+            retiredGroup.remove();
+
+            var activeItems = [];
             var retiredItems = [];
             list.querySelectorAll('.custom-select-option').forEach(function(item) {
                 var isRetired = retiredValues.indexOf(item.dataset.value) !== -1;
                 item.classList.toggle('retired-product-option', isRetired);
-                if (isRetired) retiredItems.push(item);
+                var label = item.dataset.label || item.textContent.trim();
+                item.dataset.label = label;
+                item.textContent = '';
+                var labelNode = document.createElement('span');
+                labelNode.className = 'product-option-label';
+                labelNode.textContent = label;
+                item.appendChild(labelNode);
+                if (isRetired) {
+                    var badge = document.createElement('span');
+                    badge.className = 'product-retired-badge';
+                    badge.textContent = '已退市';
+                    item.appendChild(badge);
+                    retiredItems.push(item);
+                } else {
+                    activeItems.push(item);
+                }
+                var check = document.createElement('span');
+                check.className = 'material-symbols-outlined product-selected-check';
+                check.setAttribute('aria-hidden', 'true');
+                check.textContent = 'check';
+                item.appendChild(check);
             });
 
+            if (activeItems.length) {
+                list.appendChild(activeGroup);
+                activeItems.forEach(function(item) { list.appendChild(item); });
+            }
             if (retiredItems.length) {
-                list.appendChild(group);
+                list.appendChild(retiredGroup);
                 retiredItems.forEach(function(item) { list.appendChild(item); });
             }
+            var emptyState = list.querySelector('.product-select-empty');
+            if (emptyState) list.insertBefore(emptyState, list.firstChild);
         }
 
         function updateProductLifecycleWarning() {
@@ -4804,9 +4884,36 @@
             var valueSpan = container.querySelector('.custom-select-value');
             var options = container.querySelectorAll('.custom-select-option');
             var hiddenSelect = document.getElementById(container.dataset.selectId);
+            var isProductSelect = container.dataset.selectId === 'plname';
+            var productSearch = isProductSelect ? container.querySelector('.product-select-search-input') : null;
+
+            function getOptionLabel(option) {
+                return option.dataset.label || option.textContent.trim();
+            }
+
+            function renderValue(selectedOption) {
+                var label = getOptionLabel(selectedOption);
+                if (!isProductSelect) {
+                    valueSpan.textContent = label;
+                    return;
+                }
+                valueSpan.textContent = '';
+                var labelNode = document.createElement('span');
+                labelNode.className = 'product-trigger-label';
+                labelNode.textContent = label;
+                valueSpan.appendChild(labelNode);
+                var isRetired = selectedOption.classList.contains('retired-product-option');
+                valueSpan.classList.toggle('is-retired', isRetired);
+                if (isRetired) {
+                    var badge = document.createElement('span');
+                    badge.className = 'product-retired-badge';
+                    badge.textContent = '已退市';
+                    valueSpan.appendChild(badge);
+                }
+            }
 
             function syncVisualOption(selectedOption) {
-                valueSpan.textContent = selectedOption.textContent;
+                renderValue(selectedOption);
                 if (selectedOption.dataset.value) {
                     valueSpan.classList.add('has-value');
                 } else {
@@ -4814,6 +4921,9 @@
                 }
                 options.forEach(function(opt) { opt.classList.remove('selected'); });
                 selectedOption.classList.add('selected');
+                if (isProductSelect) {
+                    options.forEach(function(opt) { opt.setAttribute('aria-selected', opt === selectedOption ? 'true' : 'false'); });
+                }
             }
 
             function updateDisplay(selectedOption) {
@@ -4839,22 +4949,124 @@
                 hiddenSelect.addEventListener('change', syncFromNativeSelect);
             }
 
+            function filterProductOptions(query) {
+                if (!isProductSelect) return;
+                var normalized = (query || '').trim().toLocaleLowerCase();
+                var visibleCount = 0;
+                options.forEach(function(option) {
+                    var matches = !normalized || getOptionLabel(option).toLocaleLowerCase().indexOf(normalized) !== -1;
+                    option.hidden = !matches;
+                    if (matches) visibleCount += 1;
+                });
+                ['active', 'retired'].forEach(function(groupType) {
+                    var group = container.querySelector('.product-select-group[data-product-group="' + groupType + '"]');
+                    if (!group) return;
+                    var hasVisibleOption = Array.prototype.some.call(options, function(option) {
+                        var optionType = option.classList.contains('retired-product-option') ? 'retired' : 'active';
+                        return optionType === groupType && !option.hidden;
+                    });
+                    group.hidden = !hasVisibleOption;
+                });
+                var emptyState = container.querySelector('.product-select-empty');
+                if (emptyState) emptyState.hidden = visibleCount !== 0;
+            }
+
+            function getVisibleProductOptions() {
+                return Array.prototype.filter.call(options, function(option) { return !option.hidden; });
+            }
+
+            function closeProductSelect() {
+                container.classList.remove('open');
+                if (isProductSelect) trigger.setAttribute('aria-expanded', 'false');
+            }
+
+            function chooseProductOption(option) {
+                if (!option) return;
+                updateDisplay(option);
+                closeProductSelect();
+                trigger.focus();
+            }
+
+            if (isProductSelect) {
+                trigger.setAttribute('aria-haspopup', 'listbox');
+                trigger.setAttribute('aria-expanded', 'false');
+                options.forEach(function(option) {
+                    option.setAttribute('role', 'option');
+                    option.tabIndex = -1;
+                });
+                if (productSearch) {
+                    productSearch.addEventListener('click', function(e) { e.stopPropagation(); });
+                    productSearch.addEventListener('input', function() { filterProductOptions(this.value); });
+                    productSearch.addEventListener('keydown', function(e) {
+                        if (e.key === 'Escape') {
+                            e.stopPropagation();
+                            if (this.value) {
+                                this.value = '';
+                                filterProductOptions('');
+                            } else {
+                                closeProductSelect();
+                                trigger.focus();
+                            }
+                        } else if (e.key === 'Enter') {
+                            e.preventDefault();
+                            chooseProductOption(getVisibleProductOptions()[0]);
+                        } else if (e.key === 'ArrowDown') {
+                            e.preventDefault();
+                            var firstVisible = getVisibleProductOptions()[0];
+                            if (firstVisible) firstVisible.focus();
+                        }
+                    });
+                }
+                options.forEach(function(option) {
+                    option.addEventListener('keydown', function(e) {
+                        var visibleOptions = getVisibleProductOptions();
+                        var currentIndex = visibleOptions.indexOf(this);
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            chooseProductOption(this);
+                        } else if (e.key === 'ArrowDown' && currentIndex < visibleOptions.length - 1) {
+                            e.preventDefault();
+                            visibleOptions[currentIndex + 1].focus();
+                        } else if (e.key === 'ArrowUp') {
+                            e.preventDefault();
+                            if (currentIndex > 0) visibleOptions[currentIndex - 1].focus();
+                            else if (productSearch) productSearch.focus();
+                        } else if (e.key === 'Escape') {
+                            e.preventDefault();
+                            closeProductSelect();
+                            trigger.focus();
+                        }
+                    });
+                });
+            }
+
             trigger.addEventListener('click', function(e) {
                 e.stopPropagation();
                 var isOpen = container.classList.contains('open');
                 document.querySelectorAll('.custom-select.open').forEach(function(cs) { cs.classList.remove('open'); });
                 if (!isOpen) {
                     container.classList.add('open');
+                    if (isProductSelect) trigger.setAttribute('aria-expanded', 'true');
+                    if (productSearch) {
+                        productSearch.value = '';
+                        filterProductOptions('');
+                        productSearch.focus();
+                    }
                     var sel = container.querySelector('.custom-select-option.selected');
                     if (sel) sel.scrollIntoView({ block: 'nearest' });
+                } else if (isProductSelect) {
+                    trigger.setAttribute('aria-expanded', 'false');
                 }
             });
 
             options.forEach(function(option) {
                 option.addEventListener('click', function(e) {
                     e.stopPropagation();
-                    updateDisplay(this);
-                    container.classList.remove('open');
+                    if (isProductSelect) chooseProductOption(this);
+                    else {
+                        updateDisplay(this);
+                        container.classList.remove('open');
+                    }
                 });
             });
 
@@ -4868,7 +5080,7 @@
                 }
                 options.forEach(function(opt) { opt.classList.remove('selected'); });
                 defaultOption.classList.add('selected');
-                valueSpan.textContent = defaultOption.textContent;
+                renderValue(defaultOption);
                 if (defaultOption.dataset.value) {
                     valueSpan.classList.add('has-value');
                 } else {
@@ -4885,7 +5097,7 @@
                 if (target) {
                     options.forEach(function(opt) { opt.classList.remove('selected'); });
                     target.classList.add('selected');
-                    valueSpan.textContent = target.textContent;
+                    renderValue(target);
                     if (val) valueSpan.classList.add('has-value');
                     else valueSpan.classList.remove('has-value');
                     if (hiddenSelect) hiddenSelect.value = val;
@@ -4911,7 +5123,11 @@
 
         // 全局点击关闭自定义下拉框
         document.addEventListener('click', function() {
-            document.querySelectorAll('.custom-select.open').forEach(function(cs) { cs.classList.remove('open'); });
+            document.querySelectorAll('.custom-select.open').forEach(function(cs) {
+                cs.classList.remove('open');
+                var trigger = cs.querySelector('.custom-select-trigger[aria-expanded]');
+                if (trigger) trigger.setAttribute('aria-expanded', 'false');
+            });
         });
 
         // ===== 设备ID / 设备SN Chip 输入 + HCI/SCP 模式（恢复 V1 联动） =====
