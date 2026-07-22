@@ -285,9 +285,9 @@ test('表单重置彻底清理旧流程状态并重新应用默认 HCI 模式', 
     planType.value = '2';
     fireChange(planType, window);
     window.addChip('SALES-ATRUST-001');
-    const scene = document.getElementById('authScene');
-    scene.value = '6';
-    fireChange(scene, window);
+    const extend = document.querySelector('#requestContentGroup input[value="extend"]');
+    extend.checked = true;
+    fireChange(extend, window);
     window.submitStandardForm();
     assert.match(alerts.at(-1), /表单已提交/);
     assert.notEqual(document.getElementById('submissionSnapshot').value, '');

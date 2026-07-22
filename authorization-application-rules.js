@@ -1,8 +1,8 @@
 (function (root, factory) {
+    var rules = factory();
+    if (root) root.AuthorizationApplicationRules = rules;
     if (typeof module === 'object' && module.exports) {
-        module.exports = factory();
-    } else {
-        root.AuthorizationApplicationRules = factory();
+        module.exports = rules;
     }
 }(typeof self !== 'undefined' ? self : this, function () {
     'use strict';

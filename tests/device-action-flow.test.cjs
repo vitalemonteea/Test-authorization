@@ -42,12 +42,14 @@ test('非销售设备的有效期内事项统一映射资源调整场景', () =>
   assert.equal(rules.mapLegacyAuthScene('increase_capacity', activeBorrowed), '2');
 });
 
-test('授权场景恢复为设备识别后的可见业务字段', () => {
+test('授权场景是设备识别后的只读业务字段', () => {
   const { dom, document } = loadV2Dom({ runScripts: false });
   try {
     const authScene = document.getElementById('authScene');
     assert.ok(authScene);
-    assert.equal(authScene.tagName, 'SELECT');
+    assert.equal(authScene.tagName, 'INPUT');
+    assert.equal(authScene.type, 'hidden');
+    assert.ok(document.getElementById('authSceneDisplay'));
     assert.match(authScene.closest('#authSceneFormItem').querySelector('.layui-form-label').textContent.trim(), /^授权场景/);
     assert.equal(document.getElementById('requestAction').type, 'hidden');
     assert.equal(document.getElementById('requestActionFormItem'), null);
@@ -56,7 +58,7 @@ test('授权场景恢复为设备识别后的可见业务字段', () => {
   }
 });
 
-test('销售设备识别后仅显示符合状态的授权场景', () => {
+test('有效期内销售设备自动识别调整场景并展示三项申请内容', () => {
   const { dom, document, window, errors } = loadV2Dom();
   try {
     const product = document.getElementById('plname');
@@ -73,7 +75,13 @@ test('销售设备识别后仅显示符合状态的授权场景', () => {
     window.addChip('SALES-ATRUST-001');
     assert.equal(sceneItem.hidden, false);
     assert.equal(sceneRow.hidden, false);
-    assert.deepEqual(Array.from(scene.options).map((option) => option.value), ['', '3', '5', '6']);
+    assert.equal(scene.value, 'adjust');
+    assert.equal(document.getElementById('authSceneLabel').textContent.trim(), '调整当前测试授权');
+    assert.match(document.getElementById('authSceneTags').textContent, /销售设备/);
+    assert.deepEqual(
+      Array.from(document.querySelectorAll('#requestContentGroup input')).map((input) => input.value),
+      ['extend', 'add_module', 'increase_capacity']
+    );
     assert.deepEqual(errors, []);
   } finally {
     dom.window.close();
@@ -180,7 +188,7 @@ test('HCI 首次加载不显示当前授权信息', () => {
   }
 });
 
-test('设备移除导致授权场景失效后隐藏当前授权信息', () => {
+test('设备移除后隐藏系统场景和申请内容', () => {
   const { dom, document, window, errors } = loadV2Dom();
   try {
     const product = document.getElementById('plname');
@@ -188,22 +196,23 @@ test('设备移除导致授权场景失效后隐藏当前授权信息', () => {
     fireChange(product, window);
     window.addChip('SALES-ATRUST-001');
 
-    const scene = document.getElementById('authScene');
-    scene.value = '5';
-    fireChange(scene, window);
     const section = document.getElementById('existingAuthSection');
-    assert.equal(window.getComputedStyle(section).display, 'block');
+    assert.equal(window.getComputedStyle(section).display, 'none', '不应再显示重复的当前授权查询区');
+    assert.equal(document.getElementById('authScene').value, 'adjust');
+    assert.equal(document.getElementById('requestContentsRow').hidden, false);
 
     window.removeDeviceChip('SALES-ATRUST-001');
     assert.equal(window.getComputedStyle(section).display, 'none');
     assert.equal(section.classList.contains('show'), false);
+    assert.equal(document.getElementById('authSceneRow').hidden, true);
+    assert.equal(document.getElementById('requestContentsRow').hidden, true);
     assert.deepEqual(errors, []);
   } finally {
     dom.window.close();
   }
 });
 
-test('切换授权场景同步内部动作并清理上一场景状态', () => {
+test('选择调整内容同步内部状态并联动日期和模块区域', () => {
   const { dom, document, window } = loadV2Dom();
   try {
     const product = document.getElementById('plname');
@@ -211,24 +220,26 @@ test('切换授权场景同步内部动作并清理上一场景状态', () => {
     fireChange(product, window);
     window.addChip('SALES-ATRUST-001');
 
-    const scene = document.getElementById('authScene');
     const action = document.getElementById('requestAction');
-    const priorQuery = document.getElementById('eaQueryDevId');
-    scene.value = '3';
-    fireChange(scene, window);
-    priorQuery.value = 'stale-value';
+    const capacity = document.querySelector('#requestContentGroup input[value="increase_capacity"]');
+    const extend = document.querySelector('#requestContentGroup input[value="extend"]');
+    capacity.checked = true;
+    fireChange(capacity, window);
+    assert.equal(action.value, 'adjust');
+    assert.deepEqual(Array.from(window.applicationState.requestContents), ['increase_capacity']);
+    assert.equal(document.querySelector('#content .unified-date-bar').hidden, true);
+    assert.equal(document.querySelector('#content .module-toolbar').hidden, false);
 
-    scene.value = '5';
-    fireChange(scene, window);
-    assert.equal(action.value, 'increase_capacity');
-    assert.equal(priorQuery.value, '');
-    assert.equal(window.applicationState.requestAction, 'increase_capacity');
+    extend.checked = true;
+    fireChange(extend, window);
+    assert.deepEqual(Array.from(window.applicationState.requestContents), ['extend', 'increase_capacity']);
+    assert.equal(document.querySelector('#content .unified-date-bar').hidden, false);
   } finally {
     dom.window.close();
   }
 });
 
-test('切换授权场景清理上一场景状态并重新计算内部审批', () => {
+test('销售设备增开模块会重新计算内部审批提示', () => {
   const { dom, document, window, errors } = loadV2Dom();
   try {
     const product = document.getElementById('plname');
@@ -236,26 +247,13 @@ test('切换授权场景清理上一场景状态并重新计算内部审批', ()
     fireChange(product, window);
     window.addChip('SALES-ATRUST-001');
 
-    const scene = document.getElementById('authScene');
-    scene.value = '3';
-    fireChange(scene, window);
-    document.getElementById('requestedMonths').value = '9';
-    document.getElementById('targetCapacity').value = '999';
-    document.getElementById('eaQueryDevId').value = 'stale-query';
-    document.getElementById('eaResultArea').style.display = 'block';
-    document.getElementById('eaResultDevice').textContent = 'stale-result';
-    const moduleToggle = document.querySelector('.module-item .toggle-switch');
-    moduleToggle.classList.add('active');
+    const addModule = document.querySelector('#requestContentGroup input[value="add_module"]');
+    addModule.checked = true;
+    fireChange(addModule, window);
+    assert.equal(window.applicationState.approvalDecision.routeKey, 'REGION_AND_HQ_MARKETING');
 
-    scene.value = '6';
-    fireChange(scene, window);
-
-    assert.equal(document.getElementById('requestedMonths').value, '');
-    assert.equal(document.getElementById('targetCapacity').value, '');
-    assert.equal(document.getElementById('eaQueryDevId').value, '');
-    assert.equal(document.getElementById('eaResultArea').style.display, 'none');
-    assert.equal(document.getElementById('eaResultDevice').textContent, '');
-    assert.equal(document.querySelectorAll('.module-item .toggle-switch.active').length, 0);
+    addModule.checked = false;
+    fireChange(addModule, window);
     assert.equal(window.applicationState.approvalDecision.routeKey, 'AUTO_PASS');
     assert.deepEqual(errors, []);
   } finally {
@@ -464,7 +462,36 @@ test('纯软无历史设备直接识别为首次开通且不要求人工确认',
     assert.equal(document.getElementById('manualReviewRequired').value, '0');
     assert.equal(document.getElementById('deviceLookupBlocking').hidden, true);
     assert.equal(document.getElementById('authSceneFormItem').hidden, false);
-    assert.deepEqual(Array.from(document.getElementById('authScene').options).map((option) => option.value), ['', '1']);
+    assert.equal(document.getElementById('authScene').value, 'first_open');
+    assert.equal(document.getElementById('authSceneLabel').textContent.trim(), '首次开通测试授权');
+    assert.equal(document.getElementById('requestContents').value, 'open');
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('硬件借测无资产记录直接阻断且不展示人工确认入口', () => {
+  const { dom, document, window, errors } = loadV2Dom();
+  try {
+    const product = document.getElementById('plname');
+    product.value = '22';
+    fireChange(product, window);
+    const planType = document.getElementById('planDevType');
+    planType.value = '1';
+    fireChange(planType, window);
+    window.addChip('UNKNOWN-BORROWED-001');
+
+    const blocking = document.getElementById('deviceLookupBlocking');
+    assert.equal(blocking.hidden, false);
+    assert.match(blocking.textContent, /硬件借测不允许继续申请/);
+    assert.equal(document.getElementById('authSceneRow').hidden, true);
+    assert.equal(document.getElementById('requestContentsRow').hidden, true);
+    assert.equal(document.getElementById('currentAuthorizationOverview').hidden, true);
+    assert.equal(document.getElementById('manualReviewRequired').value, '0');
+    assert.equal(document.getElementById('retryDeviceLookup').hidden, true);
+    assert.equal(document.getElementById('saveApplicationDraft').hidden, true);
+    assert.notEqual(document.getElementById('syncToast').style.display, 'block');
+    assert.deepEqual(errors, []);
   } finally {
     dom.window.close();
   }

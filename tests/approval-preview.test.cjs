@@ -130,20 +130,26 @@ test('内部审批决策随场景、客户、时长、容量和设备事实失�
     fireChange(product, window);
     window.addChip('SALES-ATRUST-001');
 
-    const scene = document.getElementById('authScene');
     const requestedMonths = document.getElementById('requestedMonths');
-    scene.value = '6';
-    fireChange(scene, window);
+    const requestOptions = document.querySelectorAll('#requestContentGroup input');
+    const extend = Array.from(requestOptions).find((input) => input.value === 'extend');
+    const addModule = Array.from(requestOptions).find((input) => input.value === 'add_module');
+    extend.checked = true;
+    fireChange(extend, window);
     requestedMonths.value = '0';
     fireChange(requestedMonths, window);
     assert.equal(window.applicationState.approvalDecision.routeKey, 'AUTO_PASS');
 
-    scene.value = '3';
-    fireChange(scene, window);
+    extend.checked = false;
+    fireChange(extend, window);
+    addModule.checked = true;
+    fireChange(addModule, window);
     assert.equal(window.applicationState.approvalDecision.routeKey, 'REGION_AND_HQ_MARKETING');
 
-    scene.value = '6';
-    fireChange(scene, window);
+    addModule.checked = false;
+    fireChange(addModule, window);
+    extend.checked = true;
+    fireChange(extend, window);
     requestedMonths.value = '3';
     fireChange(requestedMonths, window);
     assert.equal(window.applicationState.approvalDecision.routeKey, 'REGION_AND_HQ_MARKETING');
@@ -160,8 +166,6 @@ test('内部审批决策随场景、客户、时长、容量和设备事实失�
     const fileInput = document.getElementById('hwFileInput');
     Object.defineProperty(fileInput, 'files', { configurable: true, value: [infoFile] });
     fireChange(fileInput, window);
-    scene.value = '1';
-    fireChange(scene, window);
     const capacity = document.getElementById('targetCapacity');
     capacity.value = '21';
     fireChange(capacity, window);
