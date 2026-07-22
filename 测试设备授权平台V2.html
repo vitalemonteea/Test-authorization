@@ -143,14 +143,6 @@
         .custom-select-arrow { font-size: 22px; color: #424656; transition: transform 0.2s; }
         .custom-select.open .custom-select-arrow { transform: rotate(180deg); color: #0050cb; }
 
-        /* ===== 申请类型下拉框 - 拓宽下拉面板宽度 ===== */
-        .custom-select[data-select-id="planDevType"] .custom-select-dropdown {
-            min-width: 480px;
-            right: auto;
-            width: max-content;
-            max-width: 560px;
-        }
-
         .custom-select-dropdown {
             display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0;
             background: #fff; border: 1px solid #c2c6d8; border-radius: 8px;
@@ -290,16 +282,16 @@
         .basic-title-accent { position: relative; width: 100%; height: 3px; margin: -17px 0 18px; background: #e5eeff; border-radius: 3px; }
         .basic-title-accent::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 72px; background: #0050cb; border-radius: 3px; }
         #section-basic .basic-two-col-row,
-        #section-basic .basic-half-row,
         #section-basic .borrow-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px 36px; margin: 0 0 18px; overflow: visible; }
+        #section-basic .basic-full-row { display: grid; grid-template-columns: minmax(0, 1fr); margin: 0 0 18px; overflow: visible; }
         #section-basic #planDevTypeRow[hidden] { display: none; }
         #section-basic #authSceneRow[hidden] { display: none; }
         #section-basic .layui-form-item { max-width: none; margin: 0 0 18px; clear: none; }
         #section-basic .basic-two-col-row .layui-form-item,
-        #section-basic .basic-half-row .layui-form-item,
+        #section-basic .basic-full-row .layui-form-item,
         #section-basic .borrow-grid .layui-form-item { margin-bottom: 0; }
-        #section-basic .basic-half-row .layui-form-item { min-width: 0; }
-        #section-basic .basic-half-row .custom-select-value { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        #section-basic .basic-full-row .layui-form-item { min-width: 0; }
+        #section-basic .basic-full-row .custom-select-value { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         #section-basic .layui-form-label { width: 120px; padding-left: 0; box-sizing: border-box; color: #0b1c30; font-weight: 600; }
         #section-basic .layui-input-block { min-width: 0; }
         #section-basic .layui-input,
@@ -623,7 +615,7 @@
             #section-basic .search-select-box { max-width: none; }
             #section-basic .basic-two-col-row,
             #section-basic .borrow-grid { grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
-            #section-basic .basic-half-row { grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
+            #section-basic .basic-full-row { grid-template-columns: 1fr; margin-bottom: 15px; }
             #section-basic .device-facts-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
             #section-basic .layui-form-label,
             #section-basic .basic-borrow-panel .layui-form-label { width: auto; padding: 0 0 6px 0; }
@@ -1073,7 +1065,7 @@
                     <input type="hidden" id="requestAction" name="requestAction" value="">
 
                     <!-- 申请类型 -->
-                    <div class="basic-half-row" id="planDevTypeRow">
+                    <div class="basic-full-row" id="planDevTypeRow">
                     <div class="layui-form-item" id="planDevTypeFormItem">
                         <label class="layui-form-label">申请类型</label>
                         <div class="layui-input-block">
@@ -1285,7 +1277,7 @@
                     </div>
 </div>
 
-                    <div class="basic-two-col-row" id="authSceneRow" hidden>
+                    <div class="basic-full-row" id="authSceneRow" hidden>
                     <!-- 授权场景由设备事实过滤，最终由申请人确认 -->
                     <div class="layui-form-item" id="authSceneFormItem" hidden>
                         <label class="layui-form-label">授权场景<span class="required-mark">*</span></label>
