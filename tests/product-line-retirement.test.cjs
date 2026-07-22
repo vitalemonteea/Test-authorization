@@ -119,6 +119,21 @@ test('产品线搜索结果的 hidden 状态应在 flex 布局下真正隐藏', 
   );
 });
 
+test('产品线下拉与触发器等宽并复用公共选中态', () => {
+  const compactCss = html.replace(/\s+/g, ' ');
+  assert.doesNotMatch(
+    compactCss,
+    /\.custom-select\[data-select-id="plname"\]\s+\.custom-select-dropdown\s*\{[^}]*(?:width|right)\s*:/,
+    '产品线下拉不应覆盖公共等宽定位'
+  );
+  assert.doesNotMatch(
+    compactCss,
+    /\.custom-select\[data-select-id="plname"\]\s+\.custom-select-option\.selected\s*\{/,
+    '产品线选中项不应覆盖公共选中样式'
+  );
+  assert.doesNotMatch(html, /product-selected-check/, '产品线选中项不应显示专属勾选图标');
+});
+
 test('选择 WOC 持续显示退市提示，切回 aBDI 后隐藏', () => {
   const { dom, document, window, errors } = loadV2Dom();
   try {

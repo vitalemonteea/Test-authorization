@@ -167,7 +167,6 @@
             padding: 8px 12px 8px 24px; font-size: 14px; color: #424656; cursor: pointer; transition: all 0.15s; white-space: nowrap;
         }
         .custom-select-option:hover { background: #eff4ff; color: #0050cb; }
-        .custom-select[data-select-id="plname"] .custom-select-dropdown { right: auto; width: min(360px, calc(100vw - 32px)); }
         .custom-select[data-select-id="plname"] .custom-select-value { display: flex; align-items: center; gap: 8px; min-width: 0; }
         .product-trigger-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .product-select-search { position: relative; padding: 10px 10px 8px; border-bottom: 1px solid #eff1f5; background: #fff; }
@@ -180,13 +179,10 @@
         .product-select-group-count { margin-left: auto; color: #8b92a5; font-weight: 500; }
         .product-lifecycle-group { margin-top: 6px; border-top: 1px solid #e3e6ee; background: #fffaf0; color: #754f08; }
         .product-lifecycle-group .material-symbols-outlined { color: #9a680e; }
-        .custom-select[data-select-id="plname"] .custom-select-option { position: relative; display: flex; align-items: center; gap: 10px; min-height: 38px; padding: 0 40px 0 14px; }
+        .custom-select[data-select-id="plname"] .custom-select-option { position: relative; display: flex; align-items: center; gap: 10px; min-height: 38px; }
         .custom-select[data-select-id="plname"] .custom-select-option[hidden],
         .product-select-group[hidden],
         .product-select-empty[hidden] { display: none; }
-        .custom-select[data-select-id="plname"] .custom-select-option.selected { padding-left: 14px; border-left: none; }
-        .product-selected-check { display: none; position: absolute; right: 14px; color: #0050cb; font-size: 18px; }
-        .custom-select[data-select-id="plname"] .custom-select-option.selected .product-selected-check { display: inline-flex; }
         .product-option-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .product-retired-badge { display: inline-flex; align-items: center; flex: 0 0 auto; height: 20px; padding: 0 6px; border: 1px solid #e6b85c; border-radius: 4px; background: #fff8e6; color: #8a5a00; font-size: 11px; line-height: 18px; }
         .product-select-empty { padding: 18px 12px; color: #8b92a5; font-size: 13px; text-align: center; }
@@ -4851,11 +4847,6 @@
                 } else {
                     activeItems.push(item);
                 }
-                var check = document.createElement('span');
-                check.className = 'material-symbols-outlined product-selected-check';
-                check.setAttribute('aria-hidden', 'true');
-                check.textContent = 'check';
-                item.appendChild(check);
             });
 
             if (activeItems.length) {
