@@ -266,14 +266,8 @@ test('设备事实面板应纵向堆叠并符合桌面与移动样式合同', ()
   const panelBackgrounds = getCssRuleBodies('.device-facts-panel')
     .map((body) => getCssProperty(body, 'background') || getCssProperty(body, 'background-color'));
   assert.ok(
-    panelBackgrounds.some((value) => {
-      if (/^var\(--[^)]*(?:blue|primary|info)[^)]*\)$/.test(value)) return true;
-      const hex = value.match(/^#([0-9a-f]{6})$/i);
-      if (!hex) return false;
-      const channels = hex[1].match(/.{2}/g).map((channel) => Number.parseInt(channel, 16));
-      return channels.every((channel) => channel >= 220) && channels[2] > channels[0] && channels[2] >= channels[1];
-    }),
-    '.device-facts-panel 应使用浅蓝背景或浅蓝色变量'
+    panelBackgrounds.some((value) => /^#(?:fff|ffffff)$/i.test(value)),
+    '.device-facts-panel 应使用中性白色背景，减少嵌套卡片感'
   );
   assertRuleProperty(
     '.device-facts-grid',

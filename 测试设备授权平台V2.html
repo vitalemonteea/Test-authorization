@@ -322,10 +322,10 @@
         #section-basic .device-facts-summary:empty { display: none; }
         #section-basic .device-lookup-blocking button[hidden] { display: none !important; }
         #section-basic .device-facts-panel,
-        #section-basic .basic-borrow-panel { min-width: 0; background: #eff4ff; border: 1px solid rgba(194,198,216,.5); border-radius: 12px; box-sizing: border-box; }
+        #section-basic .basic-borrow-panel { min-width: 0; background: #fff; border: 1px solid #d8deea; border-radius: 8px; box-sizing: border-box; }
         #section-basic .device-facts-panel { overflow: hidden; }
         #section-basic .basic-borrow-panel { padding: 16px 20px 20px; }
-        #section-basic .device-facts-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; padding: 0 20px; box-sizing: border-box; cursor: pointer; list-style: none; }
+        #section-basic .device-facts-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; padding: 0 14px 0 16px; box-sizing: border-box; cursor: pointer; list-style: none; }
         #section-basic .device-facts-header::-webkit-details-marker { display: none; }
         #section-basic .device-facts-header:hover { background: rgba(255,255,255,.42); }
         #section-basic .device-facts-header:focus-visible { outline: 2px solid #0050cb; outline-offset: -2px; border-radius: 12px; }
@@ -334,18 +334,25 @@
         #section-basic .device-facts-status { flex: 0 0 auto; padding: 3px 10px; color: #0050cb; background: #e5eeff; border: none; border-radius: 9999px; font-size: 12px; font-weight: 600; }
         #section-basic .device-facts-toggle { color: #424656; font-size: 20px; transition: transform .2s ease; }
         #section-basic .device-facts-panel[open] .device-facts-toggle { transform: rotate(180deg); }
-        #section-basic .device-facts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; padding: 4px 20px 20px; }
-        #section-basic .device-fact-item { min-width: 0; padding: 9px 10px; background: #fff; border: 1px solid rgba(194,198,216,.4); border-radius: 8px; }
+        #section-basic .device-facts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; padding: 4px 16px 16px; }
+        #section-basic .device-fact-item { min-width: 0; padding: 9px 10px; background: #f7f9fc; border: none; border-radius: 6px; }
         #section-basic .device-fact-label,
         #section-basic .device-fact-value { display: block; overflow-wrap: anywhere; word-break: break-word; }
         #section-basic .device-fact-label { margin-bottom: 4px; color: #424656; font-size: 12px; line-height: 16px; }
         #section-basic .device-fact-value { color: #0b1c30; font-size: 13px; line-height: 1.45; }
-        #section-basic .auth-scene-display { display: flex; align-items: flex-start; gap: 12px; min-height: 64px; padding: 12px 14px; background: #f7faff; border: 1px solid #dbe7ff; border-radius: 8px; box-sizing: border-box; }
-        #section-basic .auth-scene-icon { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex: 0 0 36px; color: #0050cb; background: #e5eeff; border-radius: 8px; font-size: 20px; }
+        #section-basic .auth-scene-display { display: flex; align-items: flex-start; gap: 10px; min-height: 56px; padding: 10px 12px; background: #fff; border: 1px solid #d8deea; border-left: 3px solid #0050cb; border-radius: 6px; box-sizing: border-box; }
+        #section-basic .auth-scene-icon { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; flex: 0 0 30px; color: #0050cb; background: #eef4ff; border-radius: 6px; font-size: 18px; }
         #section-basic .auth-scene-copy { min-width: 0; flex: 1; }
         #section-basic .auth-scene-title-line { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-height: 22px; }
         #section-basic .auth-scene-title { color: #0b1c30; font-size: 14px; font-weight: 600; line-height: 22px; }
         #section-basic .auth-scene-description { display: block; margin-top: 2px; color: #6b7890; font-size: 12px; line-height: 18px; }
+        #section-basic .auth-scene-basis { margin-top: 4px; color: #6b7890; font-size: 12px; line-height: 18px; }
+        #section-basic .auth-scene-basis[hidden] { display: none; }
+        #section-basic .auth-scene-basis summary { display: inline-flex; align-items: center; color: #0050cb; cursor: pointer; list-style: none; }
+        #section-basic .auth-scene-basis summary::-webkit-details-marker { display: none; }
+        #section-basic .auth-scene-basis summary::after { content: 'expand_more'; margin-left: 2px; font-family: 'Material Symbols Outlined'; font-size: 16px; transition: transform .15s; }
+        #section-basic .auth-scene-basis[open] summary::after { transform: rotate(180deg); }
+        #section-basic .auth-scene-basis-text { display: block; margin-top: 3px; color: #6b7890; }
         #section-basic .auth-scene-tag { display: inline-flex; align-items: center; min-height: 20px; padding: 0 7px; color: #0050cb; background: #e5eeff; border-radius: 4px; font-size: 11px; font-weight: 600; }
         #section-basic .auth-scene-tag.warning { color: #8a4b00; background: #fff1d6; }
         #section-basic .request-content-group { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
@@ -433,14 +440,6 @@
         /* 全局操作栏 */
         .module-toolbar { display: flex; align-items: center; padding: 10px 0; margin-bottom: 8px; border-bottom: 1px solid #eff4ff; max-width: 900px; margin-left: auto; margin-right: auto; }
         .module-toolbar-title { font-size: 15px; font-weight: 600; color: #1a1a2e; flex: 1; }
-        .current-auth-overview { max-width: 900px; margin: 0 auto 12px; padding: 14px 16px; background: #f7faff; border: 1px solid #dbe7ff; border-radius: 8px; box-sizing: border-box; }
-        .current-auth-overview[hidden] { display: none; }
-        .current-auth-overview-title { margin-bottom: 10px; color: #0f1f3d; font-size: 14px; font-weight: 600; }
-        .current-auth-overview-list { display: grid; gap: 8px; }
-        .current-auth-overview-item { display: grid; grid-template-columns: minmax(160px, 1fr) minmax(0, 2fr) minmax(120px, 1fr); gap: 12px; align-items: center; padding: 8px 10px; background: #fff; border: 1px solid #e5eeff; border-radius: 6px; }
-        .current-auth-device { min-width: 0; color: #0f1f3d; font-size: 13px; font-weight: 600; overflow-wrap: anywhere; }
-        .current-auth-detail { min-width: 0; color: #6b7890; font-size: 12px; }
-        .current-auth-detail strong { color: #1a1a2e; font-size: 13px; font-weight: 500; overflow-wrap: anywhere; }
         .toolbar-btn { height: 28px; line-height: 26px; padding: 0 12px; background: #eff4ff; color: #0050cb; border: none; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 500; margin-left: 8px; transition: all 0.2s; }
         .toolbar-btn:hover { background: #dae1ff; }
 
@@ -671,9 +670,6 @@
             #section-basic .basic-borrow-panel .layui-form-label { width: auto; padding: 0 0 6px 0; }
             #section-basic .basic-borrow-panel { padding: 16px 14px 14px; }
             #section-basic .basic-borrow-title { margin: 0 0 14px; }
-            .current-auth-overview { padding: 12px; }
-            .current-auth-overview-item { grid-template-columns: 1fr; gap: 6px; }
-
             .unified-date-bar { flex-wrap: wrap; }
             .module-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
             .xaas-spec-modal { min-width: auto; width: 90%; }
@@ -1385,6 +1381,10 @@
                                         <span id="authSceneTags"></span>
                                     </span>
                                     <span class="auth-scene-description" id="authSceneDescription"></span>
+                                    <details class="auth-scene-basis" id="authSceneBasis" hidden>
+                                        <summary>查看识别依据</summary>
+                                        <span class="auth-scene-basis-text" id="authSceneBasisText"></span>
+                                    </details>
                                 </span>
                             </div>
                         </div>
@@ -1594,8 +1594,6 @@
                             <button type="button" class="toolbar-btn" id="expandAll">全部展开</button>
                             <button type="button" class="toolbar-btn" id="collapseAll">全部折叠</button>
                         </div>
-
-                        <div class="current-auth-overview" id="currentAuthorizationOverview" hidden></div>
 
                         <!-- 1. 计算虚拟化 -->
                         <div class="module-item" id="module-aSV" data-module="计算虚拟化">
@@ -5581,13 +5579,14 @@
         var authSceneInput = document.getElementById('authScene');
         var authSceneLabel = document.getElementById('authSceneLabel');
         var authSceneDescription = document.getElementById('authSceneDescription');
+        var authSceneBasis = document.getElementById('authSceneBasis');
+        var authSceneBasisText = document.getElementById('authSceneBasisText');
         var authSceneTags = document.getElementById('authSceneTags');
         var requestActionInput = document.getElementById('requestAction');
         var requestContentsInput = document.getElementById('requestContents');
         var requestContentsRow = document.getElementById('requestContentsRow');
         var requestContentGroup = document.getElementById('requestContentGroup');
         var deviceFactsSummary = document.getElementById('deviceFactsSummary');
-        var currentAuthorizationOverview = document.getElementById('currentAuthorizationOverview');
         var deviceLookupBlocking = document.getElementById('deviceLookupBlocking');
         var deviceLookupBlockingText = document.getElementById('deviceLookupBlockingText');
         var retryDeviceLookup = document.getElementById('retryDeviceLookup');
@@ -5698,6 +5697,9 @@
             authSceneInput.value = '';
             authSceneLabel.textContent = '';
             authSceneDescription.textContent = '';
+            authSceneBasis.hidden = true;
+            authSceneBasis.open = false;
+            authSceneBasisText.textContent = '';
             authSceneTags.textContent = '';
             requestContentGroup.textContent = '';
             authSceneRow.hidden = true;
@@ -5801,8 +5803,10 @@
                 adjust: '当前授权仍在有效期内，可按需组合调整授权内容。'
             };
             var recognitionBasis = facts[0].recognitionBasis || '';
-            authSceneDescription.textContent = (descriptions[baseScene] || '') +
-                (recognitionBasis ? ' 识别依据：' + recognitionBasis + '。' : '');
+            authSceneDescription.textContent = descriptions[baseScene] || '';
+            authSceneBasis.hidden = !recognitionBasis;
+            authSceneBasis.open = false;
+            authSceneBasisText.textContent = recognitionBasis ? recognitionBasis + '。' : '';
             renderAuthorizationSceneTags(facts);
             authSceneRow.hidden = false;
             authSceneFormItem.hidden = false;
@@ -5848,53 +5852,6 @@
             return null;
         }
 
-        function renderCurrentAuthorizationOverview(facts) {
-            currentAuthorizationOverview.textContent = '';
-            currentAuthorizationOverview.hidden = facts.length === 0;
-            if (!facts.length) return;
-
-            var title = document.createElement('div');
-            title.className = 'current-auth-overview-title';
-            title.textContent = '当前授权概况';
-            currentAuthorizationOverview.appendChild(title);
-
-            var list = document.createElement('div');
-            list.className = 'current-auth-overview-list';
-            facts.forEach(function(fact) {
-                var factsAvailable = fact.lookupStatus === 'success';
-                var modules = factsAvailable ?
-                    (fact.currentModules && fact.currentModules.length ? fact.currentModules.join('、') : '无') :
-                    '待人工确认';
-                var capacity = factsAvailable ? String(fact.currentCapacity || 0) : '待人工确认';
-                var item = document.createElement('div');
-                item.className = 'current-auth-overview-item';
-
-                var device = document.createElement('span');
-                device.className = 'current-auth-device';
-                device.textContent = fact.deviceId;
-
-                var moduleDetail = document.createElement('span');
-                moduleDetail.className = 'current-auth-detail';
-                moduleDetail.textContent = '当前模块：';
-                var moduleValue = document.createElement('strong');
-                moduleValue.textContent = modules;
-                moduleDetail.appendChild(moduleValue);
-
-                var capacityDetail = document.createElement('span');
-                capacityDetail.className = 'current-auth-detail';
-                capacityDetail.textContent = '当前容量：';
-                var capacityValue = document.createElement('strong');
-                capacityValue.textContent = capacity;
-                capacityDetail.appendChild(capacityValue);
-
-                item.appendChild(device);
-                item.appendChild(moduleDetail);
-                item.appendChild(capacityDetail);
-                list.appendChild(item);
-            });
-            currentAuthorizationOverview.appendChild(list);
-        }
-
         function renderDeviceFactsSummary(facts) {
             deviceFactsSummary.textContent = '';
             facts.forEach(function(fact) {
@@ -5920,11 +5877,18 @@
                 } else {
                     authorizationLabel = '待人工确认';
                 }
+                var factsAvailable = fact.lookupStatus === 'success';
+                var currentModules = factsAvailable ?
+                    (fact.currentModules && fact.currentModules.length ? fact.currentModules.join('、') : '无') :
+                    '待确认';
+                var currentCapacity = factsAvailable ? String(fact.currentCapacity || 0) : '待确认';
                 var values = [
                     ['来源', sourceLabel],
                     ['授权状态', authorizationLabel],
                     ['累计测试', (fact.testedMonths || 0) + '个月'],
-                    ['历史申请', (fact.applicationCount || 0) + '次']
+                    ['历史申请', (fact.applicationCount || 0) + '次'],
+                    ['当前模块', currentModules],
+                    ['当前容量', currentCapacity]
                 ];
                 var panel = document.createElement('details');
                 panel.className = 'device-facts-panel';
@@ -5968,7 +5932,6 @@
                 panel.appendChild(grid);
                 deviceFactsSummary.appendChild(panel);
             });
-            renderCurrentAuthorizationOverview(facts);
         }
 
         function renderLookupBlocking(reason) {
@@ -6027,7 +5990,6 @@
             var blockingReason = typeof authorizationRules.getLookupBlockingReason === 'function' ?
                 authorizationRules.getLookupBlockingReason(facts, plnameSelect.value) : null;
             renderLookupBlocking(blockingReason);
-            if (blockingReason) currentAuthorizationOverview.hidden = true;
             renderAuthorizationScene(facts, blockingReason);
             recalculateApprovalDecision();
         }

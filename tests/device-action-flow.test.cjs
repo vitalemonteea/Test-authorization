@@ -50,6 +50,8 @@ test('授权场景是设备识别后的只读业务字段', () => {
     assert.equal(authScene.tagName, 'INPUT');
     assert.equal(authScene.type, 'hidden');
     assert.ok(document.getElementById('authSceneDisplay'));
+    assert.equal(document.getElementById('authSceneBasis').tagName, 'DETAILS');
+    assert.match(document.getElementById('authSceneBasis').querySelector('summary').textContent, /查看识别依据/);
     assert.match(authScene.closest('#authSceneFormItem').querySelector('.layui-form-label').textContent.trim(), /^授权场景/);
     assert.equal(document.getElementById('requestAction').type, 'hidden');
     assert.equal(document.getElementById('requestActionFormItem'), null);
@@ -161,7 +163,7 @@ test('纯软设备只查授权历史并可识别重新开通场景', () => {
 
     window.addChip('SOFT-REOPEN-001');
     assert.equal(document.getElementById('authScene').value, 'reopen');
-    assert.match(document.getElementById('authSceneDescription').textContent, /匹配 1 条授权记录/);
+    assert.match(document.getElementById('authSceneBasisText').textContent, /匹配 1 条授权记录/);
     assert.doesNotMatch(document.getElementById('deviceFactsSummary').textContent, /待人工确认/);
     assert.deepEqual(errors, []);
   } finally {
@@ -179,7 +181,7 @@ test('重新开通与累计超期可以在场景卡中同时显示', () => {
 
     assert.equal(document.getElementById('authScene').value, 'reopen');
     assert.match(document.getElementById('authSceneTags').textContent, /累计测试超期/);
-    assert.match(document.getElementById('authSceneDescription').textContent, /匹配 3 条授权记录/);
+    assert.match(document.getElementById('authSceneBasisText').textContent, /匹配 3 条授权记录/);
     assert.deepEqual(errors, []);
   } finally {
     dom.window.close();
@@ -195,8 +197,8 @@ test('HCI 硬件信息文件按客户与集群历史识别有效授权', () => {
     fireChange(fileInput, window);
 
     assert.equal(document.getElementById('authScene').value, 'adjust');
-    assert.match(document.getElementById('authSceneDescription').textContent, /客户 \+ 产品线 \+ 集群标识/);
-    assert.match(document.getElementById('currentAuthorizationOverview').textContent, /分布式存储/);
+    assert.match(document.getElementById('authSceneBasisText').textContent, /客户 \+ 产品线 \+ 集群标识/);
+    assert.match(document.getElementById('deviceFactsSummary').textContent, /分布式存储/);
     assert.deepEqual(errors, []);
   } finally {
     dom.window.close();
@@ -217,7 +219,7 @@ test('切换客户后按新的历史范围重新派生基础场景', () => {
     customer.dispatchEvent(new window.Event('input', { bubbles: true }));
     document.querySelector('#customerDropdown [data-id="C100002"]').click();
     assert.equal(document.getElementById('authScene').value, 'first_open');
-    assert.match(document.getElementById('authSceneDescription').textContent, /匹配 0 条授权记录/);
+    assert.match(document.getElementById('authSceneBasisText').textContent, /匹配 0 条授权记录/);
     assert.deepEqual(errors, []);
   } finally {
     dom.window.close();
@@ -377,24 +379,18 @@ test('只读设备事实摘要仅展示来源、授权状态和历史', () => {
     const grid = panel.querySelector('.device-facts-grid');
     assert.ok(grid, '事实面板应包含 .device-facts-grid');
     const items = Array.from(grid.querySelectorAll('.device-fact-item'));
-    assert.equal(items.length, 4, '事实面板应正好展示 4 项事实');
+    assert.equal(items.length, 6, '事实面板应同时展示设备事实和当前授权概况');
     assert.deepEqual(
       items.map((item) => item.querySelector('.device-fact-label').textContent.trim()),
-      ['来源', '授权状态', '累计测试', '历史申请']
+      ['来源', '授权状态', '累计测试', '历史申请', '当前模块', '当前容量']
     );
     assert.deepEqual(
       items.map((item) => item.querySelector('.device-fact-value').textContent.trim()),
-      ['借测设备', '无授权', '0个月', '0次']
+      ['借测设备', '无授权', '0个月', '0次', '无', '0']
     );
-    assert.doesNotMatch(panel.textContent, /实际产品|当前模块|当前容量/);
+    assert.doesNotMatch(panel.textContent, /实际产品/);
     assert.equal(panel.querySelector('input, select, textarea, button'), null);
-
-    const overview = document.getElementById('currentAuthorizationOverview');
-    assert.equal(overview.hidden, false, '设备识别后模块配置区应显示当前授权概况');
-    const overviewItem = overview.querySelector('.current-auth-overview-item');
-    assert.equal(overviewItem.querySelector('.current-auth-device').textContent.trim(), 'DEV-NGAF-001');
-    assert.match(overviewItem.textContent, /当前模块：无/);
-    assert.match(overviewItem.textContent, /当前容量：0/);
+    assert.equal(document.getElementById('currentAuthorizationOverview'), null, '不应再渲染重复的独立授权概况卡');
     assert.deepEqual(errors, []);
   } finally {
     dom.window.close();
@@ -563,7 +559,7 @@ test('硬件借测无资产记录直接阻断且不展示人工确认入口', ()
     assert.match(blocking.textContent, /硬件借测不允许继续申请/);
     assert.equal(document.getElementById('authSceneRow').hidden, true);
     assert.equal(document.getElementById('requestContentsRow').hidden, true);
-    assert.equal(document.getElementById('currentAuthorizationOverview').hidden, true);
+    assert.equal(document.getElementById('currentAuthorizationOverview'), null);
     assert.equal(document.getElementById('manualReviewRequired').value, '0');
     assert.equal(document.getElementById('retryDeviceLookup').hidden, true);
     assert.equal(document.getElementById('saveApplicationDraft').hidden, true);
