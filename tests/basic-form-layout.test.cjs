@@ -312,11 +312,13 @@ test('授权场景应占满独立整行，区域与办事处保持标准两列�
   assert.strictEqual(officeItem.parentElement, officeRow, '办事处应为两列行的直接子项');
 });
 
-test('硬件信息文件应紧跟产品线与版本并位于设备字段之前', () => {
+test('客户信息应位于产品线之后，硬件信息文件位于客户与设备之间', () => {
   const productRow = doc.getElementById('plname').closest('.basic-two-col-row');
+  const customer = doc.getElementById('customerInfoFormItem');
   const hwInfo = doc.getElementById('hwInfoSection');
   const device = doc.getElementById('deviceIdFormItem');
-  assert.equal(productRow.nextElementSibling, hwInfo, '硬件信息文件应直接位于产品线/版本下方');
+  assert.equal(productRow.nextElementSibling, customer, '客户信息应直接位于产品线/版本下方');
+  assert.equal(customer.nextElementSibling, hwInfo, '硬件信息文件应紧跟客户信息');
   assert.ok(hwInfo.compareDocumentPosition(device) & 4, '硬件信息文件应位于设备字段之前');
   assert.ok(hwInfo.classList.contains('basic-full'), '硬件信息文件应占满整行');
 });

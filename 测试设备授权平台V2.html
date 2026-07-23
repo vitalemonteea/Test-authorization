@@ -1098,6 +1098,22 @@
                     </div>
                     </div>
 
+                    <!-- 客户信息：先建立客户上下文，再识别申请类型与设备历史 -->
+                    <div class="layui-form-item basic-full" id="customerInfoFormItem">
+                        <label class="layui-form-label">客户信息</label>
+                        <div class="layui-input-block">
+                            <div class="search-select-box">
+                                <input type="text" id="customerSearchInput" placeholder="请输入客户名称或ID搜索" class="layui-input" autocomplete="off">
+                                <div class="search-dropdown" id="customerDropdown"></div>
+                            </div>
+                            <div class="customer-info-display" id="customerInfoDisplay">
+                                客户名称：<span id="selectedCustomerName">-</span> <span id="selectedSales" class="sales-person-badge" style="display:none;"></span>
+                                <span style="margin-left:20px;">客户ID：<span id="selectedCustomerId">-</span></span>
+                                <span class="customer-type-badge" id="customerTypeBadge" style="display:none;"></span>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- HCI/SCP 通过硬件信息文件识别设备与授权信息 -->
                     <div class="layui-form-item basic-full" id="hwInfoSection" style="align-items: center;">
                         <label class="layui-form-label">硬件信息文件<span class="required-mark">*</span></label>
@@ -1477,22 +1493,6 @@
                         <label class="layui-form-label">接收邮箱</label>
                         <div class="layui-input-block">
                             <input type="text" id="userEmail" name="userEmail" placeholder="请填写正确邮箱，以免邮件发送失败" class="layui-input">
-                        </div>
-                    </div>
-
-                    <!-- 客户信息 -->
-                    <div class="layui-form-item basic-full">
-                        <label class="layui-form-label">客户信息</label>
-                        <div class="layui-input-block">
-                            <div class="search-select-box">
-                                <input type="text" id="customerSearchInput" placeholder="请输入客户名称或ID搜索" class="layui-input" autocomplete="off">
-                                <div class="search-dropdown" id="customerDropdown"></div>
-                            </div>
-                            <div class="customer-info-display" id="customerInfoDisplay">
-                                客户名称：<span id="selectedCustomerName">-</span> <span id="selectedSales" class="sales-person-badge" style="display:none;"></span>
-                                <span style="margin-left:20px;">客户ID：<span id="selectedCustomerId">-</span></span>
-                                <span class="customer-type-badge" id="customerTypeBadge" style="display:none;"></span>
-                            </div>
                         </div>
                     </div>
 

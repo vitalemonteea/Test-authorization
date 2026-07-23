@@ -88,18 +88,20 @@ test('有效期内销售设备自动识别调整场景并展示三项申请内�
   }
 });
 
-test('设备、借测信息、授权场景和客户字段按业务顺序排列', () => {
+test('客户、申请类型、设备、借测信息和授权场景按业务顺序排列', () => {
   const { dom, document } = loadV2Dom({ runScripts: false });
   try {
+    const customer = document.getElementById('customerInfoFormItem');
+    const planType = document.getElementById('planDevTypeRow');
     const device = document.getElementById('deviceIdFormItem');
     const deviceSn = document.getElementById('devSnFormItem');
     const borrow = document.getElementById('borrowTestFields');
     const scene = document.getElementById('authSceneFormItem');
-    const customer = document.getElementById('customerSearchInput');
+    assert.ok(customer.compareDocumentPosition(planType) & 4);
+    assert.ok(planType.compareDocumentPosition(device) & 4);
     assert.ok(device.compareDocumentPosition(deviceSn) & 4);
     assert.ok(deviceSn.compareDocumentPosition(borrow) & 4);
     assert.ok(borrow.compareDocumentPosition(scene) & 4);
-    assert.ok(scene.compareDocumentPosition(customer) & 4);
   } finally {
     dom.window.close();
   }
