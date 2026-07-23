@@ -239,7 +239,8 @@ test('HCI 硬件信息文件按客户与集群历史识别有效授权', () => {
 
     assert.equal(document.getElementById('authScene').value, 'adjust');
     assert.match(document.getElementById('authSceneBasisText').textContent, /客户 \+ 产品线 \+ 集群标识/);
-    assert.match(document.getElementById('deviceFactsSummary').textContent, /分布式存储/);
+    assert.doesNotMatch(document.getElementById('deviceFactsSummary').textContent, /分布式存储/);
+    assert.match(document.getElementById('configuredModuleList').textContent, /分布式存储/);
     assert.deepEqual(errors, []);
   } finally {
     dom.window.close();
@@ -399,7 +400,7 @@ test('查询结果归一化并给出设备事实阻断原因', () => {
   ], '20').code, 'PRODUCT_MISMATCH');
 });
 
-test('只读设备事实摘要仅展示来源、授权状态和历史', () => {
+test('只读设备事实摘要不再重复展示当前模块与容量', () => {
   const { dom, document, window, errors } = loadV2Dom();
   try {
     const product = document.getElementById('plname');
@@ -420,18 +421,48 @@ test('只读设备事实摘要仅展示来源、授权状态和历史', () => {
     const grid = panel.querySelector('.device-facts-grid');
     assert.ok(grid, '事实面板应包含 .device-facts-grid');
     const items = Array.from(grid.querySelectorAll('.device-fact-item'));
-    assert.equal(items.length, 6, '事实面板应同时展示设备事实和当前授权概况');
+    assert.equal(items.length, 4, '事实面板应只展示设备来源、状态和历史信息');
     assert.deepEqual(
       items.map((item) => item.querySelector('.device-fact-label').textContent.trim()),
-      ['来源', '授权状态', '累计测试', '历史申请', '当前模块', '当前容量']
+      ['来源', '授权状态', '累计测试', '历史申请']
     );
     assert.deepEqual(
       items.map((item) => item.querySelector('.device-fact-value').textContent.trim()),
-      ['借测设备', '无授权', '0个月', '0次', '无', '0']
+      ['借测设备', '无授权', '0个月', '0次']
     );
     assert.doesNotMatch(panel.textContent, /实际产品/);
     assert.equal(panel.querySelector('input, select, textarea, button'), null);
     assert.equal(document.getElementById('currentAuthorizationOverview'), null, '不应再渲染重复的独立授权概况卡');
+    assert.deepEqual(errors, []);
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('已配置模块只在授权模块配置区展示', () => {
+  const { dom, document, window, errors } = loadV2Dom();
+  try {
+    const product = document.getElementById('plname');
+    product.value = '22';
+    fireChange(product, window);
+    window.addChip('ACTIVE-NGAF-001');
+
+    const devicePanel = document.querySelector('#deviceFactsSummary .device-facts-panel');
+    assert.doesNotMatch(devicePanel.textContent, /当前模块|当前容量|基础防护|应用控制/);
+
+    const configuredSummary = document.getElementById('configuredModuleSummary');
+    assert.equal(configuredSummary.hidden, true, '未选择模块类申请内容时不应单独显示配置摘要');
+    const addModule = document.querySelector('#requestContentGroup input[value="add_module"]');
+    addModule.checked = true;
+    fireChange(addModule, window);
+
+    assert.equal(configuredSummary.hidden, false);
+    assert.equal(configuredSummary.querySelector('.configured-module-label').textContent.trim(), '当前已配置模块');
+    assert.deepEqual(
+      Array.from(configuredSummary.querySelectorAll('.configured-module-tag')).map((tag) => tag.textContent.trim()),
+      ['check_circle基础防护', 'check_circleIPS', 'check_circle应用控制']
+    );
+    assert.doesNotMatch(configuredSummary.textContent, /200|当前容量/);
     assert.deepEqual(errors, []);
   } finally {
     dom.window.close();

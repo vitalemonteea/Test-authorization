@@ -469,6 +469,12 @@
         .module-toolbar-title { font-size: 15px; font-weight: 600; color: #1a1a2e; flex: 1; }
         .toolbar-btn { height: 28px; line-height: 26px; padding: 0 12px; background: #eff4ff; color: #0050cb; border: none; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 500; margin-left: 8px; transition: all 0.2s; }
         .toolbar-btn:hover { background: #dae1ff; }
+        .configured-module-summary { display: flex; align-items: center; gap: 10px; max-width: 900px; margin: 0 auto 12px; padding: 8px 0; color: #424656; }
+        .configured-module-summary[hidden] { display: none; }
+        .configured-module-label { flex: 0 0 auto; font-size: 13px; font-weight: 600; }
+        .configured-module-list { display: flex; align-items: center; gap: 8px; min-width: 0; flex-wrap: wrap; }
+        .configured-module-tag { display: inline-flex; align-items: center; gap: 4px; min-height: 24px; padding: 2px 8px; color: #0050cb; background: #e5eeff; border-radius: 4px; font-size: 12px; font-weight: 500; }
+        .configured-module-tag .material-symbols-outlined { font-size: 15px; }
 
         /* 右侧导航 - MD3 风格 */
         .module-nav { position: fixed; top: 100px; right: 12px; width: 168px; background: #fff; border-radius: 12px; padding: 10px 6px; max-height: calc(100vh - 160px); overflow-y: auto; z-index: 2100; box-shadow: 0 2px 12px rgba(0,0,0,.08); border: none; }
@@ -695,6 +701,8 @@
             .standard-action-bar { gap: 10px; min-height: 60px; padding: 8px 0; }
             .standard-action-status { font-size: 12px; }
             .standard-action-buttons .layui-btn { padding: 0 14px; }
+            .configured-module-summary { align-items: flex-start; gap: 6px; padding: 8px 0; }
+            .configured-module-list { gap: 6px; }
 
             .layui-form-item { flex-direction: column; align-items: stretch; }
             .layui-form-label { width: auto; padding: 0 0 6px 0; }
@@ -1637,6 +1645,10 @@
                             <span class="module-toolbar-title">授权模块配置</span>
                             <button type="button" class="toolbar-btn" id="expandAll">全部展开</button>
                             <button type="button" class="toolbar-btn" id="collapseAll">全部折叠</button>
+                        </div>
+                        <div class="configured-module-summary" id="configuredModuleSummary" hidden>
+                            <span class="configured-module-label">当前已配置模块</span>
+                            <div class="configured-module-list" id="configuredModuleList"></div>
                         </div>
 
                         <!-- 1. 计算虚拟化 -->
@@ -5810,6 +5822,7 @@
         function updateAuthorizationConfigurationVisibility() {
             var dateBar = document.querySelector('#content .unified-date-bar');
             var moduleToolbar = document.querySelector('#content .module-toolbar');
+            var configuredModuleSummary = document.getElementById('configuredModuleSummary');
             var simplifiedModulesTitle = document.getElementById('simplifiedModulesTitle');
             var moduleCards = document.querySelectorAll('#content .module-item');
             var isOpening = applicationState.baseScene === 'first_open' || applicationState.baseScene === 'reopen';
@@ -5818,6 +5831,9 @@
                 applicationState.requestContents.indexOf('increase_capacity') !== -1;
             if (dateBar) dateBar.hidden = !showDate;
             if (moduleToolbar) moduleToolbar.hidden = !showModules;
+            if (configuredModuleSummary) {
+                configuredModuleSummary.hidden = !showModules || configuredModuleSummary.dataset.hasModules !== 'true';
+            }
             if (simplifiedModulesTitle) simplifiedModulesTitle.hidden = !showModules;
             moduleCards.forEach(function(card) { card.hidden = !showModules; });
         }
@@ -5965,18 +5981,11 @@
                 } else {
                     authorizationLabel = '待人工确认';
                 }
-                var factsAvailable = fact.lookupStatus === 'success';
-                var currentModules = factsAvailable ?
-                    (fact.currentModules && fact.currentModules.length ? fact.currentModules.join('、') : '无') :
-                    '待确认';
-                var currentCapacity = factsAvailable ? String(fact.currentCapacity || 0) : '待确认';
                 var values = [
                     ['来源', sourceLabel],
                     ['授权状态', authorizationLabel],
                     ['累计测试', (fact.testedMonths || 0) + '个月'],
-                    ['历史申请', (fact.applicationCount || 0) + '次'],
-                    ['当前模块', currentModules],
-                    ['当前容量', currentCapacity]
+                    ['历史申请', (fact.applicationCount || 0) + '次']
                 ];
                 var panel = document.createElement('details');
                 panel.className = 'device-facts-panel';
@@ -6020,6 +6029,34 @@
                 panel.appendChild(grid);
                 deviceFactsSummary.appendChild(panel);
             });
+        }
+
+        function renderConfiguredModules(facts) {
+            var summary = document.getElementById('configuredModuleSummary');
+            var list = document.getElementById('configuredModuleList');
+            if (!summary || !list) return;
+            var modules = [];
+            facts.forEach(function(fact) {
+                (fact.currentModules || []).forEach(function(moduleName) {
+                    if (modules.indexOf(moduleName) === -1) modules.push(moduleName);
+                });
+            });
+            list.textContent = '';
+            modules.forEach(function(moduleName) {
+                var tag = document.createElement('span');
+                tag.className = 'configured-module-tag';
+                var icon = document.createElement('span');
+                icon.className = 'material-symbols-outlined';
+                icon.textContent = 'check_circle';
+                icon.setAttribute('aria-hidden', 'true');
+                var label = document.createElement('span');
+                label.textContent = moduleName;
+                tag.appendChild(icon);
+                tag.appendChild(label);
+                list.appendChild(tag);
+            });
+            summary.dataset.hasModules = modules.length ? 'true' : 'false';
+            updateAuthorizationConfigurationVisibility();
         }
 
         function renderLookupBlocking(reason) {
@@ -6074,6 +6111,7 @@
             applicationState.deviceFacts = facts;
             applicationState.approvalDecision = null;
             renderDeviceFactsSummary(facts);
+            renderConfiguredModules(facts);
             manualReviewRequired.value = facts.some(function(fact) { return fact.manualReviewRequired; }) ? '1' : '0';
             var blockingReason = typeof authorizationRules.getLookupBlockingReason === 'function' ?
                 authorizationRules.getLookupBlockingReason(facts, plnameSelect.value) : null;
