@@ -160,6 +160,10 @@
             padding: 8px 12px 8px 24px; font-size: 14px; color: #424656; cursor: pointer; transition: all 0.15s; white-space: nowrap;
         }
         .custom-select-option:hover { background: #eff4ff; color: #0050cb; }
+        .custom-select[data-select-id="cloudVersion"] .custom-select-list { overflow-x: hidden; }
+        .custom-select[data-select-id="cloudVersion"] .custom-select-option {
+            white-space: normal; overflow-wrap: anywhere; line-height: 20px;
+        }
         .custom-select[data-select-id="plname"] .custom-select-value { display: flex; align-items: center; gap: 8px; min-width: 0; }
         .custom-select[data-select-id="plname"].open .custom-select-value { display: none; }
         .product-trigger-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -5148,7 +5152,7 @@
                 }
             });
 
-            options.forEach(function(option) {
+            function bindOptionClick(option) {
                 option.addEventListener('click', function(e) {
                     e.stopPropagation();
                     if (isProductSelect) chooseProductOption(this);
@@ -5157,7 +5161,8 @@
                         container.classList.remove('open');
                     }
                 });
-            });
+            }
+            options.forEach(bindOptionClick);
 
             container._resetToDefault = function() {
                 var defaultOption = options[0];
@@ -5192,6 +5197,34 @@
                     if (hiddenSelect) hiddenSelect.value = val;
                 }
             };
+            container._replaceOptions = function(items) {
+                if (!hiddenSelect || isProductSelect) return;
+                var list = container.querySelector('.custom-select-list');
+                hiddenSelect.textContent = '';
+                list.textContent = '';
+                items.forEach(function(item, index) {
+                    var nativeOption = document.createElement('option');
+                    nativeOption.value = item.value;
+                    nativeOption.textContent = item.label;
+                    nativeOption.selected = index === 0;
+                    hiddenSelect.appendChild(nativeOption);
+
+                    var visualOption = document.createElement('li');
+                    visualOption.className = 'custom-select-option' + (index === 0 ? ' selected' : '');
+                    visualOption.dataset.value = item.value;
+                    visualOption.textContent = item.label;
+                    list.appendChild(visualOption);
+                });
+                options = container.querySelectorAll('.custom-select-option');
+                options.forEach(bindOptionClick);
+                hiddenSelect.value = items.length ? items[0].value : '';
+                if (options[0]) syncVisualOption(options[0]);
+                else {
+                    valueSpan.textContent = '请选择...';
+                    valueSpan.classList.remove('has-value');
+                }
+                container.classList.remove('open');
+            };
             container._closeDropdown = function() {
                 if (isProductSelect) closeProductSelect();
                 else container.classList.remove('open');
@@ -5213,6 +5246,33 @@
             initCustomSelect(cs);
         });
         updateProductLifecycleWarning();
+
+        var defaultCloudVersionOptions = Array.prototype.map.call(
+            document.getElementById('cloudVersion').options,
+            function(option) { return { value: option.value, label: option.textContent }; }
+        );
+        var productVersionOptions = {
+            '20': [
+                { value: 'atrust-analysis-a2.6.10-plus', label: '零信任分析中心（aTrust -A.2.6.10及以上）' },
+                { value: 'atrust-control-2.4.10-plus', label: '控制中心（SDPC2.4.10，或ZTAC2.2.72及以上）' },
+                { value: 'atrust-control-2.2.16-2.3.10', label: '控制中心(SDPC2.2.16到2.3.10，ZTAC2.2.72到2.2.71)' },
+                { value: 'atrust-control-below-2.2.16', label: '控制中心（SDPC2.2.16以下版本，不含2.2.16；ZTAC2.2.72以下版本，不包含2.2.72版本）' },
+                { value: 'atrust-hybrid-2.4.10-plus', label: '综合网关（HYBRID2.4.10及以上）' },
+                { value: 'atrust-hybrid-2.2.16-2.3.10', label: '综合网关(HYBRID2.2.16到2.3.10版本)' },
+                { value: 'atrust-hybrid-below-2.2.16', label: '综合网关（HYBRID2.2.16以下版本，不含2.2.16）' },
+                { value: 'atrust-proxy-gateway', label: '代理网关' }
+            ],
+            '22': [
+                { value: 'ngaf-8.0.60-plus', label: 'NGAF8.0.60及以上' },
+                { value: 'vaf-8.0.107-plus', label: 'vAF8.0.107及以上虚拟化版本' }
+            ]
+        };
+
+        function updateProductVersionOptions(productLineId) {
+            var container = document.querySelector('[data-select-id="cloudVersion"]');
+            if (!container || !container._replaceOptions) return;
+            container._replaceOptions(productVersionOptions[String(productLineId)] || defaultCloudVersionOptions);
+        }
 
         // 全局点击关闭自定义下拉框
         document.addEventListener('click', function() {
@@ -6174,6 +6234,7 @@
         plnameSelect.addEventListener('change', function() {
             var plVal = this.value;
             applicationState.productStatus = getCurrentProductStatus(plVal);
+            updateProductVersionOptions(plVal);
             updateDateLimit(applicationState.customerType);
             updateProductLifecycleWarning();
             // 切换产品线时重置下游字段
@@ -6236,6 +6297,7 @@
             clearHwFile();
 
             updateProductLifecycleWarning();
+            updateProductVersionOptions(plnameSelect.value);
             applyPlMode();
             refreshRecognizedDeviceFacts(deviceIdChips.get());
             refreshModuleNav(plnameSelect.value);
