@@ -110,6 +110,10 @@ test('基本信息外层容器应带 basic-info-section 类', () => {
     section.classList.contains('basic-info-section'),
     '基本信息容器应带 basic-info-section 类'
   );
+  assert.ok(
+    elementHasCssProperty(section, 'width', /^100%$/),
+    '基本信息卡应固定占满主表单宽度，不应按内容动态收缩'
+  );
 });
 
 test('基本信息标题下应包含 basic-title-accent 强调线', () => {
