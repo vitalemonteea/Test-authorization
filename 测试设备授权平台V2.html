@@ -27,6 +27,9 @@
         .layui-header { height: 40px; background: #fff; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: flex-end; padding: 0 24px; gap: 4px; overflow: visible; }
         .header-icon-btn { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border: none; background: transparent; border-radius: 8px; cursor: pointer; color: #5f6368; transition: background 0.2s ease, color 0.2s ease; position: relative; font-family: inherit; font-size: 14px; }
         .header-icon-btn:hover { background: rgba(0,0,0,.04); color: #0050cb; }
+        .header-icon-btn:focus-visible,
+        .header-menu-btn:focus-visible,
+        .header-user:focus-visible { outline: 2px solid #0050cb; outline-offset: -2px; }
         .header-icon-btn .material-symbols-outlined { font-size: 24px; }
         .header-user { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 12px 0 8px; border: none; background: transparent; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 14px; transition: background 0.2s ease; margin-left: 8px; }
         .header-user:hover { background: rgba(0,0,0,.04); }
@@ -201,8 +204,32 @@
         /* 按钮 */
         .layui-btn { display: inline-flex; align-items: center; justify-content: center; height: 40px; padding: 0 24px; background-color: #0050cb; color: #fff; white-space: nowrap; text-align: center; font-size: 14px; font-weight: 500; border: none; border-radius: 10px; cursor: pointer; transition: all 0.2s; }
         .layui-btn:hover { opacity: 0.9; box-shadow: 0 2px 8px rgba(0,80,203,.25); }
+        .layui-btn:focus-visible { outline: 2px solid #0050cb; outline-offset: 2px; }
+        .layui-btn:disabled { background: #c7ccd6; color: #fff; cursor: not-allowed; opacity: 1; box-shadow: none; }
+        .layui-btn:disabled:hover { background: #c7ccd6; opacity: 1; box-shadow: none; }
         .layui-btn-primary { background-color: #eff4ff; color: #0050cb; border: none; }
         .layui-btn-primary:hover { background: #dae1ff; box-shadow: none; color: #0050cb; }
+
+        /* 硬件授权表单操作栏 */
+        body[data-active-tab="hardware"] .layui-layout-admin .layui-body { bottom: 0; }
+        body[data-active-tab="hardware"] .layui-footer { display: none; }
+        #content-hardware { height: 100%; min-height: 100%; }
+        #formsn { min-height: 100%; }
+        #formsn { display: flex; flex-direction: column; }
+        .standard-action-bar {
+            position: sticky; bottom: 0; z-index: 1200;
+            display: flex; align-items: center; justify-content: space-between; gap: 16px;
+            width: 100%; max-width: 900px; min-height: 64px; margin: auto auto 0; padding: 10px 16px;
+            background: rgba(255,255,255,.96); border-top: 1px solid #d8deea;
+            box-shadow: 0 -4px 14px rgba(11,28,48,.08); backdrop-filter: blur(8px);
+        }
+        .standard-action-status { display: inline-flex; align-items: center; gap: 8px; min-width: 0; color: #424656; font-size: 13px; line-height: 20px; }
+        .standard-action-status .material-symbols-outlined { flex: 0 0 auto; color: #5f6b7a; font-size: 20px; }
+        .standard-action-status.is-ready { color: #176b3a; }
+        .standard-action-status.is-ready .material-symbols-outlined { color: #176b3a; }
+        .standard-action-status.has-conflict { color: #ba1a1a; }
+        .standard-action-status.has-conflict .material-symbols-outlined { color: #ba1a1a; }
+        .standard-action-buttons { display: inline-flex; align-items: center; gap: 8px; flex: 0 0 auto; }
 
 
         /* 表单辅助 */
@@ -460,6 +487,20 @@
             .layui-header { padding: 0 16px; }
         }
 
+        /* 紧凑桌面：左侧收为图标轨，释放表单宽度 */
+        @media (max-width: 1100px) and (min-width: 769px) {
+            .layui-layout-admin .layui-side { width: 64px; }
+            .layui-layout-admin .layui-header,
+            .layui-layout-admin .layui-body { left: 64px; }
+            .layui-layout-admin .layui-footer { left: 64px; }
+            .sidebar-brand { justify-content: center; padding: 12px 0; }
+            .brand-title,
+            .navBar ul li a cite { display: none; }
+            .navBar ul { padding: 0 8px; }
+            .navBar ul li a { justify-content: center; gap: 0; padding: 10px 0; }
+            .content-body { padding: 12px 188px 12px 24px; }
+        }
+
         /* XaaS 表单样式 */
         .required-star { color: #c62828; margin-left: 2px; }
         .xaas-product-list { border: 1px solid #d1d5db; border-radius: 8px; max-width: 600px; overflow: visible; }
@@ -651,6 +692,9 @@
             .layui-layout-admin .layui-footer { left: 0; }
             .content-body { padding: 12px 16px; }
             .module-nav { display: none !important; }
+            .standard-action-bar { gap: 10px; min-height: 60px; padding: 8px 0; }
+            .standard-action-status { font-size: 12px; }
+            .standard-action-buttons .layui-btn { padding: 0 14px; }
 
             .layui-form-item { flex-direction: column; align-items: stretch; }
             .layui-form-label { width: auto; padding: 0 0 6px 0; }
@@ -855,17 +899,17 @@
     <div class="layui-layout layui-layout-admin">
         <!-- 顶部 -->
         <div class="layui-header">
-            <button type="button" class="header-menu-btn" onclick="toggleMobileSidebar()">
-                <span class="material-symbols-outlined">menu</span>
+            <button type="button" class="header-menu-btn" onclick="toggleMobileSidebar()" aria-label="展开侧边导航" title="展开侧边导航">
+                <span class="material-symbols-outlined" aria-hidden="true">menu</span>
             </button>
             <div class="tooltip-wrap">
-                <button type="button" class="header-icon-btn" onclick="window.open('https://200-200-0-201.atrust.sangfor.com/sap/files/czsc.pdf')">
-                    <span class="material-symbols-outlined">menu_book</span>
+                <button type="button" class="header-icon-btn" onclick="window.open('https://200-200-0-201.atrust.sangfor.com/sap/files/czsc.pdf')" aria-label="操作手册" title="操作手册">
+                    <span class="material-symbols-outlined" aria-hidden="true">menu_book</span>
                 </button>
                 <span class="tooltip-box">操作手册</span>
             </div>
-            <button type="button" class="header-icon-btn" onclick="window.open('javascript:;')">
-                <span class="material-symbols-outlined">settings</span>
+            <button type="button" class="header-icon-btn" onclick="window.open('javascript:;')" aria-label="系统设置" title="系统设置">
+                <span class="material-symbols-outlined" aria-hidden="true">settings</span>
             </button>
                         <div class="header-user-dropdown" id="userDropdown">
                 <button type="button" class="header-user" onclick="toggleUserDropdown()">
@@ -975,7 +1019,7 @@
                                     <option value="41">独立在线授权</option>
                                     <option value="44">统一在线授权</option>
                                 </select>
-                                <div class="custom-select-trigger product-combobox-trigger" tabindex="0">
+                                <div class="custom-select-trigger product-combobox-trigger" tabindex="0" role="combobox" aria-label="产品线" aria-haspopup="listbox" aria-expanded="false" aria-controls="productLineOptions">
                                     <span class="custom-select-value">aBDI</span>
                                     <div class="product-select-search-inline" role="search">
                                         <span class="material-symbols-outlined" aria-hidden="true">search</span>
@@ -1069,7 +1113,7 @@
                                     <option value="6.9.0sCloud1_1">sCloud690/691/6100 英文C86免KEY</option>
                                     <option value="sCloud6.9.0EN-UKEY">sCloud690/691/6100英文C86USB-KEY</option>
                                 </select>
-                                <button type="button" class="custom-select-trigger">
+                                <button type="button" class="custom-select-trigger" aria-label="版本">
                                     <span class="custom-select-value">HCI-6.8.1-VKEY</span>
                                     <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
                                 </button>
@@ -1165,7 +1209,7 @@
                                     <option value="1">硬件借测（硬件为我司借测设备，通过硬件设备开授权）</option>
                                     <option value="2">纯软测试（硬件为客户自己服务器，通过软件开授权）</option>
                                 </select>
-                                <button type="button" class="custom-select-trigger">
+                                <button type="button" class="custom-select-trigger" aria-label="申请类型">
                                     <span class="custom-select-value">请选择...</span>
                                     <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
                                 </button>
@@ -1240,7 +1284,7 @@
                                     <option value="渠道借测">渠道借测</option>
                                     <option value="自用测试">自用测试</option>
                                 </select>
-                                <button type="button" class="custom-select-trigger">
+                                <button type="button" class="custom-select-trigger" aria-label="借测状态">
                                     <span class="custom-select-value">请选择借测状态</span>
                                     <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
                                 </button>
@@ -1266,7 +1310,7 @@
                                     <option value="演示测试">演示测试</option>
                                     <option value="培训测试">培训测试</option>
                                 </select>
-                                <button type="button" class="custom-select-trigger">
+                                <button type="button" class="custom-select-trigger" aria-label="借测类型">
                                     <span class="custom-select-value">请选择借测类型</span>
                                     <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
                                 </button>
@@ -1443,7 +1487,7 @@
                                     <option value="金融事业部">金融事业部</option>
                                     <option value="陕西区">陕西区</option>
                                 </select>
-                                <button type="button" class="custom-select-trigger">
+                                <button type="button" class="custom-select-trigger" aria-label="区域">
                                     <span class="custom-select-value">请选择区域</span>
                                     <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
                                 </button>
@@ -1498,7 +1542,7 @@
                                 <select class="layui-select" name="office" id="office" style="display:none;">
                                     <option value="上海办" selected>上海办</option>
                                 </select>
-                                <button type="button" class="custom-select-trigger">
+                                <button type="button" class="custom-select-trigger" aria-label="办事处">
                                     <span class="custom-select-value has-value">上海办</span>
                                     <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
                                 </button>
@@ -2012,11 +2056,14 @@
                     </div>
                     <!-- 动态授权配置区结束 -->
 
-                    <!-- 提交按钮 -->
-                    <div class="layui-form-item">
-                        <div class="layui-input-block" style="text-align: center;">
-                            <button type="button" class="layui-btn" id="standardSubmitButton" onclick="submitStandardForm()">立即获取</button>
+                    <div class="standard-action-bar" id="standardActionBar">
+                        <div class="standard-action-status" id="standardActionStatus" role="status" aria-live="polite">
+                            <span class="material-symbols-outlined" id="standardActionStatusIcon" aria-hidden="true">info</span>
+                            <span id="standardActionStatusText">请先识别设备或上传硬件信息</span>
+                        </div>
+                        <div class="standard-action-buttons">
                             <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                            <button type="button" class="layui-btn" id="standardSubmitButton" onclick="submitStandardForm()">立即获取</button>
                         </div>
                     </div>
                 </form>
@@ -4964,6 +5011,18 @@
             var hiddenSelect = document.getElementById(container.dataset.selectId);
             var isProductSelect = container.dataset.selectId === 'plname';
             var productSearch = isProductSelect ? container.querySelector('.product-select-search-input') : null;
+            var selectAriaLabels = {
+                plname: '产品线',
+                cloudVersion: '版本',
+                planDevType: '申请类型',
+                area: '区域',
+                office: '办事处'
+            };
+            if (selectAriaLabels[container.dataset.selectId]) {
+                trigger.setAttribute('aria-label', selectAriaLabels[container.dataset.selectId]);
+            }
+            trigger.setAttribute('aria-haspopup', 'listbox');
+            trigger.setAttribute('aria-expanded', 'false');
 
             function getOptionLabel(option) {
                 return option.dataset.label || option.textContent.trim();
@@ -5055,8 +5114,8 @@
 
             function closeProductSelect() {
                 container.classList.remove('open');
+                trigger.setAttribute('aria-expanded', 'false');
                 if (isProductSelect) {
-                    trigger.setAttribute('aria-expanded', 'false');
                     if (productSearch) {
                         productSearch.value = '';
                         filterProductOptions('');
@@ -5161,11 +5220,13 @@
             trigger.addEventListener('click', function(e) {
                 e.stopPropagation();
                 var isOpen = container.classList.contains('open');
-                document.querySelectorAll('.custom-select.open').forEach(function(cs) { cs.classList.remove('open'); });
+                document.querySelectorAll('.custom-select.open').forEach(function(cs) {
+                    if (cs._closeDropdown) cs._closeDropdown();
+                    else cs.classList.remove('open');
+                });
                 if (!isOpen) {
-                    if (isProductSelect) openProductSelect();
-                    else container.classList.add('open');
-                } else if (isProductSelect) {
+                    openProductSelect();
+                } else {
                     closeProductSelect();
                 }
             });
@@ -5176,7 +5237,7 @@
                     if (isProductSelect) chooseProductOption(this);
                     else {
                         updateDisplay(this);
-                        container.classList.remove('open');
+                        closeProductSelect();
                     }
                 });
             }
@@ -5241,11 +5302,10 @@
                     valueSpan.textContent = '请选择...';
                     valueSpan.classList.remove('has-value');
                 }
-                container.classList.remove('open');
+                closeProductSelect();
             };
             container._closeDropdown = function() {
-                if (isProductSelect) closeProductSelect();
-                else container.classList.remove('open');
+                closeProductSelect();
             };
         }
 
@@ -5597,6 +5657,9 @@
         var deviceCompatibilityBlocking = document.getElementById('deviceCompatibilityBlocking');
         var deviceCompatibilityIssueList = document.getElementById('deviceCompatibilityIssueList');
         var standardSubmitButton = document.getElementById('standardSubmitButton');
+        var standardActionStatus = document.getElementById('standardActionStatus');
+        var standardActionStatusIcon = document.getElementById('standardActionStatusIcon');
+        var standardActionStatusText = document.getElementById('standardActionStatusText');
         var compatibilityIssueLabels = {
             PRODUCT_LINE_MISMATCH: '实际产品不同',
             BASE_SCENE_MISMATCH: '授权场景不同，请拆单申请',
@@ -5620,6 +5683,31 @@
                 deviceCompatibilityIssueList.appendChild(row);
             });
             standardSubmitButton.disabled = issues.some(function(issue) { return issue.hard; });
+            updateStandardActionReadiness();
+        }
+
+        function updateStandardActionReadiness() {
+            var hardConflict = applicationState.compatibilityIssues.some(function(issue) { return issue.hard; });
+            var statusText = '请先识别设备或上传硬件信息';
+            var statusIcon = 'info';
+            var statusClass = '';
+            if (hardConflict) {
+                statusText = '设备存在冲突，请先处理';
+                statusIcon = 'error';
+                statusClass = 'has-conflict';
+            } else if (applicationState.deviceFacts.length > 0 && !applicationState.requestAction) {
+                statusText = '设备信息待处理';
+            } else if (applicationState.baseScene === 'adjust' && !applicationState.requestContents.length) {
+                statusText = '请选择申请内容';
+            } else if (applicationState.deviceFacts.length > 0) {
+                statusText = '已识别 ' + applicationState.deviceFacts.length + ' 台设备，可以提交';
+                statusIcon = 'check_circle';
+                statusClass = 'is-ready';
+            }
+            standardActionStatus.classList.remove('is-ready', 'has-conflict');
+            if (statusClass) standardActionStatus.classList.add(statusClass);
+            standardActionStatusIcon.textContent = statusIcon;
+            standardActionStatusText.textContent = statusText;
         }
 
         function buildDeviceApplications(facts) {

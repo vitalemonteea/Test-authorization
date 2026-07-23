@@ -193,6 +193,57 @@ test('桌面布局应约束顶部账号入口并始终保留模块导航', () =>
   assert.match(compactCss, /\.content-body\{padding:12px188px12px32px;/, '紧凑桌面应为右侧模块导航保留空间');
 });
 
+test('1024 宽度应将左侧导航收为图标轨并保留右侧导航空间', () => {
+  const railMediaMatch = /@media\s*\(max-width\s*:\s*1100px\)\s*and\s*\(min-width\s*:\s*769px\)/i.exec(cssText);
+  const railMediaRange = findCssBlockRange(cssText, railMediaMatch?.index ?? -1);
+  assert.ok(railMediaRange, '应存在 769px 至 1100px 的图标轨断点');
+  const railCss = cssText.slice(railMediaRange.contentStart, railMediaRange.contentEnd).replace(/\s+/g, '');
+  assert.match(railCss, /\.layui-layout-admin\.layui-side\{width:64px;/, '左侧导航应收窄为 64px');
+  assert.match(railCss, /\.layui-layout-admin\.layui-header,\.layui-layout-admin\.layui-body\{left:64px;/, '顶部栏和正文应同步左移');
+  assert.match(railCss, /\.brand-title,\.navBarulliacite\{display:none;/, '图标轨应隐藏品牌标题和菜单文字');
+  assert.match(railCss, /\.content-body\{padding:12px188px12px24px;/, '正文仍应为右侧模块导航预留空间');
+});
+
+test('硬件授权应使用带状态反馈的粘性操作栏', () => {
+  const actionBar = doc.getElementById('standardActionBar');
+  assert.ok(actionBar, '应存在标准表单操作栏');
+  assert.equal(actionBar.closest('form')?.id, 'formsn');
+  assert.ok(doc.getElementById('standardActionStatusText'), '操作栏应包含实时状态文案');
+  assert.equal(actionBar.querySelector('[role="status"]')?.getAttribute('aria-live'), 'polite');
+  assert.deepEqual(
+    Array.from(actionBar.querySelectorAll('button')).map((button) => button.textContent.trim()),
+    ['重置', '立即获取'],
+    '次要操作应位于主要操作之前'
+  );
+  assertRuleProperty('.standard-action-bar', 'position', /^sticky$/, '操作栏应跟随滚动容器粘附');
+  assertRuleProperty('.standard-action-bar', 'bottom', /^0$/, '操作栏应粘附在滚动容器底部');
+  assertRuleProperty('body[data-active-tab="hardware"] .layui-footer', 'display', /^none$/, '硬件授权页应释放旧页脚空间');
+});
+
+test('顶部图标和关键自定义下拉应具有可读名称', () => {
+  const headerButtons = Array.from(doc.querySelectorAll('.header-menu-btn, .header-icon-btn'));
+  assert.deepEqual(
+    headerButtons.map((button) => button.getAttribute('aria-label')),
+    ['展开侧边导航', '操作手册', '系统设置']
+  );
+
+  const expectedLabels = {
+    plname: '产品线',
+    cloudVersion: '版本',
+    planDevType: '申请类型',
+    area: '区域',
+    office: '办事处'
+  };
+  Object.entries(expectedLabels).forEach(([selectId, label]) => {
+    const trigger = doc.querySelector(`[data-select-id="${selectId}"] .custom-select-trigger`);
+    assert.equal(trigger?.getAttribute('aria-label'), label, `${selectId} 下拉应有明确名称`);
+  });
+  const productTrigger = doc.querySelector('[data-select-id="plname"] .custom-select-trigger');
+  assert.equal(productTrigger.getAttribute('role'), 'combobox');
+  assert.equal(productTrigger.getAttribute('aria-expanded'), 'false');
+  assert.equal(productTrigger.getAttribute('aria-controls'), 'productLineOptions');
+});
+
 test('首屏应通过硬件授权 Tab 状态入口显示右侧模块导航', () => {
   const switchTabDefinition = html.indexOf('function switchTab(tabName)');
   const switchTabInitialization = html.indexOf("switchTab('hardware');", switchTabDefinition);

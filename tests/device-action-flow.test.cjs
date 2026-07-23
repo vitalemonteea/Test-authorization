@@ -171,6 +171,47 @@ test('纯软设备只查授权历史并可识别重新开通场景', () => {
   }
 });
 
+test('操作栏按识别与申请内容状态提供提交提示', () => {
+  const { dom, document, window, errors } = loadV2Dom();
+  try {
+    const status = document.getElementById('standardActionStatusText');
+    assert.equal(status.textContent.trim(), '请先识别设备或上传硬件信息');
+
+    const product = document.getElementById('plname');
+    product.value = '20';
+    fireChange(product, window);
+    window.addChip('SALES-ATRUST-001');
+    assert.equal(status.textContent.trim(), '请选择申请内容');
+
+    const extend = document.querySelector('#requestContentGroup input[value="extend"]');
+    extend.checked = true;
+    fireChange(extend, window);
+    assert.equal(status.textContent.trim(), '已识别 1 台设备，可以提交');
+    assert.equal(document.getElementById('standardActionStatus').classList.contains('is-ready'), true);
+    assert.deepEqual(errors, []);
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('自定义下拉同步 aria-expanded 展开状态', () => {
+  const { dom, document, errors } = loadV2Dom();
+  try {
+    const container = document.querySelector('[data-select-id="planDevType"]');
+    const trigger = container.querySelector('.custom-select-trigger');
+    assert.equal(trigger.getAttribute('aria-expanded'), 'false');
+    trigger.click();
+    assert.equal(container.classList.contains('open'), true);
+    assert.equal(trigger.getAttribute('aria-expanded'), 'true');
+    document.body.click();
+    assert.equal(container.classList.contains('open'), false);
+    assert.equal(trigger.getAttribute('aria-expanded'), 'false');
+    assert.deepEqual(errors, []);
+  } finally {
+    dom.window.close();
+  }
+});
+
 test('重新开通与累计超期可以在场景卡中同时显示', () => {
   const { dom, document, window, errors } = loadV2Dom();
   try {
