@@ -240,7 +240,8 @@ test('HCI 硬件信息文件按客户与集群历史识别有效授权', () => {
     assert.equal(document.getElementById('authScene').value, 'adjust');
     assert.match(document.getElementById('authSceneBasisText').textContent, /客户 \+ 产品线 \+ 集群标识/);
     assert.doesNotMatch(document.getElementById('deviceFactsSummary').textContent, /分布式存储/);
-    assert.match(document.getElementById('configuredModuleList').textContent, /分布式存储/);
+    assert.equal(document.querySelector('#module-aSV .module-status').textContent.trim(), '已授权');
+    assert.match(document.querySelector('#module-aSV .module-authorization-validity').textContent, /2026-10-31/);
     assert.deepEqual(errors, []);
   } finally {
     dom.window.close();
@@ -421,14 +422,14 @@ test('只读设备事实摘要不再重复展示当前模块与容量', () => {
     const grid = panel.querySelector('.device-facts-grid');
     assert.ok(grid, '事实面板应包含 .device-facts-grid');
     const items = Array.from(grid.querySelectorAll('.device-fact-item'));
-    assert.equal(items.length, 4, '事实面板应只展示设备来源、状态和历史信息');
+    assert.equal(items.length, 5, '事实面板应展示设备来源、状态、历史和最新授权有效期');
     assert.deepEqual(
       items.map((item) => item.querySelector('.device-fact-label').textContent.trim()),
-      ['来源', '授权状态', '累计测试', '历史申请']
+      ['来源', '授权状态', '累计测试', '历史申请', '最新授权有效期']
     );
     assert.deepEqual(
       items.map((item) => item.querySelector('.device-fact-value').textContent.trim()),
-      ['借测设备', '无授权', '0个月', '0次']
+      ['借测设备', '无授权', '0个月', '0次', '无']
     );
     assert.doesNotMatch(panel.textContent, /实际产品/);
     assert.equal(panel.querySelector('input, select, textarea, button'), null);
@@ -439,7 +440,7 @@ test('只读设备事实摘要不再重复展示当前模块与容量', () => {
   }
 });
 
-test('已配置模块只在授权模块配置区展示', () => {
+test('已有授权直接映射为模块卡开关、状态和有效期', () => {
   const { dom, document, window, errors } = loadV2Dom();
   try {
     const product = document.getElementById('plname');
@@ -450,19 +451,27 @@ test('已配置模块只在授权模块配置区展示', () => {
     const devicePanel = document.querySelector('#deviceFactsSummary .device-facts-panel');
     assert.doesNotMatch(devicePanel.textContent, /当前模块|当前容量|基础防护|应用控制/);
 
-    const configuredSummary = document.getElementById('configuredModuleSummary');
-    assert.equal(configuredSummary.hidden, true, '未选择模块类申请内容时不应单独显示配置摘要');
+    assert.equal(document.getElementById('configuredModuleSummary'), null, '不应再单独展示已配置模块标签行');
     const addModule = document.querySelector('#requestContentGroup input[value="add_module"]');
     addModule.checked = true;
     fireChange(addModule, window);
 
-    assert.equal(configuredSummary.hidden, false);
-    assert.equal(configuredSummary.querySelector('.configured-module-label').textContent.trim(), '当前已配置模块');
-    assert.deepEqual(
-      Array.from(configuredSummary.querySelectorAll('.configured-module-tag')).map((tag) => tag.textContent.trim()),
-      ['check_circle基础防护', 'check_circleIPS', 'check_circle应用控制']
-    );
-    assert.doesNotMatch(configuredSummary.textContent, /200|当前容量/);
+    const ngafCard = document.getElementById('module-NGAF');
+    assert.equal(ngafCard.dataset.currentlyAuthorized, 'true');
+    assert.equal(ngafCard.querySelector('.toggle-switch').classList.contains('active'), true);
+    assert.equal(ngafCard.querySelector('.toggle-switch').getAttribute('aria-disabled'), 'true');
+    assert.equal(ngafCard.querySelector('.module-status').textContent.trim(), '已授权');
+    assert.equal(ngafCard.querySelector('.module-authorization-validity').textContent.trim(), '授权至 2026-08-31');
+    assert.equal(ngafCard.querySelector('input[name="NGAF_service_time"]').value, '2026-08-31');
+
+    ngafCard.querySelector('.toggle-switch').click();
+    assert.equal(ngafCard.querySelector('.toggle-switch').classList.contains('active'), true, '已有授权模块不可在增开场景中关闭');
+
+    const adCard = document.getElementById('module-AD');
+    assert.equal(adCard.dataset.currentlyAuthorized, 'false');
+    assert.equal(adCard.querySelector('.toggle-switch').classList.contains('active'), false);
+    assert.equal(adCard.querySelector('.module-status').textContent.trim(), '未授权');
+    assert.match(getDeviceFactValue(devicePanel, '最新授权有效期'), /2026-08-31/);
     assert.deepEqual(errors, []);
   } finally {
     dom.window.close();
