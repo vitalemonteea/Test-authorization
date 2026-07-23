@@ -229,9 +229,18 @@
         .search-dropdown .search-item .item-badge.normal { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
         .search-dropdown .search-item:hover .item-badge.ka { background: #fff3e0; border-color: #ffcc80; }
         .search-dropdown .search-item:hover .item-badge.normal { background: #e8f5e9; border-color: #a5d6a7; }
-        .customer-info-display { margin-top: 8px; font-size: 13px; color: #666; line-height: 28px; background: #f8f8f8; padding: 5px 12px; border-radius: 2px; display: none; width: fit-content; }
-        .customer-info-display.show { display: block; }
-        .customer-info-display span { color: #333; font-weight: 500; }
+        .customer-info-display { display: none; align-items: center; justify-content: space-between; gap: 16px; width: 100%; min-height: 48px; padding: 8px 10px 8px 12px; color: #424656; background: #fff; border: 1px solid #d8deea; border-radius: 8px; box-sizing: border-box; }
+        .customer-info-display.show { display: flex; }
+        .customer-summary-main { display: flex; align-items: center; gap: 10px; min-width: 0; }
+        .customer-summary-icon { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; flex: 0 0 30px; color: #0050cb; background: #eef4ff; border-radius: 6px; font-size: 18px; }
+        .customer-summary-copy { display: flex; align-items: center; gap: 10px; min-width: 0; flex-wrap: wrap; }
+        .customer-summary-name { min-width: 0; color: #0b1c30; font-size: 13px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .customer-summary-meta { display: inline-flex; align-items: center; gap: 8px; color: #6b7890; font-size: 12px; }
+        .customer-summary-meta strong { color: #424656; font-weight: 500; }
+        .customer-change-button { display: inline-flex; align-items: center; justify-content: center; gap: 4px; min-width: 66px; height: 32px; flex: 0 0 auto; padding: 0 10px; color: #0050cb; background: transparent; border: 1px solid #b9cdf2; border-radius: 6px; font-size: 12px; cursor: pointer; transition: background-color .15s, border-color .15s; }
+        .customer-change-button:hover { background: #eef4ff; border-color: #7da3e6; }
+        .customer-change-button .material-symbols-outlined { font-size: 16px; }
+        #customerInfoFormItem.has-selection .search-select-box { display: none; }
         .customer-search-locked { background: #f5f7fa !important; color: #666 !important; cursor: not-allowed; }
         .customer-type-badge { display: inline-block; padding: 1px 8px; border-radius: 3px; font-size: 11px; font-weight: 600; margin-left: 10px; vertical-align: middle; line-height: 20px; }
         .customer-type-badge.ka { background: #fff3e0; color: #e65100; border: 1px solid #ffcc80; }
@@ -290,6 +299,7 @@
         .basic-title-accent::before { content: ''; position: absolute; inset: 0 auto 0 0; width: 72px; background: #0050cb; border-radius: 3px; }
         #section-basic .basic-two-col-row,
         #section-basic .borrow-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px 36px; margin: 0 0 18px; overflow: visible; }
+        #section-basic .product-version-row { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); }
         #section-basic .basic-full-row { display: grid; grid-template-columns: minmax(0, 1fr); margin: 0 0 18px; overflow: visible; }
         #section-basic #planDevTypeRow[hidden] { display: none; }
         #section-basic #authSceneRow[hidden] { display: none; }
@@ -918,7 +928,7 @@
                         <div class="section-title">基本信息</div>
                         <div class="basic-title-accent" aria-hidden="true"></div>
                     <div id="section-basic">
-                    <div class="basic-two-col-row">
+                    <div class="basic-two-col-row product-version-row">
                     <!-- 产品线 -->
                     <div class="layui-form-item">
                         <label class="layui-form-label">产品线</label>
@@ -1110,10 +1120,20 @@
                                 <input type="text" id="customerSearchInput" placeholder="请输入客户名称或ID搜索" class="layui-input" autocomplete="off">
                                 <div class="search-dropdown" id="customerDropdown"></div>
                             </div>
-                            <div class="customer-info-display" id="customerInfoDisplay">
-                                客户名称：<span id="selectedCustomerName">-</span> <span id="selectedSales" class="sales-person-badge" style="display:none;"></span>
-                                <span style="margin-left:20px;">客户ID：<span id="selectedCustomerId">-</span></span>
-                                <span class="customer-type-badge" id="customerTypeBadge" style="display:none;"></span>
+                            <div class="customer-info-display" id="customerInfoDisplay" aria-live="polite">
+                                <div class="customer-summary-main">
+                                    <span class="material-symbols-outlined customer-summary-icon" aria-hidden="true">domain</span>
+                                    <div class="customer-summary-copy">
+                                        <span class="customer-summary-name" id="selectedCustomerName">-</span>
+                                        <span class="customer-summary-meta">客户ID <strong id="selectedCustomerId">-</strong></span>
+                                        <span id="selectedSales" class="sales-person-badge" style="display:none;"></span>
+                                        <span class="customer-type-badge" id="customerTypeBadge" style="display:none;"></span>
+                                    </div>
+                                </div>
+                                <button type="button" class="customer-change-button" id="changeCustomerButton" title="重新选择客户">
+                                    <span class="material-symbols-outlined" aria-hidden="true">edit</span>
+                                    <span>更换</span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -6284,6 +6304,7 @@
             document.getElementById('selectedCustomerName').textContent = '-';
             document.getElementById('selectedCustomerId').textContent = '-';
             document.getElementById('customerInfoDisplay').classList.remove('show');
+            document.getElementById('customerInfoFormItem').classList.remove('has-selection');
             var salesBadge = document.getElementById('selectedSales');
             salesBadge.textContent = '';
             salesBadge.style.display = 'none';
@@ -6380,6 +6401,13 @@
         var infoDisplay = document.getElementById('customerInfoDisplay');
         var nameSpan = document.getElementById('selectedCustomerName');
         var idSpan = document.getElementById('selectedCustomerId');
+        var customerInfoFormItem = document.getElementById('customerInfoFormItem');
+        var changeCustomerButton = document.getElementById('changeCustomerButton');
+
+        function showSelectedCustomerSummary() {
+            infoDisplay.classList.add('show');
+            customerInfoFormItem.classList.add('has-selection');
+        }
 
         searchInput.addEventListener('input', function() {
             var keyword = this.value.trim().toLowerCase();
@@ -6426,7 +6454,7 @@
                     badge.className = 'customer-type-badge normal';
                 }
                 badge.style.display = 'inline-block';
-                infoDisplay.classList.add('show');
+                showSelectedCustomerSummary();
                 dropdown.classList.remove('show');
                 // 更新日期限制
                 updateDateLimit(custType);
@@ -6464,7 +6492,7 @@
                         badge.className = 'customer-type-badge normal';
                         badge.style.display = 'inline-block';
                     }
-                    infoDisplay.classList.add('show');
+                    showSelectedCustomerSummary();
                     applicationState.customerType = 'normal';
                     applicationState.customerId = newCustomerId;
                     if (applicationState.rawDeviceFacts.length) {
@@ -6476,6 +6504,13 @@
                 }
             });
         }
+
+        changeCustomerButton.addEventListener('click', function() {
+            customerInfoFormItem.classList.remove('has-selection');
+            infoDisplay.classList.remove('show');
+            searchInput.focus();
+            searchInput.select();
+        });
 
         // ===== 模块交互 =====
         var cards = document.querySelectorAll('.module-item');

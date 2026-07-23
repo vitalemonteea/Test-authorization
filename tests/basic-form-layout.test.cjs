@@ -294,6 +294,13 @@ test('产品线与版本应在同一 basic-two-col-row 两列布局中', () => {
   const row = plname.closest('.basic-two-col-row');
   assert.ok(row, '产品线应位于 .basic-two-col-row 内');
   assert.ok(row.querySelector('#cloudVersion'), '同一行应包含版本 cloudVersion');
+  assert.ok(row.classList.contains('product-version-row'), '产品与版本行应带 product-version-row 比例布局类');
+  assertRuleProperty(
+    '.product-version-row',
+    'grid-template-columns',
+    /^minmax\(0,2fr\)minmax\(0,3fr\)$/,
+    '版本字段应比产品线获得更多展示空间'
+  );
 });
 
 test('授权场景应占满独立整行，区域与办事处保持标准两列布局', () => {
@@ -332,6 +339,9 @@ test('客户信息应展示销售负责人徽章 selectedSales', () => {
   );
   const display = doc.getElementById('customerInfoDisplay');
   assert.ok(display.contains(sales), 'selectedSales 应位于客户信息展示区内');
+  assert.ok(display.querySelector('.customer-summary-main'), '客户选中态应使用单条摘要布局');
+  assert.ok(display.querySelector('#changeCustomerButton'), '客户摘要应提供更换客户操作');
+  assert.match(html, /customerInfoFormItem\.classList\.add\('has-selection'\)/, '选择客户后应切换为摘要状态');
 });
 
 test('申请类型表单项应位于 basic-full-row 并占满整行', () => {
