@@ -367,19 +367,19 @@
         #section-basic .device-fact-value { display: block; overflow-wrap: anywhere; word-break: break-word; }
         #section-basic .device-fact-label { margin-bottom: 4px; color: #424656; font-size: 12px; line-height: 16px; }
         #section-basic .device-fact-value { color: #0b1c30; font-size: 13px; line-height: 1.45; }
-        #section-basic .auth-scene-display { display: flex; align-items: flex-start; gap: 10px; min-height: 56px; padding: 10px 12px; background: #fff; border: 1px solid #d8deea; border-left: 3px solid #0050cb; border-radius: 6px; box-sizing: border-box; }
-        #section-basic .auth-scene-icon { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; flex: 0 0 30px; color: #0050cb; background: #eef4ff; border-radius: 6px; font-size: 18px; }
+        #section-basic .auth-scene-display { display: flex; align-items: center; min-height: 76px; padding: 14px 16px; background: #fff; border: 1px solid #d8deea; border-left: 3px solid #0050cb; border-radius: 6px; box-sizing: border-box; }
+        #section-basic .auth-scene-display.has-basis { display: grid; grid-template-columns: minmax(0, 3fr) minmax(240px, 2fr); gap: 20px; }
+        #section-basic .auth-scene-main { display: flex; align-items: center; gap: 12px; min-width: 0; }
+        #section-basic .auth-scene-icon { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex: 0 0 40px; color: #0050cb; background: #eef4ff; border-radius: 6px; font-size: 21px; }
         #section-basic .auth-scene-copy { min-width: 0; flex: 1; }
         #section-basic .auth-scene-title-line { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-height: 22px; }
         #section-basic .auth-scene-title { color: #0b1c30; font-size: 14px; font-weight: 600; line-height: 22px; }
         #section-basic .auth-scene-description { display: block; margin-top: 2px; color: #6b7890; font-size: 12px; line-height: 18px; }
-        #section-basic .auth-scene-basis { margin-top: 4px; color: #6b7890; font-size: 12px; line-height: 18px; }
+        #section-basic .auth-scene-basis { display: flex; flex-direction: column; justify-content: center; min-width: 0; min-height: 48px; padding-left: 20px; border-left: 1px solid #e5eaf2; color: #6b7890; font-size: 12px; line-height: 18px; }
         #section-basic .auth-scene-basis[hidden] { display: none; }
-        #section-basic .auth-scene-basis summary { display: inline-flex; align-items: center; color: #0050cb; cursor: pointer; list-style: none; }
-        #section-basic .auth-scene-basis summary::-webkit-details-marker { display: none; }
-        #section-basic .auth-scene-basis summary::after { content: 'expand_more'; margin-left: 2px; font-family: 'Material Symbols Outlined'; font-size: 16px; transition: transform .15s; }
-        #section-basic .auth-scene-basis[open] summary::after { transform: rotate(180deg); }
-        #section-basic .auth-scene-basis-text { display: block; margin-top: 3px; color: #6b7890; }
+        #section-basic .auth-scene-basis-label { display: flex; align-items: center; gap: 5px; margin-bottom: 3px; color: #424656; font-size: 12px; font-weight: 600; line-height: 18px; }
+        #section-basic .auth-scene-basis-label .material-symbols-outlined { color: #0050cb; font-size: 17px; }
+        #section-basic .auth-scene-basis-text { display: block; color: #6b7890; overflow-wrap: anywhere; }
         #section-basic .auth-scene-tag { display: inline-flex; align-items: center; min-height: 20px; padding: 0 7px; color: #0050cb; background: #e5eeff; border-radius: 4px; font-size: 11px; font-weight: 600; }
         #section-basic .auth-scene-tag.warning { color: #8a4b00; background: #fff1d6; }
         #section-basic .request-content-group { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
@@ -713,6 +713,8 @@
             #section-basic .borrow-grid { grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
             #section-basic .basic-full-row { grid-template-columns: 1fr; margin-bottom: 15px; }
             #section-basic .device-facts-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            #section-basic .auth-scene-display.has-basis { grid-template-columns: 1fr; gap: 12px; }
+            #section-basic .auth-scene-basis { min-height: 0; padding: 12px 0 0; border-top: 1px solid #e5eaf2; border-left: 0; }
             #section-basic .request-content-group { grid-template-columns: 1fr; }
             #section-basic .layui-form-label,
             #section-basic .basic-borrow-panel .layui-form-label { width: auto; padding: 0 0 6px 0; }
@@ -1422,18 +1424,20 @@
                         <div class="layui-input-block">
                             <input type="hidden" id="authScene" name="authScene" value="">
                             <div class="auth-scene-display" id="authSceneDisplay" role="status" aria-live="polite">
-                                <span class="material-symbols-outlined auth-scene-icon" aria-hidden="true">rule</span>
-                                <span class="auth-scene-copy">
-                                    <span class="auth-scene-title-line">
-                                        <strong class="auth-scene-title" id="authSceneLabel"></strong>
-                                        <span id="authSceneTags"></span>
+                                <div class="auth-scene-main">
+                                    <span class="material-symbols-outlined auth-scene-icon" aria-hidden="true">rule</span>
+                                    <span class="auth-scene-copy">
+                                        <span class="auth-scene-title-line">
+                                            <strong class="auth-scene-title" id="authSceneLabel"></strong>
+                                            <span id="authSceneTags"></span>
+                                        </span>
+                                        <span class="auth-scene-description" id="authSceneDescription"></span>
                                     </span>
-                                    <span class="auth-scene-description" id="authSceneDescription"></span>
-                                    <details class="auth-scene-basis" id="authSceneBasis" hidden>
-                                        <summary>查看识别依据</summary>
-                                        <span class="auth-scene-basis-text" id="authSceneBasisText"></span>
-                                    </details>
-                                </span>
+                                </div>
+                                <div class="auth-scene-basis" id="authSceneBasis" hidden>
+                                    <span class="auth-scene-basis-label"><span class="material-symbols-outlined" aria-hidden="true">manage_search</span>识别依据</span>
+                                    <span class="auth-scene-basis-text" id="authSceneBasisText"></span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -5640,6 +5644,7 @@
         var authSceneFormItem = document.getElementById('authSceneFormItem');
         var authSceneRow = document.getElementById('authSceneRow');
         var authSceneInput = document.getElementById('authScene');
+        var authSceneDisplay = document.getElementById('authSceneDisplay');
         var authSceneLabel = document.getElementById('authSceneLabel');
         var authSceneDescription = document.getElementById('authSceneDescription');
         var authSceneBasis = document.getElementById('authSceneBasis');
@@ -5789,7 +5794,7 @@
             authSceneLabel.textContent = '';
             authSceneDescription.textContent = '';
             authSceneBasis.hidden = true;
-            authSceneBasis.open = false;
+            authSceneDisplay.classList.remove('has-basis');
             authSceneBasisText.textContent = '';
             authSceneTags.textContent = '';
             requestContentGroup.textContent = '';
@@ -5896,7 +5901,7 @@
             var recognitionBasis = facts[0].recognitionBasis || '';
             authSceneDescription.textContent = descriptions[baseScene] || '';
             authSceneBasis.hidden = !recognitionBasis;
-            authSceneBasis.open = false;
+            authSceneDisplay.classList.toggle('has-basis', Boolean(recognitionBasis));
             authSceneBasisText.textContent = recognitionBasis ? recognitionBasis + '。' : '';
             renderAuthorizationSceneTags(facts);
             authSceneRow.hidden = false;

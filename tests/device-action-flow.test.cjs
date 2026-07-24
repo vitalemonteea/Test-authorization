@@ -50,8 +50,9 @@ test('授权场景是设备识别后的只读业务字段', () => {
     assert.equal(authScene.tagName, 'INPUT');
     assert.equal(authScene.type, 'hidden');
     assert.ok(document.getElementById('authSceneDisplay'));
-    assert.equal(document.getElementById('authSceneBasis').tagName, 'DETAILS');
-    assert.match(document.getElementById('authSceneBasis').querySelector('summary').textContent, /查看识别依据/);
+    assert.equal(document.getElementById('authSceneBasis').tagName, 'DIV');
+    assert.match(document.getElementById('authSceneBasis').querySelector('.auth-scene-basis-label').textContent, /识别依据/);
+    assert.equal(document.getElementById('authSceneBasis').querySelector('summary'), null);
     assert.match(authScene.closest('#authSceneFormItem').querySelector('.layui-form-label').textContent.trim(), /^授权场景/);
     assert.equal(document.getElementById('requestAction').type, 'hidden');
     assert.equal(document.getElementById('requestActionFormItem'), null);
@@ -223,6 +224,8 @@ test('重新开通与累计超期可以在场景卡中同时显示', () => {
     assert.equal(document.getElementById('authScene').value, 'reopen');
     assert.match(document.getElementById('authSceneTags').textContent, /累计测试超期/);
     assert.match(document.getElementById('authSceneBasisText').textContent, /匹配 3 条授权记录/);
+    assert.ok(document.getElementById('authSceneDisplay').classList.contains('has-basis'));
+    assert.equal(document.getElementById('authSceneBasis').hidden, false);
     assert.deepEqual(errors, []);
   } finally {
     dom.window.close();
