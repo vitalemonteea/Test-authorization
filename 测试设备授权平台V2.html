@@ -944,6 +944,22 @@
         .record-workflow-error{margin-top:-6px;color:#d92d20;font-size:12px;line-height:18px}
         .record-workflow-error[hidden]{display:none}
         .record-file-input{width:100%;padding:9px 10px;box-sizing:border-box;color:#424656;background:#f7f9fc;border:1px dashed #b7c2d3;border-radius:6px;font-size:12px}
+        .record-decision-group{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:14px}
+        .record-decision-option{display:flex;align-items:center;gap:8px;min-height:42px;padding:0 12px;color:#0b1c30;background:#fff;border:1px solid #c8d1e0;border-radius:6px;font-size:13px;cursor:pointer}
+        .record-decision-option:has(input:checked){color:#003f9e;background:#eef4ff;border-color:#0050cb}
+        .record-decision-option input{width:16px;height:16px;margin:0;accent-color:#0050cb}
+        .record-confirm-layer{position:fixed;inset:0;z-index:5400;display:flex;align-items:center;justify-content:center;padding:16px}
+        .record-confirm-layer[hidden]{display:none}
+        .record-confirm-backdrop{position:absolute;inset:0;background:rgba(11,28,48,.38)}
+        .record-confirm-dialog{position:relative;width:min(440px,100%);background:#fff;border-radius:8px;box-shadow:0 20px 48px rgba(11,28,48,.22)}
+        .record-confirm-header{display:flex;align-items:center;gap:10px;padding:18px 20px 12px}
+        .record-confirm-icon{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;color:#b42318;background:#fff0ee;border-radius:50%;font-size:20px}
+        .record-confirm-title{margin:0;color:#0b1c30;font-size:16px;font-weight:600}
+        .record-confirm-body{padding:0 20px 18px;color:#424656;font-size:13px;line-height:20px}
+        .record-confirm-application{margin:8px 0 14px;padding:8px 10px;color:#0b1c30;background:#f7f9fc;border-radius:4px;font-weight:600}
+        .record-confirm-footer{display:flex;justify-content:flex-end;gap:10px;padding:12px 20px;border-top:1px solid #e5eaf2}
+        .record-drawer-button.danger{color:#fff;background:#d92d20;border-color:#d92d20}
+        .record-drawer-button.danger:hover{color:#fff;background:#b42318;border-color:#b42318}
         .record-action-toast{position:fixed;right:24px;bottom:24px;z-index:5600;display:flex;align-items:center;gap:8px;max-width:360px;padding:11px 14px;color:#0b1c30;background:#fff;border:1px solid #cbe7dc;border-left:4px solid #12a474;border-radius:6px;box-shadow:0 8px 24px rgba(11,28,48,.16);font-size:13px}
         .record-action-toast[hidden]{display:none}
         .record-action-toast .material-symbols-outlined{color:#12a474;font-size:19px}
@@ -3597,6 +3613,19 @@
                 <button type="button" class="record-drawer-button" id="recordDrawerSecondary" data-record-drawer-close>关闭</button>
                 <button type="button" class="record-drawer-button primary" id="recordDrawerPrimary" hidden></button>
             </footer>
+        </section>
+    </div>
+    <div class="record-confirm-layer" id="recordRevokeLayer" hidden aria-hidden="true">
+        <div class="record-confirm-backdrop" data-record-revoke-close></div>
+        <section class="record-confirm-dialog" role="alertdialog" aria-modal="true" aria-labelledby="recordRevokeTitle" aria-describedby="recordRevokeDescription">
+            <header class="record-confirm-header"><span class="record-confirm-icon material-symbols-outlined" aria-hidden="true">warning</span><h2 class="record-confirm-title" id="recordRevokeTitle">撤销申请</h2></header>
+            <div class="record-confirm-body">
+                <div id="recordRevokeDescription">撤销后当前审批流程将立即终止，本次操作不可恢复。</div>
+                <div class="record-confirm-application" id="recordRevokeApplicationNo"></div>
+                <label class="record-workflow-field"><span class="record-workflow-label">撤销原因<span class="record-workflow-required">*</span></span><textarea class="record-workflow-textarea" id="recordRevokeReason" placeholder="请填写撤销原因"></textarea></label>
+                <div class="record-workflow-error" id="recordRevokeError" hidden></div>
+            </div>
+            <footer class="record-confirm-footer"><button type="button" class="record-drawer-button" data-record-revoke-close>取消</button><button type="button" class="record-drawer-button danger" id="recordRevokeConfirm">确认撤销</button></footer>
         </section>
     </div>
     <div class="record-action-toast" id="recordActionToast" role="status" aria-live="polite" hidden><span class="material-symbols-outlined" aria-hidden="true">check_circle</span><span id="recordActionToastText"></span></div>
@@ -7248,6 +7277,7 @@
             '续期': '基于当前授权发起延期申请',
             '撤销': '撤回尚未完成的申请',
             '审核': '进入审批处理页面',
+            '重新提交': '补充驳回原因涉及的信息后再次发起审批',
             '下载': '下载本次生成的授权信息'
         };
         document.querySelectorAll('#content-records .sticky-right .ml-auto > *').forEach(function(action) {
@@ -7262,6 +7292,7 @@
 
     var lastRecordDrawerTrigger = null;
     var activeRecordWorkflow = null;
+    var activeRecordRevoke = null;
     var recordActionToastTimer = null;
 
     function setRecordDrawerMode(mode) {
@@ -7532,12 +7563,54 @@
         container.appendChild(fileField);
     }
 
+    function renderApproveWorkflow(container, data) {
+        appendRecordWorkflowCallout(container, '请结合申请信息和已有审批记录完成本节点审核。提交后将流转到下一审批节点。', false);
+        var overview = createRecordWorkflowElement('div', 'record-detail-grid record-workflow-section');
+        appendRecordDetailItems(overview, [
+            { label: '客户名称', value: data.customer },
+            { label: '产品线/方案', value: data.product },
+            { label: '授权对象', value: data.device },
+            { label: '申请有效期', value: data.validity }
+        ]);
+        container.appendChild(overview);
+        var timelineSection = createRecordWorkflowElement('section', 'record-workflow-section');
+        timelineSection.appendChild(createRecordWorkflowElement('h3', 'record-workflow-section-title', '已有审批记录'));
+        var timeline = createRecordWorkflowElement('div', 'record-approval-timeline');
+        renderRecordApprovalTimeline(timeline, buildRecordApprovalSteps(data));
+        timelineSection.appendChild(timeline);
+        container.appendChild(timelineSection);
+        var decisionSection = createRecordWorkflowElement('section', 'record-workflow-section');
+        decisionSection.appendChild(createRecordWorkflowElement('h3', 'record-workflow-section-title', '审批决定'));
+        var group = createRecordWorkflowElement('div', 'record-decision-group');
+        [['approve', '审批通过'], ['reject', '审批驳回']].forEach(function(optionData, index) {
+            var option = createRecordWorkflowElement('label', 'record-decision-option');
+            var radio = createRecordWorkflowElement('input');
+            radio.type = 'radio';
+            radio.name = 'recordApprovalDecision';
+            radio.value = optionData[0];
+            radio.checked = index === 0;
+            option.appendChild(radio);
+            option.appendChild(createRecordWorkflowElement('span', '', optionData[1]));
+            group.appendChild(option);
+        });
+        decisionSection.appendChild(group);
+        container.appendChild(decisionSection);
+        appendRecordWorkflowField(container, {
+            id: 'recordApprovalOpinion',
+            label: '审批意见',
+            multiline: true,
+            placeholder: '请填写审批意见',
+            required: true
+        });
+    }
+
     function openRecordWorkflowDrawer(action, row, trigger) {
         var data = getRecordRowData(row);
         var config = {
             copy: { title: '复制申请', subtitle: '复制已有信息并创建新申请', primary: '创建复制草稿' },
             renew: { title: '发起续期', subtitle: '基于当前授权申请新的有效期', primary: '提交续期申请' },
-            resubmit: { title: '重新提交', subtitle: '补充驳回原因涉及的信息后重新提交', primary: '重新提交' }
+            resubmit: { title: '重新提交', subtitle: '补充驳回原因涉及的信息后重新提交', primary: '重新提交' },
+            approve: { title: '审核申请', subtitle: '核对申请与授权信息并完成当前审批节点', primary: '提交审批' }
         }[action];
         if (!config) return;
         var layer = document.getElementById('recordDrawerLayer');
@@ -7555,6 +7628,7 @@
         if (action === 'copy') renderCopyWorkflow(content, data);
         if (action === 'renew') renderRenewWorkflow(content, data);
         if (action === 'resubmit') renderResubmitWorkflow(content, data);
+        if (action === 'approve') renderApproveWorkflow(content, data);
         var primary = document.getElementById('recordDrawerPrimary');
         primary.textContent = config.primary;
         primary.hidden = false;
@@ -7587,11 +7661,49 @@
         var messageMap = {
             copy: '复制草稿已创建，可在申请页面继续编辑。',
             renew: '续期申请已提交，将进入审批流程。',
-            resubmit: '申请已重新提交，将重新进入审批流程。'
+            resubmit: '申请已重新提交，将重新进入审批流程。',
+            approve: (document.querySelector('input[name="recordApprovalDecision"]:checked') || {}).value === 'reject' ? '审批驳回已提交。' : '审批通过已提交，将流转到下一节点。'
         };
         var message = messageMap[activeRecordWorkflow.action];
         closeRecordDrawer();
         showRecordActionToast(message);
+    }
+
+    function openRecordRevokeDialog(row, trigger) {
+        var data = getRecordRowData(row);
+        var layer = document.getElementById('recordRevokeLayer');
+        lastRecordDrawerTrigger = trigger || null;
+        activeRecordRevoke = { row: row, data: data };
+        document.getElementById('recordRevokeApplicationNo').textContent = data.applicationNo + ' · ' + data.customer;
+        document.getElementById('recordRevokeReason').value = '';
+        document.getElementById('recordRevokeError').hidden = true;
+        layer.hidden = false;
+        layer.setAttribute('aria-hidden', 'false');
+        document.getElementById('recordRevokeReason').focus();
+    }
+
+    function closeRecordRevokeDialog() {
+        var layer = document.getElementById('recordRevokeLayer');
+        if (layer.hidden) return;
+        layer.hidden = true;
+        layer.setAttribute('aria-hidden', 'true');
+        activeRecordRevoke = null;
+        if (lastRecordDrawerTrigger && typeof lastRecordDrawerTrigger.focus === 'function') lastRecordDrawerTrigger.focus();
+        lastRecordDrawerTrigger = null;
+    }
+
+    function submitRecordRevoke() {
+        if (!activeRecordRevoke) return;
+        var reason = document.getElementById('recordRevokeReason');
+        var error = document.getElementById('recordRevokeError');
+        if (!reason.value.trim()) {
+            error.textContent = '请填写撤销原因。';
+            error.hidden = false;
+            reason.focus();
+            return;
+        }
+        closeRecordRevokeDialog();
+        showRecordActionToast('撤销申请已提交，当前审批流程将终止。');
     }
 
     function closeRecordDrawer() {
@@ -7608,7 +7720,7 @@
         var records = document.getElementById('content-records');
         if (!records || records.dataset.detailDrawerReady === 'true') return;
         records.dataset.detailDrawerReady = 'true';
-        var actionTypes = { '查看': 'view', '复制': 'copy', '续期': 'renew', '重新提交': 'resubmit' };
+        var actionTypes = { '查看': 'view', '复制': 'copy', '续期': 'renew', '重新提交': 'resubmit', '审核': 'approve', '撤销': 'revoke' };
         records.querySelectorAll('.sticky-right .ml-auto > *').forEach(function(action) {
             var actionType = actionTypes[action.textContent.trim()];
             if (!actionType) return;
@@ -7622,6 +7734,7 @@
             var action = event.target.closest('[data-record-action]');
             if (!action) return;
             if (action.dataset.recordAction === 'view') openRecordDetailDrawer(action.closest('tr'), action);
+            else if (action.dataset.recordAction === 'revoke') openRecordRevokeDialog(action.closest('tr'), action);
             else openRecordWorkflowDrawer(action.dataset.recordAction, action.closest('tr'), action);
         });
         records.addEventListener('keydown', function(event) {
@@ -7629,15 +7742,23 @@
             if (!action || (event.key !== 'Enter' && event.key !== ' ')) return;
             event.preventDefault();
             if (action.dataset.recordAction === 'view') openRecordDetailDrawer(action.closest('tr'), action);
+            else if (action.dataset.recordAction === 'revoke') openRecordRevokeDialog(action.closest('tr'), action);
             else openRecordWorkflowDrawer(action.dataset.recordAction, action.closest('tr'), action);
         });
         document.querySelectorAll('[data-record-drawer-close]').forEach(function(control) {
             control.addEventListener('click', closeRecordDrawer);
         });
         document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') closeRecordDrawer();
+            if (event.key === 'Escape') {
+                closeRecordDrawer();
+                closeRecordRevokeDialog();
+            }
         });
         document.getElementById('recordDrawerPrimary').addEventListener('click', submitRecordWorkflow);
+        document.querySelectorAll('[data-record-revoke-close]').forEach(function(control) {
+            control.addEventListener('click', closeRecordRevokeDialog);
+        });
+        document.getElementById('recordRevokeConfirm').addEventListener('click', submitRecordRevoke);
     }
 
     function initRecordsPagination() {

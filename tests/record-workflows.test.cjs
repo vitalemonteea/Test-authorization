@@ -118,3 +118,42 @@ test('驳回记录可补充说明和材料后重新提交', () => {
     dom.window.close();
   }
 });
+
+test('审核抽屉展示申请摘要、审批记录和审批决定', () => {
+  const { dom, document, window } = setupRecords();
+  try {
+    clickAction(document, window, 'approve');
+    assert.equal(document.getElementById('recordDrawerTitle').textContent, '审核申请');
+    assert.match(document.getElementById('recordWorkflowContent').textContent, /已有审批记录/);
+    assert.equal(document.querySelectorAll('input[name="recordApprovalDecision"]').length, 2);
+    assert.equal(document.querySelector('input[name="recordApprovalDecision"]:checked').value, 'approve');
+    document.getElementById('recordDrawerPrimary').click();
+    assert.equal(document.getElementById('recordWorkflowError').hidden, false);
+    document.getElementById('recordApprovalOpinion').value = '申请信息完整，同意进入下一节点';
+    document.getElementById('recordDrawerPrimary').click();
+    assert.equal(document.getElementById('recordDrawerLayer').hidden, true);
+    assert.match(document.getElementById('recordActionToastText').textContent, /审批通过已提交/);
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('撤销使用破坏性确认弹窗并强制填写原因', () => {
+  const { dom, document, window } = setupRecords();
+  try {
+    const revoke = clickAction(document, window, 'revoke');
+    const layer = document.getElementById('recordRevokeLayer');
+    assert.equal(layer.hidden, false);
+    assert.match(document.getElementById('recordRevokeApplicationNo').textContent, /^AUTH-/);
+    document.getElementById('recordRevokeConfirm').click();
+    assert.equal(layer.hidden, false);
+    assert.equal(document.getElementById('recordRevokeError').hidden, false);
+    document.getElementById('recordRevokeReason').value = '客户测试计划取消';
+    document.getElementById('recordRevokeConfirm').click();
+    assert.equal(layer.hidden, true);
+    assert.match(document.getElementById('recordActionToastText').textContent, /撤销申请已提交/);
+    assert.equal(document.activeElement, revoke);
+  } finally {
+    dom.window.close();
+  }
+});
