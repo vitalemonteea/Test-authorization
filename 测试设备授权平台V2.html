@@ -882,6 +882,49 @@
         #content-records [data-action-tip]{position:relative;outline-offset:2px}
         #content-records [data-action-tip]::after{content:attr(data-action-tip);position:absolute;right:0;bottom:calc(100% + 6px);z-index:100;padding:6px 9px;color:#f3f4f6;background:#1f2937;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.15);font-size:12px;font-weight:400;line-height:18px;white-space:nowrap;pointer-events:none;opacity:0;visibility:hidden;transform:translateY(2px);transition:opacity .15s,transform .15s,visibility .15s}
         #content-records [data-action-tip]:hover::after,#content-records [data-action-tip]:focus::after{opacity:1;visibility:visible;transform:translateY(0)}
+        .record-drawer-layer{position:fixed;inset:0;z-index:5200;display:flex;justify-content:flex-end}
+        .record-drawer-layer[hidden]{display:none}
+        .record-drawer-backdrop{position:absolute;inset:0;background:rgba(11,28,48,.28)}
+        .record-drawer{position:relative;width:min(560px,100vw);height:100%;display:flex;flex-direction:column;background:#fff;box-shadow:-12px 0 32px rgba(11,28,48,.16);animation:recordDrawerIn .18s ease-out}
+        @keyframes recordDrawerIn{from{transform:translateX(20px);opacity:.7}to{transform:translateX(0);opacity:1}}
+        .record-drawer-header{display:flex;align-items:flex-start;gap:12px;min-height:72px;padding:16px 20px;border-bottom:1px solid #e5eaf2;box-sizing:border-box}
+        .record-drawer-heading{min-width:0;flex:1}
+        .record-drawer-title{margin:0;color:#0b1c30;font-size:17px;font-weight:600;line-height:24px}
+        .record-drawer-subtitle{margin-top:3px;color:#6b7890;font-size:12px;line-height:18px;overflow-wrap:anywhere}
+        .record-drawer-close{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;flex:0 0 36px;padding:0;color:#424656;background:transparent;border:0;border-radius:6px;cursor:pointer}
+        .record-drawer-close:hover{color:#0050cb;background:#eef4ff}
+        .record-drawer-body{flex:1;min-height:0;overflow-y:auto;padding:0 20px 24px}
+        .record-drawer-summary{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 -20px 20px;padding:13px 20px;background:#f7f9fc;border-bottom:1px solid #edf1f7}
+        .record-drawer-summary-label{color:#6b7890;font-size:12px;line-height:18px}
+        .record-drawer-summary-value{display:block;margin-top:2px;color:#0b1c30;font-size:14px;font-weight:600;line-height:20px}
+        .record-detail-status{display:inline-flex;align-items:center;min-height:24px;padding:0 9px;color:#0050cb;background:#e5eeff;border-radius:9999px;font-size:12px;font-weight:600}
+        .record-detail-status.status-authorized{color:#087a55;background:#e8faf3}
+        .record-detail-status.status-rejected{color:#b42318;background:#fff0ee}
+        .record-detail-status.status-expired{color:#5f6675;background:#eef1f5}
+        .record-detail-section{padding:0 0 20px}
+        .record-detail-section + .record-detail-section{padding-top:20px;border-top:1px solid #edf1f7}
+        .record-detail-section-title{display:flex;align-items:center;gap:7px;margin:0 0 14px;color:#0b1c30;font-size:14px;font-weight:600;line-height:20px}
+        .record-detail-section-title .material-symbols-outlined{color:#0050cb;font-size:18px}
+        .record-detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 20px}
+        .record-detail-item{min-width:0}
+        .record-detail-label{display:block;margin-bottom:4px;color:#6b7890;font-size:12px;line-height:18px}
+        .record-detail-value{display:block;color:#0b1c30;font-size:13px;line-height:20px;overflow-wrap:anywhere}
+        .record-detail-value.is-code{font-family:Consolas,"SFMono-Regular",monospace;color:#003f9e}
+        .record-approval-timeline{margin-top:16px}
+        .record-approval-step{position:relative;display:grid;grid-template-columns:18px minmax(0,1fr);gap:10px;padding-bottom:18px}
+        .record-approval-step:last-child{padding-bottom:0}
+        .record-approval-step:not(:last-child)::before{content:"";position:absolute;left:8px;top:18px;bottom:0;width:1px;background:#d8deea}
+        .record-approval-dot{position:relative;z-index:1;width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;color:#fff;background:#aab2c1;border-radius:50%;font-size:12px}
+        .record-approval-step.done .record-approval-dot{background:#12a474}
+        .record-approval-step.current .record-approval-dot{background:#0050cb;box-shadow:0 0 0 4px #e5eeff}
+        .record-approval-step.rejected .record-approval-dot{background:#d92d20}
+        .record-approval-title{color:#0b1c30;font-size:13px;font-weight:600;line-height:18px}
+        .record-approval-detail{margin-top:2px;color:#6b7890;font-size:12px;line-height:18px}
+        .record-drawer-footer{display:flex;justify-content:flex-end;gap:10px;padding:12px 20px;border-top:1px solid #e5eaf2;background:#fff}
+        .record-drawer-button{min-width:80px;height:36px;padding:0 16px;border:1px solid #c8d1e0;border-radius:6px;background:#fff;color:#0b1c30;font-size:13px;cursor:pointer}
+        .record-drawer-button:hover{border-color:#0050cb;color:#0050cb;background:#f7faff}
+        .record-action-control:focus-visible{outline:2px solid rgba(0,80,203,.45);outline-offset:2px}
+        @media (max-width:600px){.record-drawer{width:100%}.record-detail-grid{grid-template-columns:1fr}.record-drawer-header,.record-drawer-body,.record-drawer-footer{padding-left:16px;padding-right:16px}.record-drawer-summary{margin-left:-16px;margin-right:-16px;padding-left:16px;padding-right:16px}}
         /* 全局客户名称悬浮提示，fixed 定位避免被表格行遮挡 */
         .cust-global-tooltip{position:fixed;z-index:9999;background:#1f2937;color:#f3f4f6;padding:6px 10px;border-radius:6px;font-size:12px;line-height:1.5;max-width:260px;white-space:normal;word-break:break-all;pointer-events:none;opacity:0;transition:opacity .15s;box-shadow:0 4px 12px rgba(0,0,0,.15)}
         .cust-global-tooltip.show{opacity:1}
@@ -3485,6 +3528,39 @@
         <div class="module-nav-item enabled" data-target="module-CDP">持续数据保护</div>
         <div class="module-nav-item enabled" data-target="module-aHM">异构管理</div>
         <div class="module-nav-item enabled" data-target="module-others">其他配置</div>
+    </div>
+
+    <div class="record-drawer-layer" id="recordDrawerLayer" hidden aria-hidden="true">
+        <div class="record-drawer-backdrop" data-record-drawer-close></div>
+        <section class="record-drawer" role="dialog" aria-modal="true" aria-labelledby="recordDrawerTitle">
+            <header class="record-drawer-header">
+                <div class="record-drawer-heading">
+                    <h2 class="record-drawer-title" id="recordDrawerTitle">授权记录详情</h2>
+                    <div class="record-drawer-subtitle" id="recordDrawerSubtitle"></div>
+                </div>
+                <button type="button" class="record-drawer-close" data-record-drawer-close aria-label="关闭授权记录详情"><span class="material-symbols-outlined" aria-hidden="true">close</span></button>
+            </header>
+            <div class="record-drawer-body">
+                <div class="record-drawer-summary">
+                    <div><span class="record-drawer-summary-label">申请编号</span><strong class="record-drawer-summary-value" id="recordDetailApplicationNo"></strong></div>
+                    <span class="record-detail-status" id="recordDetailStatus"></span>
+                </div>
+                <section class="record-detail-section">
+                    <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">description</span>申请信息</h3>
+                    <div class="record-detail-grid" id="recordApplicationGrid"></div>
+                </section>
+                <section class="record-detail-section">
+                    <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">license</span>授权信息</h3>
+                    <div class="record-detail-grid" id="recordAuthorizationGrid"></div>
+                </section>
+                <section class="record-detail-section">
+                    <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">approval</span>审批信息</h3>
+                    <div class="record-detail-grid" id="recordApprovalGrid"></div>
+                    <div class="record-approval-timeline" id="recordApprovalTimeline"></div>
+                </section>
+            </div>
+            <footer class="record-drawer-footer"><button type="button" class="record-drawer-button" data-record-drawer-close>关闭</button></footer>
+        </section>
     </div>
 
     <!-- XaaS规格编辑弹窗 -->
@@ -7146,6 +7222,195 @@
         });
     }
 
+    var lastRecordDrawerTrigger = null;
+
+    function getRecordRowData(row) {
+        var cells = row.querySelectorAll('td');
+        return {
+            applicationNo: cells[0] ? cells[0].textContent.trim().replace(/^chevron_right\s*/, '') : '',
+            authorizationType: cells[1] ? cells[1].textContent.trim() : '',
+            platform: cells[2] ? cells[2].textContent.trim() : '',
+            product: cells[3] ? cells[3].textContent.trim() : '',
+            version: cells[4] ? cells[4].textContent.trim() : '',
+            customer: cells[5] ? (cells[5].querySelector('.cust-name') || cells[5]).textContent.trim() : '',
+            device: cells[6] ? cells[6].textContent.trim() : '',
+            region: cells[7] ? cells[7].textContent.trim() : '',
+            validity: cells[8] ? cells[8].textContent.trim() : '',
+            applicant: cells[9] ? cells[9].textContent.trim() : '',
+            appliedAt: cells[10] ? cells[10].textContent.trim() : '',
+            status: getRecordRowStatus(row)
+        };
+    }
+
+    function getRecordModules(product) {
+        var moduleMap = {
+            'HCI': '计算虚拟化、分布式存储',
+            'NGAF': '基础防护、IPS、应用控制',
+            'SaaS-XDR': '威胁检测、终端响应',
+            'AD': '应用交付基础功能',
+            'WAF': 'Web应用防护、Bot防护',
+            'SASE-GA': '全球访问、带宽管理'
+        };
+        return moduleMap[product] || (product ? product + ' 标准授权能力' : '按申请配置');
+    }
+
+    function getRecordApprovalMeta(status) {
+        var meta = {
+            '待审批': { current: '区域负责人审批', decision: '待处理' },
+            '审批中': { current: '产品线负责人审批', decision: '处理中' },
+            '已通过': { current: '授权中台生成授权', decision: '审批通过' },
+            '已授权': { current: '流程已完成', decision: '审批通过' },
+            '已驳回': { current: '申请人补充材料', decision: '审批驳回' },
+            '已过期': { current: '授权已到期', decision: '历史审批通过' }
+        };
+        return meta[status] || { current: '流程处理中', decision: status || '未知' };
+    }
+
+    function appendRecordDetailItems(container, items) {
+        container.textContent = '';
+        items.forEach(function(item) {
+            var wrap = document.createElement('div');
+            wrap.className = 'record-detail-item';
+            var label = document.createElement('span');
+            label.className = 'record-detail-label';
+            label.textContent = item.label;
+            var value = document.createElement('span');
+            value.className = 'record-detail-value' + (item.code ? ' is-code' : '');
+            value.textContent = item.value || '—';
+            wrap.appendChild(label);
+            wrap.appendChild(value);
+            container.appendChild(wrap);
+        });
+    }
+
+    function buildRecordApprovalSteps(data) {
+        var steps = [{ title: '提交申请', detail: data.applicant + ' · ' + data.appliedAt, state: 'done' }];
+        if (data.status === '待审批') {
+            steps.push({ title: '区域负责人审批', detail: '等待区域负责人处理', state: 'current' });
+            steps.push({ title: '产品线审批', detail: '尚未开始', state: '' });
+        } else if (data.status === '已驳回') {
+            steps.push({ title: '区域负责人审批', detail: '审批驳回：申请说明或材料不完整', state: 'rejected' });
+            steps.push({ title: '补充申请信息', detail: '等待申请人重新提交', state: 'current' });
+        } else {
+            steps.push({ title: '区域负责人审批', detail: '李明 · 已通过', state: 'done' });
+            steps.push({ title: '产品线负责人审批', detail: data.status === '审批中' ? '等待王海处理' : '王海 · 已通过', state: data.status === '审批中' ? 'current' : 'done' });
+            if (data.status !== '审批中') {
+                steps.push({ title: '授权中台处理', detail: data.status === '已通过' ? '等待生成授权信息' : '授权信息已生成', state: data.status === '已通过' ? 'current' : 'done' });
+            }
+        }
+        return steps;
+    }
+
+    function renderRecordApprovalTimeline(container, steps) {
+        container.textContent = '';
+        steps.forEach(function(step) {
+            var row = document.createElement('div');
+            row.className = 'record-approval-step' + (step.state ? ' ' + step.state : '');
+            var dot = document.createElement('span');
+            dot.className = 'record-approval-dot material-symbols-outlined';
+            dot.setAttribute('aria-hidden', 'true');
+            dot.textContent = step.state === 'rejected' ? 'close' : (step.state === 'done' ? 'check' : 'more_horiz');
+            var copy = document.createElement('div');
+            var title = document.createElement('div');
+            title.className = 'record-approval-title';
+            title.textContent = step.title;
+            var detail = document.createElement('div');
+            detail.className = 'record-approval-detail';
+            detail.textContent = step.detail;
+            copy.appendChild(title);
+            copy.appendChild(detail);
+            row.appendChild(dot);
+            row.appendChild(copy);
+            container.appendChild(row);
+        });
+    }
+
+    function getRecordStatusClass(status) {
+        if (status === '已授权') return 'status-authorized';
+        if (status === '已驳回') return 'status-rejected';
+        if (status === '已过期') return 'status-expired';
+        return '';
+    }
+
+    function openRecordDetailDrawer(row, trigger) {
+        var data = getRecordRowData(row);
+        var meta = getRecordApprovalMeta(data.status);
+        var layer = document.getElementById('recordDrawerLayer');
+        lastRecordDrawerTrigger = trigger || null;
+        document.getElementById('recordDrawerTitle').textContent = '授权记录详情';
+        document.getElementById('recordDrawerSubtitle').textContent = data.customer + ' · ' + data.product;
+        document.getElementById('recordDetailApplicationNo').textContent = data.applicationNo;
+        var status = document.getElementById('recordDetailStatus');
+        status.className = 'record-detail-status ' + getRecordStatusClass(data.status);
+        status.textContent = data.status;
+        appendRecordDetailItems(document.getElementById('recordApplicationGrid'), [
+            { label: '授权类型', value: data.authorizationType },
+            { label: '申请平台', value: data.platform },
+            { label: '客户名称', value: data.customer },
+            { label: '申请人', value: data.applicant },
+            { label: '区域', value: data.region },
+            { label: '申请时间', value: data.appliedAt }
+        ]);
+        var hasAuthorization = data.status === '已授权' || data.status === '已过期';
+        appendRecordDetailItems(document.getElementById('recordAuthorizationGrid'), [
+            { label: '产品线/方案', value: data.product },
+            { label: '版本号', value: data.version },
+            { label: '授权对象', value: data.device },
+            { label: '授权有效期', value: data.validity },
+            { label: '授权内容', value: getRecordModules(data.product) },
+            { label: '授权码', value: hasAuthorization ? 'LIC-' + data.applicationNo.replace(/[^A-Z0-9]/gi, '').slice(-12) : '待生成', code: true },
+            { label: '授权文件', value: hasAuthorization ? '授权信息-' + data.applicationNo : '待生成' }
+        ]);
+        appendRecordDetailItems(document.getElementById('recordApprovalGrid'), [
+            { label: '审批结果', value: meta.decision },
+            { label: '当前节点', value: meta.current }
+        ]);
+        renderRecordApprovalTimeline(document.getElementById('recordApprovalTimeline'), buildRecordApprovalSteps(data));
+        layer.hidden = false;
+        layer.setAttribute('aria-hidden', 'false');
+        var closeButton = layer.querySelector('.record-drawer-close');
+        if (closeButton) closeButton.focus();
+    }
+
+    function closeRecordDrawer() {
+        var layer = document.getElementById('recordDrawerLayer');
+        if (layer.hidden) return;
+        layer.hidden = true;
+        layer.setAttribute('aria-hidden', 'true');
+        if (lastRecordDrawerTrigger && typeof lastRecordDrawerTrigger.focus === 'function') lastRecordDrawerTrigger.focus();
+        lastRecordDrawerTrigger = null;
+    }
+
+    function initRecordDetailDrawer() {
+        var records = document.getElementById('content-records');
+        if (!records || records.dataset.detailDrawerReady === 'true') return;
+        records.dataset.detailDrawerReady = 'true';
+        records.querySelectorAll('.sticky-right .ml-auto > *').forEach(function(action) {
+            if (action.textContent.trim() !== '查看') return;
+            action.classList.add('record-action-control');
+            action.setAttribute('data-record-action', 'view');
+            action.setAttribute('role', 'button');
+            action.setAttribute('tabindex', '0');
+            action.setAttribute('aria-haspopup', 'dialog');
+        });
+        records.addEventListener('click', function(event) {
+            var action = event.target.closest('[data-record-action="view"]');
+            if (action) openRecordDetailDrawer(action.closest('tr'), action);
+        });
+        records.addEventListener('keydown', function(event) {
+            var action = event.target.closest('[data-record-action="view"]');
+            if (!action || (event.key !== 'Enter' && event.key !== ' ')) return;
+            event.preventDefault();
+            openRecordDetailDrawer(action.closest('tr'), action);
+        });
+        document.querySelectorAll('[data-record-drawer-close]').forEach(function(control) {
+            control.addEventListener('click', closeRecordDrawer);
+        });
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') closeRecordDrawer();
+        });
+    }
+
     function initRecordsPagination() {
         var mainTbody = document.querySelector("#content-records .table-scroll-wrap table tbody");
         if (!mainTbody) return;
@@ -7322,6 +7587,7 @@
             initRecordsDatePicker();
             initRecordDownloadActions();
             initRecordActionTips();
+            initRecordDetailDrawer();
             initRecordsTooltip();
         });
     } else {
@@ -7329,6 +7595,7 @@
         initRecordsDatePicker();
         initRecordDownloadActions();
         initRecordActionTips();
+        initRecordDetailDrawer();
         initRecordsTooltip();
     }
     </script>
