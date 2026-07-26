@@ -923,8 +923,32 @@
         .record-drawer-footer{display:flex;justify-content:flex-end;gap:10px;padding:12px 20px;border-top:1px solid #e5eaf2;background:#fff}
         .record-drawer-button{min-width:80px;height:36px;padding:0 16px;border:1px solid #c8d1e0;border-radius:6px;background:#fff;color:#0b1c30;font-size:13px;cursor:pointer}
         .record-drawer-button:hover{border-color:#0050cb;color:#0050cb;background:#f7faff}
+        .record-drawer-button.primary{color:#fff;background:#0050cb;border-color:#0050cb}
+        .record-drawer-button.primary:hover{color:#fff;background:#003f9e;border-color:#003f9e}
+        .record-workflow-content{padding-top:20px}
+        .record-workflow-callout{display:flex;align-items:flex-start;gap:8px;margin-bottom:20px;padding:10px 12px;color:#35506f;background:#f2f6fc;border-left:3px solid #5c7fb5;border-radius:4px;font-size:12px;line-height:18px}
+        .record-workflow-callout.warning{color:#8a4b00;background:#fff8e8;border-left-color:#d68a1f}
+        .record-workflow-callout .material-symbols-outlined{flex:0 0 auto;font-size:18px}
+        .record-workflow-section{margin-bottom:20px}
+        .record-workflow-section-title{margin:0 0 10px;color:#0b1c30;font-size:13px;font-weight:600;line-height:20px}
+        .record-workflow-field{display:block;margin-bottom:14px}
+        .record-workflow-label{display:block;margin-bottom:6px;color:#424656;font-size:12px;font-weight:600;line-height:18px}
+        .record-workflow-required{margin-left:2px;color:#d92d20}
+        .record-workflow-input,.record-workflow-textarea{width:100%;box-sizing:border-box;color:#0b1c30;background:#fff;border:1px solid #c8d1e0;border-radius:6px;font-size:13px;outline:0}
+        .record-workflow-input{height:38px;padding:0 11px}
+        .record-workflow-textarea{min-height:88px;padding:9px 11px;line-height:20px;resize:vertical}
+        .record-workflow-input:focus,.record-workflow-textarea:focus{border-color:#0050cb;box-shadow:0 0 0 2px rgba(0,80,203,.12)}
+        .record-copy-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+        .record-copy-option{display:flex;align-items:center;gap:8px;min-height:38px;padding:0 10px;color:#0b1c30;background:#f7f9fc;border:1px solid #e5eaf2;border-radius:6px;font-size:12px}
+        .record-copy-option input{width:15px;height:15px;margin:0;accent-color:#0050cb}
+        .record-workflow-error{margin-top:-6px;color:#d92d20;font-size:12px;line-height:18px}
+        .record-workflow-error[hidden]{display:none}
+        .record-file-input{width:100%;padding:9px 10px;box-sizing:border-box;color:#424656;background:#f7f9fc;border:1px dashed #b7c2d3;border-radius:6px;font-size:12px}
+        .record-action-toast{position:fixed;right:24px;bottom:24px;z-index:5600;display:flex;align-items:center;gap:8px;max-width:360px;padding:11px 14px;color:#0b1c30;background:#fff;border:1px solid #cbe7dc;border-left:4px solid #12a474;border-radius:6px;box-shadow:0 8px 24px rgba(11,28,48,.16);font-size:13px}
+        .record-action-toast[hidden]{display:none}
+        .record-action-toast .material-symbols-outlined{color:#12a474;font-size:19px}
         .record-action-control:focus-visible{outline:2px solid rgba(0,80,203,.45);outline-offset:2px}
-        @media (max-width:600px){.record-drawer{width:100%}.record-detail-grid{grid-template-columns:1fr}.record-drawer-header,.record-drawer-body,.record-drawer-footer{padding-left:16px;padding-right:16px}.record-drawer-summary{margin-left:-16px;margin-right:-16px;padding-left:16px;padding-right:16px}}
+        @media (max-width:600px){.record-drawer{width:100%}.record-detail-grid,.record-copy-options{grid-template-columns:1fr}.record-drawer-header,.record-drawer-body,.record-drawer-footer{padding-left:16px;padding-right:16px}.record-drawer-summary{margin-left:-16px;margin-right:-16px;padding-left:16px;padding-right:16px}}
         /* 全局客户名称悬浮提示，fixed 定位避免被表格行遮挡 */
         .cust-global-tooltip{position:fixed;z-index:9999;background:#1f2937;color:#f3f4f6;padding:6px 10px;border-radius:6px;font-size:12px;line-height:1.5;max-width:260px;white-space:normal;word-break:break-all;pointer-events:none;opacity:0;transition:opacity .15s;box-shadow:0 4px 12px rgba(0,0,0,.15)}
         .cust-global-tooltip.show{opacity:1}
@@ -3541,27 +3565,41 @@
                 <button type="button" class="record-drawer-close" data-record-drawer-close aria-label="关闭授权记录详情"><span class="material-symbols-outlined" aria-hidden="true">close</span></button>
             </header>
             <div class="record-drawer-body">
-                <div class="record-drawer-summary">
-                    <div><span class="record-drawer-summary-label">申请编号</span><strong class="record-drawer-summary-value" id="recordDetailApplicationNo"></strong></div>
-                    <span class="record-detail-status" id="recordDetailStatus"></span>
+                <div id="recordDrawerView">
+                    <div class="record-drawer-summary">
+                        <div><span class="record-drawer-summary-label">申请编号</span><strong class="record-drawer-summary-value" id="recordDetailApplicationNo"></strong></div>
+                        <span class="record-detail-status" id="recordDetailStatus"></span>
+                    </div>
+                    <section class="record-detail-section">
+                        <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">description</span>申请信息</h3>
+                        <div class="record-detail-grid" id="recordApplicationGrid"></div>
+                    </section>
+                    <section class="record-detail-section">
+                        <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">license</span>授权信息</h3>
+                        <div class="record-detail-grid" id="recordAuthorizationGrid"></div>
+                    </section>
+                    <section class="record-detail-section">
+                        <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">approval</span>审批信息</h3>
+                        <div class="record-detail-grid" id="recordApprovalGrid"></div>
+                        <div class="record-approval-timeline" id="recordApprovalTimeline"></div>
+                    </section>
                 </div>
-                <section class="record-detail-section">
-                    <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">description</span>申请信息</h3>
-                    <div class="record-detail-grid" id="recordApplicationGrid"></div>
-                </section>
-                <section class="record-detail-section">
-                    <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">license</span>授权信息</h3>
-                    <div class="record-detail-grid" id="recordAuthorizationGrid"></div>
-                </section>
-                <section class="record-detail-section">
-                    <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">approval</span>审批信息</h3>
-                    <div class="record-detail-grid" id="recordApprovalGrid"></div>
-                    <div class="record-approval-timeline" id="recordApprovalTimeline"></div>
-                </section>
+                <div id="recordDrawerWorkflow" hidden>
+                    <div class="record-drawer-summary">
+                        <div><span class="record-drawer-summary-label">来源申请</span><strong class="record-drawer-summary-value" id="recordWorkflowApplicationNo"></strong></div>
+                        <span class="record-detail-status" id="recordWorkflowStatus"></span>
+                    </div>
+                    <div class="record-workflow-content" id="recordWorkflowContent"></div>
+                    <div class="record-workflow-error" id="recordWorkflowError" hidden></div>
+                </div>
             </div>
-            <footer class="record-drawer-footer"><button type="button" class="record-drawer-button" data-record-drawer-close>关闭</button></footer>
+            <footer class="record-drawer-footer">
+                <button type="button" class="record-drawer-button" id="recordDrawerSecondary" data-record-drawer-close>关闭</button>
+                <button type="button" class="record-drawer-button primary" id="recordDrawerPrimary" hidden></button>
+            </footer>
         </section>
     </div>
+    <div class="record-action-toast" id="recordActionToast" role="status" aria-live="polite" hidden><span class="material-symbols-outlined" aria-hidden="true">check_circle</span><span id="recordActionToastText"></span></div>
 
     <!-- XaaS规格编辑弹窗 -->
     <div class="xaas-spec-modal-overlay" id="xaasSpecModal">
@@ -7223,6 +7261,19 @@
     }
 
     var lastRecordDrawerTrigger = null;
+    var activeRecordWorkflow = null;
+    var recordActionToastTimer = null;
+
+    function setRecordDrawerMode(mode) {
+        var isView = mode === 'view';
+        document.getElementById('recordDrawerView').hidden = !isView;
+        document.getElementById('recordDrawerWorkflow').hidden = isView;
+        var secondary = document.getElementById('recordDrawerSecondary');
+        var primary = document.getElementById('recordDrawerPrimary');
+        secondary.textContent = isView ? '关闭' : '取消';
+        primary.hidden = isView;
+        document.getElementById('recordWorkflowError').hidden = true;
+    }
 
     function getRecordRowData(row) {
         var cells = row.querySelectorAll('td');
@@ -7337,6 +7388,8 @@
         var meta = getRecordApprovalMeta(data.status);
         var layer = document.getElementById('recordDrawerLayer');
         lastRecordDrawerTrigger = trigger || null;
+        activeRecordWorkflow = null;
+        setRecordDrawerMode('view');
         document.getElementById('recordDrawerTitle').textContent = '授权记录详情';
         document.getElementById('recordDrawerSubtitle').textContent = data.customer + ' · ' + data.product;
         document.getElementById('recordDetailApplicationNo').textContent = data.applicationNo;
@@ -7372,11 +7425,181 @@
         if (closeButton) closeButton.focus();
     }
 
+    function createRecordWorkflowElement(tag, className, textValue) {
+        var element = document.createElement(tag);
+        if (className) element.className = className;
+        if (typeof textValue === 'string') element.textContent = textValue;
+        return element;
+    }
+
+    function appendRecordWorkflowCallout(container, textValue, warning) {
+        var callout = createRecordWorkflowElement('div', 'record-workflow-callout' + (warning ? ' warning' : ''));
+        var icon = createRecordWorkflowElement('span', 'material-symbols-outlined', warning ? 'warning_amber' : 'info');
+        icon.setAttribute('aria-hidden', 'true');
+        callout.appendChild(icon);
+        callout.appendChild(createRecordWorkflowElement('span', '', textValue));
+        container.appendChild(callout);
+    }
+
+    function appendRecordWorkflowField(container, options) {
+        var field = createRecordWorkflowElement('label', 'record-workflow-field');
+        var label = createRecordWorkflowElement('span', 'record-workflow-label', options.label);
+        if (options.required) label.appendChild(createRecordWorkflowElement('span', 'record-workflow-required', '*'));
+        var input = createRecordWorkflowElement(options.multiline ? 'textarea' : 'input', options.multiline ? 'record-workflow-textarea' : 'record-workflow-input');
+        input.id = options.id;
+        input.name = options.id;
+        if (!options.multiline) input.type = options.type || 'text';
+        if (options.value) input.value = options.value;
+        if (options.placeholder) input.placeholder = options.placeholder;
+        if (options.required) input.setAttribute('data-workflow-required', 'true');
+        field.appendChild(label);
+        field.appendChild(input);
+        container.appendChild(field);
+        return input;
+    }
+
+    function getRenewalDefaultDate(validity) {
+        var match = String(validity || '').match(/~\s*(\d{4})-(\d{2})-(\d{2})/);
+        if (!match) return '';
+        var date = new Date(Date.UTC(Number(match[1]), Number(match[2]) - 1, Number(match[3])));
+        date.setUTCDate(date.getUTCDate() + 90);
+        return date.toISOString().slice(0, 10);
+    }
+
+    function renderCopyWorkflow(container, data) {
+        appendRecordWorkflowCallout(container, '系统将以当前记录为来源创建一份新的申请草稿，原申请和原授权不会被修改。', false);
+        var section = createRecordWorkflowElement('section', 'record-workflow-section');
+        section.appendChild(createRecordWorkflowElement('h3', 'record-workflow-section-title', '复制内容'));
+        var options = createRecordWorkflowElement('div', 'record-copy-options');
+        ['客户与区域信息', '产品线与版本', '设备信息', '授权配置'].forEach(function(textValue) {
+            var option = createRecordWorkflowElement('label', 'record-copy-option');
+            var checkbox = createRecordWorkflowElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.checked = true;
+            option.appendChild(checkbox);
+            option.appendChild(createRecordWorkflowElement('span', '', textValue));
+            options.appendChild(option);
+        });
+        section.appendChild(options);
+        container.appendChild(section);
+        appendRecordWorkflowField(container, {
+            id: 'recordCopyNote',
+            label: '新申请说明',
+            multiline: true,
+            value: '基于 ' + data.applicationNo + ' 复制，后续将根据实际需求调整授权配置。'
+        });
+    }
+
+    function renderRenewWorkflow(container, data) {
+        appendRecordWorkflowCallout(container, '续期申请通过后将生成一条新的授权记录，不会覆盖当前记录。', false);
+        var overview = createRecordWorkflowElement('div', 'record-detail-grid record-workflow-section');
+        appendRecordDetailItems(overview, [
+            { label: '当前授权有效期', value: data.validity },
+            { label: '授权对象', value: data.device }
+        ]);
+        container.appendChild(overview);
+        appendRecordWorkflowField(container, {
+            id: 'recordRenewEndDate',
+            label: '申请续期至',
+            type: 'date',
+            value: getRenewalDefaultDate(data.validity),
+            required: true
+        });
+        appendRecordWorkflowField(container, {
+            id: 'recordRenewReason',
+            label: '续期原因',
+            multiline: true,
+            placeholder: '请说明客户测试进展和续期原因',
+            required: true
+        });
+    }
+
+    function renderResubmitWorkflow(container, data) {
+        appendRecordWorkflowCallout(container, '上次审批未通过：申请说明或材料不完整。请补充后重新提交，原审批记录将保留。', true);
+        appendRecordWorkflowField(container, {
+            id: 'recordResubmitNote',
+            label: '修正说明',
+            multiline: true,
+            placeholder: '请说明本次补充或调整的内容',
+            required: true
+        });
+        var fileField = createRecordWorkflowElement('label', 'record-workflow-field');
+        fileField.appendChild(createRecordWorkflowElement('span', 'record-workflow-label', '补充材料（可选）'));
+        var file = createRecordWorkflowElement('input', 'record-file-input');
+        file.type = 'file';
+        file.id = 'recordResubmitFile';
+        fileField.appendChild(file);
+        container.appendChild(fileField);
+    }
+
+    function openRecordWorkflowDrawer(action, row, trigger) {
+        var data = getRecordRowData(row);
+        var config = {
+            copy: { title: '复制申请', subtitle: '复制已有信息并创建新申请', primary: '创建复制草稿' },
+            renew: { title: '发起续期', subtitle: '基于当前授权申请新的有效期', primary: '提交续期申请' },
+            resubmit: { title: '重新提交', subtitle: '补充驳回原因涉及的信息后重新提交', primary: '重新提交' }
+        }[action];
+        if (!config) return;
+        var layer = document.getElementById('recordDrawerLayer');
+        var content = document.getElementById('recordWorkflowContent');
+        lastRecordDrawerTrigger = trigger || null;
+        activeRecordWorkflow = { action: action, row: row, data: data };
+        setRecordDrawerMode(action);
+        document.getElementById('recordDrawerTitle').textContent = config.title;
+        document.getElementById('recordDrawerSubtitle').textContent = config.subtitle;
+        document.getElementById('recordWorkflowApplicationNo').textContent = data.applicationNo;
+        var status = document.getElementById('recordWorkflowStatus');
+        status.className = 'record-detail-status ' + getRecordStatusClass(data.status);
+        status.textContent = data.status;
+        content.textContent = '';
+        if (action === 'copy') renderCopyWorkflow(content, data);
+        if (action === 'renew') renderRenewWorkflow(content, data);
+        if (action === 'resubmit') renderResubmitWorkflow(content, data);
+        var primary = document.getElementById('recordDrawerPrimary');
+        primary.textContent = config.primary;
+        primary.hidden = false;
+        layer.hidden = false;
+        layer.setAttribute('aria-hidden', 'false');
+        var firstInput = content.querySelector('input, textarea');
+        if (firstInput) firstInput.focus();
+    }
+
+    function showRecordActionToast(message) {
+        var toast = document.getElementById('recordActionToast');
+        document.getElementById('recordActionToastText').textContent = message;
+        toast.hidden = false;
+        clearTimeout(recordActionToastTimer);
+        recordActionToastTimer = setTimeout(function() { toast.hidden = true; }, 2600);
+    }
+
+    function submitRecordWorkflow() {
+        if (!activeRecordWorkflow) return;
+        var required = Array.from(document.querySelectorAll('#recordDrawerWorkflow [data-workflow-required="true"]')).find(function(field) {
+            return !String(field.value || '').trim();
+        });
+        var error = document.getElementById('recordWorkflowError');
+        if (required && !String(required.value || '').trim()) {
+            error.textContent = '请完成必填信息后再提交。';
+            error.hidden = false;
+            required.focus();
+            return;
+        }
+        var messageMap = {
+            copy: '复制草稿已创建，可在申请页面继续编辑。',
+            renew: '续期申请已提交，将进入审批流程。',
+            resubmit: '申请已重新提交，将重新进入审批流程。'
+        };
+        var message = messageMap[activeRecordWorkflow.action];
+        closeRecordDrawer();
+        showRecordActionToast(message);
+    }
+
     function closeRecordDrawer() {
         var layer = document.getElementById('recordDrawerLayer');
         if (layer.hidden) return;
         layer.hidden = true;
         layer.setAttribute('aria-hidden', 'true');
+        activeRecordWorkflow = null;
         if (lastRecordDrawerTrigger && typeof lastRecordDrawerTrigger.focus === 'function') lastRecordDrawerTrigger.focus();
         lastRecordDrawerTrigger = null;
     }
@@ -7385,23 +7608,28 @@
         var records = document.getElementById('content-records');
         if (!records || records.dataset.detailDrawerReady === 'true') return;
         records.dataset.detailDrawerReady = 'true';
+        var actionTypes = { '查看': 'view', '复制': 'copy', '续期': 'renew', '重新提交': 'resubmit' };
         records.querySelectorAll('.sticky-right .ml-auto > *').forEach(function(action) {
-            if (action.textContent.trim() !== '查看') return;
+            var actionType = actionTypes[action.textContent.trim()];
+            if (!actionType) return;
             action.classList.add('record-action-control');
-            action.setAttribute('data-record-action', 'view');
+            action.setAttribute('data-record-action', actionType);
             action.setAttribute('role', 'button');
             action.setAttribute('tabindex', '0');
             action.setAttribute('aria-haspopup', 'dialog');
         });
         records.addEventListener('click', function(event) {
-            var action = event.target.closest('[data-record-action="view"]');
-            if (action) openRecordDetailDrawer(action.closest('tr'), action);
+            var action = event.target.closest('[data-record-action]');
+            if (!action) return;
+            if (action.dataset.recordAction === 'view') openRecordDetailDrawer(action.closest('tr'), action);
+            else openRecordWorkflowDrawer(action.dataset.recordAction, action.closest('tr'), action);
         });
         records.addEventListener('keydown', function(event) {
-            var action = event.target.closest('[data-record-action="view"]');
+            var action = event.target.closest('[data-record-action]');
             if (!action || (event.key !== 'Enter' && event.key !== ' ')) return;
             event.preventDefault();
-            openRecordDetailDrawer(action.closest('tr'), action);
+            if (action.dataset.recordAction === 'view') openRecordDetailDrawer(action.closest('tr'), action);
+            else openRecordWorkflowDrawer(action.dataset.recordAction, action.closest('tr'), action);
         });
         document.querySelectorAll('[data-record-drawer-close]').forEach(function(control) {
             control.addEventListener('click', closeRecordDrawer);
@@ -7409,6 +7637,7 @@
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') closeRecordDrawer();
         });
+        document.getElementById('recordDrawerPrimary').addEventListener('click', submitRecordWorkflow);
     }
 
     function initRecordsPagination() {

@@ -12,6 +12,13 @@ function setupRecords() {
   return loaded;
 }
 
+function clickAction(document, window, actionName) {
+  const action = document.querySelector(`[data-record-action="${actionName}"]`);
+  assert.ok(action, `${actionName}操作应存在`);
+  action.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+  return action;
+}
+
 test('查看授权记录使用右侧抽屉并保持列表上下文', () => {
   const { dom, document, window, errors } = setupRecords();
   try {
@@ -55,6 +62,58 @@ test('查看支持键盘打开、Escape关闭并恢复焦点', () => {
     document.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
     assert.equal(document.getElementById('recordDrawerLayer').hidden, true);
     assert.equal(document.activeElement, view);
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('复制申请展示复制范围并创建演示草稿', () => {
+  const { dom, document, window } = setupRecords();
+  try {
+    clickAction(document, window, 'copy');
+    assert.equal(document.getElementById('recordDrawerTitle').textContent, '复制申请');
+    assert.equal(document.getElementById('recordDrawerView').hidden, true);
+    assert.equal(document.querySelectorAll('#recordWorkflowContent .record-copy-option').length, 4);
+    assert.match(document.getElementById('recordCopyNote').value, /基于 AUTH-/);
+    document.getElementById('recordDrawerPrimary').click();
+    assert.equal(document.getElementById('recordDrawerLayer').hidden, true);
+    assert.equal(document.getElementById('recordActionToast').hidden, false);
+    assert.match(document.getElementById('recordActionToastText').textContent, /复制草稿已创建/);
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('续期抽屉展示当前授权并校验续期原因', () => {
+  const { dom, document, window } = setupRecords();
+  try {
+    clickAction(document, window, 'renew');
+    assert.equal(document.getElementById('recordDrawerTitle').textContent, '发起续期');
+    assert.match(document.getElementById('recordWorkflowContent').textContent, /当前授权有效期/);
+    assert.match(document.getElementById('recordRenewEndDate').value, /^\d{4}-\d{2}-\d{2}$/);
+    document.getElementById('recordDrawerPrimary').click();
+    assert.equal(document.getElementById('recordDrawerLayer').hidden, false);
+    assert.equal(document.getElementById('recordWorkflowError').hidden, false);
+    document.getElementById('recordRenewReason').value = '客户需要继续完成业务验证';
+    document.getElementById('recordDrawerPrimary').click();
+    assert.equal(document.getElementById('recordDrawerLayer').hidden, true);
+    assert.match(document.getElementById('recordActionToastText').textContent, /续期申请已提交/);
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('驳回记录可补充说明和材料后重新提交', () => {
+  const { dom, document, window } = setupRecords();
+  try {
+    clickAction(document, window, 'resubmit');
+    assert.equal(document.getElementById('recordDrawerTitle').textContent, '重新提交');
+    assert.match(document.getElementById('recordWorkflowContent').textContent, /上次审批未通过/);
+    assert.ok(document.getElementById('recordResubmitFile'));
+    document.getElementById('recordResubmitNote').value = '已补充客户测试计划和申请说明';
+    document.getElementById('recordDrawerPrimary').click();
+    assert.equal(document.getElementById('recordDrawerLayer').hidden, true);
+    assert.match(document.getElementById('recordActionToastText').textContent, /重新提交/);
   } finally {
     dom.window.close();
   }
