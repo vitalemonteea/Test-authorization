@@ -66,17 +66,13 @@ test('记录操作通过悬浮和键盘聚焦解释功能意义', () => {
       const action = [...document.querySelectorAll('[data-action-tip]')].find((item) => item.textContent.trim() === label);
       assert.ok(action, `${label}操作应存在说明`);
       assert.equal(action.getAttribute('data-action-tip'), tip);
-      assert.equal(action.getAttribute('aria-describedby'), 'recordsActionTooltip');
+      assert.equal(action.getAttribute('title'), tip);
+      assert.match(action.getAttribute('aria-label'), new RegExp(tip));
     });
     assert.equal(document.querySelector('.sticky-right .ml-auto > *:first-child').hasAttribute('data-action-tip'), false, '查看保持不提示');
-
-    const copyAction = [...document.querySelectorAll('[data-action-tip]')].find((item) => item.textContent.trim() === '复制');
-    copyAction.dispatchEvent(new window.Event('mouseenter'));
-    const tooltip = document.getElementById('recordsActionTooltip');
-    assert.ok(tooltip.classList.contains('show'));
-    assert.equal(tooltip.textContent, expectedTips['复制']);
-    copyAction.dispatchEvent(new window.Event('mouseleave'));
-    assert.equal(tooltip.classList.contains('show'), false);
+    const styles = [...document.querySelectorAll('style')].map((style) => style.textContent).join('\n');
+    assert.match(styles, /\[data-action-tip\]:hover::after/);
+    assert.match(styles, /\[data-action-tip\]:focus::after/);
     assert.deepEqual(errors, []);
   } finally {
     dom.window.close();

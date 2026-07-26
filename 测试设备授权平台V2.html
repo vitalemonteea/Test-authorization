@@ -879,6 +879,9 @@
         #content-records .cust-cell .cust-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:default}
         #content-records .cust-cell .cust-badge{flex-shrink:0;font-size:11px}
         #content-records .record-download-action{border:0;background:transparent;font:inherit;line-height:inherit}
+        #content-records [data-action-tip]{position:relative;outline-offset:2px}
+        #content-records [data-action-tip]::after{content:attr(data-action-tip);position:absolute;right:0;bottom:calc(100% + 6px);z-index:100;padding:6px 9px;color:#f3f4f6;background:#1f2937;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.15);font-size:12px;font-weight:400;line-height:18px;white-space:nowrap;pointer-events:none;opacity:0;visibility:hidden;transform:translateY(2px);transition:opacity .15s,transform .15s,visibility .15s}
+        #content-records [data-action-tip]:hover::after,#content-records [data-action-tip]:focus::after{opacity:1;visibility:visible;transform:translateY(0)}
         /* 全局客户名称悬浮提示，fixed 定位避免被表格行遮挡 */
         .cust-global-tooltip{position:fixed;z-index:9999;background:#1f2937;color:#f3f4f6;padding:6px 10px;border-radius:6px;font-size:12px;line-height:1.5;max-width:260px;white-space:normal;word-break:break-all;pointer-events:none;opacity:0;transition:opacity .15s;box-shadow:0 4px 12px rgba(0,0,0,.15)}
         .cust-global-tooltip.show{opacity:1}
@@ -7137,7 +7140,8 @@
             var tip = tipByAction[action.textContent.trim()];
             if (!tip) return;
             action.setAttribute('data-action-tip', tip);
-            action.setAttribute('aria-describedby', 'recordsActionTooltip');
+            action.setAttribute('title', tip);
+            action.setAttribute('aria-label', action.textContent.trim() + '：' + tip);
             if (action.tagName !== 'BUTTON') action.setAttribute('tabindex', '0');
         });
     }
@@ -7302,7 +7306,7 @@
             activeEl = null;
         }
 
-        document.querySelectorAll('#content-records .cust-name, #content-records [data-action-tip]').forEach(function(el) {
+        document.querySelectorAll('#content-records .cust-name').forEach(function(el) {
             el.addEventListener('mouseenter', function() { showTooltip(el); });
             el.addEventListener('mouseleave', hideTooltip);
             el.addEventListener('focus', function() { showTooltip(el); });
