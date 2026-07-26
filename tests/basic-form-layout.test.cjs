@@ -429,6 +429,15 @@ test('接收邮箱、设备SN和设备ID应为全宽 basic-full', () => {
   );
 });
 
+test('接收邮箱应持续提示优先填写客户邮箱', () => {
+  const email = doc.getElementById('userEmail');
+  const help = doc.getElementById('userEmailHelp');
+  assert.ok(help, '应显示接收邮箱帮助文案');
+  assert.equal(email.getAttribute('aria-describedby'), 'userEmailHelp');
+  assert.match(help.textContent, /建议填写客户邮箱/);
+  assert.match(help.textContent, /授权结果及相关文件/);
+});
+
 test('申请参数与审批明细不作为申请人可见字段', () => {
   assert.equal(doc.getElementById('requestParametersFormItem'), null, '不应保留常驻申请参数表单项');
   const preview = doc.getElementById('approvalPreview');

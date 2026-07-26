@@ -387,6 +387,7 @@
         #section-basic .auth-scene-basis-text { display: block; color: #6b7890; overflow-wrap: anywhere; }
         #section-basic .auth-scene-tag { display: inline-flex; align-items: center; min-height: 20px; padding: 0 7px; color: #0050cb; background: #e5eeff; border-radius: 4px; font-size: 11px; font-weight: 600; }
         #section-basic .auth-scene-tag.warning { color: #8a4b00; background: #fff1d6; }
+        #section-basic .email-help { display: block; margin-top: 6px; color: #6b7890; font-size: 12px; line-height: 18px; }
         #section-basic .request-content-group { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
         #section-basic .request-content-option { position: relative; display: flex; align-items: center; gap: 9px; min-width: 0; min-height: 44px; padding: 9px 12px; color: #424656; background: #fff; border: 1px solid #d8deea; border-radius: 8px; box-sizing: border-box; cursor: pointer; transition: border-color .15s, background-color .15s, box-shadow .15s; }
         #section-basic .request-content-option:hover { border-color: #8eaae0; background: #f7faff; }
@@ -1577,7 +1578,8 @@
                     <div class="layui-form-item basic-full">
                         <label class="layui-form-label">接收邮箱</label>
                         <div class="layui-input-block">
-                            <input type="text" id="userEmail" name="userEmail" placeholder="请填写正确邮箱，以免邮件发送失败" class="layui-input">
+                            <input type="text" id="userEmail" name="userEmail" placeholder="请输入接收邮箱" class="layui-input" aria-describedby="userEmailHelp">
+                            <span class="email-help" id="userEmailHelp">建议填写客户邮箱，用于接收授权结果及相关文件。</span>
                         </div>
                     </div>
 
