@@ -878,6 +878,7 @@
         #content-records .cust-cell{display:flex;align-items:center;gap:8px;max-width:200px}
         #content-records .cust-cell .cust-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:default}
         #content-records .cust-cell .cust-badge{flex-shrink:0;font-size:11px}
+        #content-records .record-download-action{border:0;background:transparent;font:inherit;line-height:inherit}
         /* 全局客户名称悬浮提示，fixed 定位避免被表格行遮挡 */
         .cust-global-tooltip{position:fixed;z-index:9999;background:#1f2937;color:#f3f4f6;padding:6px 10px;border-radius:6px;font-size:12px;line-height:1.5;max-width:260px;white-space:normal;word-break:break-all;pointer-events:none;opacity:0;transition:opacity .15s;box-shadow:0 4px 12px rgba(0,0,0,.15)}
         .cust-global-tooltip.show{opacity:1}
@@ -7083,6 +7084,47 @@
     var recordsTotalPages = 0;
     var recordsAllRows = [];
 
+    function getRecordRowStatus(row) {
+        if (row.dataset.status) return row.dataset.status;
+        var statusBadge = row.querySelector('.sticky-right > div > span');
+        return statusBadge ? statusBadge.textContent.trim() : '';
+    }
+
+    function downloadAuthorizationFile(row) {
+        var applicationCell = row.querySelector('.sticky-left-0');
+        var applicationNo = applicationCell ? applicationCell.textContent.trim() : '未知申请';
+        var cells = row.querySelectorAll('td');
+        var fileContent = [
+            '授权信息（演示文件）',
+            '申请编号：' + applicationNo,
+            '产品线/方案：' + (cells[3] ? cells[3].textContent.trim() : ''),
+            '设备ID：' + (cells[6] ? cells[6].textContent.trim() : ''),
+            '授权有效期：' + (cells[8] ? cells[8].textContent.trim() : '')
+        ].join('\n');
+        var link = document.createElement('a');
+        link.href = 'data:application/octet-stream;charset=utf-8,' + encodeURIComponent(fileContent);
+        link.download = '授权信息-' + applicationNo;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+    }
+
+    function initRecordDownloadActions() {
+        var rows = document.querySelectorAll('#content-records .table-scroll-wrap tbody > tr:not(.solution-detail-row)');
+        rows.forEach(function(row) {
+            var status = getRecordRowStatus(row);
+            var actionWrap = row.querySelector('.sticky-right .ml-auto');
+            if (!actionWrap || (status !== '已授权' && status !== '已过期') || actionWrap.querySelector('.record-download-action')) return;
+            var button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'record-download-action text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]';
+            button.setAttribute('aria-label', '下载授权');
+            button.textContent = '下载';
+            button.addEventListener('click', function() { downloadAuthorizationFile(row); });
+            actionWrap.insertBefore(button, actionWrap.children[1] || null);
+        });
+    }
+
     function initRecordsPagination() {
         var mainTbody = document.querySelector("#content-records .table-scroll-wrap table tbody");
         if (!mainTbody) return;
@@ -7251,11 +7293,13 @@
         document.addEventListener("DOMContentLoaded", function() {
             initRecordsPagination();
             initRecordsDatePicker();
+            initRecordDownloadActions();
             initRecordsTooltip();
         });
     } else {
         initRecordsPagination();
         initRecordsDatePicker();
+        initRecordDownloadActions();
         initRecordsTooltip();
     }
     </script>
