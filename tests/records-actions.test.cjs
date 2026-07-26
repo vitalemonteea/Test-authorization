@@ -47,3 +47,38 @@ test('下载授权生成不预设扩展名的单个 Mock 文件', () => {
     dom.window.close();
   }
 });
+
+test('记录操作通过悬浮和键盘聚焦解释功能意义', () => {
+  const { dom, document, window, errors } = loadV2Dom();
+  try {
+    window.initRecordDownloadActions();
+    window.initRecordActionTips();
+    window.initRecordsTooltip();
+
+    const expectedTips = {
+      '复制': '基于当前记录创建一份新申请',
+      '续期': '基于当前授权发起延期申请',
+      '撤销': '撤回尚未完成的申请',
+      '审核': '进入审批处理页面',
+      '下载': '下载本次生成的授权信息'
+    };
+    Object.entries(expectedTips).forEach(([label, tip]) => {
+      const action = [...document.querySelectorAll('[data-action-tip]')].find((item) => item.textContent.trim() === label);
+      assert.ok(action, `${label}操作应存在说明`);
+      assert.equal(action.getAttribute('data-action-tip'), tip);
+      assert.equal(action.getAttribute('aria-describedby'), 'recordsActionTooltip');
+    });
+    assert.equal(document.querySelector('.sticky-right .ml-auto > *:first-child').hasAttribute('data-action-tip'), false, '查看保持不提示');
+
+    const copyAction = [...document.querySelectorAll('[data-action-tip]')].find((item) => item.textContent.trim() === '复制');
+    copyAction.dispatchEvent(new window.Event('mouseenter'));
+    const tooltip = document.getElementById('recordsActionTooltip');
+    assert.ok(tooltip.classList.contains('show'));
+    assert.equal(tooltip.textContent, expectedTips['复制']);
+    copyAction.dispatchEvent(new window.Event('mouseleave'));
+    assert.equal(tooltip.classList.contains('show'), false);
+    assert.deepEqual(errors, []);
+  } finally {
+    dom.window.close();
+  }
+});

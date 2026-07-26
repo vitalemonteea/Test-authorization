@@ -7125,6 +7125,23 @@
         });
     }
 
+    function initRecordActionTips() {
+        var tipByAction = {
+            '复制': '基于当前记录创建一份新申请',
+            '续期': '基于当前授权发起延期申请',
+            '撤销': '撤回尚未完成的申请',
+            '审核': '进入审批处理页面',
+            '下载': '下载本次生成的授权信息'
+        };
+        document.querySelectorAll('#content-records .sticky-right .ml-auto > *').forEach(function(action) {
+            var tip = tipByAction[action.textContent.trim()];
+            if (!tip) return;
+            action.setAttribute('data-action-tip', tip);
+            action.setAttribute('aria-describedby', 'recordsActionTooltip');
+            if (action.tagName !== 'BUTTON') action.setAttribute('tabindex', '0');
+        });
+    }
+
     function initRecordsPagination() {
         var mainTbody = document.querySelector("#content-records .table-scroll-wrap table tbody");
         if (!mainTbody) return;
@@ -7245,8 +7262,11 @@
     }
 
     function initRecordsTooltip() {
+        if (document.getElementById('recordsActionTooltip')) return;
         var tooltip = document.createElement('div');
         tooltip.className = 'cust-global-tooltip';
+        tooltip.id = 'recordsActionTooltip';
+        tooltip.setAttribute('role', 'tooltip');
         document.body.appendChild(tooltip);
         var activeEl = null;
 
@@ -7266,10 +7286,11 @@
         }
 
         function showTooltip(el) {
-            var full = el.getAttribute('data-full') || el.getAttribute('title') || el.textContent;
+            var actionTip = el.getAttribute('data-action-tip');
+            var full = actionTip || el.getAttribute('data-full') || el.getAttribute('title') || el.textContent;
             if (!full) return;
             var isClamped = el.scrollWidth > el.clientWidth;
-            if (!isClamped && full === el.textContent) return;
+            if (!actionTip && !isClamped && full === el.textContent) return;
             tooltip.textContent = full;
             activeEl = el;
             tooltip.classList.add('show');
@@ -7281,9 +7302,11 @@
             activeEl = null;
         }
 
-        document.querySelectorAll('#content-records .cust-name').forEach(function(el) {
+        document.querySelectorAll('#content-records .cust-name, #content-records [data-action-tip]').forEach(function(el) {
             el.addEventListener('mouseenter', function() { showTooltip(el); });
             el.addEventListener('mouseleave', hideTooltip);
+            el.addEventListener('focus', function() { showTooltip(el); });
+            el.addEventListener('blur', hideTooltip);
         });
         window.addEventListener('scroll', positionTooltip, true);
         window.addEventListener('resize', positionTooltip);
@@ -7294,12 +7317,14 @@
             initRecordsPagination();
             initRecordsDatePicker();
             initRecordDownloadActions();
+            initRecordActionTips();
             initRecordsTooltip();
         });
     } else {
         initRecordsPagination();
         initRecordsDatePicker();
         initRecordDownloadActions();
+        initRecordActionTips();
         initRecordsTooltip();
     }
     </script>
