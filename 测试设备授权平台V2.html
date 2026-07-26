@@ -377,6 +377,11 @@
         #section-basic .auth-scene-description { display: block; margin-top: 2px; color: #6b7890; font-size: 12px; line-height: 18px; }
         #section-basic .auth-scene-basis { display: flex; flex-direction: column; justify-content: center; min-width: 0; min-height: 48px; padding-left: 20px; border-left: 1px solid #e5eaf2; color: #6b7890; font-size: 12px; line-height: 18px; }
         #section-basic .auth-scene-basis[hidden] { display: none; }
+        #section-basic .auth-scene-approval-note { margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #f4dfb9; color: #8a4b00; }
+        #section-basic .auth-scene-approval-note[hidden] { display: none; }
+        #section-basic .auth-scene-approval-title { display: flex; align-items: center; gap: 5px; margin-bottom: 2px; font-weight: 600; line-height: 18px; }
+        #section-basic .auth-scene-approval-title .material-symbols-outlined { color: #c66a00; font-size: 17px; }
+        #section-basic .auth-scene-approval-text { display: block; line-height: 18px; }
         #section-basic .auth-scene-basis-label { display: flex; align-items: center; gap: 5px; margin-bottom: 3px; color: #424656; font-size: 12px; font-weight: 600; line-height: 18px; }
         #section-basic .auth-scene-basis-label .material-symbols-outlined { color: #0050cb; font-size: 17px; }
         #section-basic .auth-scene-basis-text { display: block; color: #6b7890; overflow-wrap: anywhere; }
@@ -1435,6 +1440,10 @@
                                     </span>
                                 </div>
                                 <div class="auth-scene-basis" id="authSceneBasis" hidden>
+                                    <div class="auth-scene-approval-note" id="authSceneApprovalNote" hidden>
+                                        <span class="auth-scene-approval-title"><span class="material-symbols-outlined" aria-hidden="true">warning_amber</span>审批提示</span>
+                                        <span class="auth-scene-approval-text">本次申请累计测试已超期，将升级审批，并扣除区域经营成本。</span>
+                                    </div>
                                     <span class="auth-scene-basis-label"><span class="material-symbols-outlined" aria-hidden="true">manage_search</span>识别依据</span>
                                     <span class="auth-scene-basis-text" id="authSceneBasisText"></span>
                                 </div>
@@ -5648,6 +5657,7 @@
         var authSceneLabel = document.getElementById('authSceneLabel');
         var authSceneDescription = document.getElementById('authSceneDescription');
         var authSceneBasis = document.getElementById('authSceneBasis');
+        var authSceneApprovalNote = document.getElementById('authSceneApprovalNote');
         var authSceneBasisText = document.getElementById('authSceneBasisText');
         var authSceneTags = document.getElementById('authSceneTags');
         var requestActionInput = document.getElementById('requestAction');
@@ -5794,6 +5804,7 @@
             authSceneLabel.textContent = '';
             authSceneDescription.textContent = '';
             authSceneBasis.hidden = true;
+            authSceneApprovalNote.hidden = true;
             authSceneDisplay.classList.remove('has-basis');
             authSceneBasisText.textContent = '';
             authSceneTags.textContent = '';
@@ -5918,19 +5929,24 @@
                 salesTag.textContent = '销售设备';
                 authSceneTags.appendChild(salesTag);
             }
-            if (facts.some(function(fact) {
+            var isOverdue = facts.some(function(fact) {
                 return typeof authorizationRules.getOverdueTier === 'function' &&
                     authorizationRules.getOverdueTier(fact, {
                         customerType: applicationState.customerType,
                         productLineId: plnameSelect.value,
                         requestedMonths: Number(requestedMonthsInput.value || 0)
                     }) === 'overdue';
-            })) {
+            });
+            if (isOverdue) {
                 var overdueTag = document.createElement('span');
                 overdueTag.className = 'auth-scene-tag warning';
                 overdueTag.textContent = '累计测试超期';
                 authSceneTags.appendChild(overdueTag);
             }
+            authSceneApprovalNote.hidden = !isOverdue;
+            var hasSceneAside = Boolean(authSceneBasisText.textContent) || isOverdue;
+            authSceneBasis.hidden = !hasSceneAside;
+            authSceneDisplay.classList.toggle('has-basis', hasSceneAside);
         }
 
         function getSelectedProductName() {

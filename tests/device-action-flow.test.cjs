@@ -224,6 +224,9 @@ test('重新开通与累计超期可以在场景卡中同时显示', () => {
     assert.equal(document.getElementById('authScene').value, 'reopen');
     assert.match(document.getElementById('authSceneTags').textContent, /累计测试超期/);
     assert.match(document.getElementById('authSceneBasisText').textContent, /匹配 3 条授权记录/);
+    assert.equal(document.getElementById('authSceneApprovalNote').hidden, false);
+    assert.match(document.getElementById('authSceneApprovalNote').textContent, /升级审批/);
+    assert.match(document.getElementById('authSceneApprovalNote').textContent, /扣除区域经营成本/);
     assert.ok(document.getElementById('authSceneDisplay').classList.contains('has-basis'));
     assert.equal(document.getElementById('authSceneBasis').hidden, false);
     assert.deepEqual(errors, []);
