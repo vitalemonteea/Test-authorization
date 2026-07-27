@@ -47,6 +47,7 @@ test('产品授权详情展示场景、授权对象、配置变更、开通结�
     assert.match(document.getElementById('recordProductDeviceGrid').textContent, /硬件信息文件/);
     assert.match(document.getElementById('recordProductDeviceGrid').textContent, /集群标识/);
     assert.doesNotMatch(document.getElementById('recordProductDeviceGrid').textContent, /设备 ID/);
+    assert.doesNotMatch(document.getElementById('recordProductDeviceGrid').textContent, /授权中台/);
     assert.match(document.getElementById('recordProductDeviceGrid').textContent, /借测单号/);
     assert.match(document.getElementById('recordProductChangeList').textContent, /未开通/);
     assert.match(document.getElementById('recordProductChangeList').textContent, /计算虚拟化、分布式存储/);
@@ -123,6 +124,7 @@ test('超期产品提示升级审批，解决方案仍使用通用授权信息',
     assert.match(document.getElementById('recordProductSceneGrid').textContent, /扣除区域经营成本/);
     assert.match(document.getElementById('recordProductDeviceGrid').textContent, /设备 ID/);
     assert.doesNotMatch(document.getElementById('recordProductDeviceGrid').textContent, /硬件信息文件/);
+    assert.doesNotMatch(document.getElementById('recordProductDeviceGrid').textContent, /授权中台/);
 
     const solutionRow = rows.find((row) => row.children[1]?.textContent.trim() === '解决方案');
     assert.ok(solutionRow, '应存在解决方案 Mock 记录');
