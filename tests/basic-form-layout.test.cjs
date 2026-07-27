@@ -446,6 +446,18 @@ test('接收邮箱应在输入框内提示优先填写客户邮箱', () => {
   assert.equal(doc.getElementById('userEmailHelp'), null, '不应在输入框下方重复占用一行');
 });
 
+test('超期申请补充信息应使用整行自适应表单布局', () => {
+  const fields = doc.getElementById('overlimit-fields');
+  const reason = doc.getElementById('overlimitReason');
+  const upload = doc.getElementById('overlimitFileInfo');
+  assert.ok(fields.classList.contains('basic-full-row'));
+  assert.equal(reason.closest('.layui-input-block').parentElement.parentElement, fields);
+  assert.ok(elementHasCssProperty(reason, 'width', /^100%$/), '申请理由应占满内容区');
+  assert.ok(elementHasCssProperty(reason, 'min-height', /^80px$/), '申请理由应提供稳定的多行录入高度');
+  assert.ok(elementHasCssProperty(reason, 'resize', /^none$/), '申请理由不应允许拖拽破坏布局');
+  assert.ok(elementHasCssProperty(upload, 'flex', /^11auto$/), '文件状态区域应自适应填满剩余宽度');
+});
+
 test('申请参数与审批明细不作为申请人可见字段', () => {
   assert.equal(doc.getElementById('requestParametersFormItem'), null, '不应保留常驻申请参数表单项');
   const preview = doc.getElementById('approvalPreview');

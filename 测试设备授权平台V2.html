@@ -380,7 +380,13 @@
         #section-basic .auth-scene-approval-text { display: block; line-height: 18px; }
         #section-basic .auth-scene-tag { display: inline-flex; align-items: center; min-height: 20px; padding: 0 7px; color: #0050cb; background: #e5eeff; border-radius: 4px; font-size: 11px; font-weight: 600; }
         #section-basic .auth-scene-tag.warning { color: #8a4b00; background: #fff1d6; }
+        #section-basic #overlimit-fields { row-gap: 16px; }
         #section-basic #overlimit-fields[hidden] { display: none; }
+        #section-basic #overlimit-fields .layui-textarea { display: block; width: 100%; min-height: 80px; padding: 10px 12px; color: #0b1c30; background: #fff; border: 1px solid #d8deea; border-radius: 8px; box-sizing: border-box; font-family: inherit; font-size: 13px; line-height: 20px; resize: none; transition: border-color .15s, box-shadow .15s; }
+        #section-basic #overlimit-fields .layui-textarea::placeholder { color: #8b92a5; }
+        #section-basic #overlimit-fields .layui-textarea:focus { outline: none; border-color: #0050cb; box-shadow: 0 0 0 2px rgba(0,80,203,.12); }
+        #section-basic #overlimit-fields .hw-upload-area { width: 100%; }
+        #section-basic #overlimit-fields .hw-file-info { flex: 1 1 auto; width: auto; min-width: 0; }
         #section-basic .request-content-group { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
         #section-basic .request-content-option { position: relative; display: flex; align-items: center; gap: 9px; min-width: 0; min-height: 44px; padding: 9px 12px; color: #424656; background: #fff; border: 1px solid #d8deea; border-radius: 8px; box-sizing: border-box; cursor: pointer; transition: border-color .15s, background-color .15s, box-shadow .15s; }
         #section-basic .request-content-option:hover { border-color: #8eaae0; background: #f7faff; }
