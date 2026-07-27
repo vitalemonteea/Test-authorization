@@ -883,8 +883,6 @@
         #content-records .cust-cell .cust-badge{flex-shrink:0;font-size:11px}
         #content-records .record-download-action{border:0;background:transparent;font:inherit;line-height:inherit}
         #content-records [data-action-tip]{position:relative;outline-offset:2px}
-        #content-records [data-action-tip]::after{content:attr(data-action-tip);position:absolute;right:0;bottom:calc(100% + 6px);z-index:100;padding:6px 9px;color:#f3f4f6;background:#1f2937;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.15);font-size:12px;font-weight:400;line-height:18px;white-space:nowrap;pointer-events:none;opacity:0;visibility:hidden;transform:translateY(2px);transition:opacity .15s,transform .15s,visibility .15s}
-        #content-records [data-action-tip]:hover::after,#content-records [data-action-tip]:focus::after{opacity:1;visibility:visible;transform:translateY(0)}
         .record-drawer-layer{position:fixed;inset:0;z-index:5200;display:flex;justify-content:flex-end}
         .record-drawer-layer[hidden]{display:none}
         .record-drawer-backdrop{position:absolute;inset:0;background:rgba(11,28,48,.28)}
@@ -971,6 +969,11 @@
         /* 全局客户名称悬浮提示，fixed 定位避免被表格行遮挡 */
         .cust-global-tooltip{position:fixed;z-index:9999;background:#1f2937;color:#f3f4f6;padding:6px 10px;border-radius:6px;font-size:12px;line-height:1.5;max-width:260px;white-space:normal;word-break:break-all;pointer-events:none;opacity:0;transition:opacity .15s;box-shadow:0 4px 12px rgba(0,0,0,.15)}
         .cust-global-tooltip.show{opacity:1}
+        #content-records .record-status-filter{display:inline-flex;align-items:center;gap:5px;min-height:28px;padding:0 9px;color:#424656;background:transparent;border:1px solid transparent;border-radius:6px;font:inherit;font-size:11px;line-height:1;cursor:pointer;white-space:nowrap;transition:color .15s,background-color .15s,border-color .15s}
+        #content-records .record-status-filter:hover{color:#0050cb;background:#eff4ff}
+        #content-records .record-status-filter.is-active{color:#0050cb;background:#eef4ff;border-color:#b7cdf5;font-weight:600}
+        #content-records .record-status-filter:focus-visible{outline:2px solid rgba(0,80,203,.35);outline-offset:1px}
+        #content-records .record-status-count{font-variant-numeric:tabular-nums}
         #content-records .filter-divider{width:1px;height:20px;background:rgba(194,198,216,0.4);flex-shrink:0}
         #content-records select{appearance:none;-webkit-appearance:none;background-image:none;}
         /* 授权记录 tab：铺满内容区宽高，避免被表单专用的 200px 侧边距挤压导致比例失真 */
@@ -2692,14 +2695,15 @@
 <div class="w-full mx-auto flex-1 flex flex-col gap-3 min-h-0">
 <div class="flex items-center justify-between shrink-0">
 <div class="flex items-center gap-3"><h1 class="text-[20px] font-semibold text-[#0b1c30]">授权记录</h1><span class="text-[12px] text-[#424656]">管理和查看所有设备授权申请及历史记录。</span></div>
-<div class="flex items-center gap-1.5 bg-white px-2 py-1 rounded-full border border-[#c2c6d8]/40">
-<span class="flex items-center gap-1 px-2 py-0.5 rounded-full bg-white text-[11px]"><span class="w-1.5 h-1.5 rounded-full bg-[#424656]"></span>共51</span>
+<div id="recordsStatusSummary" class="flex items-center gap-1 bg-white px-1.5 py-1 rounded-lg border border-[#c2c6d8]/40" aria-label="按审批状态筛选授权记录">
+<button type="button" class="record-status-filter is-active" data-record-status="" aria-pressed="true"><span class="w-1.5 h-1.5 rounded-full bg-[#424656]"></span><span>全部</span><span class="record-status-count">0</span></button>
 <div class="w-px h-3 bg-[#c2c6d8]/40"></div>
-<span class="flex items-center gap-1 px-2 py-0.5 rounded-full hover:bg-[#eff4ff] cursor-pointer text-[11px] text-primary"><span class="w-1.5 h-1.5 rounded-full bg-primary"></span>待审批2</span>
-<span class="flex items-center gap-1 px-2 py-0.5 rounded-full hover:bg-[#eff4ff] cursor-pointer text-[11px] text-[#424656]"><span class="w-1.5 h-1.5 rounded-full bg-[#10b981]"></span>审批中1</span>
-<span class="flex items-center gap-1 px-2 py-0.5 rounded-full hover:bg-[#eff4ff] cursor-pointer text-[11px] text-[#424656]"><span class="w-1.5 h-1.5 rounded-full bg-[#8b5cf6]"></span>已通过1</span>
-<span class="flex items-center gap-1 px-2 py-0.5 rounded-full hover:bg-[#eff4ff] cursor-pointer text-[11px] text-[#424656]"><span class="w-1.5 h-1.5 rounded-full bg-[#3b82f6]"></span>已授权4</span>
-<span class="flex items-center gap-1 px-2 py-0.5 rounded-full hover:bg-[#eff4ff] cursor-pointer text-[11px] text-[#424656]"><span class="w-1.5 h-1.5 rounded-full bg-error"></span>已驳回1</span><span class="flex items-center gap-1 px-2 py-0.5 rounded-full hover:bg-[#eff4ff] cursor-pointer text-[11px] text-[#424656]"><span class="w-1.5 h-1.5 rounded-full bg-[#9ca3af]"></span>已过期1</span>
+<button type="button" class="record-status-filter" data-record-status="待审批" aria-pressed="false"><span class="w-1.5 h-1.5 rounded-full bg-primary"></span><span>待审批</span><span class="record-status-count">0</span></button>
+<button type="button" class="record-status-filter" data-record-status="审批中" aria-pressed="false"><span class="w-1.5 h-1.5 rounded-full bg-[#10b981]"></span><span>审批中</span><span class="record-status-count">0</span></button>
+<button type="button" class="record-status-filter" data-record-status="已通过" aria-pressed="false"><span class="w-1.5 h-1.5 rounded-full bg-[#8b5cf6]"></span><span>已通过</span><span class="record-status-count">0</span></button>
+<button type="button" class="record-status-filter" data-record-status="已授权" aria-pressed="false"><span class="w-1.5 h-1.5 rounded-full bg-[#3b82f6]"></span><span>已授权</span><span class="record-status-count">0</span></button>
+<button type="button" class="record-status-filter" data-record-status="已驳回" aria-pressed="false"><span class="w-1.5 h-1.5 rounded-full bg-error"></span><span>已驳回</span><span class="record-status-count">0</span></button>
+<button type="button" class="record-status-filter" data-record-status="已过期" aria-pressed="false"><span class="w-1.5 h-1.5 rounded-full bg-[#9ca3af]"></span><span>已过期</span><span class="record-status-count">0</span></button>
 </div>
 </div>
 <!-- Filters -->
@@ -2718,7 +2722,7 @@
       </div>
       <div class="flex items-center gap-3">
         <label class="text-[12px] text-[#424656] whitespace-nowrap w-[84px] text-right">状态</label>
-        <select class="h-9 px-3 text-[12px] text-[#0b1c30] flex-1 max-w-[300px] border border-[#c2c6d8]/50 rounded-md bg-white focus:border-primary focus:outline-none">
+        <select id="recordsStatusSelect" class="h-9 px-3 text-[12px] text-[#0b1c30] flex-1 max-w-[300px] border border-[#c2c6d8]/50 rounded-md bg-white focus:border-primary focus:outline-none">
           <option>全部</option>
           <option>待审批</option>
           <option>审批中</option>
@@ -2751,8 +2755,8 @@
     </div>
     <!-- 按钮区 -->
     <div class="flex items-center gap-2">
-      <button class="h-9 px-5 bg-white text-primary border border-primary/30 rounded-md text-[12px] font-medium hover:bg-[#eff4ff] flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">close</span>重置</button>
-      <button class="h-9 px-5 bg-primary text-white rounded-md text-[12px] font-medium hover:bg-primary/90 flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">search</span>查询</button>
+      <button id="recordsResetButton" class="h-9 px-5 bg-white text-primary border border-primary/30 rounded-md text-[12px] font-medium hover:bg-[#eff4ff] flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">close</span>重置</button>
+      <button id="recordsQueryButton" class="h-9 px-5 bg-primary text-white rounded-md text-[12px] font-medium hover:bg-primary/90 flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">search</span>查询</button>
     </div>
   </div>
 </div>
@@ -7226,6 +7230,8 @@
     var recordsTotalRows = 0;
     var recordsTotalPages = 0;
     var recordsAllRows = [];
+    var recordsFilteredRows = [];
+    var recordsActiveStatus = '';
 
     function getRecordRowStatus(row) {
         if (row.dataset.status) return row.dataset.status;
@@ -7281,7 +7287,6 @@
             var tip = tipByAction[action.textContent.trim()];
             if (!tip) return;
             action.setAttribute('data-action-tip', tip);
-            action.setAttribute('title', tip);
             action.setAttribute('aria-label', action.textContent.trim() + '：' + tip);
             if (action.tagName !== 'BUTTON') action.setAttribute('tabindex', '0');
         });
@@ -7758,11 +7763,68 @@
         document.getElementById('recordRevokeConfirm').addEventListener('click', submitRecordRevoke);
     }
 
+    function updateRecordsStatusSummary() {
+        var counts = {};
+        recordsAllRows.forEach(function(row) {
+            var status = getRecordRowStatus(row);
+            counts[status] = (counts[status] || 0) + 1;
+        });
+        document.querySelectorAll('#recordsStatusSummary [data-record-status]').forEach(function(button) {
+            var status = button.dataset.recordStatus || '';
+            var count = status ? (counts[status] || 0) : recordsAllRows.length;
+            var countEl = button.querySelector('.record-status-count');
+            if (countEl) countEl.textContent = count;
+        });
+    }
+
+    function applyRecordsStatusFilter(status) {
+        recordsActiveStatus = status || '';
+        recordsFilteredRows = recordsAllRows.filter(function(row) {
+            return !recordsActiveStatus || getRecordRowStatus(row) === recordsActiveStatus;
+        });
+        recordsTotalRows = recordsFilteredRows.length;
+        recordsCurrentPage = 1;
+        var select = document.getElementById('recordsStatusSelect');
+        if (select) select.value = recordsActiveStatus || '全部';
+        document.querySelectorAll('#recordsStatusSummary [data-record-status]').forEach(function(button) {
+            var isActive = (button.dataset.recordStatus || '') === recordsActiveStatus;
+            button.classList.toggle('is-active', isActive);
+            button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        });
+        renderRecordsPage();
+    }
+
+    function initRecordsStatusFilters() {
+        var summary = document.getElementById('recordsStatusSummary');
+        if (!summary || summary.dataset.ready === 'true') return;
+        summary.dataset.ready = 'true';
+        summary.querySelectorAll('[data-record-status]').forEach(function(button) {
+            button.addEventListener('click', function() {
+                applyRecordsStatusFilter(button.dataset.recordStatus || '');
+            });
+        });
+        var select = document.getElementById('recordsStatusSelect');
+        if (select) select.addEventListener('change', function() {
+            applyRecordsStatusFilter(this.value === '全部' ? '' : this.value);
+        });
+        var query = document.getElementById('recordsQueryButton');
+        if (query) query.addEventListener('click', function() {
+            applyRecordsStatusFilter(select && select.value !== '全部' ? select.value : '');
+        });
+        var reset = document.getElementById('recordsResetButton');
+        if (reset) reset.addEventListener('click', function() {
+            applyRecordsStatusFilter('');
+        });
+        updateRecordsStatusSummary();
+        applyRecordsStatusFilter('');
+    }
+
     function initRecordsPagination() {
         var mainTbody = document.querySelector("#content-records .table-scroll-wrap table tbody");
         if (!mainTbody) return;
         recordsAllRows = Array.from(mainTbody.querySelectorAll(":scope > tr:not(.solution-detail-row)"));
-        recordsTotalRows = recordsAllRows.length;
+        recordsFilteredRows = recordsAllRows.slice();
+        recordsTotalRows = recordsFilteredRows.length;
         var ps = document.getElementById("pageSizeSelect");
         if (ps) ps.onchange = function() {
             recordsPageSize = parseInt(this.value);
@@ -7786,11 +7848,18 @@
         if (recordsCurrentPage > recordsTotalPages) recordsCurrentPage = recordsTotalPages;
         var start = (recordsCurrentPage - 1) * recordsPageSize;
         var end = Math.min(start + recordsPageSize, recordsTotalRows);
-        recordsAllRows.forEach(function(row, i) {
+        recordsAllRows.forEach(function(row) {
+            row.style.display = "none";
+            var detail = row.nextElementSibling;
+            if (detail && detail.classList.contains('solution-detail-row')) detail.style.display = 'none';
+        });
+        recordsFilteredRows.forEach(function(row, i) {
             row.style.display = (i >= start && i < end) ? "" : "none";
         });
         var info = document.getElementById("paginationInfo");
-        if (info) info.textContent = "显示第 " + (start + 1) + " 到 " + end + " 条，共 " + recordsTotalRows + " 条";
+        if (info) info.textContent = recordsTotalRows
+            ? "显示第 " + (start + 1) + " 到 " + end + " 条，共 " + recordsTotalRows + " 条"
+            : "显示第 0 到 0 条，共 0 条";
         renderRecordsPageButtons();
     }
 
@@ -7878,21 +7947,27 @@
     }
 
     function initRecordsTooltip() {
-        if (document.getElementById('recordsActionTooltip')) return;
-        var tooltip = document.createElement('div');
-        tooltip.className = 'cust-global-tooltip';
-        tooltip.id = 'recordsActionTooltip';
-        tooltip.setAttribute('role', 'tooltip');
-        document.body.appendChild(tooltip);
+        var tooltip = document.getElementById('recordsActionTooltip');
+        if (!tooltip) {
+            tooltip = document.createElement('div');
+            tooltip.className = 'cust-global-tooltip';
+            tooltip.id = 'recordsActionTooltip';
+            tooltip.setAttribute('role', 'tooltip');
+            document.body.appendChild(tooltip);
+        }
         var activeEl = null;
 
         function positionTooltip() {
             if (!activeEl) return;
             var rect = activeEl.getBoundingClientRect();
             var tipRect = tooltip.getBoundingClientRect();
+            var topBoundary = 6;
+            var tableHeader = activeEl.closest('#content-records') && document.querySelector('#content-records .table-scroll-wrap thead');
+            if (tableHeader) topBoundary = Math.max(topBoundary, tableHeader.getBoundingClientRect().bottom + 6);
             var top = rect.top - tipRect.height - 6;
             var left = rect.left;
-            if (top < 6) top = rect.bottom + 6;
+            if (top < topBoundary) top = rect.bottom + 6;
+            if (top + tipRect.height > window.innerHeight - 6) top = Math.max(topBoundary, rect.top - tipRect.height - 6);
             if (left + tipRect.width > window.innerWidth - 12) {
                 left = window.innerWidth - tipRect.width - 12;
             }
@@ -7918,11 +7993,20 @@
             activeEl = null;
         }
 
-        document.querySelectorAll('#content-records .cust-name').forEach(function(el) {
+        function bindTooltip(el) {
+            if (el.dataset.recordsTooltipReady === 'true') return;
+            el.dataset.recordsTooltipReady = 'true';
             el.addEventListener('mouseenter', function() { showTooltip(el); });
             el.addEventListener('mouseleave', hideTooltip);
             el.addEventListener('focus', function() { showTooltip(el); });
             el.addEventListener('blur', hideTooltip);
+        }
+
+        document.querySelectorAll('#content-records .cust-name').forEach(function(el) {
+            bindTooltip(el);
+        });
+        document.querySelectorAll('#content-records .sticky-right .ml-auto > [data-action-tip]').forEach(function(el) {
+            bindTooltip(el);
         });
         window.addEventListener('scroll', positionTooltip, true);
         window.addEventListener('resize', positionTooltip);
@@ -7931,6 +8015,7 @@
     if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", function() {
             initRecordsPagination();
+            initRecordsStatusFilters();
             initRecordsDatePicker();
             initRecordDownloadActions();
             initRecordActionTips();
@@ -7939,6 +8024,7 @@
         });
     } else {
         initRecordsPagination();
+        initRecordsStatusFilters();
         initRecordsDatePicker();
         initRecordDownloadActions();
         initRecordActionTips();

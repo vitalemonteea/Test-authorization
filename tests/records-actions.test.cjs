@@ -67,13 +67,16 @@ test('记录操作通过悬浮和键盘聚焦解释功能意义', () => {
       const action = [...document.querySelectorAll('[data-action-tip]')].find((item) => item.textContent.trim() === label);
       assert.ok(action, `${label}操作应存在说明`);
       assert.equal(action.getAttribute('data-action-tip'), tip);
-      assert.equal(action.getAttribute('title'), tip);
       assert.match(action.getAttribute('aria-label'), new RegExp(tip));
     });
     assert.equal(document.querySelector('.sticky-right .ml-auto > *:first-child').hasAttribute('data-action-tip'), false, '查看保持不提示');
-    const styles = [...document.querySelectorAll('style')].map((style) => style.textContent).join('\n');
-    assert.match(styles, /\[data-action-tip\]:hover::after/);
-    assert.match(styles, /\[data-action-tip\]:focus::after/);
+    const download = [...document.querySelectorAll('[data-action-tip]')].find((item) => item.textContent.trim() === '下载');
+    download.dispatchEvent(new window.MouseEvent('mouseenter'));
+    const tooltip = document.getElementById('recordsActionTooltip');
+    assert.ok(tooltip.classList.contains('show'));
+    assert.equal(tooltip.textContent, expectedTips['下载']);
+    download.dispatchEvent(new window.MouseEvent('mouseleave'));
+    assert.equal(tooltip.classList.contains('show'), false);
     assert.deepEqual(errors, []);
   } finally {
     dom.window.close();
@@ -117,6 +120,34 @@ test('审批状态与操作区使用固定栅格并保持操作左对齐', () =>
     assert.equal(window.getComputedStyle(actionList).marginLeft, '0px');
     assert.equal(window.getComputedStyle(actionList).justifySelf, 'start');
     assert.equal(window.getComputedStyle(firstAction).minHeight, '24px');
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('顶部审批状态统计可筛选记录并同步状态下拉与分页', () => {
+  const { dom, document, window } = loadV2Dom();
+  try {
+    window.initRecordsPagination();
+    window.initRecordsStatusFilters();
+    const rejectedButton = document.querySelector('[data-record-status="已驳回"]');
+    const allRows = [...document.querySelectorAll('#content-records .table-scroll-wrap > table > tbody > tr:not(.solution-detail-row)')];
+    const rejectedRows = allRows.filter((row) => window.getRecordRowStatus(row) === '已驳回');
+
+    assert.equal(document.querySelector('[data-record-status=""] .record-status-count').textContent, String(allRows.length));
+    assert.equal(rejectedButton.querySelector('.record-status-count').textContent, String(rejectedRows.length));
+    rejectedButton.click();
+    assert.equal(rejectedButton.getAttribute('aria-pressed'), 'true');
+    assert.ok(rejectedButton.classList.contains('is-active'));
+    assert.equal(document.getElementById('recordsStatusSelect').value, '已驳回');
+    assert.match(document.getElementById('paginationInfo').textContent, new RegExp('共 ' + rejectedRows.length + ' 条'));
+    const visibleRows = allRows.filter((row) => row.style.display !== 'none');
+    assert.ok(visibleRows.length > 0);
+    assert.ok(visibleRows.every((row) => window.getRecordRowStatus(row) === '已驳回'));
+
+    document.getElementById('recordsResetButton').click();
+    assert.equal(document.getElementById('recordsStatusSelect').value, '全部');
+    assert.equal(document.querySelector('[data-record-status=""]').getAttribute('aria-pressed'), 'true');
   } finally {
     dom.window.close();
   }
