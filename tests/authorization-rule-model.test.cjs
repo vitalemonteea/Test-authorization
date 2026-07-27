@@ -77,6 +77,26 @@ test('历史范围不匹配时为首次申请，历史授权结束时为重新�
   assert.equal(rules.deriveBaseScene(reopen), 'reopen');
 });
 
+test('已登记设备归属其他客户时返回明确阻断原因', () => {
+  const fact = {
+    lookupStatus: 'success',
+    deviceId: 'SALES-ATRUST-001',
+    customerId: 'C100001',
+    productLineId: '20',
+    productName: 'aTrust',
+    deviceSource: 'sales',
+    customerBindingRequired: true
+  };
+
+  assert.equal(rules.getLookupBlockingReason([fact], '20', 'C100001'), null);
+  assert.deepEqual(rules.getLookupBlockingReason([fact], '20', 'C100004'), {
+    code: 'CUSTOMER_MISMATCH',
+    deviceId: 'SALES-ATRUST-001',
+    ownerCustomerId: 'C100001',
+    selectedCustomerId: 'C100004'
+  });
+});
+
 test('授权过期与累计超期是两个可同时成立的状态', () => {
   const expired = {
     productLineId: '22', authorizationStatus: 'expired', testedDays: 150

@@ -275,6 +275,32 @@ test('切换客户后按新的历史范围重新派生基础场景', () => {
   }
 });
 
+test('已登记设备与所选客户不一致时阻断而不是静默变成首次开通', () => {
+  const { dom, document, window, errors } = loadV2Dom();
+  try {
+    const product = document.getElementById('plname');
+    product.value = '20';
+    fireChange(product, window);
+
+    const customer = document.getElementById('customerSearchInput');
+    customer.value = 'C100004';
+    customer.dispatchEvent(new window.Event('input', { bubbles: true }));
+    document.querySelector('#customerDropdown [data-id="C100004"]').click();
+    window.addChip('SALES-ATRUST-001');
+
+    const blocking = document.getElementById('deviceLookupBlocking');
+    assert.equal(blocking.hidden, false);
+    assert.match(blocking.textContent, /设备归属客户与当前选择不一致/);
+    assert.match(blocking.textContent, /深圳市腾讯计算机系统有限公司（C100001）/);
+    assert.match(blocking.textContent, /北京百度网讯科技有限公司（C100004）/);
+    assert.equal(document.getElementById('authScene').value, '');
+    assert.equal(document.getElementById('authSceneFormItem').hidden, true);
+    assert.deepEqual(errors, []);
+  } finally {
+    dom.window.close();
+  }
+});
+
 test('HCI 上传硬件信息文件后显示授权场景，切换 DMP 后清空', () => {
   const { dom, document, window, errors } = loadV2Dom();
   try {
