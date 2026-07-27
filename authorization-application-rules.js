@@ -7,7 +7,7 @@
 }(typeof self !== 'undefined' ? self : this, function () {
     'use strict';
 
-    var RULE_VERSION = '2026-07-27.1';
+    var RULE_VERSION = '2026-07-22.2';
     var PRODUCT_STATUS = {
         '6': 'retired'
     };
@@ -337,7 +337,7 @@
         return normalized;
     }
 
-    function getLookupBlockingReason(deviceFacts, selectedProductLineId, selectedCustomerId) {
+    function getLookupBlockingReason(deviceFacts, selectedProductLineId) {
         var facts = deviceFacts || [];
         var lookupError = facts.find(function(fact) { return fact.lookupStatus === 'error'; });
         if (lookupError) {
@@ -358,19 +358,6 @@
                 deviceId: mismatch.deviceId,
                 productLineId: mismatch.productLineId,
                 productName: mismatch.productName
-            };
-        }
-        var customerMismatch = facts.find(function(fact) {
-            return fact.lookupStatus === 'success' && fact.customerBindingRequired === true &&
-                !!selectedCustomerId && !!fact.customerId &&
-                String(fact.customerId) !== String(selectedCustomerId);
-        });
-        if (customerMismatch) {
-            return {
-                code: 'CUSTOMER_MISMATCH',
-                deviceId: customerMismatch.deviceId,
-                ownerCustomerId: customerMismatch.customerId,
-                selectedCustomerId: selectedCustomerId
             };
         }
         return null;

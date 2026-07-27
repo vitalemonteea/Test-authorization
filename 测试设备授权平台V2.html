@@ -5704,7 +5704,6 @@
                 lookupStatus: 'success', deviceId: 'SALES-ATRUST-001', sn: 'SN-SALES-ATRUST-001',
                 customerId: 'C100001',
                 productLineId: '20', productName: 'aTrust', deviceSource: 'sales', borrowOrderId: '',
-                customerBindingRequired: true,
                 authorizationStatus: 'active', currentModules: ['基础接入'], currentCapacity: 300,
                 testedMonths: 3, applicationCount: 1, materialKeys: ['sales-device-proof'],
                 factVersion: 'facts-atrust-001-v1'
@@ -5713,7 +5712,6 @@
                 lookupStatus: 'success', deviceId: 'SALES-ATRUST-FIRST', sn: 'SN-SALES-ATRUST-FIRST',
                 customerId: 'C100001',
                 productLineId: '20', productName: 'aTrust', deviceSource: 'sales', borrowOrderId: '',
-                customerBindingRequired: true,
                 authorizationStatus: 'none', currentModules: [], currentCapacity: 0,
                 testedMonths: 0, applicationCount: 0, materialKeys: ['sales-device-proof'],
                 factVersion: 'facts-atrust-first-v1'
@@ -5721,8 +5719,7 @@
             'SALES-ATRUST-REOPEN': {
                 lookupStatus: 'success', deviceId: 'SALES-ATRUST-REOPEN', sn: 'SN-SALES-ATRUST-REOPEN',
                 customerId: 'C100001', productLineId: '20', productName: 'aTrust',
-                deviceSource: 'sales', borrowOrderId: '', customerBindingRequired: true,
-                authorizationStatus: 'expired',
+                deviceSource: 'sales', borrowOrderId: '', authorizationStatus: 'expired',
                 currentModules: ['基础接入'], currentCapacity: 200, testedMonths: 3,
                 applicationCount: 1, materialKeys: ['sales-device-proof'],
                 factVersion: 'facts-atrust-reopen-v1'
@@ -5801,11 +5798,6 @@
             { customerId: 'C100001', productLineId: '45', clusterId: 'CLUSTER-HCI-EXPIRED', authorizationStatus: 'expired', durationDays: 90, endDate: '2026-01-31', modules: ['计算虚拟化'], capacity: 12 },
             { customerId: 'C100001', productLineId: '19', clusterId: 'CLUSTER-SCP-ACTIVE', authorizationStatus: 'active', durationDays: 90, endDate: '2026-10-31', modules: ['云管平台'], capacity: 10 }
         ];
-        window.AuthorizationMockData = {
-            deviceFactsById: mockDeviceFactsById,
-            authorizationHistoryRecords: mockAuthorizationHistoryRecords
-        };
-
         var authSceneFormItem = document.getElementById('authSceneFormItem');
         var authSceneRow = document.getElementById('authSceneRow');
         var authSceneInput = document.getElementById('authScene');
@@ -6278,12 +6270,6 @@
                 deviceLookupBlockingText.textContent = '设备事实查询失败：' + reason.deviceId + '，请重试';
             } else if (reason.code === 'UNKNOWN_BORROWED_DEVICE') {
                 deviceLookupBlockingText.textContent = '未查询到借测设备：' + reason.deviceId + '，硬件借测不允许继续申请';
-            } else if (reason.code === 'CUSTOMER_MISMATCH') {
-                var ownerCustomerName = getMockCustomerName(reason.ownerCustomerId);
-                var selectedCustomerName = getMockCustomerName(reason.selectedCustomerId);
-                deviceLookupBlockingText.textContent = '设备归属客户与当前选择不一致：' + reason.deviceId +
-                    ' 归属 ' + ownerCustomerName + '（' + reason.ownerCustomerId + '），当前选择 ' +
-                    selectedCustomerName + '（' + reason.selectedCustomerId + '），请核对客户信息或设备标识';
             } else {
                 deviceLookupBlockingText.textContent = '设备实际产品与所选产品不一致：' +
                     reason.deviceId + ' 实际为 ' + reason.productName;
@@ -6309,13 +6295,6 @@
             });
         }
 
-        function getMockCustomerName(customerId) {
-            var customer = Array.isArray(customers) ? customers.find(function(item) {
-                return item.id === customerId;
-            }) : null;
-            return customer ? customer.name : customerId;
-        }
-
         function resolveFactsWithRuleHistory(rawFacts) {
             if (typeof authorizationRules.resolveDeviceFacts !== 'function') return rawFacts.slice();
             return rawFacts.map(function(fact) {
@@ -6336,7 +6315,7 @@
             renderModuleAuthorizationState(facts);
             manualReviewRequired.value = facts.some(function(fact) { return fact.manualReviewRequired; }) ? '1' : '0';
             var blockingReason = typeof authorizationRules.getLookupBlockingReason === 'function' ?
-                authorizationRules.getLookupBlockingReason(facts, plnameSelect.value, applicationState.customerId) : null;
+                authorizationRules.getLookupBlockingReason(facts, plnameSelect.value) : null;
             renderLookupBlocking(blockingReason);
             renderAuthorizationScene(facts, blockingReason);
             recalculateApprovalDecision();
@@ -6357,7 +6336,7 @@
             return [{
                 lookupStatus: 'success',
                 deviceId: recognizedId,
-                customerId: applicationState.customerId || 'C100001',
+                customerId: 'C100001',
                 clusterId: 'CLUSTER-' + productName.toUpperCase() + '-' + historyVariant,
                 sn: 'SN-' + productLineId + '-' + fileKey.slice(0, 16),
                 productLineId: productLineId,
@@ -7066,16 +7045,12 @@
         }
 
         var lookupBlockingReason = rules.getLookupBlockingReason ?
-            rules.getLookupBlockingReason(latestFacts, productLineId, state.customerId) : null;
+            rules.getLookupBlockingReason(latestFacts, productLineId) : null;
 
         if (lookupBlockingReason) {
-            var blockingMessages = {
-                LOOKUP_ERROR: '设备事实查询失败，请重试或保存草稿',
-                UNKNOWN_BORROWED_DEVICE: '未查询到借测设备，硬件借测不允许继续申请',
-                PRODUCT_MISMATCH: '设备实际产品与所选产品不一致，请更正后继续',
-                CUSTOMER_MISMATCH: '设备归属客户与当前选择不一致，请核对客户信息或设备标识'
-            };
-            alert(blockingMessages[lookupBlockingReason.code] || '设备信息校验未通过，请核对后继续');
+            alert(lookupBlockingReason.code === 'LOOKUP_ERROR' ?
+                '设备事实查询失败，请重试或保存草稿' :
+                '设备实际产品与所选产品不一致，请更正后继续');
             return;
         }
 
