@@ -79,3 +79,23 @@ test('记录操作通过悬浮和键盘聚焦解释功能意义', () => {
     dom.window.close();
   }
 });
+
+test('授权记录固定表头应始终覆盖滚动中的固定正文列', () => {
+  const { dom, document, window } = loadV2Dom();
+  try {
+    const regularHeader = document.querySelector('#content-records thead th:not(.sticky-left):not(.sticky-right)');
+    const rightHeader = document.querySelector('#content-records thead th.sticky-right');
+    const rightBodyCell = document.querySelector('#content-records tbody td.sticky-right');
+    const regularHeaderStyle = window.getComputedStyle(regularHeader);
+    const rightHeaderStyle = window.getComputedStyle(rightHeader);
+    const rightBodyStyle = window.getComputedStyle(rightBodyCell);
+
+    assert.equal(regularHeaderStyle.position, 'sticky');
+    assert.equal(regularHeaderStyle.top, '0px');
+    assert.ok(Number(regularHeaderStyle.zIndex) > Number(rightBodyStyle.zIndex));
+    assert.ok(Number(rightHeaderStyle.zIndex) > Number(regularHeaderStyle.zIndex));
+    assert.equal(rightHeaderStyle.backgroundColor, 'rgb(255, 255, 255)');
+  } finally {
+    dom.window.close();
+  }
+});
