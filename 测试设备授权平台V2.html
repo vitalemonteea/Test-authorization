@@ -249,8 +249,6 @@
         .search-dropdown .search-item:hover { background-color: #eff4ff; color: #0050cb; }
         .search-dropdown .search-item .item-left { display: flex; align-items: center; flex: 1; min-width: 0; }
         .search-dropdown .search-item .item-name { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .search-dropdown .search-item .item-id { font-size: 12px; color: #999; margin-left: 10px; flex-shrink: 0; }
-        .search-dropdown .search-item:hover .item-id { color: #6b7280; }
         .search-dropdown .search-item .item-badge { display: inline-block; padding: 1px 8px; border-radius: 3px; font-size: 11px; font-weight: 600; line-height: 20px; flex-shrink: 0; margin-left: 12px; }
         .search-dropdown .search-item .item-badge.ka { background: #fff3e0; color: #e65100; border: 1px solid #ffcc80; }
         .search-dropdown .search-item .item-badge.normal { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
@@ -1264,7 +1262,6 @@
                                     <span class="material-symbols-outlined customer-summary-icon" aria-hidden="true">domain</span>
                                     <div class="customer-summary-copy">
                                         <span class="customer-summary-name" id="selectedCustomerName">-</span>
-                                        <span class="customer-summary-meta">客户ID <strong id="selectedCustomerId">-</strong></span>
                                         <span id="selectedSales" class="sales-person-badge" style="display:none;"></span>
                                         <span class="customer-type-badge" id="customerTypeBadge" style="display:none;"></span>
                                     </div>
@@ -5045,7 +5042,7 @@
                 chipInputEl.placeholder = config.hint;
             } else {
                 if (planDevType === '2') {
-                    chipInputEl.placeholder = '请输入客户ID / KeyId / 客户名称';
+                    chipInputEl.placeholder = '请输入 KeyId / 客户名称';
                 } else {
                     chipInputEl.placeholder = '请输入设备ID 或 KeyId';
                 }
@@ -6591,7 +6588,6 @@
             document.getElementById('submissionSnapshot').value = '';
             document.getElementById('customerSearchInput').value = '';
             document.getElementById('selectedCustomerName').textContent = '-';
-            document.getElementById('selectedCustomerId').textContent = '-';
             document.getElementById('customerInfoDisplay').classList.remove('show');
             document.getElementById('customerInfoFormItem').classList.remove('has-selection');
             var salesBadge = document.getElementById('selectedSales');
@@ -6689,7 +6685,6 @@
         var dropdown = document.getElementById('customerDropdown');
         var infoDisplay = document.getElementById('customerInfoDisplay');
         var nameSpan = document.getElementById('selectedCustomerName');
-        var idSpan = document.getElementById('selectedCustomerId');
         var customerInfoFormItem = document.getElementById('customerInfoFormItem');
         var changeCustomerButton = document.getElementById('changeCustomerButton');
 
@@ -6711,7 +6706,7 @@
                     var custType = c.type || 'normal';
                     var badgeClass = custType === 'KA' ? 'item-badge ka' : 'item-badge normal';
                     var badgeText = custType === 'KA' ? 'KA客户' : '普通客户';
-                    return '<div class="search-item" data-name="' + c.name + '" data-id="' + c.id + '" data-type="' + custType + '" data-sales="' + (c.sales || '') + '"><span class="item-left"><span class="item-name">' + c.name + '</span><span class="item-id">' + c.id + '</span></span>' + (c.sales ? '<span class="sales-person-badge" style="margin-left:6px;">' + c.sales + '</span>' : '') + '<span class="' + badgeClass + '">' + badgeText + '</span></div>';
+                    return '<div class="search-item" data-name="' + c.name + '" data-id="' + c.id + '" data-type="' + custType + '" data-sales="' + (c.sales || '') + '"><span class="item-left"><span class="item-name">' + c.name + '</span></span>' + (c.sales ? '<span class="sales-person-badge" style="margin-left:6px;">' + c.sales + '</span>' : '') + '<span class="' + badgeClass + '">' + badgeText + '</span></div>';
                 }).join('') + '<div class="search-item" style="cursor:default;border-top:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center;"><span style="color:#999;">没有找到需要的客户？</span><button type="button" class="hw-create-cust-item" style="background:#0050cb;color:#fff;border:none;border-radius:4px;padding:4px 12px;font-size:12px;cursor:pointer;white-space:nowrap;flex-shrink:0;">+ 创建新客户</button></div>';
             }
             dropdown.classList.add('show');
@@ -6726,7 +6721,6 @@
             if (item && item.dataset.name) {
                 searchInput.value = item.dataset.name;
                 nameSpan.textContent = item.dataset.name;
-                idSpan.textContent = item.dataset.id;
                 var salesBadge = document.getElementById('selectedSales');
                 if (salesBadge) {
                     salesBadge.textContent = item.dataset.sales || '';
@@ -6774,7 +6768,6 @@
                     searchInput.value = newName;
                     nameSpan.textContent = newName;
                     var newCustomerId = 'C' + (100020 + Math.floor(Math.random() * 100));
-                    idSpan.textContent = newCustomerId;
                     var badge = document.getElementById('customerTypeBadge');
                     if (badge) {
                         badge.textContent = '普通客户';

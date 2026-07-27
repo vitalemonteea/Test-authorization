@@ -393,6 +393,15 @@ test('客户信息应展示销售负责人徽章 selectedSales', () => {
   assert.match(html, /customerInfoFormItem\.classList\.add\('has-selection'\)/, '选择客户后应切换为摘要状态');
 });
 
+test('客户编码仅用于内部查询且不在页面展示', () => {
+  const display = doc.getElementById('customerInfoDisplay');
+  assert.equal(doc.getElementById('selectedCustomerId'), null, '客户摘要不应展示内部客户编码');
+  assert.doesNotMatch(display.textContent, /客户ID/, '客户摘要不应保留客户ID标签');
+  assert.doesNotMatch(html, /class="item-id"/, '客户搜索结果不应展示内部客户编码');
+  assert.doesNotMatch(html, /请输入客户ID/, '页面输入提示不应引导展示客户编码');
+  assert.match(html, /data-id="' \+ c\.id \+ '"/, '客户编码应继续作为内部查询键保留');
+});
+
 test('申请类型表单项应位于 basic-full-row 并占满整行', () => {
   const item = doc.getElementById('planDevTypeFormItem');
   assert.ok(item, 'planDevTypeFormItem 应存在');
