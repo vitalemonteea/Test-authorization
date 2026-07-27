@@ -5801,6 +5801,10 @@
             { customerId: 'C100001', productLineId: '45', clusterId: 'CLUSTER-HCI-EXPIRED', authorizationStatus: 'expired', durationDays: 90, endDate: '2026-01-31', modules: ['计算虚拟化'], capacity: 12 },
             { customerId: 'C100001', productLineId: '19', clusterId: 'CLUSTER-SCP-ACTIVE', authorizationStatus: 'active', durationDays: 90, endDate: '2026-10-31', modules: ['云管平台'], capacity: 10 }
         ];
+        window.AuthorizationMockData = {
+            deviceFactsById: mockDeviceFactsById,
+            authorizationHistoryRecords: mockAuthorizationHistoryRecords
+        };
 
         var authSceneFormItem = document.getElementById('authSceneFormItem');
         var authSceneRow = document.getElementById('authSceneRow');
