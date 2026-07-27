@@ -52,6 +52,38 @@ test('详情抽屉同时展示授权信息与审批信息', () => {
   }
 });
 
+test('XaaS 详情展示客户、订阅规格、业务补充信息和开通结果', () => {
+  const { dom, document, window } = setupRecords();
+  try {
+    const rows = [...document.querySelectorAll('#content-records .table-scroll-wrap > table > tbody > tr:not(.solution-detail-row)')];
+    const xaasRow = rows.find((row) => row.children[3]?.textContent.trim() === 'SASE-GA');
+    assert.ok(xaasRow, '应存在 SASE-GA XaaS Mock 记录');
+    const view = xaasRow.querySelector('[data-record-action="view"]');
+    assert.ok(view, '已授权 XaaS 记录应支持查看');
+    view.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+
+    assert.equal(document.getElementById('recordAuthorizationSection').hidden, true);
+    assert.equal(document.getElementById('recordXaasCustomerSection').hidden, false);
+    assert.match(document.getElementById('recordXaasCustomerGrid').textContent, /联系人姓名/);
+    assert.match(document.getElementById('recordXaasCustomerGrid').textContent, /所属云图账号/);
+    assert.match(document.getElementById('recordXaasSubscriptionList').textContent, /SASE-GA 全球加速/);
+    assert.match(document.getElementById('recordXaasSubscriptionList').textContent, /带宽 10M/);
+    assert.match(document.getElementById('recordXaasSubscriptionList').textContent, /已开通/);
+    assert.doesNotMatch(document.getElementById('recordXaasSubscriptionList').textContent, /2个设备/);
+    assert.match(document.getElementById('recordXaasSupplementGrid').textContent, /客户需求/);
+    assert.match(document.getElementById('recordXaasDeliveryGrid').textContent, /租户\/实例标识/);
+    assert.match(document.getElementById('recordXaasDeliveryGrid').textContent, /授权文件/);
+
+    const productView = rows[0].querySelector('[data-record-action="view"]');
+    productView.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    assert.equal(document.getElementById('recordAuthorizationSection').hidden, false);
+    assert.equal(document.getElementById('recordXaasCustomerSection').hidden, true);
+    assert.match(document.getElementById('recordAuthorizationGrid').textContent, /授权对象/);
+  } finally {
+    dom.window.close();
+  }
+});
+
 test('查看支持键盘打开、Escape关闭并恢复焦点', () => {
   const { dom, document, window } = setupRecords();
   try {

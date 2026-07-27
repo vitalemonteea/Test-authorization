@@ -908,9 +908,22 @@
         .record-detail-section-title .material-symbols-outlined{color:#0050cb;font-size:18px}
         .record-detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 20px}
         .record-detail-item{min-width:0}
+        .record-detail-item.full{grid-column:1/-1}
         .record-detail-label{display:block;margin-bottom:4px;color:#6b7890;font-size:12px;line-height:18px}
         .record-detail-value{display:block;color:#0b1c30;font-size:13px;line-height:20px;overflow-wrap:anywhere}
         .record-detail-value.is-code{font-family:Consolas,"SFMono-Regular",monospace;color:#003f9e}
+        .record-xaas-only[hidden],.record-product-only[hidden]{display:none!important}
+        .record-xaas-subscriptions{display:flex;flex-direction:column;gap:10px}
+        .record-xaas-subscription{padding:12px 14px;background:#f7f9fc;border:1px solid #e3e8f1;border-radius:6px}
+        .record-xaas-subscription-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
+        .record-xaas-subscription-family{margin-bottom:2px;color:#6b7890;font-size:11px;line-height:16px}
+        .record-xaas-subscription-name{color:#0b1c30;font-size:13px;font-weight:600;line-height:20px}
+        .record-xaas-subscription-status{display:inline-flex;align-items:center;min-height:22px;padding:0 8px;color:#087a55;background:#e8faf3;border-radius:9999px;font-size:11px;font-weight:600;white-space:nowrap}
+        .record-xaas-subscription-status.pending{color:#0050cb;background:#e5eeff}
+        .record-xaas-subscription-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 18px}
+        .record-xaas-subscription-meta-item{min-width:0}
+        .record-xaas-subscription-meta-label{display:block;margin-bottom:2px;color:#7b8496;font-size:11px;line-height:16px}
+        .record-xaas-subscription-meta-value{display:block;color:#424656;font-size:12px;line-height:18px;overflow-wrap:anywhere}
         .record-approval-timeline{margin-top:16px}
         .record-approval-step{position:relative;display:grid;grid-template-columns:18px minmax(0,1fr);gap:10px;padding-bottom:18px}
         .record-approval-step:last-child{padding-bottom:0}
@@ -965,7 +978,7 @@
         .record-action-toast[hidden]{display:none}
         .record-action-toast .material-symbols-outlined{color:#12a474;font-size:19px}
         .record-action-control:focus-visible{outline:2px solid rgba(0,80,203,.45);outline-offset:2px}
-        @media (max-width:600px){.record-drawer{width:100%}.record-detail-grid,.record-copy-options{grid-template-columns:1fr}.record-drawer-header,.record-drawer-body,.record-drawer-footer{padding-left:16px;padding-right:16px}.record-drawer-summary{margin-left:-16px;margin-right:-16px;padding-left:16px;padding-right:16px}}
+        @media (max-width:600px){.record-drawer{width:100%}.record-detail-grid,.record-copy-options,.record-xaas-subscription-meta{grid-template-columns:1fr}.record-drawer-header,.record-drawer-body,.record-drawer-footer{padding-left:16px;padding-right:16px}.record-drawer-summary{margin-left:-16px;margin-right:-16px;padding-left:16px;padding-right:16px}}
         /* 全局客户名称悬浮提示，fixed 定位避免被表格行遮挡 */
         .cust-global-tooltip{position:fixed;z-index:9999;background:#1f2937;color:#f3f4f6;padding:6px 10px;border-radius:6px;font-size:12px;line-height:1.5;max-width:260px;white-space:normal;word-break:break-all;pointer-events:none;opacity:0;transition:opacity .15s;box-shadow:0 4px 12px rgba(0,0,0,.15)}
         .cust-global-tooltip.show{opacity:1}
@@ -3596,9 +3609,25 @@
                         <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">description</span>申请信息</h3>
                         <div class="record-detail-grid" id="recordApplicationGrid"></div>
                     </section>
-                    <section class="record-detail-section">
+                    <section class="record-detail-section record-xaas-only" id="recordXaasCustomerSection" hidden>
+                        <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">contact_page</span>客户信息</h3>
+                        <div class="record-detail-grid" id="recordXaasCustomerGrid"></div>
+                    </section>
+                    <section class="record-detail-section record-product-only" id="recordAuthorizationSection">
                         <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">license</span>授权信息</h3>
                         <div class="record-detail-grid" id="recordAuthorizationGrid"></div>
+                    </section>
+                    <section class="record-detail-section record-xaas-only" id="recordXaasSubscriptionSection" hidden>
+                        <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">subscriptions</span>订阅授权明细</h3>
+                        <div class="record-xaas-subscriptions" id="recordXaasSubscriptionList"></div>
+                    </section>
+                    <section class="record-detail-section record-xaas-only" id="recordXaasSupplementSection" hidden>
+                        <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">fact_check</span>业务补充信息</h3>
+                        <div class="record-detail-grid" id="recordXaasSupplementGrid"></div>
+                    </section>
+                    <section class="record-detail-section record-xaas-only" id="recordXaasDeliverySection" hidden>
+                        <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">cloud_done</span>开通结果</h3>
+                        <div class="record-detail-grid" id="recordXaasDeliveryGrid"></div>
                     </section>
                     <section class="record-detail-section">
                         <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">approval</span>审批信息</h3>
@@ -7338,6 +7367,66 @@
         return moduleMap[product] || (product ? product + ' 标准授权能力' : '按申请配置');
     }
 
+    function getXaasRecordDetail(data) {
+        var authorized = data.status === '已授权' || data.status === '已过期';
+        var licenseCode = authorized ? 'LIC-' + data.applicationNo.replace(/[^A-Z0-9]/gi, '').slice(-12) : '待生成';
+        if (data.product === 'SaaS-XDR') {
+            return {
+                action: '首次开通试用',
+                customer: {
+                    contact: '赵敏', phone: '138****5621', email: 'zhao***@alibaba-inc.com',
+                    cloudAccount: '阿里云图企业账号', industry: '互联网 / 综合互联网服务'
+                },
+                subscriptions: [{
+                    family: 'XDR 产品族', name: 'SaaS-XDR（含 SaaS GPT）',
+                    specLabel: '日志量', spec: '2 亿条', validity: data.validity,
+                    status: authorized ? '已开通' : data.status
+                }],
+                supplement: [
+                    { label: '测试场景', value: '全流量检测、聚合降噪' },
+                    { label: '测试驱动力', value: '提升集团威胁发现与跨区域联动处置能力' },
+                    { label: '核心需求', value: '统一接入现有安全设备日志，验证高级威胁检测效果', full: true },
+                    { label: '客户环境信息', value: '集团总部及 3 个区域数据中心，已部署 AF、SIP' },
+                    { label: '预算信息', value: '当年预算 / 50-80W' },
+                    { label: '客户信息收集表', value: '阿里集团-XDR客户信息收集表.xlsx', full: true }
+                ],
+                delivery: {
+                    tenant: authorized ? 'TENANT-XDR-ALB-015' : '待审批通过后生成',
+                    version: data.version,
+                    openedAt: authorized ? data.appliedAt : '待开通',
+                    email: 'zhao***@alibaba-inc.com',
+                    licenseCode: licenseCode,
+                    file: authorized ? '授权信息-' + data.applicationNo : '待生成'
+                }
+            };
+        }
+        return {
+            action: '首次开通试用',
+            customer: {
+                contact: '王蕾', phone: '186****3098', email: 'wanglei***@jd.com',
+                cloudAccount: '京东集团云图账号', industry: '批发和零售业 / 电子商务'
+            },
+            subscriptions: [{
+                family: 'SASE 产品族', name: data.product === 'SASE-GA' ? 'SASE-GA 全球加速' : data.product,
+                specLabel: '授权规格', spec: data.product === 'SASE-GA' ? '带宽 10M' : '按申请配置',
+                validity: data.validity, status: authorized ? '已开通' : data.status
+            }],
+            supplement: [
+                { label: '客户需求', value: '改善海外办公与国内核心业务系统之间的访问质量', full: true },
+                { label: '项目规模', value: '覆盖 2 个海外区域、约 500 名办公用户', full: true },
+                { label: '竞争对手', value: '已对比传统国际专线方案，重点验证时延与稳定性', full: true }
+            ],
+            delivery: {
+                tenant: authorized ? 'TENANT-SASE-JD-050' : '待审批通过后生成',
+                version: data.version,
+                openedAt: authorized ? '2026-06-29 16:20' : '待开通',
+                email: 'wanglei***@jd.com',
+                licenseCode: licenseCode,
+                file: authorized ? '授权信息-' + data.applicationNo : '待生成'
+            }
+        };
+    }
+
     function getRecordApprovalMeta(status) {
         var meta = {
             '待审批': { current: '区域负责人审批', decision: '待处理' },
@@ -7354,7 +7443,7 @@
         container.textContent = '';
         items.forEach(function(item) {
             var wrap = document.createElement('div');
-            wrap.className = 'record-detail-item';
+            wrap.className = 'record-detail-item' + (item.full ? ' full' : '');
             var label = document.createElement('span');
             label.className = 'record-detail-label';
             label.textContent = item.label;
@@ -7364,6 +7453,52 @@
             wrap.appendChild(label);
             wrap.appendChild(value);
             container.appendChild(wrap);
+        });
+    }
+
+    function renderXaasSubscriptions(container, subscriptions) {
+        container.textContent = '';
+        subscriptions.forEach(function(subscription) {
+            var card = document.createElement('article');
+            card.className = 'record-xaas-subscription';
+            var head = document.createElement('div');
+            head.className = 'record-xaas-subscription-head';
+            var heading = document.createElement('div');
+            var family = document.createElement('div');
+            family.className = 'record-xaas-subscription-family';
+            family.textContent = subscription.family;
+            var name = document.createElement('div');
+            name.className = 'record-xaas-subscription-name';
+            name.textContent = subscription.name;
+            var status = document.createElement('span');
+            status.className = 'record-xaas-subscription-status' + (subscription.status === '已开通' ? '' : ' pending');
+            status.textContent = subscription.status;
+            heading.appendChild(family);
+            heading.appendChild(name);
+            head.appendChild(heading);
+            head.appendChild(status);
+            card.appendChild(head);
+
+            var meta = document.createElement('div');
+            meta.className = 'record-xaas-subscription-meta';
+            [
+                { label: subscription.specLabel, value: subscription.spec },
+                { label: '授权有效期', value: subscription.validity }
+            ].forEach(function(item) {
+                var metaItem = document.createElement('div');
+                metaItem.className = 'record-xaas-subscription-meta-item';
+                var label = document.createElement('span');
+                label.className = 'record-xaas-subscription-meta-label';
+                label.textContent = item.label;
+                var value = document.createElement('span');
+                value.className = 'record-xaas-subscription-meta-value';
+                value.textContent = item.value || '—';
+                metaItem.appendChild(label);
+                metaItem.appendChild(value);
+                meta.appendChild(metaItem);
+            });
+            card.appendChild(meta);
+            container.appendChild(card);
         });
     }
 
@@ -7429,24 +7564,51 @@
         var status = document.getElementById('recordDetailStatus');
         status.className = 'record-detail-status ' + getRecordStatusClass(data.status);
         status.textContent = data.status;
+        var isXaas = data.authorizationType === 'XaaS';
+        var xaasDetail = isXaas ? getXaasRecordDetail(data) : null;
         appendRecordDetailItems(document.getElementById('recordApplicationGrid'), [
             { label: '授权类型', value: data.authorizationType },
             { label: '申请平台', value: data.platform },
-            { label: '客户名称', value: data.customer },
             { label: '申请人', value: data.applicant },
             { label: '区域', value: data.region },
-            { label: '申请时间', value: data.appliedAt }
+            { label: '申请时间', value: data.appliedAt },
+            { label: isXaas ? '申请动作' : '客户名称', value: isXaas ? xaasDetail.action : data.customer }
         ]);
-        var hasAuthorization = data.status === '已授权' || data.status === '已过期';
-        appendRecordDetailItems(document.getElementById('recordAuthorizationGrid'), [
-            { label: '产品线/方案', value: data.product },
-            { label: '版本号', value: data.version },
-            { label: '授权对象', value: data.device },
-            { label: '授权有效期', value: data.validity },
-            { label: '授权内容', value: getRecordModules(data.product) },
-            { label: '授权码', value: hasAuthorization ? 'LIC-' + data.applicationNo.replace(/[^A-Z0-9]/gi, '').slice(-12) : '待生成', code: true },
-            { label: '授权文件', value: hasAuthorization ? '授权信息-' + data.applicationNo : '待生成' }
-        ]);
+        document.getElementById('recordAuthorizationSection').hidden = isXaas;
+        document.querySelectorAll('#recordDrawerView .record-xaas-only').forEach(function(section) {
+            section.hidden = !isXaas;
+        });
+        if (isXaas) {
+            appendRecordDetailItems(document.getElementById('recordXaasCustomerGrid'), [
+                { label: '客户名称', value: data.customer },
+                { label: '所属云图账号', value: xaasDetail.customer.cloudAccount },
+                { label: '联系人姓名', value: xaasDetail.customer.contact },
+                { label: '联系人手机号', value: xaasDetail.customer.phone },
+                { label: '联系人邮箱', value: xaasDetail.customer.email },
+                { label: '所属行业', value: xaasDetail.customer.industry }
+            ]);
+            renderXaasSubscriptions(document.getElementById('recordXaasSubscriptionList'), xaasDetail.subscriptions);
+            appendRecordDetailItems(document.getElementById('recordXaasSupplementGrid'), xaasDetail.supplement);
+            appendRecordDetailItems(document.getElementById('recordXaasDeliveryGrid'), [
+                { label: '租户/实例标识', value: xaasDetail.delivery.tenant, code: true },
+                { label: '实际版本', value: xaasDetail.delivery.version },
+                { label: '开通时间', value: xaasDetail.delivery.openedAt },
+                { label: '接收邮箱', value: xaasDetail.delivery.email },
+                { label: '授权码', value: xaasDetail.delivery.licenseCode, code: true },
+                { label: '授权文件', value: xaasDetail.delivery.file }
+            ]);
+        } else {
+            var hasAuthorization = data.status === '已授权' || data.status === '已过期';
+            appendRecordDetailItems(document.getElementById('recordAuthorizationGrid'), [
+                { label: '产品线/方案', value: data.product },
+                { label: '版本号', value: data.version },
+                { label: '授权对象', value: data.device },
+                { label: '授权有效期', value: data.validity },
+                { label: '授权内容', value: getRecordModules(data.product) },
+                { label: '授权码', value: hasAuthorization ? 'LIC-' + data.applicationNo.replace(/[^A-Z0-9]/gi, '').slice(-12) : '待生成', code: true },
+                { label: '授权文件', value: hasAuthorization ? '授权信息-' + data.applicationNo : '待生成' }
+            ]);
+        }
         appendRecordDetailItems(document.getElementById('recordApprovalGrid'), [
             { label: '审批结果', value: meta.decision },
             { label: '当前节点', value: meta.current }
