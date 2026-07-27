@@ -50,6 +50,8 @@ test('产品授权详情展示场景、授权对象、配置变更、开通结�
     assert.doesNotMatch(document.getElementById('recordProductDeviceGrid').textContent, /授权中台/);
     assert.match(document.getElementById('recordProductDeviceGrid').textContent, /借测单号/);
     assert.match(document.getElementById('recordProductChangeList').textContent, /未开通/);
+    assert.match(document.getElementById('recordProductChangeList').textContent, /配置项变更前变更后/);
+    assert.doesNotMatch(document.getElementById('recordProductChangeList').textContent, /arrow_forward/);
     assert.match(document.getElementById('recordProductChangeList').textContent, /计算虚拟化、分布式存储/);
     assert.match(document.getElementById('recordProductChangeList').textContent, /物理 CPU 16 颗/);
     assert.match(document.getElementById('recordProductDeliveryGrid').textContent, /授权码/);
@@ -74,6 +76,7 @@ test('详情字段使用标签和值横向对齐的只读表单', () => {
     assert.equal(itemStyle.display, 'grid');
     assert.match(itemStyle.gridTemplateColumns, /^82px /);
     assert.equal(labelStyle.marginBottom, '0px');
+    assert.equal(document.getElementById('recordDrawerSubtitle').hidden, true);
   } finally {
     dom.window.close();
   }
@@ -158,6 +161,7 @@ test('复制申请展示复制范围并创建演示草稿', () => {
   try {
     clickAction(document, window, 'copy');
     assert.equal(document.getElementById('recordDrawerTitle').textContent, '复制申请');
+    assert.equal(document.getElementById('recordDrawerSubtitle').hidden, false);
     assert.equal(document.getElementById('recordDrawerView').hidden, true);
     assert.equal(document.querySelectorAll('#recordWorkflowContent .record-copy-option').length, 4);
     assert.match(document.getElementById('recordCopyNote').value, /基于 AUTH-/);
