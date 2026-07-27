@@ -50,9 +50,9 @@ test('授权场景是设备识别后的只读业务字段', () => {
     assert.equal(authScene.tagName, 'INPUT');
     assert.equal(authScene.type, 'hidden');
     assert.ok(document.getElementById('authSceneDisplay'));
-    assert.equal(document.getElementById('authSceneBasis').tagName, 'DIV');
-    assert.match(document.getElementById('authSceneBasis').querySelector('.auth-scene-basis-label').textContent, /识别依据/);
-    assert.equal(document.getElementById('authSceneBasis').querySelector('summary'), null);
+    assert.equal(document.getElementById('authSceneBasis'), null);
+    assert.doesNotMatch(document.getElementById('authSceneDisplay').textContent, /识别依据/);
+    assert.ok(document.getElementById('authSceneApprovalNote'));
     assert.match(authScene.closest('#authSceneFormItem').querySelector('.layui-form-label').textContent.trim(), /^授权场景/);
     assert.equal(document.getElementById('requestAction').type, 'hidden');
     assert.equal(document.getElementById('requestActionFormItem'), null);
@@ -164,7 +164,7 @@ test('纯软设备只查授权历史并可识别重新开通场景', () => {
 
     window.addChip('SOFT-REOPEN-001');
     assert.equal(document.getElementById('authScene').value, 'reopen');
-    assert.match(document.getElementById('authSceneBasisText').textContent, /匹配 1 条授权记录/);
+    assert.doesNotMatch(document.getElementById('authSceneDisplay').textContent, /识别依据|匹配 1 条授权记录/);
     assert.doesNotMatch(document.getElementById('deviceFactsSummary').textContent, /待人工确认/);
     assert.deepEqual(errors, []);
   } finally {
@@ -223,19 +223,22 @@ test('重新开通与累计超期可以在场景卡中同时显示', () => {
 
     assert.equal(document.getElementById('authScene').value, 'reopen');
     assert.match(document.getElementById('authSceneTags').textContent, /累计测试超期/);
-    assert.match(document.getElementById('authSceneBasisText').textContent, /匹配 3 条授权记录/);
     assert.equal(document.getElementById('authSceneApprovalNote').hidden, false);
     assert.match(document.getElementById('authSceneApprovalNote').textContent, /升级审批/);
     assert.match(document.getElementById('authSceneApprovalNote').textContent, /扣除区域经营成本/);
-    assert.ok(document.getElementById('authSceneDisplay').classList.contains('has-basis'));
-    assert.equal(document.getElementById('authSceneBasis').hidden, false);
-    assert.equal(document.getElementById('overlimit-fields').style.display, 'block');
+    assert.doesNotMatch(document.getElementById('authSceneDisplay').textContent, /识别依据|匹配 3 条授权记录/);
+    assert.ok(document.getElementById('authSceneDisplay').classList.contains('has-approval'));
+    assert.equal(document.getElementById('overlimit-fields').hidden, false);
+    assert.equal(document.getElementById('requestContentsRow').nextElementSibling.id, 'overlimit-fields');
     assert.ok(document.getElementById('overlimitReason'));
     assert.ok(document.getElementById('overlimitFileInput'));
+    assert.match(document.getElementById('standardActionStatusText').textContent, /请填写超期申请理由/);
 
     document.getElementById('overlimitReason').value = '客户仍需完成压力验证';
+    document.getElementById('overlimitReason').dispatchEvent(new window.Event('input', { bubbles: true }));
+    assert.match(document.getElementById('standardActionStatusText').textContent, /可以提交/);
     window.removeDeviceChip('OVERDUE-NGAF-001');
-    assert.equal(document.getElementById('overlimit-fields').style.display, 'none');
+    assert.equal(document.getElementById('overlimit-fields').hidden, true);
     assert.equal(document.getElementById('overlimitReason').value, '');
     assert.deepEqual(errors, []);
   } finally {
@@ -252,7 +255,7 @@ test('HCI 硬件信息文件按客户与集群历史识别有效授权', () => {
     fireChange(fileInput, window);
 
     assert.equal(document.getElementById('authScene').value, 'adjust');
-    assert.match(document.getElementById('authSceneBasisText').textContent, /客户 \+ 产品线 \+ 集群标识/);
+    assert.doesNotMatch(document.getElementById('authSceneDisplay').textContent, /识别依据|客户 \+ 产品线 \+ 集群标识/);
     assert.doesNotMatch(document.getElementById('deviceFactsSummary').textContent, /分布式存储/);
     assert.equal(document.querySelector('#module-aSV .module-status').textContent.trim(), '已授权');
     assert.match(document.querySelector('#module-aSV .module-authorization-validity').textContent, /2026-10-31/);
@@ -276,7 +279,8 @@ test('切换客户后按新的历史范围重新派生基础场景', () => {
     customer.dispatchEvent(new window.Event('input', { bubbles: true }));
     document.querySelector('#customerDropdown [data-id="C100002"]').click();
     assert.equal(document.getElementById('authScene').value, 'first_open');
-    assert.match(document.getElementById('authSceneBasisText').textContent, /匹配 0 条授权记录/);
+    assert.match(document.getElementById('authSceneDescription').textContent, /首次申请/);
+    assert.doesNotMatch(document.getElementById('authSceneDisplay').textContent, /识别依据|匹配 0 条授权记录/);
     assert.deepEqual(errors, []);
   } finally {
     dom.window.close();

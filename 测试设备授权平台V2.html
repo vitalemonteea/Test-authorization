@@ -366,26 +366,21 @@
         #section-basic .device-fact-label { margin-bottom: 4px; color: #424656; font-size: 12px; line-height: 16px; }
         #section-basic .device-fact-value { color: #0b1c30; font-size: 13px; line-height: 1.45; }
         #section-basic .auth-scene-display { display: flex; align-items: center; min-height: 76px; padding: 14px 16px; background: #fff; border: 1px solid #d8deea; border-left: 3px solid #0050cb; border-radius: 6px; box-sizing: border-box; }
-        #section-basic .auth-scene-display.has-basis { display: grid; grid-template-columns: minmax(0, 3fr) minmax(240px, 2fr); gap: 20px; }
+        #section-basic .auth-scene-display.has-approval { display: grid; grid-template-columns: minmax(0, 3fr) minmax(240px, 2fr); gap: 20px; }
         #section-basic .auth-scene-main { display: flex; align-items: center; gap: 12px; min-width: 0; }
         #section-basic .auth-scene-icon { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex: 0 0 40px; color: #0050cb; background: #eef4ff; border-radius: 6px; font-size: 21px; }
         #section-basic .auth-scene-copy { min-width: 0; flex: 1; }
         #section-basic .auth-scene-title-line { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-height: 22px; }
         #section-basic .auth-scene-title { color: #0b1c30; font-size: 14px; font-weight: 600; line-height: 22px; }
         #section-basic .auth-scene-description { display: block; margin-top: 2px; color: #6b7890; font-size: 12px; line-height: 18px; }
-        #section-basic .auth-scene-basis { display: flex; flex-direction: column; justify-content: center; min-width: 0; min-height: 48px; padding-left: 20px; border-left: 1px solid #e5eaf2; color: #6b7890; font-size: 12px; line-height: 18px; }
-        #section-basic .auth-scene-basis[hidden] { display: none; }
-        #section-basic .auth-scene-approval-note { margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #f4dfb9; color: #8a4b00; }
+        #section-basic .auth-scene-approval-note { min-width: 0; min-height: 48px; padding-left: 20px; border-left: 1px solid #e5eaf2; color: #8a4b00; font-size: 12px; line-height: 18px; }
         #section-basic .auth-scene-approval-note[hidden] { display: none; }
         #section-basic .auth-scene-approval-title { display: flex; align-items: center; gap: 5px; margin-bottom: 2px; font-weight: 600; line-height: 18px; }
         #section-basic .auth-scene-approval-title .material-symbols-outlined { color: #c66a00; font-size: 17px; }
         #section-basic .auth-scene-approval-text { display: block; line-height: 18px; }
-        #section-basic .auth-scene-basis-label { display: flex; align-items: center; gap: 5px; margin-bottom: 3px; color: #424656; font-size: 12px; font-weight: 600; line-height: 18px; }
-        #section-basic .auth-scene-basis-label .material-symbols-outlined { color: #0050cb; font-size: 17px; }
-        #section-basic .auth-scene-basis-text { display: block; color: #6b7890; overflow-wrap: anywhere; }
         #section-basic .auth-scene-tag { display: inline-flex; align-items: center; min-height: 20px; padding: 0 7px; color: #0050cb; background: #e5eeff; border-radius: 4px; font-size: 11px; font-weight: 600; }
         #section-basic .auth-scene-tag.warning { color: #8a4b00; background: #fff1d6; }
-        #section-basic .email-help { display: block; margin-top: 6px; color: #6b7890; font-size: 12px; line-height: 18px; }
+        #section-basic #overlimit-fields[hidden] { display: none; }
         #section-basic .request-content-group { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
         #section-basic .request-content-option { position: relative; display: flex; align-items: center; gap: 9px; min-width: 0; min-height: 44px; padding: 9px 12px; color: #424656; background: #fff; border: 1px solid #d8deea; border-radius: 8px; box-sizing: border-box; cursor: pointer; transition: border-color .15s, background-color .15s, box-shadow .15s; }
         #section-basic .request-content-option:hover { border-color: #8eaae0; background: #f7faff; }
@@ -717,8 +712,8 @@
             #section-basic .borrow-grid { grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
             #section-basic .basic-full-row { grid-template-columns: 1fr; margin-bottom: 15px; }
             #section-basic .device-facts-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-            #section-basic .auth-scene-display.has-basis { grid-template-columns: 1fr; gap: 12px; }
-            #section-basic .auth-scene-basis { min-height: 0; padding: 12px 0 0; border-top: 1px solid #e5eaf2; border-left: 0; }
+            #section-basic .auth-scene-display.has-approval { grid-template-columns: 1fr; gap: 12px; }
+            #section-basic .auth-scene-approval-note { min-height: 0; padding: 12px 0 0; border-top: 1px solid #e5eaf2; border-left: 0; }
             #section-basic .request-content-group { grid-template-columns: 1fr; }
             #section-basic .layui-form-label,
             #section-basic .basic-borrow-panel .layui-form-label { width: auto; padding: 0 0 6px 0; }
@@ -1513,31 +1508,6 @@
                     </div>
 </div>
 
-<!-- ===== 超规续期额外字段 ===== -->
-<div id="overlimit-fields" style="display:none;">
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">申请原因<span class="required-mark">*</span></label>
-                        <div class="layui-input-block">
-                            <textarea id="overlimitReason" class="layui-textarea" placeholder="请填写超规续期申请原因" rows="4"></textarea>
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">附件上传</label>
-                        <div class="layui-input-block">
-                            <div class="hw-upload-area">
-                                <input type="file" id="overlimitFileInput">
-                                <div class="hw-file-info" id="overlimitFileInfo">
-                                    <span class="hw-file-name empty" id="overlimitFileName">未选择文件（支持常见格式）</span>
-                                    <span class="hw-file-meta" id="overlimitFileMeta"></span>
-                                    <span class="hw-file-clear" id="overlimitFileClear" title="删除文件">&times;</span>
-                                </div>
-                                <label class="hw-upload-btn" for="overlimitFileInput"><span class="upload-icon">&#8679;</span> 上传附件</label>
-                            </div>
-                            <span class="font-acloud" style="margin-top:4px;">如有无法自助申请的审批附件，请在此上传</span>
-                        </div>
-                    </div>
-</div>
-
                     <div class="basic-full-row" id="authSceneRow" hidden>
                     <!-- 授权场景由设备授权状态自动识别 -->
                     <div class="layui-form-item" id="authSceneFormItem" hidden>
@@ -1555,13 +1525,9 @@
                                         <span class="auth-scene-description" id="authSceneDescription"></span>
                                     </span>
                                 </div>
-                                <div class="auth-scene-basis" id="authSceneBasis" hidden>
-                                    <div class="auth-scene-approval-note" id="authSceneApprovalNote" hidden>
-                                        <span class="auth-scene-approval-title"><span class="material-symbols-outlined" aria-hidden="true">warning_amber</span>审批提示</span>
-                                        <span class="auth-scene-approval-text">本次申请累计测试已超期，将升级审批，并扣除区域经营成本。</span>
-                                    </div>
-                                    <span class="auth-scene-basis-label"><span class="material-symbols-outlined" aria-hidden="true">manage_search</span>识别依据</span>
-                                    <span class="auth-scene-basis-text" id="authSceneBasisText"></span>
+                                <div class="auth-scene-approval-note" id="authSceneApprovalNote" hidden>
+                                    <span class="auth-scene-approval-title"><span class="material-symbols-outlined" aria-hidden="true">warning_amber</span>审批提示</span>
+                                    <span class="auth-scene-approval-text">本次申请累计测试已超期，将升级审批，并扣除区域经营成本。</span>
                                 </div>
                             </div>
                         </div>
@@ -1573,6 +1539,30 @@
                         <label class="layui-form-label">申请内容<span class="required-mark">*</span></label>
                         <div class="layui-input-block">
                             <div class="request-content-group" id="requestContentGroup" role="group" aria-label="申请内容"></div>
+                        </div>
+                    </div>
+                    </div>
+
+                    <!-- 超期申请补充材料，仅在规则识别为累计超期时展示 -->
+                    <div class="basic-full-row" id="overlimit-fields" hidden>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">申请理由<span class="required-mark">*</span></label>
+                        <div class="layui-input-block">
+                            <textarea id="overlimitReason" class="layui-textarea" placeholder="请说明超期后仍需申请授权的业务原因" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">证明材料</label>
+                        <div class="layui-input-block">
+                            <div class="hw-upload-area">
+                                <input type="file" id="overlimitFileInput">
+                                <div class="hw-file-info" id="overlimitFileInfo">
+                                    <span class="hw-file-name empty" id="overlimitFileName">未选择文件（支持常见格式）</span>
+                                    <span class="hw-file-meta" id="overlimitFileMeta"></span>
+                                    <span class="hw-file-clear" id="overlimitFileClear" title="删除文件">&times;</span>
+                                </div>
+                                <label class="hw-upload-btn" for="overlimitFileInput"><span class="upload-icon">&#8679;</span> 上传文件</label>
+                            </div>
                         </div>
                     </div>
                     </div>
@@ -1693,8 +1683,7 @@
                     <div class="layui-form-item basic-full">
                         <label class="layui-form-label">接收邮箱</label>
                         <div class="layui-input-block">
-                            <input type="text" id="userEmail" name="userEmail" placeholder="请输入接收邮箱" class="layui-input" aria-describedby="userEmailHelp">
-                            <span class="email-help" id="userEmailHelp">建议填写客户邮箱，用于接收授权结果及相关文件。</span>
+                            <input type="text" id="userEmail" name="userEmail" placeholder="请输入接收邮箱，建议优先填写客户邮箱" class="layui-input" title="用于接收授权结果及相关文件">
                         </div>
                     </div>
 
@@ -4534,7 +4523,7 @@
         }
 
         function setOverlimitFieldsVisible(visible) {
-            overlimitFields.style.display = visible ? 'block' : 'none';
+            overlimitFields.hidden = !visible;
             if (visible) return;
             document.getElementById('overlimitReason').value = '';
             document.getElementById('overlimitFileInput').value = '';
@@ -5866,9 +5855,7 @@
         var authSceneDisplay = document.getElementById('authSceneDisplay');
         var authSceneLabel = document.getElementById('authSceneLabel');
         var authSceneDescription = document.getElementById('authSceneDescription');
-        var authSceneBasis = document.getElementById('authSceneBasis');
         var authSceneApprovalNote = document.getElementById('authSceneApprovalNote');
-        var authSceneBasisText = document.getElementById('authSceneBasisText');
         var authSceneTags = document.getElementById('authSceneTags');
         var requestActionInput = document.getElementById('requestAction');
         var requestContentsInput = document.getElementById('requestContents');
@@ -5916,6 +5903,7 @@
 
         function updateStandardActionReadiness() {
             var hardConflict = applicationState.compatibilityIssues.some(function(issue) { return issue.hard; });
+            var missingOverdueReason = !overlimitFields.hidden && !document.getElementById('overlimitReason').value.trim();
             var statusText = '请先识别设备或上传硬件信息';
             var statusIcon = 'info';
             var statusClass = '';
@@ -5927,16 +5915,21 @@
                 statusText = '设备信息待处理';
             } else if (applicationState.baseScene === 'adjust' && !applicationState.requestContents.length) {
                 statusText = '请选择申请内容';
+            } else if (missingOverdueReason) {
+                statusText = '请填写超期申请理由';
             } else if (applicationState.deviceFacts.length > 0) {
                 statusText = '已识别 ' + applicationState.deviceFacts.length + ' 台设备，可以提交';
                 statusIcon = 'check_circle';
                 statusClass = 'is-ready';
             }
+            standardSubmitButton.disabled = hardConflict || missingOverdueReason;
             standardActionStatus.classList.remove('is-ready', 'has-conflict');
             if (statusClass) standardActionStatus.classList.add(statusClass);
             standardActionStatusIcon.textContent = statusIcon;
             standardActionStatusText.textContent = statusText;
         }
+
+        document.getElementById('overlimitReason').addEventListener('input', updateStandardActionReadiness);
 
         function buildDeviceApplications(facts) {
             return facts.map(function(fact) {
@@ -6013,10 +6006,8 @@
             authSceneInput.value = '';
             authSceneLabel.textContent = '';
             authSceneDescription.textContent = '';
-            authSceneBasis.hidden = true;
             authSceneApprovalNote.hidden = true;
-            authSceneDisplay.classList.remove('has-basis');
-            authSceneBasisText.textContent = '';
+            authSceneDisplay.classList.remove('has-approval');
             authSceneTags.textContent = '';
             requestContentGroup.textContent = '';
             authSceneRow.hidden = true;
@@ -6120,11 +6111,7 @@
                 reopen: '历史授权已结束，本次将重新开通测试授权。',
                 adjust: '当前授权仍在有效期内，可按需组合调整授权内容。'
             };
-            var recognitionBasis = facts[0].recognitionBasis || '';
             authSceneDescription.textContent = descriptions[baseScene] || '';
-            authSceneBasis.hidden = !recognitionBasis;
-            authSceneDisplay.classList.toggle('has-basis', Boolean(recognitionBasis));
-            authSceneBasisText.textContent = recognitionBasis ? recognitionBasis + '。' : '';
             renderAuthorizationSceneTags(facts);
             authSceneRow.hidden = false;
             authSceneFormItem.hidden = false;
@@ -6156,9 +6143,7 @@
             }
             authSceneApprovalNote.hidden = !isOverdue;
             setOverlimitFieldsVisible(isOverdue);
-            var hasSceneAside = Boolean(authSceneBasisText.textContent) || isOverdue;
-            authSceneBasis.hidden = !hasSceneAside;
-            authSceneDisplay.classList.toggle('has-basis', hasSceneAside);
+            authSceneDisplay.classList.toggle('has-approval', isOverdue);
         }
 
         function getSelectedProductName() {
@@ -7135,6 +7120,14 @@
 
         if (state.baseScene === 'adjust' && !state.requestContents.length) {
             alert('请至少选择一项申请内容');
+            return;
+        }
+
+        var overlimitFields = document.getElementById('overlimit-fields');
+        var overlimitReason = document.getElementById('overlimitReason');
+        if (!overlimitFields.hidden && !overlimitReason.value.trim()) {
+            alert('请填写超期申请理由');
+            overlimitReason.focus();
             return;
         }
 
