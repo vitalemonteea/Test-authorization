@@ -867,6 +867,11 @@
         #content-records .sticky-right::before{left:-6px;background:linear-gradient(to left,rgba(0,0,0,0.06),transparent)}
         #content-records thead th{position:sticky!important;top:0;z-index:30;background:#fff;border-bottom:1px solid rgba(194,198,216,0.4)}
         #content-records thead th.sticky-left,#content-records thead th.sticky-right{z-index:40;background:#fff!important}
+        #content-records thead th.sticky-right,#content-records tbody td.sticky-right{width:270px;min-width:270px}
+        #content-records thead th.sticky-right>div,#content-records tbody td.sticky-right>div{display:grid;grid-template-columns:72px minmax(0,1fr);column-gap:12px;align-items:center}
+        #content-records thead th.sticky-right>div>span:last-child{text-align:left}
+        #content-records tbody td.sticky-right>div>.ml-auto{margin-left:0!important;justify-self:start;gap:4px;white-space:nowrap}
+        #content-records tbody td.sticky-right>div>.ml-auto>*{display:inline-flex;min-height:24px;align-items:center;justify-content:center;box-sizing:border-box;flex:0 0 auto}
         #content-records .table-scroll-wrap{flex:1;overflow:auto;min-height:0;scrollbar-gutter:stable}
         #content-records .table-scroll-wrap::-webkit-scrollbar{width:6px;height:6px}
         #content-records .table-scroll-wrap::-webkit-scrollbar-track{background:transparent}

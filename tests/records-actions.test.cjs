@@ -99,3 +99,25 @@ test('授权记录固定表头应始终覆盖滚动中的固定正文列', () =>
     dom.window.close();
   }
 });
+
+test('审批状态与操作区使用固定栅格并保持操作左对齐', () => {
+  const { dom, document, window } = loadV2Dom();
+  try {
+    const headerCell = document.querySelector('#content-records thead th.sticky-right');
+    const headerLayout = headerCell.firstElementChild;
+    const bodyCell = document.querySelector('#content-records tbody td.sticky-right');
+    const bodyLayout = bodyCell.firstElementChild;
+    const actionList = bodyLayout.querySelector('.ml-auto');
+    const firstAction = actionList.firstElementChild;
+
+    assert.equal(window.getComputedStyle(headerCell).width, '270px');
+    assert.equal(window.getComputedStyle(headerLayout).display, 'grid');
+    assert.equal(window.getComputedStyle(headerLayout).gridTemplateColumns, '72px minmax(0,1fr)');
+    assert.equal(window.getComputedStyle(bodyLayout).display, 'grid');
+    assert.equal(window.getComputedStyle(actionList).marginLeft, '0px');
+    assert.equal(window.getComputedStyle(actionList).justifySelf, 'start');
+    assert.equal(window.getComputedStyle(firstAction).minHeight, '24px');
+  } finally {
+    dom.window.close();
+  }
+});
