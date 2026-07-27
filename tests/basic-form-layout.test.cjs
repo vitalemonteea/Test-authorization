@@ -399,6 +399,7 @@ test('客户编码仅用于内部查询且不在页面展示', () => {
   assert.doesNotMatch(display.textContent, /客户ID/, '客户摘要不应保留客户ID标签');
   assert.doesNotMatch(html, /class="item-id"/, '客户搜索结果不应展示内部客户编码');
   assert.doesNotMatch(html, /请输入客户ID/, '页面输入提示不应引导展示客户编码');
+  assert.equal(doc.getElementById('customerSearchInput').placeholder, '请输入客户名称搜索');
   assert.match(html, /data-id="' \+ c\.id \+ '"/, '客户编码应继续作为内部查询键保留');
 });
 
