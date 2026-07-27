@@ -912,7 +912,7 @@
         .record-detail-label{display:block;margin-bottom:4px;color:#6b7890;font-size:12px;line-height:18px}
         .record-detail-value{display:block;color:#0b1c30;font-size:13px;line-height:20px;overflow-wrap:anywhere}
         .record-detail-value.is-code{font-family:Consolas,"SFMono-Regular",monospace;color:#003f9e}
-        .record-xaas-only[hidden],.record-product-only[hidden]{display:none!important}
+        .record-xaas-only[hidden],.record-product-auth-only[hidden],.record-product-only[hidden]{display:none!important}
         .record-xaas-subscriptions{display:flex;flex-direction:column;gap:10px}
         .record-xaas-subscription{padding:12px 14px;background:#f7f9fc;border:1px solid #e3e8f1;border-radius:6px}
         .record-xaas-subscription-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
@@ -924,6 +924,13 @@
         .record-xaas-subscription-meta-item{min-width:0}
         .record-xaas-subscription-meta-label{display:block;margin-bottom:2px;color:#7b8496;font-size:11px;line-height:16px}
         .record-xaas-subscription-meta-value{display:block;color:#424656;font-size:12px;line-height:18px;overflow-wrap:anywhere}
+        .record-product-change-list{display:flex;flex-direction:column;border:1px solid #e3e8f1;border-radius:6px;overflow:hidden}
+        .record-product-change-row{display:grid;grid-template-columns:84px minmax(0,1fr) 18px minmax(0,1fr);gap:10px;align-items:start;padding:10px 12px;background:#fff}
+        .record-product-change-row + .record-product-change-row{border-top:1px solid #edf1f7}
+        .record-product-change-label{color:#6b7890;font-size:12px;line-height:20px}
+        .record-product-change-value{color:#424656;font-size:12px;line-height:20px;overflow-wrap:anywhere}
+        .record-product-change-value.target{color:#003f9e;font-weight:600}
+        .record-product-change-arrow{color:#8b95a7;font-size:16px;line-height:20px;text-align:center}
         .record-approval-timeline{margin-top:16px}
         .record-approval-step{position:relative;display:grid;grid-template-columns:18px minmax(0,1fr);gap:10px;padding-bottom:18px}
         .record-approval-step:last-child{padding-bottom:0}
@@ -978,7 +985,7 @@
         .record-action-toast[hidden]{display:none}
         .record-action-toast .material-symbols-outlined{color:#12a474;font-size:19px}
         .record-action-control:focus-visible{outline:2px solid rgba(0,80,203,.45);outline-offset:2px}
-        @media (max-width:600px){.record-drawer{width:100%}.record-detail-grid,.record-copy-options,.record-xaas-subscription-meta{grid-template-columns:1fr}.record-drawer-header,.record-drawer-body,.record-drawer-footer{padding-left:16px;padding-right:16px}.record-drawer-summary{margin-left:-16px;margin-right:-16px;padding-left:16px;padding-right:16px}}
+        @media (max-width:600px){.record-drawer{width:100%}.record-detail-grid,.record-copy-options,.record-xaas-subscription-meta{grid-template-columns:1fr}.record-product-change-row{grid-template-columns:72px minmax(0,1fr);gap:4px 10px}.record-product-change-arrow{display:none}.record-product-change-value.target{grid-column:2}.record-drawer-header,.record-drawer-body,.record-drawer-footer{padding-left:16px;padding-right:16px}.record-drawer-summary{margin-left:-16px;margin-right:-16px;padding-left:16px;padding-right:16px}}
         /* 全局客户名称悬浮提示，fixed 定位避免被表格行遮挡 */
         .cust-global-tooltip{position:fixed;z-index:9999;background:#1f2937;color:#f3f4f6;padding:6px 10px;border-radius:6px;font-size:12px;line-height:1.5;max-width:260px;white-space:normal;word-break:break-all;pointer-events:none;opacity:0;transition:opacity .15s;box-shadow:0 4px 12px rgba(0,0,0,.15)}
         .cust-global-tooltip.show{opacity:1}
@@ -3612,6 +3619,22 @@
                     <section class="record-detail-section record-xaas-only" id="recordXaasCustomerSection" hidden>
                         <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">contact_page</span>客户信息</h3>
                         <div class="record-detail-grid" id="recordXaasCustomerGrid"></div>
+                    </section>
+                    <section class="record-detail-section record-product-auth-only" id="recordProductSceneSection" hidden>
+                        <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">rule</span>授权场景与申请内容</h3>
+                        <div class="record-detail-grid" id="recordProductSceneGrid"></div>
+                    </section>
+                    <section class="record-detail-section record-product-auth-only" id="recordProductDeviceSection" hidden>
+                        <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">dns</span>授权对象</h3>
+                        <div class="record-detail-grid" id="recordProductDeviceGrid"></div>
+                    </section>
+                    <section class="record-detail-section record-product-auth-only" id="recordProductChangeSection" hidden>
+                        <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">difference</span>配置变更</h3>
+                        <div class="record-product-change-list" id="recordProductChangeList"></div>
+                    </section>
+                    <section class="record-detail-section record-product-auth-only" id="recordProductDeliverySection" hidden>
+                        <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">verified</span>开通结果</h3>
+                        <div class="record-detail-grid" id="recordProductDeliveryGrid"></div>
                     </section>
                     <section class="record-detail-section record-product-only" id="recordAuthorizationSection">
                         <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">license</span>授权信息</h3>
@@ -7427,6 +7450,77 @@
         };
     }
 
+    function getProductRecordDetail(data) {
+        var authorized = data.status === '已授权' || data.status === '已过期';
+        var isClusterProduct = data.product === 'HCI' || data.product === 'SCP';
+        var isFirstOpening = data.applicationNo === 'AUTH-20260701-001';
+        var isOverdue = data.status === '已过期';
+        var scene = isFirstOpening ? '首次开通测试授权' : (isOverdue ? '重新开通测试授权' : '有效期内调整');
+        var requestItems = isFirstOpening ? '开通测试授权' : (isOverdue ? '延期' : '延期、增开模块、扩容');
+        var modules = getRecordModules(data.product);
+        var previousModules = isFirstOpening ? '未开通' : modules.split('、')[0];
+        var capacity = isClusterProduct ? '物理 CPU 16 颗' : '标准测试容量';
+        var previousCapacity = isFirstOpening ? '未开通' : (isClusterProduct ? '物理 CPU 8 颗' : '基础测试容量');
+        var previousValidity = isFirstOpening ? '未开通' : (isOverdue ? '2025-07-01 ~ 2026-01-01' : '2026-04-01 ~ 2026-06-29');
+        var objectItems;
+
+        if (isClusterProduct) {
+            var clusterId = 'CLUSTER-' + data.product + '-' + data.applicationNo.slice(-3);
+            objectItems = [
+                { label: '硬件信息文件', value: data.customer + '-' + data.product + '硬件信息文件（已上传）', full: true },
+                { label: '集群标识', value: clusterId, code: true },
+                { label: '来源', value: '硬件借测系统' },
+                { label: '授权中台', value: '总部授权中台' },
+                { label: '最新授权有效期', value: data.validity },
+                { label: '累计测试', value: isOverdue ? '270 天' : '90 天' },
+                { label: '历史申请', value: isFirstOpening ? '0 次' : '2 次' }
+            ];
+            if (isFirstOpening) {
+                objectItems.push(
+                    { label: '借测单号', value: 'BT-2026-0701-018', code: true },
+                    { label: '借测人', value: data.applicant },
+                    { label: '借测状态', value: '借测中' },
+                    { label: '借测类型', value: '硬件借测' }
+                );
+            }
+        } else {
+            objectItems = [
+                { label: '设备 ID', value: data.device, code: true },
+                { label: '设备 SN', value: data.device.replace(/^GW-/, 'SN-'), code: true },
+                { label: '来源', value: '销售设备台账' },
+                { label: '授权中台', value: '总部授权中台' },
+                { label: '最新授权有效期', value: data.validity },
+                { label: '累计测试', value: isOverdue ? '270 天' : '120 天' },
+                { label: '历史申请', value: isOverdue ? '3 次' : '1 次' }
+            ];
+        }
+
+        return {
+            scene: [
+                { label: '授权场景', value: scene },
+                { label: '申请事项', value: requestItems },
+                { label: isOverdue ? '审批提示' : '规则判断', value: isOverdue ? '已超过 6 个月规则，将升级审批并扣除区域经营成本' : (isFirstOpening ? '当前客户与产品线下无历史授权，按首次申请处理' : '授权仍在有效期内，按同类配置调整规则审批'), full: true },
+                { label: '申请原因', value: isFirstOpening ? '客户计划开展虚拟化平台兼容性与稳定性验证，需要开通首期测试授权。' : (isOverdue ? '原测试周期结束后仍需完成压力验证，申请重新开通测试授权。' : '客户测试范围扩大，需要延长测试周期并补充模块与容量。'), full: true },
+                { label: '附件', value: isOverdue ? '超期测试说明.pdf' : '客户测试计划.pdf', full: true }
+            ],
+            object: objectItems,
+            changes: [
+                { label: '授权有效期', before: previousValidity, after: data.validity },
+                { label: '授权模块', before: previousModules, after: modules },
+                { label: '授权容量', before: previousCapacity, after: capacity }
+            ],
+            delivery: [
+                { label: '实际授权有效期', value: authorized ? data.validity : '待审批通过后确认' },
+                { label: '最终授权模块', value: authorized ? modules : '待审批通过后确认' },
+                { label: '最终授权容量', value: authorized ? capacity : '待审批通过后确认' },
+                { label: '授权码', value: authorized ? 'LIC-' + data.applicationNo.replace(/[^A-Z0-9]/gi, '').slice(-12) : '待生成', code: true },
+                { label: '授权文件', value: authorized ? '授权信息-' + data.applicationNo : '待生成' },
+                { label: '生成时间', value: authorized ? data.appliedAt : '待生成' },
+                { label: '接收邮箱', value: 'license-recipient@sangfor.com.cn', full: true }
+            ]
+        };
+    }
+
     function getRecordApprovalMeta(status) {
         var meta = {
             '待审批': { current: '区域负责人审批', decision: '待处理' },
@@ -7502,6 +7596,32 @@
         });
     }
 
+    function renderProductChanges(container, changes) {
+        container.textContent = '';
+        changes.forEach(function(change) {
+            var row = document.createElement('div');
+            row.className = 'record-product-change-row';
+            var label = document.createElement('span');
+            label.className = 'record-product-change-label';
+            label.textContent = change.label;
+            var before = document.createElement('span');
+            before.className = 'record-product-change-value';
+            before.textContent = change.before || '—';
+            var arrow = document.createElement('span');
+            arrow.className = 'record-product-change-arrow material-symbols-outlined';
+            arrow.setAttribute('aria-hidden', 'true');
+            arrow.textContent = 'arrow_forward';
+            var after = document.createElement('span');
+            after.className = 'record-product-change-value target';
+            after.textContent = change.after || '—';
+            row.appendChild(label);
+            row.appendChild(before);
+            row.appendChild(arrow);
+            row.appendChild(after);
+            container.appendChild(row);
+        });
+    }
+
     function buildRecordApprovalSteps(data) {
         var steps = [{ title: '提交申请', detail: data.applicant + ' · ' + data.appliedAt, state: 'done' }];
         if (data.status === '待审批') {
@@ -7565,7 +7685,9 @@
         status.className = 'record-detail-status ' + getRecordStatusClass(data.status);
         status.textContent = data.status;
         var isXaas = data.authorizationType === 'XaaS';
+        var isProductAuth = data.authorizationType === '产品授权';
         var xaasDetail = isXaas ? getXaasRecordDetail(data) : null;
+        var productDetail = isProductAuth ? getProductRecordDetail(data) : null;
         appendRecordDetailItems(document.getElementById('recordApplicationGrid'), [
             { label: '授权类型', value: data.authorizationType },
             { label: '申请平台', value: data.platform },
@@ -7574,9 +7696,12 @@
             { label: '申请时间', value: data.appliedAt },
             { label: isXaas ? '申请动作' : '客户名称', value: isXaas ? xaasDetail.action : data.customer }
         ]);
-        document.getElementById('recordAuthorizationSection').hidden = isXaas;
+        document.getElementById('recordAuthorizationSection').hidden = isXaas || isProductAuth;
         document.querySelectorAll('#recordDrawerView .record-xaas-only').forEach(function(section) {
             section.hidden = !isXaas;
+        });
+        document.querySelectorAll('#recordDrawerView .record-product-auth-only').forEach(function(section) {
+            section.hidden = !isProductAuth;
         });
         if (isXaas) {
             appendRecordDetailItems(document.getElementById('recordXaasCustomerGrid'), [
@@ -7597,6 +7722,11 @@
                 { label: '授权码', value: xaasDetail.delivery.licenseCode, code: true },
                 { label: '授权文件', value: xaasDetail.delivery.file }
             ]);
+        } else if (isProductAuth) {
+            appendRecordDetailItems(document.getElementById('recordProductSceneGrid'), productDetail.scene);
+            appendRecordDetailItems(document.getElementById('recordProductDeviceGrid'), productDetail.object);
+            renderProductChanges(document.getElementById('recordProductChangeList'), productDetail.changes);
+            appendRecordDetailItems(document.getElementById('recordProductDeliveryGrid'), productDetail.delivery);
         } else {
             var hasAuthorization = data.status === '已授权' || data.status === '已过期';
             appendRecordDetailItems(document.getElementById('recordAuthorizationGrid'), [
@@ -7616,6 +7746,8 @@
         renderRecordApprovalTimeline(document.getElementById('recordApprovalTimeline'), buildRecordApprovalSteps(data));
         layer.hidden = false;
         layer.setAttribute('aria-hidden', 'false');
+        var drawerBody = layer.querySelector('.record-drawer-body');
+        if (drawerBody) drawerBody.scrollTop = 0;
         var closeButton = layer.querySelector('.record-drawer-close');
         if (closeButton) closeButton.focus();
     }

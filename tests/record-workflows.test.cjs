@@ -36,14 +36,23 @@ test('查看授权记录使用右侧抽屉并保持列表上下文', () => {
   }
 });
 
-test('详情抽屉同时展示授权信息与审批信息', () => {
+test('产品授权详情展示场景、授权对象、配置变更、开通结果和审批信息', () => {
   const { dom, document, window } = setupRecords();
   try {
     const view = document.querySelector('[data-record-action="view"]');
     view.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
-    assert.match(document.getElementById('recordAuthorizationGrid').textContent, /授权内容/);
-    assert.match(document.getElementById('recordAuthorizationGrid').textContent, /授权码/);
-    assert.match(document.getElementById('recordAuthorizationGrid').textContent, /授权文件/);
+    assert.equal(document.getElementById('recordAuthorizationSection').hidden, true);
+    assert.equal(document.getElementById('recordProductSceneSection').hidden, false);
+    assert.match(document.getElementById('recordProductSceneGrid').textContent, /首次开通测试授权/);
+    assert.match(document.getElementById('recordProductDeviceGrid').textContent, /硬件信息文件/);
+    assert.match(document.getElementById('recordProductDeviceGrid').textContent, /集群标识/);
+    assert.doesNotMatch(document.getElementById('recordProductDeviceGrid').textContent, /设备 ID/);
+    assert.match(document.getElementById('recordProductDeviceGrid').textContent, /借测单号/);
+    assert.match(document.getElementById('recordProductChangeList').textContent, /未开通/);
+    assert.match(document.getElementById('recordProductChangeList').textContent, /计算虚拟化、分布式存储/);
+    assert.match(document.getElementById('recordProductChangeList').textContent, /物理 CPU 16 颗/);
+    assert.match(document.getElementById('recordProductDeliveryGrid').textContent, /授权码/);
+    assert.match(document.getElementById('recordProductDeliveryGrid').textContent, /授权文件/);
     assert.match(document.getElementById('recordApprovalGrid').textContent, /审批结果/);
     assert.match(document.getElementById('recordApprovalTimeline').textContent, /提交申请/);
     assert.match(document.getElementById('recordApprovalTimeline').textContent, /授权中台处理/);
@@ -76,7 +85,33 @@ test('XaaS 详情展示客户、订阅规格、业务补充信息和开通结果
 
     const productView = rows[0].querySelector('[data-record-action="view"]');
     productView.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    assert.equal(document.getElementById('recordAuthorizationSection').hidden, true);
+    assert.equal(document.getElementById('recordXaasCustomerSection').hidden, true);
+    assert.equal(document.getElementById('recordProductSceneSection').hidden, false);
+    assert.match(document.getElementById('recordProductSceneGrid').textContent, /授权场景/);
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('超期产品提示升级审批，解决方案仍使用通用授权信息', () => {
+  const { dom, document, window } = setupRecords();
+  try {
+    const rows = [...document.querySelectorAll('#content-records .table-scroll-wrap > table > tbody > tr:not(.solution-detail-row)')];
+    const overdueRow = rows.find((row) => row.children[0]?.textContent.includes('AUTH-20260628-033'));
+    assert.ok(overdueRow, '应存在已过期的普通产品授权 Mock 记录');
+    overdueRow.querySelector('[data-record-action="view"]').dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    assert.match(document.getElementById('recordProductSceneGrid').textContent, /重新开通测试授权/);
+    assert.match(document.getElementById('recordProductSceneGrid').textContent, /升级审批/);
+    assert.match(document.getElementById('recordProductSceneGrid').textContent, /扣除区域经营成本/);
+    assert.match(document.getElementById('recordProductDeviceGrid').textContent, /设备 ID/);
+    assert.doesNotMatch(document.getElementById('recordProductDeviceGrid').textContent, /硬件信息文件/);
+
+    const solutionRow = rows.find((row) => row.children[1]?.textContent.trim() === '解决方案');
+    assert.ok(solutionRow, '应存在解决方案 Mock 记录');
+    solutionRow.querySelector('[data-record-action="view"]').dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
     assert.equal(document.getElementById('recordAuthorizationSection').hidden, false);
+    assert.equal(document.getElementById('recordProductSceneSection').hidden, true);
     assert.equal(document.getElementById('recordXaasCustomerSection').hidden, true);
     assert.match(document.getElementById('recordAuthorizationGrid').textContent, /授权对象/);
   } finally {
