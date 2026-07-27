@@ -213,16 +213,31 @@ test('驳回记录可补充说明和材料后重新提交', () => {
   }
 });
 
-test('审核抽屉展示申请摘要、审批记录和审批决定', () => {
+test('审核抽屉展示完整判断依据并要求主动选择审批决定', () => {
   const { dom, document, window } = setupRecords();
   try {
     clickAction(document, window, 'approve');
     assert.equal(document.getElementById('recordDrawerTitle').textContent, '审核申请');
+    assert.equal(document.activeElement, document.getElementById('recordDrawerTitle'));
+    assert.equal(document.querySelector('#recordDrawerLayer .record-drawer-body').scrollTop, 0);
+    assert.ok(document.getElementById('recordDrawerLayer').classList.contains('is-approval'));
+    assert.match(document.getElementById('recordApproveApplicationGrid').textContent, /申请人/);
+    assert.match(document.getElementById('recordApproveApplicationGrid').textContent, /客户类型/);
+    assert.match(document.getElementById('recordApproveApplicationGrid').textContent, /版本号/);
+    assert.match(document.getElementById('recordApproveRiskGrid').textContent, /核对重点/);
+    assert.match(document.getElementById('recordApproveSubscriptionList').textContent, /2 亿条/);
+    assert.match(document.getElementById('recordApproveBasisGrid').textContent, /测试驱动力/);
+    assert.match(document.getElementById('recordApproveBasisGrid').textContent, /客户信息收集表/);
     assert.match(document.getElementById('recordWorkflowContent').textContent, /已有审批记录/);
+    assert.match(document.getElementById('recordWorkflowContent').textContent, /意见：已提交申请信息和相关材料/);
     assert.equal(document.querySelectorAll('input[name="recordApprovalDecision"]').length, 2);
-    assert.equal(document.querySelector('input[name="recordApprovalDecision"]:checked').value, 'approve');
+    assert.equal(document.querySelector('input[name="recordApprovalDecision"]:checked'), null);
     document.getElementById('recordDrawerPrimary').click();
     assert.equal(document.getElementById('recordWorkflowError').hidden, false);
+    assert.match(document.getElementById('recordWorkflowError').textContent, /请选择审批决定/);
+    document.querySelector('input[name="recordApprovalDecision"][value="approve"]').checked = true;
+    document.getElementById('recordDrawerPrimary').click();
+    assert.match(document.getElementById('recordWorkflowError').textContent, /请完成必填信息/);
     document.getElementById('recordApprovalOpinion').value = '申请信息完整，同意进入下一节点';
     document.getElementById('recordDrawerPrimary').click();
     assert.equal(document.getElementById('recordDrawerLayer').hidden, true);
