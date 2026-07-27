@@ -910,6 +910,7 @@
         .record-detail-section + .record-detail-section{padding-top:18px;border-top:0}
         .record-detail-section-title{display:flex;align-items:center;gap:7px;margin:0 0 9px;color:#0b1c30;font-size:13px;font-weight:600;line-height:20px}
         .record-detail-section-title .material-symbols-outlined{color:#0050cb;font-size:17px}
+        .record-detail-subsection-title{margin:14px 0 8px;color:#424656;font-size:12px;font-weight:600;line-height:18px}
         .record-detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:0;background:#fbfcfe;border:1px solid #e3e8f1;border-radius:6px;overflow:hidden}
         .record-detail-item{display:grid;grid-template-columns:82px minmax(0,1fr);gap:8px;align-items:start;min-width:0;padding:9px 12px;border-bottom:1px solid #e8edf4}
         .record-detail-item.full{grid-column:1/-1}
@@ -3620,21 +3621,21 @@
                         <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">description</span>申请信息</h3>
                         <div class="record-detail-grid" id="recordApplicationGrid"></div>
                     </section>
-                    <section class="record-detail-section record-xaas-only" id="recordXaasCustomerSection" hidden>
+                    <section class="record-detail-section" id="recordCustomerSection" hidden>
                         <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">contact_page</span>客户信息</h3>
-                        <div class="record-detail-grid" id="recordXaasCustomerGrid"></div>
+                        <div class="record-detail-grid" id="recordCustomerGrid"></div>
                     </section>
-                    <section class="record-detail-section record-product-auth-only" id="recordProductSceneSection" hidden>
-                        <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">rule</span>授权场景与申请内容</h3>
-                        <div class="record-detail-grid" id="recordProductSceneGrid"></div>
-                    </section>
-                    <section class="record-detail-section record-product-auth-only" id="recordProductDeviceSection" hidden>
-                        <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">dns</span>授权对象</h3>
+                    <section class="record-detail-section record-product-auth-only" id="recordProductDetailSection" hidden>
+                        <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">license</span>产品授权明细</h3>
+                        <div class="record-detail-grid" id="recordProductOverviewGrid"></div>
+                        <h4 class="record-detail-subsection-title">授权对象</h4>
                         <div class="record-detail-grid" id="recordProductDeviceGrid"></div>
-                    </section>
-                    <section class="record-detail-section record-product-auth-only" id="recordProductChangeSection" hidden>
-                        <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">difference</span>配置变更</h3>
+                        <h4 class="record-detail-subsection-title">配置变更</h4>
                         <div class="record-product-change-list" id="recordProductChangeList"></div>
+                    </section>
+                    <section class="record-detail-section record-product-auth-only" id="recordProductSupplementSection" hidden>
+                        <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">fact_check</span>业务补充信息</h3>
+                        <div class="record-detail-grid" id="recordProductSupplementGrid"></div>
                     </section>
                     <section class="record-detail-section record-product-auth-only" id="recordProductDeliverySection" hidden>
                         <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">verified</span>开通结果</h3>
@@ -7716,15 +7717,26 @@
         var isProductAuth = data.authorizationType === '产品授权';
         var xaasDetail = isXaas ? getXaasRecordDetail(data) : null;
         var productDetail = isProductAuth ? getProductRecordDetail(data) : null;
-        appendRecordDetailItems(document.getElementById('recordApplicationGrid'), [
+        var applicationItems = [
             { label: '授权类型', value: data.authorizationType },
             { label: '申请平台', value: data.platform },
             { label: '申请人', value: data.applicant },
             { label: '区域', value: data.region },
             { label: '申请时间', value: data.appliedAt },
-            { label: isXaas ? '申请动作' : '客户名称', value: isXaas ? xaasDetail.action : data.customer }
-        ]);
+            {
+                label: isXaas ? '申请动作' : (isProductAuth ? '授权场景' : '客户名称'),
+                value: isXaas ? xaasDetail.action : (isProductAuth ? productDetail.scene[0].value : data.customer)
+            }
+        ];
+        if (isProductAuth) {
+            applicationItems.push(
+                { label: '申请事项', value: productDetail.scene[1].value },
+                { label: '申请有效期', value: data.validity }
+            );
+        }
+        appendRecordDetailItems(document.getElementById('recordApplicationGrid'), applicationItems);
         document.getElementById('recordAuthorizationSection').hidden = isXaas || isProductAuth;
+        document.getElementById('recordCustomerSection').hidden = !(isXaas || isProductAuth);
         document.querySelectorAll('#recordDrawerView .record-xaas-only').forEach(function(section) {
             section.hidden = !isXaas;
         });
@@ -7732,7 +7744,7 @@
             section.hidden = !isProductAuth;
         });
         if (isXaas) {
-            appendRecordDetailItems(document.getElementById('recordXaasCustomerGrid'), [
+            appendRecordDetailItems(document.getElementById('recordCustomerGrid'), [
                 { label: '客户名称', value: data.customer },
                 { label: '所属云图账号', value: xaasDetail.customer.cloudAccount },
                 { label: '联系人姓名', value: xaasDetail.customer.contact },
@@ -7751,9 +7763,18 @@
                 { label: '授权文件', value: xaasDetail.delivery.file }
             ]);
         } else if (isProductAuth) {
-            appendRecordDetailItems(document.getElementById('recordProductSceneGrid'), productDetail.scene);
+            appendRecordDetailItems(document.getElementById('recordCustomerGrid'), [
+                { label: '客户名称', value: data.customer },
+                { label: '客户类型', value: data.customerType }
+            ]);
+            appendRecordDetailItems(document.getElementById('recordProductOverviewGrid'), [
+                { label: '产品线', value: data.product },
+                { label: '版本号', value: data.version },
+                { label: '申请有效期', value: data.validity, full: true }
+            ]);
             appendRecordDetailItems(document.getElementById('recordProductDeviceGrid'), productDetail.object);
             renderProductChanges(document.getElementById('recordProductChangeList'), productDetail.changes);
+            appendRecordDetailItems(document.getElementById('recordProductSupplementGrid'), productDetail.scene.slice(2));
             appendRecordDetailItems(document.getElementById('recordProductDeliveryGrid'), productDetail.delivery);
         } else {
             var hasAuthorization = data.status === '已授权' || data.status === '已过期';
