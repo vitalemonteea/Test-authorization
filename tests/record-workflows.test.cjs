@@ -229,14 +229,20 @@ test('审核抽屉展示完整判断依据并要求主动选择审批决定', ()
     assert.equal(document.getElementById('recordDrawerTitle').textContent, '审核申请');
     assert.equal(document.activeElement, document.getElementById('recordDrawerTitle'));
     assert.equal(document.querySelector('#recordDrawerLayer .record-drawer-body').scrollTop, 0);
-    assert.ok(document.getElementById('recordDrawerLayer').classList.contains('is-approval'));
-    assert.match(document.getElementById('recordApproveApplicationGrid').textContent, /申请人/);
-    assert.match(document.getElementById('recordApproveApplicationGrid').textContent, /客户类型/);
-    assert.match(document.getElementById('recordApproveApplicationGrid').textContent, /版本号/);
-    assert.match(document.getElementById('recordApproveRiskGrid').textContent, /核对重点/);
+    assert.equal(document.getElementById('recordDrawerLayer').classList.contains('is-approval'), false);
+    assert.ok(document.getElementById('recordWorkflowContent').classList.contains('record-approve-content'));
+    assert.match(document.getElementById('recordApproveApplicationGrid').textContent, /授权类型XaaS/);
+    assert.match(document.getElementById('recordApproveApplicationGrid').textContent, /申请动作首次开通试用/);
+    assert.match(document.getElementById('recordApproveCustomerGrid').textContent, /客户名称阿里巴巴/);
+    assert.match(document.getElementById('recordApproveCustomerGrid').textContent, /联系人手机号/);
+    assert.match(document.getElementById('recordApproveCustomerGrid').textContent, /所属行业/);
     assert.match(document.getElementById('recordApproveSubscriptionList').textContent, /2 亿条/);
     assert.match(document.getElementById('recordApproveBasisGrid').textContent, /测试驱动力/);
     assert.match(document.getElementById('recordApproveBasisGrid').textContent, /客户信息收集表/);
+    assert.equal(document.getElementById('recordApproveRiskGrid'), null);
+    const sectionTitles = [...document.querySelectorAll('#recordWorkflowContent > .record-detail-section > .record-detail-section-title')]
+      .map((title) => title.lastChild.textContent.trim());
+    assert.deepEqual(sectionTitles, ['申请信息', '客户信息', '订阅授权明细', '业务补充信息', '已有审批记录', '审批决定']);
     assert.match(document.getElementById('recordWorkflowContent').textContent, /已有审批记录/);
     assert.match(document.getElementById('recordWorkflowContent').textContent, /意见：已提交申请信息和相关材料/);
     assert.equal(document.querySelectorAll('input[name="recordApprovalDecision"]').length, 2);

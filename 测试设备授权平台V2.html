@@ -888,7 +888,6 @@
         .record-drawer-layer[hidden]{display:none}
         .record-drawer-backdrop{position:absolute;inset:0;background:rgba(11,28,48,.38)}
         .record-drawer{position:relative;width:min(560px,100vw);height:100%;display:flex;flex-direction:column;background:#fff;box-shadow:-12px 0 32px rgba(11,28,48,.16);animation:recordDrawerIn .18s ease-out}
-        .record-drawer-layer.is-approval .record-drawer{width:min(720px,100vw)}
         @keyframes recordDrawerIn{from{transform:translateX(20px);opacity:.7}to{transform:translateX(0);opacity:1}}
         .record-drawer-header{display:flex;align-items:center;gap:12px;min-height:68px;padding:12px 20px;border-bottom:1px solid #e5eaf2;box-sizing:border-box}
         .record-drawer-heading{min-width:0;flex:1}
@@ -959,9 +958,7 @@
         .record-workflow-callout .material-symbols-outlined{flex:0 0 auto;font-size:18px}
         .record-workflow-section{margin-bottom:20px}
         .record-workflow-section-title{margin:0 0 10px;color:#0b1c30;font-size:13px;font-weight:600;line-height:20px}
-        .record-approve-section{padding-top:2px}
-        .record-approve-risk-grid{border-color:#efd7aa;background:#fffdf8}
-        .record-approve-risk-grid .record-detail-label{color:#7a5a2b}
+        .record-workflow-content.record-approve-content{padding-top:0}
         .record-workflow-field{display:block;margin-bottom:14px}
         .record-workflow-label{display:block;margin-bottom:6px;color:#424656;font-size:12px;font-weight:600;line-height:18px}
         .record-workflow-required{margin-left:2px;color:#d92d20}
@@ -7363,7 +7360,6 @@
 
     function setRecordDrawerMode(mode) {
         var isView = mode === 'view';
-        document.getElementById('recordDrawerLayer').classList.toggle('is-approval', mode === 'approve');
         document.getElementById('recordDrawerView').hidden = !isView;
         document.getElementById('recordDrawerWorkflow').hidden = isView;
         document.getElementById('recordDrawerSubtitle').hidden = isView;
@@ -7700,6 +7696,46 @@
         return '';
     }
 
+    function getRecordApplicationItems(data, xaasDetail, productDetail) {
+        var isXaas = Boolean(xaasDetail);
+        var isProductAuth = Boolean(productDetail);
+        var items = [
+            { label: '授权类型', value: data.authorizationType },
+            { label: '申请平台', value: data.platform },
+            { label: '申请人', value: data.applicant },
+            { label: '区域', value: data.region },
+            { label: '申请时间', value: data.appliedAt },
+            {
+                label: isXaas ? '申请动作' : (isProductAuth ? '授权场景' : '客户名称'),
+                value: isXaas ? xaasDetail.action : (isProductAuth ? productDetail.scene[0].value : data.customer)
+            }
+        ];
+        if (isProductAuth) {
+            items.push(
+                { label: '申请事项', value: productDetail.scene[1].value },
+                { label: '申请有效期', value: data.validity }
+            );
+        }
+        return items;
+    }
+
+    function getRecordCustomerItems(data, xaasDetail) {
+        if (!xaasDetail) {
+            return [
+                { label: '客户名称', value: data.customer },
+                { label: '客户类型', value: data.customerType }
+            ];
+        }
+        return [
+            { label: '客户名称', value: data.customer },
+            { label: '所属云图账号', value: xaasDetail.customer.cloudAccount },
+            { label: '联系人姓名', value: xaasDetail.customer.contact },
+            { label: '联系人手机号', value: xaasDetail.customer.phone },
+            { label: '联系人邮箱', value: xaasDetail.customer.email },
+            { label: '所属行业', value: xaasDetail.customer.industry }
+        ];
+    }
+
     function openRecordDetailDrawer(row, trigger) {
         var data = getRecordRowData(row);
         var meta = getRecordApprovalMeta(data.status);
@@ -7717,24 +7753,7 @@
         var isProductAuth = data.authorizationType === '产品授权';
         var xaasDetail = isXaas ? getXaasRecordDetail(data) : null;
         var productDetail = isProductAuth ? getProductRecordDetail(data) : null;
-        var applicationItems = [
-            { label: '授权类型', value: data.authorizationType },
-            { label: '申请平台', value: data.platform },
-            { label: '申请人', value: data.applicant },
-            { label: '区域', value: data.region },
-            { label: '申请时间', value: data.appliedAt },
-            {
-                label: isXaas ? '申请动作' : (isProductAuth ? '授权场景' : '客户名称'),
-                value: isXaas ? xaasDetail.action : (isProductAuth ? productDetail.scene[0].value : data.customer)
-            }
-        ];
-        if (isProductAuth) {
-            applicationItems.push(
-                { label: '申请事项', value: productDetail.scene[1].value },
-                { label: '申请有效期', value: data.validity }
-            );
-        }
-        appendRecordDetailItems(document.getElementById('recordApplicationGrid'), applicationItems);
+        appendRecordDetailItems(document.getElementById('recordApplicationGrid'), getRecordApplicationItems(data, xaasDetail, productDetail));
         document.getElementById('recordAuthorizationSection').hidden = isXaas || isProductAuth;
         document.getElementById('recordCustomerSection').hidden = !(isXaas || isProductAuth);
         document.querySelectorAll('#recordDrawerView .record-xaas-only').forEach(function(section) {
@@ -7744,14 +7763,7 @@
             section.hidden = !isProductAuth;
         });
         if (isXaas) {
-            appendRecordDetailItems(document.getElementById('recordCustomerGrid'), [
-                { label: '客户名称', value: data.customer },
-                { label: '所属云图账号', value: xaasDetail.customer.cloudAccount },
-                { label: '联系人姓名', value: xaasDetail.customer.contact },
-                { label: '联系人手机号', value: xaasDetail.customer.phone },
-                { label: '联系人邮箱', value: xaasDetail.customer.email },
-                { label: '所属行业', value: xaasDetail.customer.industry }
-            ]);
+            appendRecordDetailItems(document.getElementById('recordCustomerGrid'), getRecordCustomerItems(data, xaasDetail));
             renderXaasSubscriptions(document.getElementById('recordXaasSubscriptionList'), xaasDetail.subscriptions);
             appendRecordDetailItems(document.getElementById('recordXaasSupplementGrid'), xaasDetail.supplement);
             appendRecordDetailItems(document.getElementById('recordXaasDeliveryGrid'), [
@@ -7763,10 +7775,7 @@
                 { label: '授权文件', value: xaasDetail.delivery.file }
             ]);
         } else if (isProductAuth) {
-            appendRecordDetailItems(document.getElementById('recordCustomerGrid'), [
-                { label: '客户名称', value: data.customer },
-                { label: '客户类型', value: data.customerType }
-            ]);
+            appendRecordDetailItems(document.getElementById('recordCustomerGrid'), getRecordCustomerItems(data, null));
             appendRecordDetailItems(document.getElementById('recordProductOverviewGrid'), [
                 { label: '产品线', value: data.product },
                 { label: '版本号', value: data.version },
@@ -7908,14 +7917,24 @@
         container.appendChild(fileField);
     }
 
-    function appendApproveDetailSection(container, title, id, items, extraClass) {
-        var section = createRecordWorkflowElement('section', 'record-workflow-section record-approve-section');
-        section.appendChild(createRecordWorkflowElement('h3', 'record-workflow-section-title', title));
-        var grid = createRecordWorkflowElement('div', 'record-detail-grid' + (extraClass ? ' ' + extraClass : ''));
+    function createApproveSection(container, title, iconName) {
+        var section = createRecordWorkflowElement('section', 'record-detail-section');
+        var heading = createRecordWorkflowElement('h3', 'record-detail-section-title');
+        var icon = createRecordWorkflowElement('span', 'material-symbols-outlined', iconName);
+        icon.setAttribute('aria-hidden', 'true');
+        heading.appendChild(icon);
+        heading.appendChild(document.createTextNode(title));
+        section.appendChild(heading);
+        container.appendChild(section);
+        return section;
+    }
+
+    function appendApproveDetailSection(container, title, iconName, id, items) {
+        var section = createApproveSection(container, title, iconName);
+        var grid = createRecordWorkflowElement('div', 'record-detail-grid');
         grid.id = id;
         appendRecordDetailItems(grid, items);
         section.appendChild(grid);
-        container.appendChild(section);
         return section;
     }
 
@@ -7924,77 +7943,57 @@
         var isProductAuth = data.authorizationType === '产品授权';
         var xaasDetail = isXaas ? getXaasRecordDetail(data) : null;
         var productDetail = isProductAuth ? getProductRecordDetail(data) : null;
-        var hasApprovalRisk = isProductAuth && productDetail.scene.some(function(item) {
-            return /升级审批|经营成本|超期/.test(item.value || '');
-        });
-        appendRecordWorkflowCallout(
+        appendApproveDetailSection(
             container,
-            hasApprovalRisk ? '本次申请命中超期规则，请重点核对申请理由、证明材料及区域经营成本影响。' : '请核对申请背景、授权明细、业务依据和已有审批记录后完成本节点审核。',
-            hasApprovalRisk
+            '申请信息',
+            'description',
+            'recordApproveApplicationGrid',
+            getRecordApplicationItems(data, xaasDetail, productDetail)
         );
 
-        var applicationItems = [
-            { label: '申请人', value: data.applicant },
-            { label: '所属区域', value: data.region },
-            { label: '客户名称', value: data.customer },
-            { label: '客户类型', value: data.customerType },
-            { label: '授权类型', value: data.authorizationType },
-            { label: '申请时间', value: data.appliedAt },
-            { label: '产品/方案', value: data.product },
-            { label: '版本号', value: data.version },
-            { label: '申请有效期', value: data.validity, full: true }
-        ];
-        appendApproveDetailSection(container, '申请信息', 'recordApproveApplicationGrid', applicationItems);
-
         if (isXaas) {
-            appendApproveDetailSection(container, '审批关注项', 'recordApproveRiskGrid', [
-                { label: '申请动作', value: xaasDetail.action },
-                { label: '当前节点', value: getRecordApprovalMeta(data.status).current },
-                { label: '核对重点', value: '订阅规格、测试场景、核心需求、客户环境及预算信息', full: true }
-            ], 'record-approve-risk-grid');
-
-            appendApproveDetailSection(container, '客户与项目', 'recordApproveCustomerGrid', [
-                { label: '所属云图账号', value: xaasDetail.customer.cloudAccount },
-                { label: '所属行业', value: xaasDetail.customer.industry },
-                { label: '联系人', value: xaasDetail.customer.contact },
-                { label: '联系邮箱', value: xaasDetail.customer.email }
-            ]);
-
-            var subscriptionSection = createRecordWorkflowElement('section', 'record-workflow-section record-approve-section');
-            subscriptionSection.appendChild(createRecordWorkflowElement('h3', 'record-workflow-section-title', '订阅授权明细'));
+            appendApproveDetailSection(container, '客户信息', 'contact_page', 'recordApproveCustomerGrid', getRecordCustomerItems(data, xaasDetail));
+            var subscriptionSection = createApproveSection(container, '订阅授权明细', 'subscriptions');
             var subscriptionList = createRecordWorkflowElement('div', 'record-xaas-subscriptions');
             subscriptionList.id = 'recordApproveSubscriptionList';
             renderXaasSubscriptions(subscriptionList, xaasDetail.subscriptions);
             subscriptionSection.appendChild(subscriptionList);
-            container.appendChild(subscriptionSection);
-
-            appendApproveDetailSection(container, '业务依据与材料', 'recordApproveBasisGrid', xaasDetail.supplement);
+            appendApproveDetailSection(container, '业务补充信息', 'fact_check', 'recordApproveBasisGrid', xaasDetail.supplement);
         } else if (isProductAuth) {
-            appendApproveDetailSection(container, '规则与风险', 'recordApproveRiskGrid', productDetail.scene, 'record-approve-risk-grid');
-            appendApproveDetailSection(container, '授权对象', 'recordApproveObjectGrid', productDetail.object);
-            var changeSection = createRecordWorkflowElement('section', 'record-workflow-section record-approve-section');
-            changeSection.appendChild(createRecordWorkflowElement('h3', 'record-workflow-section-title', '配置变更'));
+            appendApproveDetailSection(container, '客户信息', 'contact_page', 'recordApproveCustomerGrid', getRecordCustomerItems(data, null));
+            var productSection = createApproveSection(container, '产品授权明细', 'license');
+            var overviewGrid = createRecordWorkflowElement('div', 'record-detail-grid');
+            overviewGrid.id = 'recordApproveOverviewGrid';
+            appendRecordDetailItems(overviewGrid, [
+                { label: '产品线', value: data.product },
+                { label: '版本号', value: data.version },
+                { label: '申请有效期', value: data.validity, full: true }
+            ]);
+            productSection.appendChild(overviewGrid);
+            productSection.appendChild(createRecordWorkflowElement('h4', 'record-detail-subsection-title', '授权对象'));
+            var objectGrid = createRecordWorkflowElement('div', 'record-detail-grid');
+            objectGrid.id = 'recordApproveObjectGrid';
+            appendRecordDetailItems(objectGrid, productDetail.object);
+            productSection.appendChild(objectGrid);
+            productSection.appendChild(createRecordWorkflowElement('h4', 'record-detail-subsection-title', '配置变更'));
             var changeList = createRecordWorkflowElement('div', 'record-product-change-list');
             changeList.id = 'recordApproveChangeList';
             renderProductChanges(changeList, productDetail.changes);
-            changeSection.appendChild(changeList);
-            container.appendChild(changeSection);
+            productSection.appendChild(changeList);
+            appendApproveDetailSection(container, '业务补充信息', 'fact_check', 'recordApproveBasisGrid', productDetail.scene.slice(2));
         } else {
-            appendApproveDetailSection(container, '授权明细', 'recordApproveAuthorizationGrid', [
+            appendApproveDetailSection(container, '授权信息', 'license', 'recordApproveAuthorizationGrid', [
                 { label: '授权对象', value: data.device },
                 { label: '授权内容', value: getRecordModules(data.product) },
                 { label: '申请有效期', value: data.validity, full: true }
             ]);
         }
 
-        var timelineSection = createRecordWorkflowElement('section', 'record-workflow-section');
-        timelineSection.appendChild(createRecordWorkflowElement('h3', 'record-workflow-section-title', '已有审批记录'));
+        var timelineSection = createApproveSection(container, '已有审批记录', 'approval');
         var timeline = createRecordWorkflowElement('div', 'record-approval-timeline');
         renderRecordApprovalTimeline(timeline, buildRecordApprovalSteps(data));
         timelineSection.appendChild(timeline);
-        container.appendChild(timelineSection);
-        var decisionSection = createRecordWorkflowElement('section', 'record-workflow-section');
-        decisionSection.appendChild(createRecordWorkflowElement('h3', 'record-workflow-section-title', '审批决定'));
+        var decisionSection = createApproveSection(container, '审批决定', 'how_to_reg');
         var group = createRecordWorkflowElement('div', 'record-decision-group');
         [['approve', '审批通过'], ['reject', '审批驳回']].forEach(function(optionData) {
             var option = createRecordWorkflowElement('label', 'record-decision-option');
@@ -8007,8 +8006,7 @@
             group.appendChild(option);
         });
         decisionSection.appendChild(group);
-        container.appendChild(decisionSection);
-        appendRecordWorkflowField(container, {
+        appendRecordWorkflowField(decisionSection, {
             id: 'recordApprovalOpinion',
             label: '审批意见',
             multiline: true,
@@ -8038,6 +8036,7 @@
         status.className = 'record-detail-status ' + getRecordStatusClass(data.status);
         status.textContent = data.status;
         content.textContent = '';
+        content.classList.toggle('record-approve-content', action === 'approve');
         if (action === 'copy') renderCopyWorkflow(content, data);
         if (action === 'renew') renderRenewWorkflow(content, data);
         if (action === 'resubmit') renderResubmitWorkflow(content, data);
