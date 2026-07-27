@@ -229,6 +229,14 @@ test('重新开通与累计超期可以在场景卡中同时显示', () => {
     assert.match(document.getElementById('authSceneApprovalNote').textContent, /扣除区域经营成本/);
     assert.ok(document.getElementById('authSceneDisplay').classList.contains('has-basis'));
     assert.equal(document.getElementById('authSceneBasis').hidden, false);
+    assert.equal(document.getElementById('overlimit-fields').style.display, 'block');
+    assert.ok(document.getElementById('overlimitReason'));
+    assert.ok(document.getElementById('overlimitFileInput'));
+
+    document.getElementById('overlimitReason').value = '客户仍需完成压力验证';
+    window.removeDeviceChip('OVERDUE-NGAF-001');
+    assert.equal(document.getElementById('overlimit-fields').style.display, 'none');
+    assert.equal(document.getElementById('overlimitReason').value, '');
     assert.deepEqual(errors, []);
   } finally {
     dom.window.close();

@@ -44,6 +44,7 @@ test('产品授权详情展示场景、授权对象、配置变更、开通结�
     assert.equal(document.getElementById('recordAuthorizationSection').hidden, true);
     assert.equal(document.getElementById('recordProductSceneSection').hidden, false);
     assert.match(document.getElementById('recordProductSceneGrid').textContent, /首次开通测试授权/);
+    assert.doesNotMatch(document.getElementById('recordProductSceneGrid').textContent, /申请原因|附件/);
     assert.match(document.getElementById('recordProductDeviceGrid').textContent, /硬件信息文件/);
     assert.match(document.getElementById('recordProductDeviceGrid').textContent, /集群标识/);
     assert.doesNotMatch(document.getElementById('recordProductDeviceGrid').textContent, /设备 ID/);
@@ -125,6 +126,9 @@ test('超期产品提示升级审批，解决方案仍使用通用授权信息',
     assert.match(document.getElementById('recordProductSceneGrid').textContent, /重新开通测试授权/);
     assert.match(document.getElementById('recordProductSceneGrid').textContent, /升级审批/);
     assert.match(document.getElementById('recordProductSceneGrid').textContent, /扣除区域经营成本/);
+    assert.match(document.getElementById('recordProductSceneGrid').textContent, /申请原因/);
+    assert.match(document.getElementById('recordProductSceneGrid').textContent, /附件/);
+    assert.match(document.getElementById('recordProductSceneGrid').textContent, /超期测试说明\.pdf/);
     assert.match(document.getElementById('recordProductDeviceGrid').textContent, /设备 ID/);
     assert.doesNotMatch(document.getElementById('recordProductDeviceGrid').textContent, /硬件信息文件/);
     assert.doesNotMatch(document.getElementById('recordProductDeviceGrid').textContent, /授权中台/);

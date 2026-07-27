@@ -4533,6 +4533,14 @@
             return prefix + '-' + raw.slice(-10);
         }
 
+        function setOverlimitFieldsVisible(visible) {
+            overlimitFields.style.display = visible ? 'block' : 'none';
+            if (visible) return;
+            document.getElementById('overlimitReason').value = '';
+            document.getElementById('overlimitFileInput').value = '';
+            clearOverlimitFile();
+        }
+
         function clearRenewalDetection() {
             renewalDeviceIdInput.value = '';
             renewalTypeInput.value = '';
@@ -4543,7 +4551,7 @@
             renewalSummaryType.textContent = '-';
             renewalSummaryStatus.textContent = '常规续期';
             renewalSummaryTitle.textContent = '已识别历史借测数据';
-            overlimitFields.style.display = 'none';
+            setOverlimitFieldsVisible(false);
         }
 
         function applyRenewalDetection(options) {
@@ -4563,14 +4571,7 @@
             renewalSummaryType.textContent = statusText;
             renewalSummary.className = 'renewal-summary show' + (isOverlimit ? ' overlimit' : '');
 
-            if (isOverlimit) {
-                overlimitFields.style.display = 'block';
-            } else {
-                overlimitFields.style.display = 'none';
-                document.getElementById('overlimitReason').value = '';
-                document.getElementById('overlimitFileInput').value = '';
-                clearOverlimitFile();
-            }
+            setOverlimitFieldsVisible(isOverlimit);
         }
 
         function resetRenewalState() {
@@ -6021,6 +6022,7 @@
             authSceneRow.hidden = true;
             authSceneFormItem.hidden = true;
             requestContentsRow.hidden = true;
+            setOverlimitFieldsVisible(false);
             resetExistingAuthSection();
             updateAuthorizationConfigurationVisibility();
             clearApprovalPreview();
@@ -6153,6 +6155,7 @@
                 authSceneTags.appendChild(overdueTag);
             }
             authSceneApprovalNote.hidden = !isOverdue;
+            setOverlimitFieldsVisible(isOverdue);
             var hasSceneAside = Boolean(authSceneBasisText.textContent) || isOverdue;
             authSceneBasis.hidden = !hasSceneAside;
             authSceneDisplay.classList.toggle('has-basis', hasSceneAside);
@@ -7497,14 +7500,20 @@
             ];
         }
 
+        var sceneItems = [
+            { label: '授权场景', value: scene },
+            { label: '申请事项', value: requestItems },
+            { label: isOverdue ? '审批提示' : '规则判断', value: isOverdue ? '已超过 6 个月规则，将升级审批并扣除区域经营成本' : (isFirstOpening ? '当前客户与产品线下无历史授权，按首次申请处理' : '授权仍在有效期内，按同类配置调整规则审批'), full: true }
+        ];
+        if (isOverdue) {
+            sceneItems.push(
+                { label: '申请原因', value: '原测试周期结束后仍需完成压力验证，申请重新开通测试授权。', full: true },
+                { label: '附件', value: '超期测试说明.pdf', full: true }
+            );
+        }
+
         return {
-            scene: [
-                { label: '授权场景', value: scene },
-                { label: '申请事项', value: requestItems },
-                { label: isOverdue ? '审批提示' : '规则判断', value: isOverdue ? '已超过 6 个月规则，将升级审批并扣除区域经营成本' : (isFirstOpening ? '当前客户与产品线下无历史授权，按首次申请处理' : '授权仍在有效期内，按同类配置调整规则审批'), full: true },
-                { label: '申请原因', value: isFirstOpening ? '客户计划开展虚拟化平台兼容性与稳定性验证，需要开通首期测试授权。' : (isOverdue ? '原测试周期结束后仍需完成压力验证，申请重新开通测试授权。' : '客户测试范围扩大，需要延长测试周期并补充模块与容量。'), full: true },
-                { label: '附件', value: isOverdue ? '超期测试说明.pdf' : '客户测试计划.pdf', full: true }
-            ],
+            scene: sceneItems,
             object: objectItems,
             changes: [
                 { label: '授权有效期', before: previousValidity, after: data.validity },
