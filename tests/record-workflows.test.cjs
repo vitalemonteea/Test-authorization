@@ -61,6 +61,23 @@ test('产品授权详情展示场景、授权对象、配置变更、开通结�
   }
 });
 
+test('详情字段使用标签和值横向对齐的只读表单', () => {
+  const { dom, document, window } = setupRecords();
+  try {
+    const view = document.querySelector('[data-record-action="view"]');
+    view.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    const item = document.querySelector('#recordApplicationGrid .record-detail-item');
+    const label = item.querySelector('.record-detail-label');
+    const itemStyle = window.getComputedStyle(item);
+    const labelStyle = window.getComputedStyle(label);
+    assert.equal(itemStyle.display, 'grid');
+    assert.match(itemStyle.gridTemplateColumns, /^82px /);
+    assert.equal(labelStyle.marginBottom, '0px');
+  } finally {
+    dom.window.close();
+  }
+});
+
 test('XaaS 详情展示客户、订阅规格、业务补充信息和开通结果', () => {
   const { dom, document, window } = setupRecords();
   try {

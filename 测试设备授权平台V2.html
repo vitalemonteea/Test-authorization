@@ -902,14 +902,14 @@
         .record-detail-status.status-authorized{color:#087a55;background:#e8faf3}
         .record-detail-status.status-rejected{color:#b42318;background:#fff0ee}
         .record-detail-status.status-expired{color:#5f6675;background:#eef1f5}
-        .record-detail-section{padding:0 0 20px}
-        .record-detail-section + .record-detail-section{padding-top:20px;border-top:1px solid #edf1f7}
-        .record-detail-section-title{display:flex;align-items:center;gap:7px;margin:0 0 14px;color:#0b1c30;font-size:14px;font-weight:600;line-height:20px}
+        .record-detail-section{padding:0 0 16px}
+        .record-detail-section + .record-detail-section{padding-top:16px;border-top:1px solid #edf1f7}
+        .record-detail-section-title{display:flex;align-items:center;gap:7px;margin:0 0 10px;color:#0b1c30;font-size:14px;font-weight:600;line-height:20px}
         .record-detail-section-title .material-symbols-outlined{color:#0050cb;font-size:18px}
-        .record-detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 20px}
-        .record-detail-item{min-width:0}
+        .record-detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:20px;border-top:1px solid #edf1f7}
+        .record-detail-item{display:grid;grid-template-columns:82px minmax(0,1fr);gap:8px;align-items:start;min-width:0;padding:8px 0;border-bottom:1px solid #edf1f7}
         .record-detail-item.full{grid-column:1/-1}
-        .record-detail-label{display:block;margin-bottom:4px;color:#6b7890;font-size:12px;line-height:18px}
+        .record-detail-label{display:block;margin:0;color:#6b7890;font-size:12px;line-height:20px}
         .record-detail-value{display:block;color:#0b1c30;font-size:13px;line-height:20px;overflow-wrap:anywhere}
         .record-detail-value.is-code{font-family:Consolas,"SFMono-Regular",monospace;color:#003f9e}
         .record-xaas-only[hidden],.record-product-auth-only[hidden],.record-product-only[hidden]{display:none!important}
@@ -985,7 +985,7 @@
         .record-action-toast[hidden]{display:none}
         .record-action-toast .material-symbols-outlined{color:#12a474;font-size:19px}
         .record-action-control:focus-visible{outline:2px solid rgba(0,80,203,.45);outline-offset:2px}
-        @media (max-width:600px){.record-drawer{width:100%}.record-detail-grid,.record-copy-options,.record-xaas-subscription-meta{grid-template-columns:1fr}.record-product-change-row{grid-template-columns:72px minmax(0,1fr);gap:4px 10px}.record-product-change-arrow{display:none}.record-product-change-value.target{grid-column:2}.record-drawer-header,.record-drawer-body,.record-drawer-footer{padding-left:16px;padding-right:16px}.record-drawer-summary{margin-left:-16px;margin-right:-16px;padding-left:16px;padding-right:16px}}
+        @media (max-width:600px){.record-drawer{width:100%}.record-detail-grid,.record-copy-options,.record-xaas-subscription-meta{grid-template-columns:1fr}.record-detail-item{grid-template-columns:90px minmax(0,1fr)}.record-product-change-row{grid-template-columns:72px minmax(0,1fr);gap:4px 10px}.record-product-change-arrow{display:none}.record-product-change-value.target{grid-column:2}.record-drawer-header,.record-drawer-body,.record-drawer-footer{padding-left:16px;padding-right:16px}.record-drawer-summary{margin-left:-16px;margin-right:-16px;padding-left:16px;padding-right:16px}}
         /* 全局客户名称悬浮提示，fixed 定位避免被表格行遮挡 */
         .cust-global-tooltip{position:fixed;z-index:9999;background:#1f2937;color:#f3f4f6;padding:6px 10px;border-radius:6px;font-size:12px;line-height:1.5;max-width:260px;white-space:normal;word-break:break-all;pointer-events:none;opacity:0;transition:opacity .15s;box-shadow:0 4px 12px rgba(0,0,0,.15)}
         .cust-global-tooltip.show{opacity:1}
