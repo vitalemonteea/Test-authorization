@@ -4,3 +4,6 @@
 *.gif
 *.zip
 node_modules/
+dist/
+todo.md
+docs/测试授权申请审批规则与审批流.xlsx
