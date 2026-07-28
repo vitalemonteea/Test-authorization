@@ -178,6 +178,21 @@ test('移动端全行布局应保持单列', () => {
   );
 });
 
+test('移动端始终隐藏模块导航且脚本不得写入内联显隐状态', () => {
+  const mobileCss = getMobileCss().replace(/\s+/g, '');
+  assert.match(
+    mobileCss,
+    /body\[data-active-tab="hardware"\]\.module-nav\{display:none!important;/,
+    '移动端即使处于产品授权页也必须隐藏模块导航'
+  );
+  assertRuleProperty('.module-nav', 'display', /^none$/, '模块导航默认状态应为隐藏');
+  assert.doesNotMatch(
+    html,
+    /moduleNav\.style\.display\s*=/,
+    'Tab 切换脚本不应使用内联 display 覆盖响应式规则'
+  );
+});
+
 test('桌面布局应约束顶部账号入口并始终保留模块导航', () => {
   const headerRules = getCssRuleBodies('.layui-layout-admin .layui-header');
   assert.ok(

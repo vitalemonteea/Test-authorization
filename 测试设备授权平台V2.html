@@ -480,8 +480,10 @@
         .toolbar-btn:hover { background: #dae1ff; }
 
         /* 右侧导航 - MD3 风格 */
-        .module-nav { position: fixed; top: 100px; right: 12px; width: 168px; background: #fff; border-radius: 12px; padding: 10px 6px; max-height: calc(100vh - 160px); overflow-y: auto; z-index: 2100; box-shadow: 0 2px 12px rgba(0,0,0,.08); border: none; }
-        body[data-active-tab="hardware"] .module-nav { display: block !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto; }
+        .module-nav { display: none; position: fixed; top: 100px; right: 12px; width: 168px; background: #fff; border-radius: 12px; padding: 10px 6px; max-height: calc(100vh - 160px); overflow-y: auto; z-index: 2100; box-shadow: 0 2px 12px rgba(0,0,0,.08); border: none; }
+        @media (min-width: 769px) {
+            body[data-active-tab="hardware"] .module-nav { display: block !important; visibility: visible !important; opacity: 1 !important; pointer-events: auto; }
+        }
         body[data-active-tab="xaas"] .module-nav,
         body[data-active-tab="records"] .module-nav { display: none !important; }
         .module-nav-title { padding: 4px 10px 10px; font-size: 13px; font-weight: 600; color: #1a1a2e; letter-spacing: 0; text-transform: none; }
@@ -700,7 +702,8 @@
             .layui-layout-admin .layui-body { left: 0; }
             .layui-layout-admin .layui-footer { left: 0; }
             .content-body { padding: 12px 16px; }
-            .module-nav { display: none !important; }
+            .module-nav,
+            body[data-active-tab="hardware"] .module-nav { display: none !important; }
             .standard-action-bar { gap: 10px; min-height: 60px; padding: 8px 0; }
             .standard-action-status { font-size: 12px; }
             .standard-action-buttons .layui-btn { padding: 0 14px; }
@@ -3719,8 +3722,7 @@
             // 切换内容区域
             contentHardware.style.display = (tabName === 'hardware') ? 'block' : 'none';
             contentXaas.style.display = (tabName === 'xaas') ? 'block' : 'none';
-            // 切换右侧模块导航
-            moduleNav.style.display = (tabName === 'hardware') ? 'block' : 'none';
+            // 模块导航由 activeTab 状态和桌面端媒体查询共同控制
             // 切换授权记录显示
             var contentRec = document.getElementById('content-records');
             if (contentRec) contentRec.style.display = (tabName === 'records') ? 'flex' : 'none';
