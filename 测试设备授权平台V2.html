@@ -885,7 +885,32 @@
         #content-records .cust-cell{display:flex;align-items:center;gap:8px;max-width:200px}
         #content-records .cust-cell .cust-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:default}
         #content-records .cust-cell .cust-badge{flex-shrink:0;font-size:11px}
+        /* 申请平台列默认隐藏（第3列，单元格保留在DOM中供详情抽屉读取） */
+        #content-records .table-scroll-wrap > table > thead th:nth-child(3),
+        #content-records .table-scroll-wrap > table > tbody > tr:not(.solution-detail-row) > td:nth-child(3){display:none}
+        #content-records .device-summary{cursor:default}
+        /* 设备ID/云图ID列（第7列）超宽时省略号截断，悬浮展示完整信息 */
+        #content-records .table-scroll-wrap > table > tbody > tr:not(.solution-detail-row) > td:nth-child(7){overflow:hidden;text-overflow:ellipsis}
         #content-records .record-download-action{border:0;background:transparent;font:inherit;line-height:inherit}
+        /* 移动端筛选栏默认隐藏，仅 ≤768px 展示；原生 select 仅作状态同步不参与展示 */
+        #content-records .records-mobile-filterbar{display:none}
+        #content-records .records-quick-select select{display:none}
+        /* 筛选表单自定义下拉：替代原生 select 弹窗，桌面/移动端通用 */
+        #content-records .records-form-select{position:relative;flex:1;max-width:300px;min-width:0}
+        #content-records .records-form-select select{display:none}
+        #content-records .form-select-trigger{display:flex;align-items:center;justify-content:space-between;gap:6px;width:100%;height:36px;padding:0 8px 0 12px;background:#fff;border:1px solid rgba(194,198,216,.5);border-radius:6px;font:inherit;font-size:12px;color:#0b1c30;cursor:pointer;text-align:left}
+        #content-records .form-select-trigger:focus-visible{outline:none;border-color:#0050cb}
+        #content-records .records-form-select.open .form-select-trigger{border-color:#0050cb}
+        #content-records .form-select-value{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        #content-records .form-select-arrow{font-size:18px;color:#727687;flex-shrink:0}
+        #content-records .records-form-select.open .form-select-arrow{transform:rotate(180deg);color:#0050cb}
+        #content-records .form-select-panel{display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid rgba(194,198,216,.5);border-radius:8px;box-shadow:0 8px 20px rgba(11,28,48,.12);padding:4px;z-index:80;max-height:260px;overflow-y:auto}
+        #content-records .records-form-select.open .form-select-panel{display:block}
+        #content-records .form-select-option{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;border:0;background:transparent;border-radius:5px;font:inherit;font-size:12px;color:#424656;padding:8px 10px;text-align:left;cursor:pointer}
+        #content-records .form-select-option:hover{background:#eff4ff;color:#0050cb}
+        #content-records .form-select-option .form-select-check{font-size:15px;color:#0050cb;visibility:hidden}
+        #content-records .form-select-option.is-selected{color:#0050cb;font-weight:500;background:#eef4ff}
+        #content-records .form-select-option.is-selected .form-select-check{visibility:visible}
         #content-records [data-action-tip]{position:relative;outline-offset:2px}
         .record-drawer-layer{position:fixed;inset:0;z-index:5200;display:flex;justify-content:flex-end}
         .record-drawer-layer[hidden]{display:none}
@@ -1000,7 +1025,8 @@
         /* 全局客户名称悬浮提示，fixed 定位避免被表格行遮挡 */
         .cust-global-tooltip{position:fixed;z-index:9999;background:#1f2937;color:#f3f4f6;padding:6px 10px;border-radius:6px;font-size:12px;line-height:1.5;max-width:260px;white-space:normal;word-break:break-all;pointer-events:none;opacity:0;transition:opacity .15s;box-shadow:0 4px 12px rgba(0,0,0,.15)}
         .cust-global-tooltip.show{opacity:1}
-        #content-records .record-status-filter{display:inline-flex;align-items:center;gap:5px;min-height:28px;padding:0 9px;color:#424656;background:transparent;border:1px solid transparent;border-radius:6px;font:inherit;font-size:11px;line-height:1;cursor:pointer;white-space:nowrap;transition:color .15s,background-color .15s,border-color .15s}
+        .cust-global-tooltip.is-multiline{white-space:pre-line;word-break:normal}
+        #content-records .record-status-filter{display:inline-flex;align-items:center;gap:5px;min-height:28px;padding:0 9px;color:#424656;background:transparent;border:1px solid transparent;border-radius:6px;font:inherit;font-size:11px;line-height:1;cursor:pointer;white-space:nowrap}
         #content-records .record-status-filter:hover{color:#0050cb;background:#eff4ff}
         #content-records .record-status-filter.is-active{color:#0050cb;background:#eef4ff;border-color:#b7cdf5;font-weight:600}
         #content-records .record-status-filter:focus-visible{outline:2px solid rgba(0,80,203,.35);outline-offset:1px}
@@ -1011,7 +1037,61 @@
         #content-records{flex-direction:column;height:100%}
         #content-records > main{min-height:0}
         .content-body.records-mode{padding:0;overflow:hidden}
-        @media (max-width:768px){.content-body.records-mode{padding:0}}
+        @media (max-width:768px){
+        .content-body.records-mode{padding:0}
+        /* 标题与状态筛选条纵向堆叠，状态条横向滑动 */
+        #content-records .records-page-head{flex-direction:column;align-items:stretch;gap:10px}
+        #content-records .records-title-wrap{flex-wrap:wrap;row-gap:2px}
+        #content-records #recordsStatusSummary{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+        #content-records #recordsStatusSummary::-webkit-scrollbar{display:none}
+        /* 筛选区：紧凑筛选栏 + 可收起的完整筛选面板 */
+        #content-records .records-mobile-filterbar{display:flex;flex-direction:column;gap:8px;position:relative;z-index:60}
+        #content-records .records-mobile-search{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid rgba(194,198,216,.5);border-radius:8px;padding:0 10px;height:38px;position:relative;z-index:50}
+        #content-records .records-mobile-search .material-symbols-outlined{font-size:18px;color:#727687}
+        #content-records .records-mobile-search input{flex:1;min-width:0;border:0;outline:none;background:transparent;font-size:13px;color:#0b1c30;height:100%}
+        #content-records .records-quickrow{display:flex;align-items:center;background:#fff;border:1px solid rgba(194,198,216,.4);border-radius:8px;padding:4px 6px;position:relative;z-index:50}
+        #content-records .records-quick-select{position:relative;flex:1;min-width:0;display:flex;align-items:center}
+        #content-records .quick-trigger{display:flex;align-items:center;justify-content:center;width:100%;min-width:0;border:0;background:transparent;font:inherit;font-size:13px;color:#0b1c30;padding:6px 4px 6px 10px;cursor:pointer}
+        #content-records .quick-trigger .quick-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        #content-records .quick-trigger .quick-caret{font-size:18px;color:#727687;flex-shrink:0;transition:transform .15s}
+        #content-records .quick-trigger[aria-expanded="true"]{color:#0050cb}
+        #content-records .quick-trigger[aria-expanded="true"] .quick-caret{transform:rotate(180deg);color:#0050cb}
+        #content-records .records-quick-select.has-value .quick-trigger{color:#0050cb;font-weight:500}
+        #content-records .records-quick-select.has-value .quick-caret{color:#0050cb}
+        /* 快捷筛选自定义下拉面板（chip 网格） + 遮罩 */
+        #content-records .records-quick-panel{position:absolute;top:calc(100% + 6px);left:0;right:0;background:#fff;border:1px solid rgba(194,198,216,.4);border-radius:10px;box-shadow:0 12px 28px rgba(11,28,48,.14);padding:12px 14px 14px;z-index:70;max-height:300px;overflow-y:auto}
+        #content-records .records-quick-panel[hidden]{display:none}
+        #content-records .quick-panel-title{font-size:12px;color:#727687;margin:0 0 10px}
+        #content-records .quick-option-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+        #content-records .quick-option{display:block;min-width:0;border:1px solid transparent;background:#f4f5f7;border-radius:6px;font:inherit;font-size:12px;color:#0b1c30;padding:10px 8px;text-align:center;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        #content-records .quick-option:active{background:#eff4ff}
+        #content-records .quick-option.is-selected{background:#eef4ff;border-color:#b7cdf5;color:#0050cb;font-weight:500}
+        #content-records .records-quick-backdrop{position:fixed;inset:0;background:rgba(11,28,48,.25);z-index:40}
+        #content-records .records-quick-backdrop[hidden]{display:none}
+        #content-records .records-quick-reset{flex:0 0 auto;display:flex;align-items:center;justify-content:center;border:0;background:transparent;color:#424656;padding:6px 8px;cursor:pointer}
+        #content-records .records-quick-reset .material-symbols-outlined{font-size:18px}
+        #content-records .records-quick-reset:active,#content-records .records-quick-reset:hover{color:#0050cb}
+        #content-records .records-quick-divider{width:1px;height:16px;background:rgba(194,198,216,.5);flex-shrink:0}
+        #content-records .records-filter-toggle{flex:0 0 auto;display:flex;align-items:center;gap:2px;border:0;background:transparent;font:inherit;font-size:13px;color:#424656;padding:6px 10px;cursor:pointer}
+        #content-records .records-filter-toggle .material-symbols-outlined{font-size:16px}
+        #content-records .records-filter-toggle[aria-expanded="true"]{color:#0050cb;font-weight:500}
+        #content-records .records-filter-card{display:none}
+        #content-records .records-filter-card.open{display:block}
+        #content-records .records-filter-layout{flex-direction:column;align-items:stretch;gap:16px}
+        #content-records .records-filter-layout select,
+        #content-records .records-filter-layout input,
+        #content-records .records-filter-layout .flex-1{max-width:none}
+        #content-records .records-form-select{max-width:none}
+        #content-records .records-filter-actions button{flex:1;justify-content:center}
+        /* 取消左右冻结列，表格整体横向滑动，表头仍纵向吸顶 */
+        #content-records .sticky-left,
+        #content-records .sticky-left-1,
+        #content-records .sticky-right{position:static;left:auto;right:auto}
+        #content-records .sticky-left-1::after,
+        #content-records .sticky-right::before{display:none}
+        /* 分页栏允许换行 */
+        #content-records .records-pagination{flex-wrap:wrap;gap:8px}
+        }
     </style>
     <!-- Tailwind CDN：仅用于还原授权记录区块样式；关闭 preflight 以免污染 layui 全局样式 -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -2718,8 +2798,8 @@
 
 <main class="flex-1 flex flex-col min-w-0 p-4 md:p-5 bg-[#f4f5f7]">
 <div class="w-full mx-auto flex-1 flex flex-col gap-3 min-h-0">
-<div class="flex items-center justify-between shrink-0">
-<div class="flex items-center gap-3"><h1 class="text-[20px] font-semibold text-[#0b1c30]">授权记录</h1><span class="text-[12px] text-[#424656]">管理和查看所有设备授权申请及历史记录。</span></div>
+<div class="records-page-head flex items-center justify-between shrink-0">
+<div class="records-title-wrap flex items-center gap-3"><h1 class="text-[20px] font-semibold text-[#0b1c30]">授权记录</h1><span class="text-[12px] text-[#424656]">管理和查看所有设备授权申请及历史记录。</span></div>
 <div id="recordsStatusSummary" class="flex items-center gap-1 bg-white px-1.5 py-1 rounded-lg border border-[#c2c6d8]/40" aria-label="按审批状态筛选授权记录">
 <button type="button" class="record-status-filter is-active" data-record-status="" aria-pressed="true"><span class="w-1.5 h-1.5 rounded-full bg-[#424656]"></span><span>全部</span><span class="record-status-count">0</span></button>
 <div class="w-px h-3 bg-[#c2c6d8]/40"></div>
@@ -2731,14 +2811,29 @@
 <button type="button" class="record-status-filter" data-record-status="已过期" aria-pressed="false"><span class="w-1.5 h-1.5 rounded-full bg-[#9ca3af]"></span><span>已过期</span><span class="record-status-count">0</span></button>
 </div>
 </div>
+<!-- 移动端筛选栏：搜索 + 快捷筛选 + 展开完整筛选（仅 ≤768px 显示） -->
+<div class="records-mobile-filterbar shrink-0" id="recordsMobileFilterbar">
+<div class="records-mobile-search"><span class="material-symbols-outlined">search</span><input type="text" id="recordsMobileSearch" placeholder="请输入设备ID/SN搜索" aria-label="按设备ID/SN搜索" /></div>
+<div class="records-quickrow">
+<div class="records-quick-select"><select id="recordsMobileType" data-placeholder="类型" aria-label="按类型筛选"><option value="">类型</option><option>产品授权</option><option>XaaS</option><option>解决方案</option></select><button type="button" class="quick-trigger" aria-haspopup="listbox" aria-expanded="false" aria-label="按类型筛选"><span class="quick-label">类型</span><span class="material-symbols-outlined quick-caret">arrow_drop_down</span></button></div>
+<div class="records-quick-divider"></div>
+<div class="records-quick-select"><select id="recordsMobileStatus" data-placeholder="状态" aria-label="按审批状态筛选"><option value="">状态</option><option>待审批</option><option>审批中</option><option>已通过</option><option>已授权</option><option>已驳回</option><option>已过期</option></select><button type="button" class="quick-trigger" aria-haspopup="listbox" aria-expanded="false" aria-label="按审批状态筛选"><span class="quick-label">状态</span><span class="material-symbols-outlined quick-caret">arrow_drop_down</span></button></div>
+<div class="records-quick-divider"></div>
+<div class="records-quick-select"><select id="recordsMobileProduct" data-placeholder="产品线" aria-label="按产品线筛选"><option value="">产品线</option></select><button type="button" class="quick-trigger" aria-haspopup="listbox" aria-expanded="false" aria-label="按产品线筛选"><span class="quick-label">产品线</span><span class="material-symbols-outlined quick-caret">arrow_drop_down</span></button></div>
+<div class="records-quick-divider"></div>
+<button type="button" class="records-filter-toggle" id="recordsMobileFilterToggle" aria-expanded="false" aria-controls="recordsFilterCard">筛选<span class="material-symbols-outlined">filter_alt</span></button>
+<div class="records-quick-divider"></div>
+<button type="button" class="records-quick-reset" id="recordsMobileReset" aria-label="重置筛选"><span class="material-symbols-outlined">cleaning_services</span></button>
+</div>
+</div>
 <!-- Filters -->
-<div class="bg-white rounded-lg shadow-sm border border-[#c2c6d8]/30 p-5 shrink-0">
-  <div class="flex items-center gap-6">
+<div class="records-filter-card bg-white rounded-lg shadow-sm border border-[#c2c6d8]/30 p-5 shrink-0" id="recordsFilterCard">
+  <div class="records-filter-layout flex items-center gap-6">
     <!-- 字段区 -->
     <div class="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
       <div class="flex items-center gap-3">
         <label class="text-[12px] text-[#424656] whitespace-nowrap w-[84px] text-right">类型</label>
-        <select class="h-9 px-3 text-[12px] text-[#0b1c30] flex-1 max-w-[300px] border border-[#c2c6d8]/50 rounded-md bg-white focus:border-primary focus:outline-none">
+        <select id="recordsTypeSelect" class="h-9 px-3 text-[12px] text-[#0b1c30] flex-1 max-w-[300px] border border-[#c2c6d8]/50 rounded-md bg-white focus:border-primary focus:outline-none">
           <option>全部</option>
           <option>产品授权</option>
           <option>XaaS</option>
@@ -2759,13 +2854,13 @@
       </div>
       <div class="flex items-center gap-3">
         <label class="text-[12px] text-[#424656] whitespace-nowrap w-[84px] text-right">产品线</label>
-        <select class="h-9 px-3 text-[12px] text-[#0b1c30] flex-1 min-w-0 max-w-[300px] border border-[#c2c6d8]/50 rounded-md bg-white focus:border-primary focus:outline-none">
+        <select id="recordsProductSelect" class="h-9 px-3 text-[12px] text-[#0b1c30] flex-1 min-w-0 max-w-[300px] border border-[#c2c6d8]/50 rounded-md bg-white focus:border-primary focus:outline-none">
           <option>全部</option>
         </select>
       </div>
       <div class="flex items-center gap-3">
         <label class="text-[12px] text-[#424656] whitespace-nowrap w-[84px] text-right">设备ID/SN</label>
-        <input type="text" class="h-9 px-3 text-[12px] text-[#0b1c30] flex-1 max-w-[300px] border border-[#c2c6d8]/50 rounded-md bg-white focus:border-primary focus:outline-none placeholder:text-[#727687]" placeholder="请输入设备ID/SN" />
+        <input type="text" id="recordsDeviceInput" class="h-9 px-3 text-[12px] text-[#0b1c30] flex-1 max-w-[300px] border border-[#c2c6d8]/50 rounded-md bg-white focus:border-primary focus:outline-none placeholder:text-[#727687]" placeholder="请输入设备ID/SN" />
       </div>
       <div class="flex items-center gap-3">
         <label class="text-[12px] text-[#424656] whitespace-nowrap w-[84px] text-right">申请人</label>
@@ -2779,7 +2874,7 @@
       </div>
     </div>
     <!-- 按钮区 -->
-    <div class="flex items-center gap-2">
+    <div class="records-filter-actions flex items-center gap-2">
       <button id="recordsResetButton" class="h-9 px-5 bg-white text-primary border border-primary/30 rounded-md text-[12px] font-medium hover:bg-[#eff4ff] flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">close</span>重置</button>
       <button id="recordsQueryButton" class="h-9 px-5 bg-primary text-white rounded-md text-[12px] font-medium hover:bg-primary/90 flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">search</span>查询</button>
     </div>
@@ -2796,7 +2891,7 @@
 <th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[120px]">产品线/方案</th>
 <th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[120px]">版本号</th>
 <th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[200px]">客户名称</th>
-<th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[140px]">设备ID</th>
+<th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[150px]">设备ID/云图ID</th>
 <th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[75px]">区域</th>
 <th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[210px]">授权有效期</th>
 <th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[80px]">申请人</th>
@@ -2831,7 +2926,7 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">SaaS-XDR</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">XDR-2.1.0</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="阿里巴巴(中国)有限公司" title="阿里巴巴(中国)有限公司">阿里巴巴(中国)有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-amber-100 text-amber-800 border border-amber-200">KA</span></div></td>
-<td class="py-3 px-4 whitespace-nowrap text-[#424656]">3个设备</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">TENANT-XDR-ALB-015</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">深圳区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-02 ~ 2026-10-01</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">李四</td>
@@ -2894,7 +2989,7 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">企业云一体化方案</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="中国工商银行股份有限公司" title="中国工商银行股份有限公司">中国工商银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-amber-100 text-amber-800 border border-amber-200">KA</span></div></td>
-<td class="py-3 px-4 whitespace-nowrap text-[#424656]">5个设备</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]"><span class="device-summary" data-full="GW-HCI-001&#10;GW-AC-005&#10;GW-NGAF-003&#10;GW-AD-002&#10;GW-WOC-001">5个设备</span></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">杭州区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-01 ~ 2026-12-28</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">钱七</td>
@@ -2926,7 +3021,7 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">安全态势感知方案</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="中国建设银行股份有限公司" title="中国建设银行股份有限公司">中国建设银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border border-slate-200">普通</span></div></td>
-<td class="py-3 px-4 whitespace-nowrap text-[#424656]">3个设备</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]"><span class="device-summary" data-full="GW-SIP-006&#10;GW-STA-004&#10;GW-NDR-002">3个设备</span></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">北京区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-04 ~ 2026-10-02</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">孙八</td>
@@ -2957,7 +3052,7 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">SASE-GA</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">SASE-3.0.1</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="京东集团股份有限公司" title="京东集团股份有限公司">京东集团股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border border-slate-200">普通</span></div></td>
-<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2个设备</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">TENANT-SASE-JD-050</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">华南区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-29 ~ 2026-09-27</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">刘十一</td>
@@ -3547,7 +3642,7 @@
 </div>
 
 <!-- Pagination -->
-<div class="px-3 py-2 border border-[#c2c6d8]/30 rounded-lg flex items-center justify-between bg-white text-[12px] shrink-0">
+<div class="records-pagination px-3 py-2 border border-[#c2c6d8]/30 rounded-lg flex items-center justify-between bg-white text-[12px] shrink-0">
 <div class="flex items-center gap-3">
 <span class="text-[#424656]" id="paginationInfo">显示第 1 到 10 条，共 51 条</span>
 <div class="flex items-center gap-1">
@@ -6757,6 +6852,36 @@
             customerInfoFormItem.classList.add('has-selection');
         }
 
+        function selectHardwareCustomer(name, id, type, sales) {
+            searchInput.value = name || '';
+            nameSpan.textContent = name || '-';
+            var salesBadge = document.getElementById('selectedSales');
+            if (salesBadge) {
+                salesBadge.textContent = sales || '';
+                salesBadge.style.display = sales ? 'inline-block' : 'none';
+            }
+            var customerType = type === 'KA' ? 'KA' : 'normal';
+            var badge = document.getElementById('customerTypeBadge');
+            if (customerType === 'KA') {
+                badge.textContent = 'KA客户';
+                badge.className = 'customer-type-badge ka';
+            } else {
+                badge.textContent = '普通客户';
+                badge.className = 'customer-type-badge normal';
+            }
+            badge.style.display = 'inline-block';
+            showSelectedCustomerSummary();
+            dropdown.classList.remove('show');
+            updateDateLimit(customerType);
+            applicationState.customerType = customerType;
+            applicationState.customerId = id || '';
+            if (applicationState.rawDeviceFacts.length) {
+                applyRecognizedDeviceFacts(applicationState.rawDeviceFacts);
+            } else {
+                recalculateApprovalDecision();
+            }
+        }
+
         searchInput.addEventListener('input', function() {
             var keyword = this.value.trim().toLowerCase();
             if (!keyword) { dropdown.classList.remove('show'); dropdown.innerHTML = ''; return; }
@@ -6783,35 +6908,7 @@
             }
             var item = e.target.closest('.search-item');
             if (item && item.dataset.name) {
-                searchInput.value = item.dataset.name;
-                nameSpan.textContent = item.dataset.name;
-                var salesBadge = document.getElementById('selectedSales');
-                if (salesBadge) {
-                    salesBadge.textContent = item.dataset.sales || '';
-                    salesBadge.style.display = item.dataset.sales ? 'inline-block' : 'none';
-                }
-                // 客户类别标识
-                var custType = item.dataset.type || 'normal';
-                var badge = document.getElementById('customerTypeBadge');
-                if (custType === 'KA') {
-                    badge.textContent = 'KA客户';
-                    badge.className = 'customer-type-badge ka';
-                } else {
-                    badge.textContent = '普通客户';
-                    badge.className = 'customer-type-badge normal';
-                }
-                badge.style.display = 'inline-block';
-                showSelectedCustomerSummary();
-                dropdown.classList.remove('show');
-                // 更新日期限制
-                updateDateLimit(custType);
-                applicationState.customerType = custType;
-                applicationState.customerId = item.dataset.id;
-                if (applicationState.rawDeviceFacts.length) {
-                    applyRecognizedDeviceFacts(applicationState.rawDeviceFacts);
-                } else {
-                    recalculateApprovalDecision();
-                }
+                selectHardwareCustomer(item.dataset.name, item.dataset.id, item.dataset.type, item.dataset.sales);
             }
         });
         document.addEventListener('click', function(e) {
@@ -7050,6 +7147,152 @@
             toast.style.display = 'block';
             setTimeout(function() { toast.style.display = 'none'; }, 2500);
         });
+
+        function setCopiedSelectByLabel(selectId, label, fallbackValue) {
+            var select = document.getElementById(selectId);
+            if (!select) return false;
+            var normalizedLabel = String(label || '').replace(/\s+/g, '').toLowerCase();
+            var option = Array.prototype.find.call(select.options, function(item) {
+                return item.textContent.trim().replace(/\s+/g, '').toLowerCase() === normalizedLabel;
+            });
+            if (!option && fallbackValue) {
+                option = Array.prototype.find.call(select.options, function(item) { return item.value === fallbackValue; });
+            }
+            if (!option) return false;
+            select.value = option.value;
+            setCustomSelectValue(selectId, option.value);
+            select.dispatchEvent(new Event('change', { bubbles: true }));
+            return true;
+        }
+
+        function setCopiedProductVersion(versionLabel) {
+            if (!versionLabel || setCopiedSelectByLabel('cloudVersion', versionLabel)) return;
+            var select = document.getElementById('cloudVersion');
+            var container = document.querySelector('[data-select-id="cloudVersion"]');
+            if (!select || !container || !container._replaceOptions) return;
+            var options = [{ value: versionLabel, label: versionLabel }].concat(
+                Array.prototype.map.call(select.options, function(option) {
+                    return { value: option.value, label: option.textContent.trim() };
+                })
+            );
+            container._replaceOptions(options);
+            setCopiedSelectByLabel('cloudVersion', versionLabel);
+        }
+
+        function populateCopiedProductApplication(data) {
+            var productOption = Array.prototype.find.call(plnameSelect.options, function(option) {
+                return option.textContent.trim() === data.product;
+            });
+            if (productOption) {
+                plnameSelect.value = productOption.value;
+                setCustomSelectValue('plname', productOption.value);
+                plnameSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                setCopiedProductVersion(data.version);
+            }
+
+            var matchedCustomer = customers.find(function(customer) { return customer.name === data.customer; });
+            selectHardwareCustomer(
+                data.customer,
+                matchedCustomer ? matchedCustomer.id : 'COPY-' + data.applicationNo,
+                matchedCustomer ? matchedCustomer.type : data.customerType,
+                matchedCustomer ? matchedCustomer.sales : ''
+            );
+            setCopiedSelectByLabel('area', data.region);
+
+            if (!isHardwareInfoFileMode() && data.device) {
+                deviceIdChips.clear();
+                window.addChip(data.device);
+            }
+            if (data.endDate) {
+                unifiedDateInput.value = data.endDate;
+                unifiedDateInput.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        }
+
+        function populateCopiedXaasApplication(data) {
+            var detail = data.xaasDetail || {};
+            var contact = detail.customer || {};
+            document.getElementById('xaas-contact-name').value = contact.contact || '';
+            document.getElementById('xaas-contact-phone').value = contact.phone || '';
+            document.getElementById('xaas-contact-email').value = contact.email || '';
+
+            var matchedCustomer = customers.find(function(customer) { return customer.name === data.customer; });
+            selectXaasCustomer(
+                data.customer,
+                matchedCustomer ? matchedCustomer.id : 'COPY-' + data.applicationNo,
+                matchedCustomer ? matchedCustomer.type : data.customerType,
+                matchedCustomer ? matchedCustomer.sales : ''
+            );
+
+            var industryText = contact.industry || '';
+            var industryParts = industryText.split('/').map(function(part) { return part.trim(); });
+            var industryL1 = industryParts[0] || '';
+            var industryL2 = industryParts[1] || '';
+            if (/零售|电商/.test(industryText)) {
+                industryL1 = '互联网';
+                industryL2 = '电商';
+            }
+            setCopiedSelectByLabel('xaas-industry-l1', industryL1);
+            setCopiedSelectByLabel('xaas-industry-l2', industryL2);
+
+            document.querySelectorAll('input[name="xaas-product"]:checked').forEach(function(checkbox) {
+                checkbox.checked = false;
+                checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+            });
+            var productItem = Array.prototype.find.call(document.querySelectorAll('.xaas-product-item'), function(item) {
+                return item.dataset.product === data.product;
+            });
+            if (productItem) {
+                var checkbox = productItem.querySelector('input[name="xaas-product"]');
+                var subscription = detail.subscriptions && detail.subscriptions[0];
+                var spec = subscription ? subscription.spec : '';
+                if (data.product === 'SASE-GA') {
+                    var bandwidthMatch = String(spec).match(/(\d+)\s*M/i);
+                    if (bandwidthMatch) xaasSpecValues['SASE-GA'].bandwidth = Number(bandwidthMatch[1]);
+                } else if (data.product === 'SaaS-XDR') {
+                    var logMatch = String(spec).match(/([\d.]+)\s*亿/);
+                    if (logMatch) {
+                        xaasSpecValues['SaaS-XDR'].logAmount = Number(logMatch[1]) * 10000;
+                        var logInput = document.getElementById('spec-log-inline');
+                        if (logInput) logInput.value = String(Number(logMatch[1]) * 100000000);
+                    }
+                }
+                checkbox.checked = true;
+                checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+
+            var supplement = {};
+            (detail.supplement || []).forEach(function(item) { supplement[item.label] = item.value; });
+            var supplementFields = {
+                '客户需求': 'sase-customer-need',
+                '项目规模': 'sase-project-scale',
+                '竞争对手': 'sase-competitor',
+                '客户环境': 'xdr-customer-env',
+                '第三方设备': 'xdr-third-party-devices',
+                '项目落地时间': 'xdr-project-landing-date'
+            };
+            Object.keys(supplementFields).forEach(function(label) {
+                var field = document.getElementById(supplementFields[label]);
+                if (field && supplement[label]) field.value = supplement[label];
+            });
+            [
+                ['测试场景', 'xdr-test-scenario'],
+                ['测试驱动力', 'xdr-test-driver'],
+                ['核心需求', 'xdr-core-need'],
+                ['安全运营模式', 'xdr-security-op-mode'],
+                ['安全人员情况', 'xdr-security-staff'],
+                ['项目预算', 'xdr-budget-info'],
+                ['安全预算', 'xdr-security-budget']
+            ].forEach(function(mapping) {
+                if (supplement[mapping[0]]) setCopiedSelectByLabel(mapping[1], supplement[mapping[0]]);
+            });
+        }
+
+        window.populateCopiedAuthorizationApplication = function(data) {
+            if (!data) return;
+            if (data.authorizationType === 'XaaS') populateCopiedXaasApplication(data);
+            else populateCopiedProductApplication(data);
+        };
     })();
     
     // Tooltip 复制功能
@@ -7295,6 +7538,8 @@
     var recordsAllRows = [];
     var recordsFilteredRows = [];
     var recordsActiveStatus = '';
+    var recordsActiveProduct = '';
+    var recordsActiveType = '';
 
     function getRecordRowStatus(row) {
         if (row.dataset.status) return row.dataset.status;
@@ -7390,6 +7635,19 @@
             appliedAt: cells[10] ? cells[10].textContent.trim() : '',
             status: getRecordRowStatus(row)
         };
+    }
+
+    function openCopiedRecordApplication(row) {
+        var data = getRecordRowData(row);
+        var targetTab = data.authorizationType === 'XaaS' ? 'xaas' : 'hardware';
+        var navigationItem = document.querySelector('#navBar [data-tab="' + targetTab + '"]');
+        if (navigationItem) navigationItem.click();
+        data.endDate = (data.validity.split('~')[1] || '').trim();
+        if (data.authorizationType === 'XaaS') data.xaasDetail = getXaasRecordDetail(data);
+        if (typeof window.populateCopiedAuthorizationApplication === 'function') {
+            window.populateCopiedAuthorizationApplication(data);
+            showRecordActionToast('已从 ' + data.applicationNo + ' 回填申请信息，请确认后提交。');
+        }
     }
 
     function getRecordModules(product) {
@@ -8157,12 +8415,13 @@
             action.setAttribute('data-record-action', actionType);
             action.setAttribute('role', 'button');
             action.setAttribute('tabindex', '0');
-            action.setAttribute('aria-haspopup', 'dialog');
+            if (actionType !== 'copy') action.setAttribute('aria-haspopup', 'dialog');
         });
         records.addEventListener('click', function(event) {
             var action = event.target.closest('[data-record-action]');
             if (!action) return;
             if (action.dataset.recordAction === 'view') openRecordDetailDrawer(action.closest('tr'), action);
+            else if (action.dataset.recordAction === 'copy') openCopiedRecordApplication(action.closest('tr'));
             else if (action.dataset.recordAction === 'revoke') openRecordRevokeDialog(action.closest('tr'), action);
             else openRecordWorkflowDrawer(action.dataset.recordAction, action.closest('tr'), action);
         });
@@ -8171,6 +8430,7 @@
             if (!action || (event.key !== 'Enter' && event.key !== ' ')) return;
             event.preventDefault();
             if (action.dataset.recordAction === 'view') openRecordDetailDrawer(action.closest('tr'), action);
+            else if (action.dataset.recordAction === 'copy') openCopiedRecordApplication(action.closest('tr'));
             else if (action.dataset.recordAction === 'revoke') openRecordRevokeDialog(action.closest('tr'), action);
             else openRecordWorkflowDrawer(action.dataset.recordAction, action.closest('tr'), action);
         });
@@ -8207,7 +8467,10 @@
     function applyRecordsStatusFilter(status) {
         recordsActiveStatus = status || '';
         recordsFilteredRows = recordsAllRows.filter(function(row) {
-            return !recordsActiveStatus || getRecordRowStatus(row) === recordsActiveStatus;
+            var statusOk = !recordsActiveStatus || getRecordRowStatus(row) === recordsActiveStatus;
+            var productOk = !recordsActiveProduct || getRecordRowProduct(row) === recordsActiveProduct;
+            var typeOk = !recordsActiveType || getRecordRowType(row) === recordsActiveType;
+            return statusOk && productOk && typeOk;
         });
         recordsTotalRows = recordsFilteredRows.length;
         recordsCurrentPage = 1;
@@ -8218,7 +8481,32 @@
             button.classList.toggle('is-active', isActive);
             button.setAttribute('aria-pressed', isActive ? 'true' : 'false');
         });
+        refreshRecordsFormSelects();
         renderRecordsPage();
+    }
+
+    function getRecordRowProduct(row) {
+        var cell = row.cells && row.cells[3];
+        return cell ? cell.textContent.trim() : '';
+    }
+
+    function applyRecordsProductFilter(product) {
+        recordsActiveProduct = product || '';
+        var select = document.getElementById('recordsProductSelect');
+        if (select) select.value = recordsActiveProduct || '全部';
+        applyRecordsStatusFilter(recordsActiveStatus);
+    }
+
+    function getRecordRowType(row) {
+        var cell = row.cells && row.cells[1];
+        return cell ? cell.textContent.trim() : '';
+    }
+
+    function applyRecordsTypeFilter(type) {
+        recordsActiveType = type || '';
+        var select = document.getElementById('recordsTypeSelect');
+        if (select) select.value = recordsActiveType || '全部';
+        applyRecordsStatusFilter(recordsActiveStatus);
     }
 
     function initRecordsStatusFilters() {
@@ -8240,10 +8528,278 @@
         });
         var reset = document.getElementById('recordsResetButton');
         if (reset) reset.addEventListener('click', function() {
+            recordsActiveProduct = '';
+            recordsActiveType = '';
+            var productSelect = document.getElementById('recordsProductSelect');
+            if (productSelect) productSelect.value = '全部';
+            var typeSelect = document.getElementById('recordsTypeSelect');
+            if (typeSelect) typeSelect.value = '全部';
             applyRecordsStatusFilter('');
         });
         updateRecordsStatusSummary();
         applyRecordsStatusFilter('');
+    }
+
+    function initRecordsMobileFilter() {
+        var bar = document.getElementById('recordsMobileFilterbar');
+        if (!bar || bar.dataset.ready === 'true') return;
+        bar.dataset.ready = 'true';
+        var card = document.getElementById('recordsFilterCard');
+        var toggle = document.getElementById('recordsMobileFilterToggle');
+        var search = document.getElementById('recordsMobileSearch');
+        var deviceInput = document.getElementById('recordsDeviceInput');
+        var mobileType = document.getElementById('recordsMobileType');
+        var typeSelect = document.getElementById('recordsTypeSelect');
+        var mobileStatus = document.getElementById('recordsMobileStatus');
+        var statusSelect = document.getElementById('recordsStatusSelect');
+        var mobileProduct = document.getElementById('recordsMobileProduct');
+        var productSelect = document.getElementById('recordsProductSelect');
+
+        // 从记录列表收集产品线/方案选项（含 XaaS 产品），同时填充快捷与完整表单下拉
+        var productValues = [];
+        document.querySelectorAll('#content-records .table-scroll-wrap > table > tbody > tr:not(.solution-detail-row)').forEach(function(row) {
+            var value = row.cells[3] ? row.cells[3].textContent.trim() : '';
+            if (value && value !== '—' && productValues.indexOf(value) === -1) productValues.push(value);
+        });
+        productValues.forEach(function(value) {
+            if (mobileProduct) mobileProduct.appendChild(new Option(value, value));
+            if (productSelect) productSelect.appendChild(new Option(value, value));
+        });
+
+        function markQuickValue(select) {
+            var wrap = select.closest('.records-quick-select');
+            if (!wrap) return;
+            wrap.classList.toggle('has-value', !!select.value);
+            var label = wrap.querySelector('.quick-trigger .quick-label');
+            if (label) label.textContent = select.value || select.dataset.placeholder || '';
+        }
+
+        function closeQuickPanels() {
+            bar.querySelectorAll('.records-quick-panel').forEach(function(panel) { panel.hidden = true; });
+            bar.querySelectorAll('.quick-trigger').forEach(function(trigger) { trigger.setAttribute('aria-expanded', 'false'); });
+            if (quickBackdrop) quickBackdrop.hidden = true;
+        }
+
+        var quickBackdrop = document.createElement('div');
+        quickBackdrop.className = 'records-quick-backdrop';
+        quickBackdrop.hidden = true;
+        quickBackdrop.addEventListener('click', closeQuickPanels);
+        bar.appendChild(quickBackdrop);
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') closeQuickPanels();
+        });
+
+        function enhanceQuickSelect(select) {
+            var wrap = select && select.closest('.records-quick-select');
+            var trigger = wrap && wrap.querySelector('.quick-trigger');
+            if (!trigger) return;
+            var panel = document.createElement('div');
+            panel.className = 'records-quick-panel';
+            panel.setAttribute('role', 'listbox');
+            panel.setAttribute('aria-label', select.getAttribute('aria-label') || '');
+            panel.hidden = true;
+            var title = document.createElement('div');
+            title.className = 'quick-panel-title';
+            title.textContent = select.dataset.placeholder || '';
+            panel.appendChild(title);
+            var grid = document.createElement('div');
+            grid.className = 'quick-option-grid';
+            Array.prototype.forEach.call(select.options, function(option) {
+                var item = document.createElement('button');
+                item.type = 'button';
+                item.className = 'quick-option';
+                item.setAttribute('role', 'option');
+                item.dataset.value = option.value;
+                item.textContent = option.value === '' ? '全部' : option.text;
+                item.addEventListener('click', function() {
+                    select.value = option.value;
+                    select.dispatchEvent(new Event('change', { bubbles: true }));
+                    closeQuickPanels();
+                });
+                grid.appendChild(item);
+            });
+            panel.appendChild(grid);
+            bar.appendChild(panel);
+            trigger.addEventListener('click', function() {
+                var willOpen = panel.hidden;
+                closeQuickPanels();
+                if (!willOpen) return;
+                panel.querySelectorAll('.quick-option').forEach(function(item) {
+                    item.classList.toggle('is-selected', item.dataset.value === select.value);
+                    item.setAttribute('aria-selected', item.dataset.value === select.value ? 'true' : 'false');
+                });
+                panel.hidden = false;
+                trigger.setAttribute('aria-expanded', 'true');
+                quickBackdrop.hidden = false;
+            });
+        }
+
+        function closeFilterCard() {
+            if (!card) return;
+            card.classList.remove('open');
+            if (toggle) toggle.setAttribute('aria-expanded', 'false');
+        }
+
+        function syncFromDesktop() {
+            if (mobileStatus && statusSelect) {
+                mobileStatus.value = statusSelect.value === '全部' ? '' : statusSelect.value;
+                markQuickValue(mobileStatus);
+            }
+            if (mobileType && typeSelect) {
+                mobileType.value = typeSelect.value === '全部' ? '' : typeSelect.value;
+                markQuickValue(mobileType);
+            }
+            if (mobileProduct && productSelect) {
+                mobileProduct.value = productSelect.value === '全部' ? '' : productSelect.value;
+                markQuickValue(mobileProduct);
+            }
+        }
+
+        if (toggle && card) toggle.addEventListener('click', function() {
+            var open = card.classList.toggle('open');
+            toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+        if (search && deviceInput) {
+            search.addEventListener('input', function() { deviceInput.value = search.value; });
+            deviceInput.addEventListener('input', function() { search.value = deviceInput.value; });
+        }
+        if (mobileType) mobileType.addEventListener('change', function() {
+            markQuickValue(mobileType);
+            applyRecordsTypeFilter(mobileType.value);
+        });
+        if (typeSelect) typeSelect.addEventListener('change', function() {
+            applyRecordsTypeFilter(typeSelect.value === '全部' ? '' : typeSelect.value);
+            syncFromDesktop();
+        });
+        if (mobileStatus) mobileStatus.addEventListener('change', function() {
+            markQuickValue(mobileStatus);
+            applyRecordsStatusFilter(mobileStatus.value);
+        });
+        if (mobileProduct) mobileProduct.addEventListener('change', function() {
+            markQuickValue(mobileProduct);
+            applyRecordsProductFilter(mobileProduct.value);
+        });
+        if (productSelect) productSelect.addEventListener('change', function() {
+            applyRecordsProductFilter(productSelect.value === '全部' ? '' : productSelect.value);
+            syncFromDesktop();
+        });
+        var quickReset = document.getElementById('recordsMobileReset');
+        if (quickReset) quickReset.addEventListener('click', function() {
+            closeQuickPanels();
+            var resetButton = document.getElementById('recordsResetButton');
+            if (resetButton) resetButton.click();
+        });
+        var query = document.getElementById('recordsQueryButton');
+        if (query) query.addEventListener('click', function() {
+            closeFilterCard();
+            syncFromDesktop();
+        });
+        var reset = document.getElementById('recordsResetButton');
+        if (reset) reset.addEventListener('click', function() {
+            if (search) search.value = '';
+            if (deviceInput) deviceInput.value = '';
+            if (typeSelect) typeSelect.value = '全部';
+            syncFromDesktop();
+        });
+        if (statusSelect) statusSelect.addEventListener('change', syncFromDesktop);
+        var summary = document.getElementById('recordsStatusSummary');
+        if (summary) summary.addEventListener('click', function() { setTimeout(syncFromDesktop, 0); });
+        enhanceQuickSelect(mobileType);
+        enhanceQuickSelect(mobileStatus);
+        enhanceQuickSelect(mobileProduct);
+    }
+
+    var recordsFormSelectSyncs = [];
+    function refreshRecordsFormSelects() {
+        recordsFormSelectSyncs.forEach(function(sync) { sync(); });
+    }
+
+    function closeRecordsFormSelects() {
+        document.querySelectorAll('#content-records .records-form-select.open').forEach(function(wrap) {
+            wrap.classList.remove('open');
+            var trigger = wrap.querySelector('.form-select-trigger');
+            if (trigger) trigger.setAttribute('aria-expanded', 'false');
+        });
+    }
+
+    function initRecordsFormSelects() {
+        ['recordsTypeSelect', 'recordsStatusSelect', 'recordsProductSelect'].forEach(function(id) {
+            var select = document.getElementById(id);
+            if (!select || select.dataset.formSelectReady === 'true') return;
+            select.dataset.formSelectReady = 'true';
+            var wrap = document.createElement('div');
+            wrap.className = 'records-form-select';
+            select.parentNode.insertBefore(wrap, select);
+            wrap.appendChild(select);
+            var fieldLabel = wrap.parentNode.querySelector('label');
+            var trigger = document.createElement('button');
+            trigger.type = 'button';
+            trigger.className = 'form-select-trigger';
+            trigger.setAttribute('aria-haspopup', 'listbox');
+            trigger.setAttribute('aria-expanded', 'false');
+            if (fieldLabel) trigger.setAttribute('aria-label', fieldLabel.textContent.trim());
+            trigger.innerHTML = '<span class="form-select-value"></span><span class="material-symbols-outlined form-select-arrow">arrow_drop_down</span>';
+            wrap.appendChild(trigger);
+            var panel = document.createElement('div');
+            panel.className = 'form-select-panel';
+            panel.setAttribute('role', 'listbox');
+            if (fieldLabel) panel.setAttribute('aria-label', fieldLabel.textContent.trim());
+            wrap.appendChild(panel);
+            var valueSpan = trigger.querySelector('.form-select-value');
+
+            // 选项可能被动态填充（如产品线），每次展开时重建
+            function renderOptions() {
+                panel.innerHTML = '';
+                Array.prototype.forEach.call(select.options, function(option) {
+                    var item = document.createElement('button');
+                    item.type = 'button';
+                    item.className = 'form-select-option';
+                    item.setAttribute('role', 'option');
+                    item.dataset.value = option.value;
+                    item.innerHTML = '<span>' + option.text + '</span><span class="material-symbols-outlined form-select-check">check</span>';
+                    item.addEventListener('click', function() {
+                        select.value = option.value;
+                        select.dispatchEvent(new Event('change', { bubbles: true }));
+                        closeRecordsFormSelects();
+                    });
+                    panel.appendChild(item);
+                });
+            }
+
+            function syncValue() {
+                var selected = select.options[select.selectedIndex];
+                valueSpan.textContent = selected ? selected.text : '';
+                panel.querySelectorAll('.form-select-option').forEach(function(item) {
+                    var isSelected = item.dataset.value === select.value;
+                    item.classList.toggle('is-selected', isSelected);
+                    item.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+                });
+            }
+
+            trigger.addEventListener('click', function(event) {
+                event.stopPropagation();
+                var willOpen = !wrap.classList.contains('open');
+                closeRecordsFormSelects();
+                if (!willOpen) return;
+                renderOptions();
+                syncValue();
+                wrap.classList.add('open');
+                trigger.setAttribute('aria-expanded', 'true');
+            });
+            select.addEventListener('change', syncValue);
+            recordsFormSelectSyncs.push(syncValue);
+            renderOptions();
+            syncValue();
+        });
+        if (!initRecordsFormSelects.bound) {
+            initRecordsFormSelects.bound = true;
+            document.addEventListener('click', function(event) {
+                if (!event.target.closest('.records-form-select')) closeRecordsFormSelects();
+            });
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') closeRecordsFormSelects();
+            });
+        }
     }
 
     function initRecordsPagination() {
@@ -8410,6 +8966,7 @@
             var isClamped = el.scrollWidth > el.clientWidth;
             if (!actionTip && !isClamped && full === el.textContent) return;
             tooltip.textContent = full;
+            tooltip.classList.toggle('is-multiline', full.indexOf('\n') > -1);
             activeEl = el;
             tooltip.classList.add('show');
             positionTooltip();
@@ -8432,6 +8989,12 @@
         document.querySelectorAll('#content-records .cust-name').forEach(function(el) {
             bindTooltip(el);
         });
+        document.querySelectorAll('#content-records .device-summary').forEach(function(el) {
+            bindTooltip(el);
+        });
+        document.querySelectorAll('#content-records .table-scroll-wrap > table > tbody > tr:not(.solution-detail-row) > td:nth-child(7)').forEach(function(el) {
+            bindTooltip(el);
+        });
         document.querySelectorAll('#content-records .sticky-right .ml-auto > [data-action-tip]').forEach(function(el) {
             bindTooltip(el);
         });
@@ -8443,6 +9006,8 @@
         document.addEventListener("DOMContentLoaded", function() {
             initRecordsPagination();
             initRecordsStatusFilters();
+            initRecordsMobileFilter();
+            initRecordsFormSelects();
             initRecordsDatePicker();
             initRecordDownloadActions();
             initRecordActionTips();
@@ -8452,6 +9017,8 @@
     } else {
         initRecordsPagination();
         initRecordsStatusFilters();
+        initRecordsMobileFilter();
+        initRecordsFormSelects();
         initRecordsDatePicker();
         initRecordDownloadActions();
         initRecordActionTips();

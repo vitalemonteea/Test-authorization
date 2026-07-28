@@ -169,19 +169,81 @@ test('查看支持键盘打开、Escape关闭并恢复焦点', () => {
   }
 });
 
-test('复制申请展示复制范围并创建演示草稿', () => {
+test('复制产品授权记录跳转并自动回填申请表单', () => {
   const { dom, document, window } = setupRecords();
   try {
-    clickAction(document, window, 'copy');
-    assert.equal(document.getElementById('recordDrawerTitle').textContent, '复制申请');
-    assert.equal(document.getElementById('recordDrawerSubtitle').hidden, false);
-    assert.equal(document.getElementById('recordDrawerView').hidden, true);
-    assert.equal(document.querySelectorAll('#recordWorkflowContent .record-copy-option').length, 4);
-    assert.match(document.getElementById('recordCopyNote').value, /基于 AUTH-/);
-    document.getElementById('recordDrawerPrimary').click();
+    const copy = clickAction(document, window, 'copy');
+    assert.equal(copy.getAttribute('aria-haspopup'), null);
+    assert.equal(document.body.dataset.activeTab, 'hardware');
+    assert.equal(document.getElementById('content-hardware').style.display, 'block');
+    assert.equal(document.getElementById('content-records').style.display, 'none');
     assert.equal(document.getElementById('recordDrawerLayer').hidden, true);
-    assert.equal(document.getElementById('recordActionToast').hidden, false);
-    assert.match(document.getElementById('recordActionToastText').textContent, /复制草稿已创建/);
+    assert.equal(document.getElementById('plname').selectedOptions[0].textContent.trim(), 'HCI');
+    assert.equal(document.getElementById('cloudVersion').selectedOptions[0].textContent.trim(), 'HCI-6.8.1-VKEY');
+    assert.equal(document.getElementById('customerSearchInput').value, '深圳市腾讯计算机系统有限公司');
+    assert.equal(document.getElementById('selectedCustomerName').textContent, '深圳市腾讯计算机系统有限公司');
+    assert.equal(document.getElementById('area').value, '上海区');
+    assert.equal(document.getElementById('unifiedDate').value, '2026-09-29');
+    assert.match(document.getElementById('recordActionToastText').textContent, /AUTH-20260701-001/);
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('复制非 HCI 产品记录回填历史版本和设备 ID', () => {
+  const { dom, document, window } = setupRecords();
+  try {
+    const rows = [...document.querySelectorAll('#content-records .table-scroll-wrap > table > tbody > tr:not(.solution-detail-row)')];
+    const wafRow = rows.find((row) => row.children[3]?.textContent.trim() === 'WAF');
+    assert.ok(wafRow, '应存在可复制的 WAF 产品授权记录');
+    const copy = wafRow.querySelector('[data-record-action="copy"]');
+    assert.ok(copy, 'WAF 记录应支持复制');
+
+    copy.click();
+
+    assert.equal(document.getElementById('plname').selectedOptions[0].textContent.trim(), 'WAF');
+    assert.equal(document.getElementById('cloudVersion').selectedOptions[0].textContent.trim(), 'WAF-7.0.5');
+    assert.equal(document.getElementById('customerSearchInput').value, '中国石油天然气集团有限公司');
+    assert.equal(document.getElementById('devIdNew').value, 'GW-WAF-012');
+    assert.match(document.getElementById('chipContainer').textContent, /GW-WAF-012/);
+    assert.equal(document.getElementById('area').value, '北京区');
+    assert.equal(document.getElementById('unifiedDate').value, '2026-09-28');
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('复制 XaaS 授权记录跳转并自动回填申请表单', () => {
+  const { dom, document, window } = setupRecords();
+  try {
+    document.querySelector('#navBar [data-tab="records"]').click();
+    const rows = [...document.querySelectorAll('#content-records .table-scroll-wrap > table > tbody > tr:not(.solution-detail-row)')];
+    const xaasRow = rows.find((row) => row.children[3]?.textContent.trim() === 'SASE-GA');
+    assert.ok(xaasRow, '应存在可复制的 SASE-GA XaaS 记录');
+    const copy = xaasRow.querySelector('[data-record-action="copy"]');
+    assert.ok(copy, 'XaaS 记录应支持复制');
+
+    copy.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+
+    assert.equal(document.body.dataset.activeTab, 'xaas');
+    assert.equal(document.getElementById('content-xaas').style.display, 'block');
+    assert.equal(document.getElementById('content-records').style.display, 'none');
+    assert.ok(document.querySelector('#navBar [data-tab="xaas"]').classList.contains('layui-this'));
+    assert.ok(document.querySelector('#top_tabs [data-tab="xaas"]').classList.contains('layui-this'));
+    assert.equal(document.getElementById('recordDrawerLayer').hidden, true);
+    assert.equal(document.getElementById('xaas-contact-name').value, '王蕾');
+    assert.equal(document.getElementById('xaas-contact-phone').value, '186****3098');
+    assert.equal(document.getElementById('xaas-contact-email').value, 'wanglei***@jd.com');
+    assert.equal(document.getElementById('xaas-customer-name').value, '京东集团股份有限公司');
+    assert.equal(document.getElementById('xaas-industry-l1').value, '互联网');
+    assert.equal(document.getElementById('xaas-industry-l2').value, '电商');
+    const productItem = document.querySelector('.xaas-product-item[data-product="SASE-GA"]');
+    assert.equal(productItem.querySelector('input[name="xaas-product"]').checked, true);
+    assert.ok(productItem.classList.contains('selected'));
+    assert.match(productItem.querySelector('.xaas-product-desc').textContent, /带宽10M/);
+    assert.match(document.getElementById('sase-customer-need').value, /海外办公/);
+    assert.match(document.getElementById('sase-project-scale').value, /500 名办公用户/);
+    assert.match(document.getElementById('sase-competitor').value, /国际专线方案/);
   } finally {
     dom.window.close();
   }
