@@ -61,8 +61,17 @@ test('产品授权详情沿用 XaaS 信息骨架并展示授权对象、配置�
     assert.match(document.getElementById('recordProductChangeList').textContent, /未开通/);
     assert.match(document.getElementById('recordProductChangeList').textContent, /配置项变更前变更后/);
     assert.doesNotMatch(document.getElementById('recordProductChangeList').textContent, /arrow_forward/);
-    assert.match(document.getElementById('recordProductChangeList').textContent, /计算虚拟化、分布式存储/);
-    assert.match(document.getElementById('recordProductChangeList').textContent, /物理 CPU 16 颗/);
+    const changeGroups = [...document.querySelectorAll('#recordProductChangeList .record-product-change-group .change-group-name')].map((el) => el.textContent.trim());
+    assert.deepEqual(changeGroups, ['计算虚拟化', '分布式存储'], '多模块配置变更应按模块分组');
+    const groupBodies = [...document.querySelectorAll('#recordProductChangeList .record-product-change-group-body')];
+    groupBodies.forEach((body) => assert.equal(body.hidden, true, '模块明细默认收起'));
+    const firstGroup = document.querySelector('#recordProductChangeList .record-product-change-group');
+    assert.match(firstGroup.textContent, /3 项变更 · 至 2026-09-29/, '收起时应展示变更摘要');
+    firstGroup.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    assert.equal(groupBodies[0].hidden, false, '点击分组应展开明细');
+    assert.equal(firstGroup.getAttribute('aria-expanded'), 'true');
+    assert.match(document.getElementById('recordProductChangeList').textContent, /集群内物理CPU颗数—16 颗/, '首开场景变更前为—');
+    assert.match(document.getElementById('recordProductChangeList').textContent, /存储授权容量—100 TB/);
     assert.match(document.getElementById('recordProductDeliveryGrid').textContent, /授权码/);
     assert.match(document.getElementById('recordProductDeliveryGrid').textContent, /授权文件/);
     assert.match(document.getElementById('recordApprovalGrid').textContent, /审批结果/);
@@ -111,6 +120,7 @@ test('XaaS 详情展示客户、订阅规格、业务补充信息和开通结果
     assert.doesNotMatch(document.getElementById('recordXaasSubscriptionList').textContent, /2个设备/);
     assert.match(document.getElementById('recordXaasSupplementGrid').textContent, /客户需求/);
     assert.match(document.getElementById('recordXaasDeliveryGrid').textContent, /租户\/实例标识/);
+    assert.match(document.getElementById('recordXaasDeliveryGrid').textContent, /云授权IDCLA-SASE-JD-050/, '已授权 XaaS 开通结果应展示云授权ID');
     assert.match(document.getElementById('recordXaasDeliveryGrid').textContent, /授权文件/);
 
     const productView = rows[0].querySelector('[data-record-action="view"]');

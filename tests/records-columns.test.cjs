@@ -432,3 +432,164 @@ test('筛选表单下拉使用自定义面板替代原生选项弹窗', () => {
     dom.window.close();
   }
 });
+
+test('授权记录表新增设备SN与云授权ID两列', () => {
+  const { dom, document, window } = loadV2Dom();
+  try {
+    const headers = [...document.querySelectorAll('#content-records .table-scroll-wrap > table > thead th')].map((th) => th.textContent.replace('info', '').trim());
+    assert.equal(headers[6], '设备ID/云图ID');
+    assert.equal(headers[7], '设备SN');
+    assert.equal(headers[8], '云授权ID');
+
+    const rows = [...document.querySelectorAll('#content-records .table-scroll-wrap > table > tbody > tr:not(.solution-detail-row)')];
+    // 硬件行：SN 按设备ID推导；云授权ID 仅在授权生成后（已通过/已授权/已过期）有值
+    const hciRow = rows.find((row) => row.textContent.includes('AUTH-20260701-001'));
+    const hciData = window.getRecordRowData(hciRow);
+    assert.equal(hciData.device, 'GW-2024-HCI-001');
+    assert.equal(hciData.deviceSn, 'SN-2024-HCI-001');
+    assert.equal(hciData.cloudAuthId, 'CLA-2024-HCI-001', '已授权记录应有云授权ID');
+    const ngafRow = rows.find((row) => row.textContent.includes('AUTH-20260703-022'));
+    const ngafData = window.getRecordRowData(ngafRow);
+    assert.equal(ngafData.deviceSn, 'SN-2024-NGAF-003');
+    assert.equal(ngafData.cloudAuthId, '—', '审批中记录云授权ID尚未生成');
+    const sipRow = rows.find((row) => row.textContent.includes('AUTH-20260704-028'));
+    assert.equal(window.getRecordRowData(sipRow).cloudAuthId, 'CLA-SIP-001', '已通过记录应有云授权ID');
+    const wafRow = rows.find((row) => row.textContent.includes('AUTH-20260630-041'));
+    assert.equal(window.getRecordRowData(wafRow).cloudAuthId, 'CLA-WAF-012', '非云化产品已授权同样有云授权ID');
+    // XaaS 行：无 SN；云授权ID 仅在授权生成后有值（待审批为 —）
+    const xaasRow = rows.find((row) => row.textContent.includes('AUTH-20260702-015'));
+    const xaasData = window.getRecordRowData(xaasRow);
+    assert.equal(xaasData.deviceSn, '—');
+    assert.equal(xaasData.cloudAuthId, '—', '待审批记录云授权ID尚未生成');
+    const saseRow = rows.find((row) => row.textContent.includes('AUTH-20260629-050'));
+    assert.equal(window.getRecordRowData(saseRow).cloudAuthId, 'CLA-SASE-JD-050', '已授权 XaaS 记录应有云授权ID');
+    // 解决方案行：SN 列悬浮展开 SN 明细
+    const solutionRow = rows.find((row) => row.textContent.includes('SOL-20260701-001'));
+    const snSummary = solutionRow.cells[7].querySelector('.device-summary');
+    assert.ok(snSummary, '方案行 SN 列应为悬浮展开入口');
+    assert.equal(snSummary.textContent.trim(), '5个设备');
+    ['SN-HCI-001', 'SN-AC-005', 'SN-NGAF-003', 'SN-AD-002', 'SN-WOC-001'].forEach((sn) => {
+      assert.ok(snSummary.getAttribute('data-full').includes(sn), `SN 明细应包含 ${sn}`);
+    });
+    assert.equal(solutionRow.cells[8].textContent.trim(), '—');
+    // 方案明细子表跨列数同步
+    const detailRow = document.querySelector('#content-records .solution-detail-row td[colspan]');
+    assert.equal(detailRow.getAttribute('colspan'), '13');
+
+    // 新列参与截断悬浮：绑定 tooltip 且具备省略号样式
+    window.initRecordsTooltip();
+    [7, 8].forEach((cellIndex) => {
+      const cell = hciRow.cells[cellIndex];
+      assert.equal(cell.dataset.recordsTooltipReady, 'true', `第${cellIndex + 1}列应绑定悬浮提示`);
+      const style = window.getComputedStyle(cell);
+      assert.equal(style.overflow, 'hidden');
+      assert.equal(style.textOverflow, 'ellipsis');
+    });
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('扩大容量仅展示已授权模块且导航同步', () => {
+  const { dom, document, window, errors } = loadV2Dom();
+  try {
+    const product = document.getElementById('plname');
+    product.value = '22';
+    product.dispatchEvent(new window.Event('change', { bubbles: true }));
+    const planType = document.getElementById('planDevType');
+    planType.value = '1';
+    planType.dispatchEvent(new window.Event('change', { bubbles: true }));
+    window.addChip('ACTIVE-NGAF-001');
+
+    // 有效期内调整场景：勾选扩大容量/规格
+    const increase = document.querySelector('#requestContentGroup input[value="increase_capacity"]');
+    assert.ok(increase, '调整场景应提供扩大容量选项');
+    increase.checked = true;
+    increase.dispatchEvent(new window.Event('change', { bubbles: true }));
+
+    const ngafCard = document.getElementById('module-NGAF');
+    assert.equal(ngafCard.hidden, false, '已授权模块应保持展示');
+    assert.equal(ngafCard.dataset.currentlyAuthorized, 'true');
+    const unauthorizedCards = [...document.querySelectorAll('#content .module-item')].filter(
+      (card) => card.dataset.currentlyAuthorized !== 'true'
+    );
+    assert.ok(unauthorizedCards.length > 0);
+    unauthorizedCards.forEach((card) => {
+      assert.equal(card.hidden, true, `未授权模块 ${card.id} 应隐藏`);
+      const navItem = document.querySelector(`.module-nav-item[data-target="${card.id}"]`);
+      if (navItem) assert.equal(navItem.hidden, true, `未授权模块导航 ${card.id} 应隐藏`);
+    });
+
+    // 追加勾选增开模块后恢复全部模块展示
+    const addModule = document.querySelector('#requestContentGroup input[value="add_module"]');
+    addModule.checked = true;
+    addModule.dispatchEvent(new window.Event('change', { bubbles: true }));
+    [...document.querySelectorAll('#content .module-item')].forEach((card) => {
+      assert.equal(card.hidden, false, `增开模块场景 ${card.id} 应展示`);
+      const navItem = document.querySelector(`.module-nav-item[data-target="${card.id}"]`);
+      if (navItem) assert.equal(navItem.hidden, false);
+    });
+    assert.deepEqual(errors, []);
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('授权有效期按最先到期模块取值并在详情展示模块明细', () => {
+  const { dom, document, window, errors } = loadV2Dom();
+  try {
+    // 表头带取值说明并绑定悬浮提示
+    const info = document.querySelector('#content-records thead .records-validity-info');
+    assert.ok(info, '授权有效期表头应有说明图标');
+    assert.match(info.getAttribute('data-action-tip'), /最先到期模块/);
+    window.initRecordsTooltip();
+    assert.equal(info.dataset.recordsTooltipReady, 'true');
+
+    // 详情抽屉：多模块已授权记录展示各模块到期日，列值等于最早到期日
+    window.initRecordDownloadActions();
+    window.initRecordActionTips();
+    window.initRecordDetailDrawer();
+    const view = document.querySelector('[data-record-action="view"]');
+    view.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    const changeList = document.getElementById('recordProductChangeList').textContent;
+    assert.match(changeList, /2026-07-01 ~ 2026-09-29/, '配置变更仍展示整单有效期');
+    assert.match(changeList, /授权至—2026-09-29/, '首个模块授权至应与列值一致');
+    assert.match(changeList, /授权至—2026-10-29/, '其余模块授权至展示各自日期');
+    const deliveryText = document.getElementById('recordProductDeliveryGrid').textContent;
+    assert.match(deliveryText, /2026-07-01 ~ 2026-09-29（按最先到期模块）/);
+    assert.match(deliveryText, /计算虚拟化（至 2026-09-29）/, '首个模块到期日应与列值一致');
+    assert.match(deliveryText, /分布式存储（至 2026-10-29）/, '其余模块展示各自到期日');
+    assert.deepEqual(errors, []);
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('审批抽屉配置变更同样按模块折叠展示', () => {
+  const { dom, document, window, errors } = loadV2Dom();
+  try {
+    window.initRecordDownloadActions();
+    window.initRecordActionTips();
+    window.initRecordDetailDrawer();
+    const rows = [...document.querySelectorAll('#content-records .table-scroll-wrap > table > tbody > tr:not(.solution-detail-row)')];
+    const hciRow = rows.find((row) => row.textContent.includes('AUTH-20260701-123'));
+    const approve = hciRow.querySelector('[data-record-action="approve"]');
+    assert.ok(approve, '待审批记录应有审核入口');
+    approve.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+
+    const changeList = document.getElementById('recordApproveChangeList');
+    assert.ok(changeList, '审批抽屉应包含配置变更');
+    const groups = [...changeList.querySelectorAll('.record-product-change-group .change-group-name')].map((el) => el.textContent.trim());
+    assert.deepEqual(groups, ['计算虚拟化', '分布式存储'], '审批抽屉多模块变更应分组');
+    const bodies = [...changeList.querySelectorAll('.record-product-change-group-body')];
+    bodies.forEach((body) => assert.equal(body.hidden, true, '审批抽屉模块明细默认收起'));
+    const firstGroup = changeList.querySelector('.record-product-change-group');
+    assert.match(firstGroup.textContent, /3 项变更 · 至 /, '收起时展示变更摘要');
+    firstGroup.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    assert.equal(bodies[0].hidden, false, '点击分组应展开明细');
+    assert.match(document.getElementById('recordApproveObjectGrid').textContent, /云授权ID/, '审批抽屉授权对象应含云授权ID');
+    assert.deepEqual(errors, []);
+  } finally {
+    dom.window.close();
+  }
+});

@@ -489,6 +489,7 @@
         .module-nav-title { padding: 4px 10px 10px; font-size: 13px; font-weight: 600; color: #1a1a2e; letter-spacing: 0; text-transform: none; }
         .module-nav-item { display: flex; align-items: center; padding: 8px 10px; font-size: 13px; color: #424656; cursor: pointer; transition: all 0.15s; border-radius: 8px; margin-bottom: 2px; border-left: none; }
         .module-nav-item:hover { background: #eff4ff; color: #0050cb; }
+        .module-nav-item[hidden] { display: none; }
         .module-nav-item.active { color: #fff; font-weight: 600; background: #0050cb; }
 
         /* 紧凑桌面：保留模块导航，并为其预留正文空间 */
@@ -889,8 +890,12 @@
         #content-records .table-scroll-wrap > table > thead th:nth-child(3),
         #content-records .table-scroll-wrap > table > tbody > tr:not(.solution-detail-row) > td:nth-child(3){display:none}
         #content-records .device-summary{cursor:default}
-        /* 设备ID/云图ID列（第7列）超宽时省略号截断，悬浮展示完整信息 */
-        #content-records .table-scroll-wrap > table > tbody > tr:not(.solution-detail-row) > td:nth-child(7){overflow:hidden;text-overflow:ellipsis}
+        /* 授权有效期表头取值说明图标 */
+        #content-records .records-validity-info{font-size:14px;color:#8b92a5;vertical-align:-3px;margin-left:2px;cursor:default}
+        /* 设备ID/云图ID、设备SN、云授权ID列（第7-9列）超宽时省略号截断，悬浮展示完整信息 */
+        #content-records .table-scroll-wrap > table > tbody > tr:not(.solution-detail-row) > td:nth-child(7),
+        #content-records .table-scroll-wrap > table > tbody > tr:not(.solution-detail-row) > td:nth-child(8),
+        #content-records .table-scroll-wrap > table > tbody > tr:not(.solution-detail-row) > td:nth-child(9){overflow:hidden;text-overflow:ellipsis}
         #content-records .record-download-action{border:0;background:transparent;font:inherit;line-height:inherit}
         /* 移动端筛选栏默认隐藏，仅 ≤768px 展示；原生 select 仅作状态同步不参与展示 */
         #content-records .records-mobile-filterbar{display:none}
@@ -961,6 +966,13 @@
         .record-product-change-head{padding:8px 12px;color:#6b7890;background:#f4f7fb;border-bottom:1px solid #dce3ed;font-size:11px;font-weight:600;line-height:18px}
         .record-product-change-row{padding:10px 12px;background:#fff}
         .record-product-change-row + .record-product-change-row{border-top:1px solid #edf1f7}
+        .record-product-change-group{display:flex;align-items:center;gap:8px;width:100%;padding:8px 12px;background:#f8faff;border:0;border-top:1px solid #dce3ed;color:#0b1c30;font-size:12px;font-weight:600;line-height:18px;cursor:pointer;text-align:left;font-family:inherit}
+        .record-product-change-group:hover{background:#eff4ff}
+        .record-product-change-group .change-group-summary{flex:1;min-width:0;color:#6b7890;font-weight:400;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        .record-product-change-group .change-group-chevron{flex:0 0 auto;font-size:10px;color:#8b92a5}
+        .record-product-change-group[aria-expanded="true"] .change-group-chevron{transform:rotate(180deg)}
+        .record-product-change-group-body{display:flex;flex-direction:column}
+        .record-product-change-group-body[hidden]{display:none}
         .record-product-change-label{color:#6b7890;font-size:12px;line-height:20px}
         .record-product-change-value{color:#424656;font-size:12px;line-height:20px;overflow-wrap:anywhere}
         .record-product-change-value.target{color:#003f9e;font-weight:600}
@@ -2892,8 +2904,10 @@
 <th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[120px]">版本号</th>
 <th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[200px]">客户名称</th>
 <th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[150px]">设备ID/云图ID</th>
+<th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[130px]">设备SN</th>
+<th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[150px]">云授权ID</th>
 <th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[75px]">区域</th>
-<th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[210px]">授权有效期</th>
+<th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[210px]">授权有效期<span class="material-symbols-outlined records-validity-info" data-action-tip="多模块授权时展示最先到期模块的有效期，各模块明细见详情" tabindex="0">info</span></th>
 <th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[80px]">申请人</th>
 <th class="py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[140px]">申请时间</th>
 <th class="sticky-right py-3 px-4 text-[11px] font-medium text-[#424656] uppercase tracking-wider whitespace-nowrap w-[210px]"><div class="flex items-center justify-between"><span>审批状态</span><span>操作</span></div></th>
@@ -2911,6 +2925,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">HCI-6.8.1-VKEY</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="深圳市腾讯计算机系统有限公司" title="深圳市腾讯计算机系统有限公司">深圳市腾讯计算机系统有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-amber-100 text-amber-800 border border-amber-200">KA</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-2024-HCI-001</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-2024-HCI-001</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">CLA-2024-HCI-001</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">上海区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-01 ~ 2026-09-29</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">张三</td>
@@ -2927,6 +2943,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">XDR-2.1.0</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="阿里巴巴(中国)有限公司" title="阿里巴巴(中国)有限公司">阿里巴巴(中国)有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-amber-100 text-amber-800 border border-amber-200">KA</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">TENANT-XDR-ALB-015</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">深圳区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-02 ~ 2026-10-01</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">李四</td>
@@ -2943,6 +2961,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">NGAF-8.0.15</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="华为技术有限公司" title="华为技术有限公司">华为技术有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-amber-100 text-amber-800 border border-amber-200">KA</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-2024-NGAF-003</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-2024-NGAF-003</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">北京区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-03 ~ 2026-10-01</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">王五</td>
@@ -2959,6 +2979,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">SIP-3.0.5</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="中国南方电网有限责任公司" title="中国南方电网有限责任公司">中国南方电网有限责任公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-SIP-001</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-SIP-001</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">CLA-SIP-001</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">广州区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-04 ~ 2026-10-02</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">周九</td>
@@ -2975,6 +2997,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">AD-7.0.8</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="北京百度网讯科技有限公司" title="北京百度网讯科技有限公司">北京百度网讯科技有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-2024-AD-007</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-2024-AD-007</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">CLA-2024-AD-007</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">广州区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2025-07-01 ~ 2026-01-01</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">赵六</td>
@@ -2990,6 +3014,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="中国工商银行股份有限公司" title="中国工商银行股份有限公司">中国工商银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-amber-100 text-amber-800 border border-amber-200">KA</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]"><span class="device-summary" data-full="GW-HCI-001&#10;GW-AC-005&#10;GW-NGAF-003&#10;GW-AD-002&#10;GW-WOC-001">5个设备</span></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]"><span class="device-summary" data-full="SN-HCI-001&#10;SN-AC-005&#10;SN-NGAF-003&#10;SN-AD-002&#10;SN-WOC-001">5个设备</span></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">杭州区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-01 ~ 2026-12-28</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">钱七</td>
@@ -2999,7 +3025,7 @@
 
 <!-- Solution 1 Expand -->
 <tr class="solution-detail-row" style="display:none;">
-<td colspan="11" class="p-0 bg-[#f8f9ff]" style="border-top:2px solid #e5eeff;">
+<td colspan="13" class="p-0 bg-[#f8f9ff]" style="border-top:2px solid #e5eeff;">
 <div style="padding:6px 12px 10px;"><div class="solution-expand-wrap">
 <div class="bg-white rounded border border-[#c2c6d8]/20 overflow-hidden" style="font-size:11.5px;">
 <table class="w-full">
@@ -3022,6 +3048,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="中国建设银行股份有限公司" title="中国建设银行股份有限公司">中国建设银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]"><span class="device-summary" data-full="GW-SIP-006&#10;GW-STA-004&#10;GW-NDR-002">3个设备</span></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]"><span class="device-summary" data-full="SN-SIP-006&#10;SN-STA-004&#10;SN-NDR-002">3个设备</span></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">北京区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-04 ~ 2026-10-02</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">孙八</td>
@@ -3038,6 +3066,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">WAF-7.0.5</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="中国石油天然气集团有限公司" title="中国石油天然气集团有限公司">中国石油天然气集团有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-amber-100 text-amber-800 border border-amber-200">KA</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-WAF-012</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-WAF-012</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">CLA-WAF-012</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">北京区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-30 ~ 2026-09-28</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">陈十</td>
@@ -3053,6 +3083,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">SASE-3.0.1</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="京东集团股份有限公司" title="京东集团股份有限公司">京东集团股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">TENANT-SASE-JD-050</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">CLA-SASE-JD-050</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">华南区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-29 ~ 2026-09-27</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">刘十一</td>
@@ -3069,6 +3101,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">EDR-3.5.0</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="浙江大学信息技术中心" title="浙江大学信息技术中心">浙江大学信息技术中心</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-EDR-008</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-EDR-008</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">杭州区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-05 ~ 2026-10-03</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">吴十二</td>
@@ -3084,6 +3118,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">AC-13.0.3</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="长沙银行股份有限公司" title="长沙银行股份有限公司">长沙银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-AC-100</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-AC-100</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">CLA-AC-100</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">华中区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-25 ~ 2027-02-05</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">黄伟</td>
@@ -3098,6 +3134,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">EDR-3.5.0</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="兴业银行股份有限公司" title="兴业银行股份有限公司">兴业银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-EDR-101</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-EDR-101</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">CLA-EDR-101</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">西北区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-07 ~ 2027-03-02</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">张磊</td>
@@ -3112,6 +3150,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">BBC-4.1.0</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="上海银行股份有限公司" title="上海银行股份有限公司">上海银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-BBC-102</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-BBC-102</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">CLA-BBC-102</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">杭州区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-30 ~ 2027-01-23</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">徐亮</td>
@@ -3126,6 +3166,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">HCI-6.8.1-VKEY</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="南京银行股份有限公司" title="南京银行股份有限公司">南京银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-HCI-103</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-HCI-103</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">CLA-HCI-103</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">武汉区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-02 ~ 2027-06-23</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">胡波</td>
@@ -3140,6 +3182,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">SSL-7.1.3</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="成都银行股份有限公司" title="成都银行股份有限公司">成都银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-SSL-104</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-SSL-104</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">成都区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-24 ~ 2026-11-22</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">王强</td>
@@ -3154,6 +3198,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">WOC-8.0.5</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="上海浦东发展银行" title="上海浦东发展银行">上海浦东发展银行</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-WOC-105</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-WOC-105</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">西南区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-02 ~ 2027-02-20</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">徐亮</td>
@@ -3168,6 +3214,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">WOC-8.0.5</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="中信银行股份有限公司" title="中信银行股份有限公司">中信银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-amber-100 text-amber-800 border-amber-200">KA</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-WOC-106</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-WOC-106</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">CLA-WOC-106</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">重庆区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-24 ~ 2026-11-12</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">何雪</td>
@@ -3182,6 +3230,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">STA-2.0.1</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="成都银行股份有限公司" title="成都银行股份有限公司">成都银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-STA-107</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-STA-107</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">上海区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-21 ~ 2026-09-30</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">王强</td>
@@ -3196,6 +3246,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">NDR-2.1.0</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="中国农业银行股份有限公司" title="中国农业银行股份有限公司">中国农业银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-NDR-108</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-NDR-108</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">上海区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-22 ~ 2027-01-15</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">朱红</td>
@@ -3210,6 +3262,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">aTrust-6.0.0</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="武汉农村商业银行" title="武汉农村商业银行">武汉农村商业银行</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-aTrust-109</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-aTrust-109</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">CLA-aTrust-109</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">天津区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-30 ~ 2027-01-05</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">李华</td>
@@ -3224,6 +3278,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">aTrust-6.0.0</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="南京银行股份有限公司" title="南京银行股份有限公司">南京银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-aTrust-110</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-aTrust-110</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">CLA-aTrust-110</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">东北区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-10 ~ 2027-02-25</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">赵敏</td>
@@ -3238,6 +3294,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">NGAF-8.0.15</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="上海农村商业银行" title="上海农村商业银行">上海农村商业银行</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-NGAF-111</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-NGAF-111</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">CLA-NGAF-111</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">西南区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-10 ~ 2027-02-19</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">朱红</td>
@@ -3252,6 +3310,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">HCI-6.8.1-VKEY</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="郑州银行股份有限公司" title="郑州银行股份有限公司">郑州银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-HCI-112</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-HCI-112</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">华中区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-01 ~ 2026-12-04</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">朱红</td>
@@ -3266,6 +3326,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">AD-7.0.8</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="郑州银行股份有限公司" title="郑州银行股份有限公司">郑州银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-AD-113</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-AD-113</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">CLA-AD-113</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">杭州区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-05 ~ 2026-09-16</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">李华</td>
@@ -3280,6 +3342,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">STA-2.0.1</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="中国铁路工程集团有限公司" title="中国铁路工程集团有限公司">中国铁路工程集团有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-STA-114</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-STA-114</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">武汉区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-26 ~ 2027-03-20</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">何雪</td>
@@ -3294,6 +3358,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">SSL-7.1.3</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="中国光大银行股份有限公司" title="中国光大银行股份有限公司">中国光大银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-SSL-115</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-SSL-115</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">南京区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-21 ~ 2026-10-30</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">郭明</td>
@@ -3308,6 +3374,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">SCP-3.0.0</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="北京农村商业银行" title="北京农村商业银行">北京农村商业银行</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-SCP-116</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-SCP-116</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">CLA-SCP-116</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">上海区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-28 ~ 2027-04-10</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">陈静</td>
@@ -3322,6 +3390,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">AC-13.0.3</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="北京银行股份有限公司" title="北京银行股份有限公司">北京银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-AC-117</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-AC-117</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">CLA-AC-117</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">重庆区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-15 ~ 2027-02-05</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">林峰</td>
@@ -3336,6 +3406,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">BBC-4.1.0</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="成都农村商业银行" title="成都农村商业银行">成都农村商业银行</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-BBC-118</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-BBC-118</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">CLA-BBC-118</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">华南区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-12 ~ 2026-09-27</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">胡波</td>
@@ -3350,6 +3422,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">BBC-4.1.0</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="中国民生银行股份有限公司" title="中国民生银行股份有限公司">中国民生银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-BBC-119</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-BBC-119</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">CLA-BBC-119</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">北京区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-18 ~ 2026-09-20</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">胡波</td>
@@ -3364,6 +3438,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">WOC-8.0.5</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="中国邮政集团公司" title="中国邮政集团公司">中国邮政集团公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-WOC-120</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-WOC-120</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">长沙区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-05 ~ 2026-08-08</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">何雪</td>
@@ -3378,6 +3454,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">HCI-6.8.1-VKEY</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="武汉农村商业银行" title="武汉农村商业银行">武汉农村商业银行</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-HCI-121</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-HCI-121</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">CLA-HCI-121</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">华北区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-16 ~ 2027-02-10</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">高远</td>
@@ -3392,6 +3470,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">HCI-6.8.1-VKEY</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="厦门国际银行" title="厦门国际银行">厦门国际银行</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-HCI-122</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-HCI-122</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">CLA-HCI-122</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">上海区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-29 ~ 2027-04-04</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">林峰</td>
@@ -3406,6 +3486,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">LOG-3.0.0</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="上海银行股份有限公司" title="上海银行股份有限公司">上海银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-Logger-123</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-Logger-123</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">CLA-Logger-123</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">华中区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-09 ~ 2027-01-23</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">徐亮</td>
@@ -3420,6 +3502,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">AD-7.0.8</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="中国铁路工程集团有限公司" title="中国铁路工程集团有限公司">中国铁路工程集团有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-AD-124</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-AD-124</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">上海区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-12 ~ 2027-02-03</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">高远</td>
@@ -3434,6 +3518,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">EDR-3.5.0</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="重庆银行股份有限公司" title="重庆银行股份有限公司">重庆银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-EDR-125</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-EDR-125</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">CLA-EDR-125</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">重庆区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-18 ~ 2027-03-22</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">陈静</td>
@@ -3448,6 +3534,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">SSL-7.1.3</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="武汉农村商业银行" title="武汉农村商业银行">武汉农村商业银行</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-SSL-126</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-SSL-126</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">上海区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-11 ~ 2027-04-15</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">吴婷</td>
@@ -3462,6 +3550,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">BBC-4.1.0</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="重庆银行股份有限公司" title="重庆银行股份有限公司">重庆银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-BBC-127</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-BBC-127</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">华中区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-27 ~ 2027-06-30</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">何雪</td>
@@ -3476,6 +3566,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">NDR-2.1.0</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="重庆农村商业银行" title="重庆农村商业银行">重庆农村商业银行</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-NDR-128</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-NDR-128</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">CLA-NDR-128</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">西南区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-05 ~ 2026-12-06</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">何雪</td>
@@ -3490,6 +3582,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">NGAF-8.0.15</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="中国光大银行股份有限公司" title="中国光大银行股份有限公司">中国光大银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-NGAF-129</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-NGAF-129</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">杭州区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-21 ~ 2027-05-01</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">杨帆</td>
@@ -3504,6 +3598,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">NGAF-8.0.15</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="广发银行股份有限公司" title="广发银行股份有限公司">广发银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-NGAF-130</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-NGAF-130</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">CLA-NGAF-130</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">天津区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-22 ~ 2027-04-03</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">林峰</td>
@@ -3518,6 +3614,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">SIP-3.0.5</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="上海浦东发展银行" title="上海浦东发展银行">上海浦东发展银行</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-SIP-131</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-SIP-131</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">CLA-SIP-131</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">西北区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-18 ~ 2027-04-18</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">孙丽</td>
@@ -3532,6 +3630,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">WOC-8.0.5</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="招商银行股份有限公司" title="招商银行股份有限公司">招商银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-amber-100 text-amber-800 border-amber-200">KA</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-WOC-132</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-WOC-132</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">杭州区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-21 ~ 2027-03-04</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">黄伟</td>
@@ -3546,6 +3646,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">HCI-6.8.1-VKEY</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="中国铁路工程集团有限公司" title="中国铁路工程集团有限公司">中国铁路工程集团有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-HCI-133</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-HCI-133</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">CLA-HCI-133</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">重庆区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-29 ~ 2027-04-27</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">刘洋</td>
@@ -3560,6 +3662,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">HCI-6.8.1-VKEY</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="天津滨海农村商业银行" title="天津滨海农村商业银行">天津滨海农村商业银行</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-HCI-134</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-HCI-134</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">CLA-HCI-134</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">东北区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-20 ~ 2026-12-06</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">何雪</td>
@@ -3574,6 +3678,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">HCI-6.8.1-VKEY</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="中国移动通信集团" title="中国移动通信集团">中国移动通信集团</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-amber-100 text-amber-800 border-amber-200">KA</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-HCI-135</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-HCI-135</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">成都区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-14 ~ 2027-02-15</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">高远</td>
@@ -3588,6 +3694,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">aBDI-3.0.0</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="中国民生银行股份有限公司" title="中国民生银行股份有限公司">中国民生银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-aBDI-136</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-aBDI-136</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">CLA-aBDI-136</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">北京区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-23 ~ 2027-04-22</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">李华</td>
@@ -3602,6 +3710,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">LOG-3.0.0</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="南京银行股份有限公司" title="南京银行股份有限公司">南京银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-Logger-137</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-Logger-137</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">长沙区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-14 ~ 2027-02-16</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">罗琳</td>
@@ -3616,6 +3726,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">STA-2.0.1</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="北京银行股份有限公司" title="北京银行股份有限公司">北京银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-STA-138</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-STA-138</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">西安区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-29 ~ 2026-10-30</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">张磊</td>
@@ -3630,6 +3742,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">aBDI-3.0.0</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="兴业银行股份有限公司" title="兴业银行股份有限公司">兴业银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border-slate-200">普通</span></div></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">GW-aBDI-139</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-aBDI-139</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">CLA-aBDI-139</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">深圳区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-02 ~ 2027-05-27</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">郭明</td>
@@ -6144,10 +6258,17 @@
             var showDate = isOpening || applicationState.requestContents.indexOf('extend') !== -1;
             var showModules = isOpening || applicationState.requestContents.indexOf('add_module') !== -1 ||
                 applicationState.requestContents.indexOf('increase_capacity') !== -1;
+            // 仅勾选扩大容量/规格时，只展示当前已授权模块，未开通模块隐藏
+            var onlyAuthorized = !isOpening && applicationState.requestContents.indexOf('increase_capacity') !== -1 &&
+                applicationState.requestContents.indexOf('add_module') === -1;
             if (dateBar) dateBar.hidden = !showDate;
             if (moduleToolbar) moduleToolbar.hidden = !showModules;
             if (simplifiedModulesTitle) simplifiedModulesTitle.hidden = !showModules;
-            moduleCards.forEach(function(card) { card.hidden = !showModules; });
+            moduleCards.forEach(function(card) {
+                card.hidden = !showModules || (onlyAuthorized && card.dataset.currentlyAuthorized !== 'true');
+                var navItem = document.querySelector('.module-nav-item[data-target="' + card.id + '"]');
+                if (navItem) navItem.hidden = onlyAuthorized && card.dataset.currentlyAuthorized !== 'true';
+            });
         }
 
         function setRequestContents(contents) {
@@ -7556,7 +7677,9 @@
             '申请编号：' + applicationNo,
             '产品线/方案：' + (cells[3] ? cells[3].textContent.trim() : ''),
             '设备ID：' + (cells[6] ? cells[6].textContent.trim() : ''),
-            '授权有效期：' + (cells[8] ? cells[8].textContent.trim() : '')
+            '设备SN：' + (cells[7] ? cells[7].textContent.trim() : ''),
+            '云授权ID：' + (cells[8] ? cells[8].textContent.trim() : ''),
+            '授权有效期：' + (cells[10] ? cells[10].textContent.trim() : '')
         ].join('\n');
         var link = document.createElement('a');
         link.href = 'data:application/octet-stream;charset=utf-8,' + encodeURIComponent(fileContent);
@@ -7629,10 +7752,12 @@
             customer: cells[5] ? (cells[5].querySelector('.cust-name') || cells[5]).textContent.trim() : '',
             customerType: customerBadge ? customerBadge.textContent.trim() : '普通客户',
             device: cells[6] ? cells[6].textContent.trim() : '',
-            region: cells[7] ? cells[7].textContent.trim() : '',
-            validity: cells[8] ? cells[8].textContent.trim() : '',
-            applicant: cells[9] ? cells[9].textContent.trim() : '',
-            appliedAt: cells[10] ? cells[10].textContent.trim() : '',
+            deviceSn: cells[7] ? cells[7].textContent.trim() : '',
+            cloudAuthId: cells[8] ? cells[8].textContent.trim() : '',
+            region: cells[9] ? cells[9].textContent.trim() : '',
+            validity: cells[10] ? cells[10].textContent.trim() : '',
+            applicant: cells[11] ? cells[11].textContent.trim() : '',
+            appliedAt: cells[12] ? cells[12].textContent.trim() : '',
             status: getRecordRowStatus(row)
         };
     }
@@ -7660,6 +7785,58 @@
             'SASE-GA': '全球访问、带宽管理'
         };
         return moduleMap[product] || (product ? product + ' 标准授权能力' : '按申请配置');
+    }
+
+    // 多模块记录的模块级到期日演示数据：列表列取最先到期模块，其余模块依次顺延 30 天
+    function addDaysToRecordDate(dateStr, days) {
+        var date = new Date(dateStr + 'T00:00:00');
+        if (isNaN(date.getTime())) return dateStr;
+        date.setDate(date.getDate() + days);
+        var month = String(date.getMonth() + 1).padStart(2, '0');
+        var day = String(date.getDate()).padStart(2, '0');
+        return date.getFullYear() + '-' + month + '-' + day;
+    }
+
+    function getRecordModuleValidityDetail(validity, modules) {
+        var endDate = (validity.split('~')[1] || '').trim();
+        var names = modules.split('、');
+        if (!endDate || names.length < 2) return '';
+        return names.map(function(name, index) {
+            return name + '（至 ' + addDaysToRecordDate(endDate, index * 30) + '）';
+        }).join('、');
+    }
+
+    // 多模块记录的模块级参数变更演示数据：每个模块参数集与容量各不相同，配置变更按模块分组展示
+    var recordModuleChangeParams = {
+        '计算虚拟化': { label: '集群内物理CPU颗数', previous: '8 颗', value: '16 颗' },
+        '分布式存储': { label: '存储授权容量', previous: '60 TB', value: '100 TB' },
+        '基础防护': { label: '1.6Gbps带宽授权数', previous: '5', value: '10' },
+        'IPS': { label: 'IPS漏洞特征识别库', previous: '未开通', value: '开通' },
+        '应用控制': { label: '应用识别库规格', previous: '标准版', value: '增强版' },
+        'Web应用防护': { label: '防护站点数', previous: '10 个', value: '20 个' },
+        'Bot防护': { label: 'Bot策略组', previous: '基础组', value: '全量组' },
+        '威胁检测': { label: '日志接入量', previous: '1 亿条/日', value: '2 亿条/日' },
+        '终端响应': { label: '响应终端数', previous: '500 台', value: '1000 台' },
+        '全球访问': { label: '接入用户数', previous: '200', value: '500' },
+        '带宽管理': { label: '加速带宽', previous: '100 Mbps', value: '200 Mbps' }
+    };
+
+    function getRecordModuleChangeGroups(modules, validity, previousValidity, isFirstOpening) {
+        var names = modules.split('、');
+        var endDate = (validity.split('~')[1] || '').trim();
+        if (names.length < 2 || !endDate) return null;
+        var previousEnd = (previousValidity.split('~')[1] || '').trim();
+        return names.map(function(name, index) {
+            var param = recordModuleChangeParams[name] || { label: '授权规格', previous: '基础测试规格', value: '标准测试规格' };
+            return {
+                module: name,
+                items: [
+                    { label: '模块状态', before: isFirstOpening ? '未开通' : '已开通', after: '已开通' },
+                    { label: param.label, before: isFirstOpening ? '—' : param.previous, after: param.value },
+                    { label: '授权至', before: isFirstOpening ? '—' : previousEnd, after: addDaysToRecordDate(endDate, index * 30) }
+                ]
+            };
+        });
     }
 
     function getXaasRecordDetail(data) {
@@ -7730,10 +7907,12 @@
         var scene = isFirstOpening ? '首次开通测试授权' : (isOverdue ? '重新开通测试授权' : '有效期内调整');
         var requestItems = isFirstOpening ? '开通测试授权' : (isOverdue ? '延期' : '延期、增开模块、扩容');
         var modules = getRecordModules(data.product);
+        var moduleValidityDetail = getRecordModuleValidityDetail(data.validity, modules);
         var previousModules = isFirstOpening ? '未开通' : modules.split('、')[0];
         var capacity = isClusterProduct ? '物理 CPU 16 颗' : '标准测试容量';
         var previousCapacity = isFirstOpening ? '未开通' : (isClusterProduct ? '物理 CPU 8 颗' : '基础测试容量');
         var previousValidity = isFirstOpening ? '未开通' : (isOverdue ? '2025-07-01 ~ 2026-01-01' : '2026-04-01 ~ 2026-06-29');
+        var moduleChangeGroups = getRecordModuleChangeGroups(modules, data.validity, previousValidity, isFirstOpening);
         var objectItems;
 
         if (isClusterProduct) {
@@ -7741,6 +7920,7 @@
             objectItems = [
                 { label: '硬件信息文件', value: data.customer + '-' + data.product + '硬件信息文件（已上传）', full: true },
                 { label: '集群标识', value: clusterId, code: true },
+                { label: '云授权ID', value: data.cloudAuthId || '—', code: true },
                 { label: '来源', value: '硬件借测系统' },
                 { label: '最新授权有效期', value: data.validity },
                 { label: '累计测试', value: isOverdue ? '270 天' : '90 天' },
@@ -7757,7 +7937,8 @@
         } else {
             objectItems = [
                 { label: '设备 ID', value: data.device, code: true },
-                { label: '设备 SN', value: data.device.replace(/^GW-/, 'SN-'), code: true },
+                { label: '设备 SN', value: data.deviceSn || data.device.replace(/^GW-/, 'SN-'), code: true },
+                { label: '云授权ID', value: data.cloudAuthId || '—', code: true },
                 { label: '来源', value: '销售设备台账' },
                 { label: '最新授权有效期', value: data.validity },
                 { label: '累计测试', value: isOverdue ? '270 天' : '120 天' },
@@ -7780,14 +7961,16 @@
         return {
             scene: sceneItems,
             object: objectItems,
-            changes: [
+            changes: moduleChangeGroups ? [
+                { label: '授权有效期', before: previousValidity, after: data.validity }
+            ].concat(moduleChangeGroups) : [
                 { label: '授权有效期', before: previousValidity, after: data.validity },
                 { label: '授权模块', before: previousModules, after: modules },
                 { label: '授权容量', before: previousCapacity, after: capacity }
             ],
             delivery: [
-                { label: '实际授权有效期', value: authorized ? data.validity : '待审批通过后确认' },
-                { label: '最终授权模块', value: authorized ? modules : '待审批通过后确认' },
+                { label: '实际授权有效期', value: authorized ? data.validity + (moduleValidityDetail ? '（按最先到期模块）' : '') : '待审批通过后确认' },
+                { label: '最终授权模块', value: authorized ? (moduleValidityDetail || modules) : '待审批通过后确认', full: !!moduleValidityDetail },
                 { label: '最终授权容量', value: authorized ? capacity : '待审批通过后确认' },
                 { label: '授权码', value: authorized ? 'LIC-' + data.applicationNo.replace(/[^A-Z0-9]/gi, '').slice(-12) : '待生成', code: true },
                 { label: '授权文件', value: authorized ? '授权信息-' + data.applicationNo : '待生成' },
@@ -7882,7 +8065,7 @@
             head.appendChild(heading);
         });
         container.appendChild(head);
-        changes.forEach(function(change) {
+        function appendChangeRow(change, target) {
             var row = document.createElement('div');
             row.className = 'record-product-change-row';
             var label = document.createElement('span');
@@ -7897,7 +8080,43 @@
             row.appendChild(label);
             row.appendChild(before);
             row.appendChild(after);
-            container.appendChild(row);
+            (target || container).appendChild(row);
+        }
+        changes.forEach(function(change) {
+            // 多模块记录按模块分组：默认收起为一行摘要，点击展开参数明细，避免多模块撑长抽屉
+            if (change.module) {
+                var items = change.items || [];
+                var group = document.createElement('button');
+                group.type = 'button';
+                group.className = 'record-product-change-group';
+                group.setAttribute('aria-expanded', 'false');
+                var name = document.createElement('span');
+                name.className = 'change-group-name';
+                name.textContent = change.module;
+                var validityItem = items.find(function(item) { return item.label === '授权至'; });
+                var summary = document.createElement('span');
+                summary.className = 'change-group-summary';
+                summary.textContent = items.length + ' 项变更' + (validityItem ? ' · 至 ' + validityItem.after : '');
+                var chevron = document.createElement('span');
+                chevron.className = 'change-group-chevron';
+                chevron.setAttribute('aria-hidden', 'true');
+                chevron.textContent = '▼';
+                group.appendChild(name);
+                group.appendChild(summary);
+                group.appendChild(chevron);
+                var body = document.createElement('div');
+                body.className = 'record-product-change-group-body';
+                body.hidden = true;
+                items.forEach(function(item) { appendChangeRow(item, body); });
+                group.addEventListener('click', function() {
+                    body.hidden = !body.hidden;
+                    group.setAttribute('aria-expanded', body.hidden ? 'false' : 'true');
+                });
+                container.appendChild(group);
+                container.appendChild(body);
+                return;
+            }
+            appendChangeRow(change, container);
         });
     }
 
@@ -8028,6 +8247,7 @@
             appendRecordDetailItems(document.getElementById('recordXaasSupplementGrid'), xaasDetail.supplement);
             appendRecordDetailItems(document.getElementById('recordXaasDeliveryGrid'), [
                 { label: '租户/实例标识', value: xaasDetail.delivery.tenant, code: true },
+                { label: '云授权ID', value: data.cloudAuthId && data.cloudAuthId !== '—' ? data.cloudAuthId : '待审批通过后生成', code: true },
                 { label: '实际版本', value: xaasDetail.delivery.version },
                 { label: '开通时间', value: xaasDetail.delivery.openedAt },
                 { label: '接收邮箱', value: xaasDetail.delivery.email },
@@ -8992,10 +9212,13 @@
         document.querySelectorAll('#content-records .device-summary').forEach(function(el) {
             bindTooltip(el);
         });
-        document.querySelectorAll('#content-records .table-scroll-wrap > table > tbody > tr:not(.solution-detail-row) > td:nth-child(7)').forEach(function(el) {
+        document.querySelectorAll('#content-records .table-scroll-wrap > table > tbody > tr:not(.solution-detail-row) > td:nth-child(7), #content-records .table-scroll-wrap > table > tbody > tr:not(.solution-detail-row) > td:nth-child(8), #content-records .table-scroll-wrap > table > tbody > tr:not(.solution-detail-row) > td:nth-child(9)').forEach(function(el) {
             bindTooltip(el);
         });
         document.querySelectorAll('#content-records .sticky-right .ml-auto > [data-action-tip]').forEach(function(el) {
+            bindTooltip(el);
+        });
+        document.querySelectorAll('#content-records thead [data-action-tip]').forEach(function(el) {
             bindTooltip(el);
         });
         window.addEventListener('scroll', positionTooltip, true);
