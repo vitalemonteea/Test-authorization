@@ -987,6 +987,10 @@
         .record-approval-title{color:#0b1c30;font-size:13px;font-weight:600;line-height:18px}
         .record-approval-detail{margin-top:2px;color:#6b7890;font-size:12px;line-height:18px}
         .record-approval-opinion{margin-top:6px;padding:7px 9px;color:#424656;background:#f7f9fc;border-radius:4px;font-size:12px;line-height:18px}
+        .record-approval-attachments{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+        .record-approval-attachment{display:inline-flex;align-items:center;gap:4px;max-width:100%;padding:3px 7px;color:#35506f;background:#eef4ff;border-radius:4px;font-size:11px;line-height:16px}
+        .record-approval-attachment .material-symbols-outlined{flex:0 0 auto;font-size:14px}
+        .record-approval-attachment-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
         .record-drawer-footer{display:flex;justify-content:flex-end;gap:10px;padding:12px 20px;border-top:1px solid #e5eaf2;background:#fff}
         .record-drawer-button{min-width:80px;height:36px;padding:0 16px;border:1px solid #c8d1e0;border-radius:6px;background:#fff;color:#0b1c30;font-size:13px;cursor:pointer}
         .record-drawer-button:hover{border-color:#0050cb;color:#0050cb;background:#f7faff}
@@ -1012,6 +1016,23 @@
         .record-workflow-error{margin-top:-6px;color:#d92d20;font-size:12px;line-height:18px}
         .record-workflow-error[hidden]{display:none}
         .record-file-input{width:100%;padding:9px 10px;box-sizing:border-box;color:#424656;background:#f7f9fc;border:1px dashed #b7c2d3;border-radius:6px;font-size:12px}
+        .record-workflow-file-hint{margin:-1px 0 8px;color:#7b8496;font-size:12px;line-height:18px}
+        .record-workflow-file-picker{display:flex;align-items:center;gap:10px}
+        .record-workflow-file-input{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+        .record-workflow-upload-trigger{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:36px;padding:0 13px;color:#0050cb;background:#fff;border:1px solid #9db3d2;border-radius:6px;font:inherit;font-size:12px;cursor:pointer}
+        .record-workflow-upload-trigger:hover{background:#f4f7ff;border-color:#0050cb}
+        .record-workflow-upload-trigger:focus-visible,.record-workflow-file-remove:focus-visible{outline:2px solid rgba(0,80,203,.5);outline-offset:2px}
+        .record-workflow-upload-trigger .material-symbols-outlined{font-size:17px}
+        .record-workflow-file-empty{color:#8b92a5;font-size:12px;line-height:18px}
+        .record-workflow-file-list{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+        .record-workflow-file-item{display:grid;grid-template-columns:18px minmax(0,1fr) auto;gap:8px;align-items:center;min-height:38px;padding:6px 8px;color:#424656;background:#f7f9fc;border:1px solid #e3e8f1;border-radius:6px;box-sizing:border-box}
+        .record-workflow-file-icon{color:#0050cb;font-size:17px}
+        .record-workflow-file-copy{min-width:0}
+        .record-workflow-file-name{display:block;color:#0b1c30;font-size:12px;line-height:18px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        .record-workflow-file-meta{display:block;color:#8b92a5;font-size:11px;line-height:16px}
+        .record-workflow-file-remove{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;padding:0;color:#6b7890;background:transparent;border:0;border-radius:5px;cursor:pointer}
+        .record-workflow-file-remove:hover{color:#b42318;background:#fff0ee}
+        .record-workflow-file-remove .material-symbols-outlined{font-size:17px}
         .record-decision-group{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:14px}
         .record-decision-option{display:flex;align-items:center;gap:8px;min-height:42px;padding:0 12px;color:#0b1c30;background:#fff;border:1px solid #c8d1e0;border-radius:6px;font-size:13px;cursor:pointer}
         .record-decision-option:has(input:checked){color:#003f9e;background:#eef4ff;border-color:#0050cb}
@@ -7758,7 +7779,8 @@
             validity: cells[10] ? cells[10].textContent.trim() : '',
             applicant: cells[11] ? cells[11].textContent.trim() : '',
             appliedAt: cells[12] ? cells[12].textContent.trim() : '',
-            status: getRecordRowStatus(row)
+            status: getRecordRowStatus(row),
+            submittedApproval: row._submittedApproval || null
         };
     }
 
@@ -8122,6 +8144,23 @@
 
     function buildRecordApprovalSteps(data) {
         var steps = [{ title: '提交申请', detail: data.applicant + ' · ' + data.appliedAt, opinion: '已提交申请信息和相关材料', state: 'done' }];
+        if (data.submittedApproval) {
+            var submitted = data.submittedApproval;
+            var rejected = submitted.decision === 'reject';
+            steps.push({
+                title: '区域负责人审批',
+                detail: '当前审批人 · ' + submitted.submittedAt + ' · ' + (rejected ? '已驳回' : '已通过'),
+                opinion: submitted.opinion,
+                attachments: submitted.attachments,
+                state: rejected ? 'rejected' : 'done'
+            });
+            steps.push({
+                title: rejected ? '补充申请信息' : '产品线审批',
+                detail: rejected ? '等待申请人重新提交' : '等待产品线负责人处理',
+                state: 'current'
+            });
+            return steps;
+        }
         if (data.status === '待审批') {
             steps.push({ title: '区域负责人审批', detail: '等待区域负责人处理', state: 'current' });
             steps.push({ title: '产品线审批', detail: '尚未开始', state: '' });
@@ -8161,6 +8200,26 @@
                 opinion.className = 'record-approval-opinion';
                 opinion.textContent = '意见：' + step.opinion;
                 copy.appendChild(opinion);
+            }
+            if (step.attachments && step.attachments.length) {
+                var attachments = document.createElement('div');
+                attachments.className = 'record-approval-attachments';
+                step.attachments.forEach(function(file) {
+                    var attachment = document.createElement('span');
+                    attachment.className = 'record-approval-attachment';
+                    var attachmentIcon = document.createElement('span');
+                    attachmentIcon.className = 'material-symbols-outlined';
+                    attachmentIcon.setAttribute('aria-hidden', 'true');
+                    attachmentIcon.textContent = 'attach_file';
+                    var attachmentName = document.createElement('span');
+                    attachmentName.className = 'record-approval-attachment-name';
+                    attachmentName.textContent = file.name;
+                    attachment.title = file.name;
+                    attachment.appendChild(attachmentIcon);
+                    attachment.appendChild(attachmentName);
+                    attachments.appendChild(attachment);
+                });
+                copy.appendChild(attachments);
             }
             row.appendChild(dot);
             row.appendChild(copy);
@@ -8320,6 +8379,86 @@
         field.appendChild(label);
         field.appendChild(input);
         container.appendChild(field);
+        return input;
+    }
+
+    function formatRecordWorkflowFileSize(bytes) {
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+        return (bytes / 1048576).toFixed(1) + ' MB';
+    }
+
+    function appendRecordWorkflowFileField(container, options) {
+        var field = createRecordWorkflowElement('div', 'record-workflow-field');
+        var label = createRecordWorkflowElement('span', 'record-workflow-label', options.label);
+        var hint = createRecordWorkflowElement('p', 'record-workflow-file-hint', options.hint);
+        var picker = createRecordWorkflowElement('div', 'record-workflow-file-picker');
+        var input = createRecordWorkflowElement('input', 'record-workflow-file-input');
+        input.type = 'file';
+        input.id = options.id;
+        input.name = options.id;
+        input.multiple = true;
+        var trigger = createRecordWorkflowElement('button', 'record-workflow-upload-trigger');
+        trigger.type = 'button';
+        trigger.appendChild(createRecordWorkflowElement('span', 'material-symbols-outlined', 'upload_file'));
+        trigger.appendChild(createRecordWorkflowElement('span', '', '选择文件'));
+        trigger.setAttribute('aria-controls', options.id);
+        var empty = createRecordWorkflowElement('span', 'record-workflow-file-empty', '未上传附件');
+        var list = createRecordWorkflowElement('div', 'record-workflow-file-list');
+        var selectedFiles = [];
+
+        function syncWorkflowAttachments() {
+            if (activeRecordWorkflow) activeRecordWorkflow.approvalAttachments = selectedFiles.slice();
+        }
+
+        function renderFiles() {
+            list.textContent = '';
+            empty.hidden = selectedFiles.length > 0;
+            selectedFiles.forEach(function(file, index) {
+                var item = createRecordWorkflowElement('div', 'record-workflow-file-item');
+                item.appendChild(createRecordWorkflowElement('span', 'record-workflow-file-icon material-symbols-outlined', 'description'));
+                var copy = createRecordWorkflowElement('div', 'record-workflow-file-copy');
+                var name = createRecordWorkflowElement('span', 'record-workflow-file-name', file.name);
+                name.title = file.name;
+                copy.appendChild(name);
+                copy.appendChild(createRecordWorkflowElement('span', 'record-workflow-file-meta', formatRecordWorkflowFileSize(file.size)));
+                var remove = createRecordWorkflowElement('button', 'record-workflow-file-remove');
+                remove.type = 'button';
+                remove.setAttribute('aria-label', '删除附件 ' + file.name);
+                remove.appendChild(createRecordWorkflowElement('span', 'material-symbols-outlined', 'delete'));
+                remove.addEventListener('click', function() {
+                    selectedFiles.splice(index, 1);
+                    syncWorkflowAttachments();
+                    renderFiles();
+                });
+                item.appendChild(copy);
+                item.appendChild(remove);
+                list.appendChild(item);
+            });
+        }
+
+        trigger.addEventListener('click', function() { input.click(); });
+        input.addEventListener('change', function() {
+            Array.from(input.files || []).forEach(function(file) {
+                var duplicated = selectedFiles.some(function(selected) {
+                    return selected.name === file.name && selected.size === file.size && selected.lastModified === file.lastModified;
+                });
+                if (!duplicated) selectedFiles.push(file);
+            });
+            input.value = '';
+            syncWorkflowAttachments();
+            renderFiles();
+        });
+
+        picker.appendChild(input);
+        picker.appendChild(trigger);
+        picker.appendChild(empty);
+        field.appendChild(label);
+        field.appendChild(hint);
+        field.appendChild(picker);
+        field.appendChild(list);
+        container.appendChild(field);
+        syncWorkflowAttachments();
         return input;
     }
 
@@ -8493,6 +8632,11 @@
             placeholder: '请填写审批意见',
             required: true
         });
+        appendRecordWorkflowFileField(decisionSection, {
+            id: 'recordApprovalAttachments',
+            label: '审批附件（可选）',
+            hint: '可上传审批判断依据、补充说明等材料，支持一次选择多个文件。'
+        });
     }
 
     function openRecordWorkflowDrawer(action, row, trigger) {
@@ -8546,6 +8690,11 @@
         recordActionToastTimer = setTimeout(function() { toast.hidden = true; }, 2600);
     }
 
+    function formatRecordWorkflowTimestamp(date) {
+        function pad(value) { return String(value).padStart(2, '0'); }
+        return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate()) + ' ' + pad(date.getHours()) + ':' + pad(date.getMinutes());
+    }
+
     function submitRecordWorkflow() {
         if (!activeRecordWorkflow) return;
         var error = document.getElementById('recordWorkflowError');
@@ -8565,6 +8714,17 @@
             required.focus();
             return;
         }
+        if (activeRecordWorkflow.action === 'approve') {
+            var approvalDecision = document.querySelector('input[name="recordApprovalDecision"]:checked');
+            activeRecordWorkflow.row._submittedApproval = {
+                decision: approvalDecision.value,
+                opinion: document.getElementById('recordApprovalOpinion').value.trim(),
+                attachments: (activeRecordWorkflow.approvalAttachments || []).map(function(file) {
+                    return { name: file.name, size: file.size };
+                }),
+                submittedAt: formatRecordWorkflowTimestamp(new Date())
+            };
+        }
         var messageMap = {
             copy: '复制草稿已创建，可在申请页面继续编辑。',
             renew: '续期申请已提交，将进入审批流程。',
@@ -8572,6 +8732,9 @@
             approve: (document.querySelector('input[name="recordApprovalDecision"]:checked') || {}).value === 'reject' ? '审批驳回已提交。' : '审批通过已提交，将流转到下一节点。'
         };
         var message = messageMap[activeRecordWorkflow.action];
+        if (activeRecordWorkflow.action === 'approve' && activeRecordWorkflow.approvalAttachments && activeRecordWorkflow.approvalAttachments.length) {
+            message += ' 已上传 ' + activeRecordWorkflow.approvalAttachments.length + ' 个附件。';
+        }
         closeRecordDrawer();
         showRecordActionToast(message);
     }

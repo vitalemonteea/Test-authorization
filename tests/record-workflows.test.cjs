@@ -297,7 +297,7 @@ test('驳回记录可补充说明和材料后重新提交', () => {
 test('审核抽屉展示完整判断依据并要求主动选择审批决定', () => {
   const { dom, document, window } = setupRecords();
   try {
-    clickAction(document, window, 'approve');
+    const approveAction = clickAction(document, window, 'approve');
     assert.equal(document.getElementById('recordDrawerTitle').textContent, '审核申请');
     assert.equal(document.activeElement, document.getElementById('recordDrawerTitle'));
     assert.equal(document.querySelector('#recordDrawerLayer .record-drawer-body').scrollTop, 0);
@@ -319,6 +319,22 @@ test('审核抽屉展示完整判断依据并要求主动选择审批决定', ()
     assert.match(document.getElementById('recordWorkflowContent').textContent, /意见：已提交申请信息和相关材料/);
     assert.equal(document.querySelectorAll('input[name="recordApprovalDecision"]').length, 2);
     assert.equal(document.querySelector('input[name="recordApprovalDecision"]:checked'), null);
+    const attachmentInput = document.getElementById('recordApprovalAttachments');
+    assert.ok(attachmentInput);
+    assert.equal(attachmentInput.multiple, true);
+    assert.match(document.getElementById('recordWorkflowContent').textContent, /审批附件（可选）/);
+    const attachmentFiles = [
+      new window.File(['approval-basis'], '客户情况说明.pdf', { type: 'application/pdf', lastModified: 1 }),
+      new window.File(['meeting-note'], '沟通纪要.docx', { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', lastModified: 2 })
+    ];
+    Object.defineProperty(attachmentInput, 'files', { configurable: true, value: attachmentFiles });
+    attachmentInput.dispatchEvent(new window.Event('change', { bubbles: true }));
+    assert.match(document.querySelector('.record-workflow-file-list').textContent, /客户情况说明\.pdf/);
+    assert.match(document.querySelector('.record-workflow-file-list').textContent, /沟通纪要\.docx/);
+    const removeButtons = document.querySelectorAll('.record-workflow-file-remove');
+    assert.equal(removeButtons.length, 2);
+    removeButtons[1].click();
+    assert.doesNotMatch(document.querySelector('.record-workflow-file-list').textContent, /沟通纪要\.docx/);
     document.getElementById('recordDrawerPrimary').click();
     assert.equal(document.getElementById('recordWorkflowError').hidden, false);
     assert.match(document.getElementById('recordWorkflowError').textContent, /请选择审批决定/);
@@ -329,6 +345,11 @@ test('审核抽屉展示完整判断依据并要求主动选择审批决定', ()
     document.getElementById('recordDrawerPrimary').click();
     assert.equal(document.getElementById('recordDrawerLayer').hidden, true);
     assert.match(document.getElementById('recordActionToastText').textContent, /审批通过已提交/);
+    assert.match(document.getElementById('recordActionToastText').textContent, /已上传 1 个附件/);
+    approveAction.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    assert.match(document.getElementById('recordWorkflowContent').textContent, /客户情况说明\.pdf/);
+    assert.doesNotMatch(document.getElementById('recordWorkflowContent').textContent, /沟通纪要\.docx/);
+    assert.match(document.getElementById('recordWorkflowContent').textContent, /申请信息完整，同意进入下一节点/);
   } finally {
     dom.window.close();
   }
