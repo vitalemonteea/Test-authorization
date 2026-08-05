@@ -987,10 +987,14 @@
         .record-approval-title{color:#0b1c30;font-size:13px;font-weight:600;line-height:18px}
         .record-approval-detail{margin-top:2px;color:#6b7890;font-size:12px;line-height:18px}
         .record-approval-opinion{margin-top:6px;padding:7px 9px;color:#424656;background:#f7f9fc;border-radius:4px;font-size:12px;line-height:18px}
-        .record-approval-attachments{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
-        .record-approval-attachment{display:inline-flex;align-items:center;gap:4px;max-width:100%;padding:3px 7px;color:#35506f;background:#eef4ff;border-radius:4px;font-size:11px;line-height:16px}
+        .record-approval-attachments{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-top:6px}
+        .record-approval-attachments-label{color:#6b7890;font-size:11px;line-height:22px}
+        .record-approval-attachment{display:inline-flex;align-items:center;gap:4px;max-width:100%;min-height:24px;padding:3px 7px;color:#35506f;background:#eef4ff;border:0;border-radius:4px;font:inherit;font-size:11px;line-height:16px;cursor:pointer}
+        .record-approval-attachment:hover{color:#003f9e;background:#dfeaff}
+        .record-approval-attachment:focus-visible{outline:2px solid rgba(0,80,203,.5);outline-offset:2px}
         .record-approval-attachment .material-symbols-outlined{flex:0 0 auto;font-size:14px}
         .record-approval-attachment-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        .record-approval-attachment-download{color:#0050cb}
         .record-drawer-footer{display:flex;justify-content:flex-end;gap:10px;padding:12px 20px;border-top:1px solid #e5eaf2;background:#fff}
         .record-drawer-button{min-width:80px;height:36px;padding:0 16px;border:1px solid #c8d1e0;border-radius:6px;background:#fff;color:#0b1c30;font-size:13px;cursor:pointer}
         .record-drawer-button:hover{border-color:#0050cb;color:#0050cb;background:#f7faff}
@@ -8142,8 +8146,32 @@
         });
     }
 
+    function getRecordSubmissionAttachments(data) {
+        var items = [];
+        if (data.authorizationType === 'XaaS') {
+            items = getXaasRecordDetail(data).supplement || [];
+        } else {
+            var productDetail = getProductRecordDetail(data);
+            items = (productDetail.scene || []).concat(productDetail.object || []);
+        }
+        return items.filter(function(item) {
+            return /附件|文件|收集表/.test(item.label || '') && item.value && item.value !== '—';
+        }).map(function(item) {
+            return {
+                name: String(item.value).replace(/（已上传）$/, ''),
+                url: item.url || ''
+            };
+        });
+    }
+
     function buildRecordApprovalSteps(data) {
-        var steps = [{ title: '提交申请', detail: data.applicant + ' · ' + data.appliedAt, opinion: '已提交申请信息和相关材料', state: 'done' }];
+        var steps = [{
+            title: '提交申请',
+            detail: data.applicant + ' · ' + data.appliedAt,
+            opinion: '已提交申请信息和相关材料',
+            attachments: getRecordSubmissionAttachments(data),
+            state: 'done'
+        }];
         if (data.submittedApproval) {
             var submitted = data.submittedApproval;
             var rejected = submitted.decision === 'reject';
@@ -8177,6 +8205,29 @@
         return steps;
     }
 
+    function downloadRecordApprovalAttachment(file) {
+        var anchor = document.createElement('a');
+        var objectUrl = '';
+        var fileName = file.name || '审批附件';
+        if (file.sourceFile && window.URL && typeof window.URL.createObjectURL === 'function') {
+            objectUrl = window.URL.createObjectURL(file.sourceFile);
+            anchor.href = objectUrl;
+        } else if (file.url) {
+            anchor.href = file.url;
+        } else {
+            anchor.href = 'data:application/octet-stream;charset=utf-8,' + encodeURIComponent('演示附件：' + fileName + '\n实际环境中将由文件服务返回原始文件。');
+        }
+        anchor.download = fileName;
+        anchor.hidden = true;
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        if (objectUrl && typeof window.URL.revokeObjectURL === 'function') {
+            window.URL.revokeObjectURL(objectUrl);
+        }
+        showRecordActionToast('附件下载已开始：' + fileName);
+    }
+
     function renderRecordApprovalTimeline(container, steps) {
         container.textContent = '';
         steps.forEach(function(step) {
@@ -8204,9 +8255,16 @@
             if (step.attachments && step.attachments.length) {
                 var attachments = document.createElement('div');
                 attachments.className = 'record-approval-attachments';
+                var attachmentsLabel = document.createElement('span');
+                attachmentsLabel.className = 'record-approval-attachments-label';
+                attachmentsLabel.textContent = '附件：';
+                attachments.appendChild(attachmentsLabel);
                 step.attachments.forEach(function(file) {
-                    var attachment = document.createElement('span');
+                    var attachment = document.createElement('button');
+                    attachment.type = 'button';
                     attachment.className = 'record-approval-attachment';
+                    attachment.setAttribute('aria-label', '下载附件 ' + file.name);
+                    attachment.setAttribute('data-record-approval-attachment', file.name);
                     var attachmentIcon = document.createElement('span');
                     attachmentIcon.className = 'material-symbols-outlined';
                     attachmentIcon.setAttribute('aria-hidden', 'true');
@@ -8215,8 +8273,16 @@
                     attachmentName.className = 'record-approval-attachment-name';
                     attachmentName.textContent = file.name;
                     attachment.title = file.name;
+                    var downloadIcon = document.createElement('span');
+                    downloadIcon.className = 'record-approval-attachment-download material-symbols-outlined';
+                    downloadIcon.setAttribute('aria-hidden', 'true');
+                    downloadIcon.textContent = 'download';
                     attachment.appendChild(attachmentIcon);
                     attachment.appendChild(attachmentName);
+                    attachment.appendChild(downloadIcon);
+                    attachment.addEventListener('click', function() {
+                        downloadRecordApprovalAttachment(file);
+                    });
                     attachments.appendChild(attachment);
                 });
                 copy.appendChild(attachments);
@@ -8720,7 +8786,7 @@
                 decision: approvalDecision.value,
                 opinion: document.getElementById('recordApprovalOpinion').value.trim(),
                 attachments: (activeRecordWorkflow.approvalAttachments || []).map(function(file) {
-                    return { name: file.name, size: file.size };
+                    return { name: file.name, size: file.size, type: file.type, sourceFile: file };
                 }),
                 submittedAt: formatRecordWorkflowTimestamp(new Date())
             };
