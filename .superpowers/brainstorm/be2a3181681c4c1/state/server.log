@@ -1,2 +1,0 @@
-{"type":"server-started","port":65271,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:65271/?key=b5034ba23cbaa4d1bb29e23d1d32e2164c9ef80fa9d5962c2f0c38708442b87f","screen_dir":"\\tmp\\brainstorm\\content","state_dir":"\\tmp\\brainstorm\\state","idle_timeout_ms":14400000}
-{"type":"server-stopped","reason":"idle timeout"}
