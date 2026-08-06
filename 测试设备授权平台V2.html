@@ -1000,6 +1000,7 @@
         .record-drawer-button:hover{border-color:#0050cb;color:#0050cb;background:#f7faff}
         .record-drawer-button.primary{color:#fff;background:#0050cb;border-color:#0050cb}
         .record-drawer-button.primary:hover{color:#fff;background:#003f9e;border-color:#003f9e}
+        .record-mobile-approval-composer{display:none}
         .record-workflow-content{padding-top:20px}
         .record-workflow-callout{display:flex;align-items:flex-start;gap:8px;margin-bottom:20px;padding:10px 12px;color:#35506f;background:#f2f6fc;border-left:3px solid #5c7fb5;border-radius:4px;font-size:12px;line-height:18px}
         .record-workflow-callout.warning{color:#8a4b00;background:#fff8e8;border-left-color:#d68a1f}
@@ -1057,7 +1058,28 @@
         .record-action-toast[hidden]{display:none}
         .record-action-toast .material-symbols-outlined{color:#12a474;font-size:19px}
         .record-action-control:focus-visible{outline:2px solid rgba(0,80,203,.45);outline-offset:2px}
-        @media (max-width:600px){.record-drawer{width:100%}.record-detail-grid,.record-copy-options,.record-xaas-subscription-meta{grid-template-columns:1fr}.record-detail-item{grid-template-columns:90px minmax(0,1fr)}.record-product-change-head,.record-product-change-row{grid-template-columns:72px minmax(0,1fr) minmax(0,1fr);gap:8px}.record-drawer-header,.record-drawer-body,.record-drawer-footer{padding-left:16px;padding-right:16px}.record-drawer-summary{margin-left:-16px;margin-right:-16px;padding-left:16px;padding-right:16px}}
+        @media (max-width:600px){.record-drawer{width:100%}.record-detail-grid,.record-copy-options,.record-xaas-subscription-meta{grid-template-columns:1fr}.record-detail-item{grid-template-columns:90px minmax(0,1fr)}.record-product-change-head,.record-product-change-row{grid-template-columns:72px minmax(0,1fr) minmax(0,1fr);gap:8px}.record-drawer-header,.record-drawer-body,.record-drawer-footer{padding-left:16px;padding-right:16px}.record-drawer-summary{margin-left:-16px;margin-right:-16px;padding-left:16px;padding-right:16px}
+            #recordDrawerLayer[data-record-workflow-action="approve"] .record-drawer-footer{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding-top:10px;padding-bottom:calc(10px + env(safe-area-inset-bottom))}
+            #recordDrawerLayer[data-record-workflow-action="approve"] .record-mobile-approval-composer{display:block;grid-column:1 / -1}
+            .record-mobile-approval-input-wrap{display:flex;align-items:center;gap:6px;min-height:44px;padding:0 8px 0 11px;background:#f5f7fa;border:1px solid #e2e8f0;border-radius:6px}
+            .record-mobile-approval-input-wrap:focus-within{background:#fff;border-color:#0050cb;box-shadow:0 0 0 2px rgba(0,80,203,.12)}
+            .record-mobile-approval-input{min-width:0;flex:1;height:42px;padding:0;border:0;outline:0;color:#0b1c30;background:transparent;font:inherit;font-size:13px}
+            .record-mobile-approval-attachment{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;padding:0;color:#7b8496;background:transparent;border:0;border-radius:5px;cursor:pointer}
+            .record-mobile-approval-attachment:hover{color:#0050cb;background:#e8effb}
+            .record-mobile-approval-attachment:focus-visible{outline:2px solid rgba(0,80,203,.5);outline-offset:1px}
+            .record-mobile-approval-attachment .material-symbols-outlined{font-size:20px}
+            .record-mobile-attachment-status{margin:5px 2px 0;color:#6b7890;font-size:11px;line-height:16px}
+            #recordDrawerLayer[data-record-workflow-action="approve"] #recordDrawerSecondary{display:none}
+            #recordDrawerLayer[data-record-workflow-action="approve"] #recordDrawerReject{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-width:0;color:#d92d20;background:#fff;border-color:#f0b8b3}
+            #recordDrawerLayer[data-record-workflow-action="approve"] #recordDrawerReject:hover{color:#b42318;background:#fff5f4;border-color:#d92d20}
+            #recordDrawerLayer[data-record-workflow-action="approve"] #recordDrawerPrimary{min-width:0;display:inline-flex;align-items:center;justify-content:center;gap:5px}
+            #recordDrawerLayer[data-record-workflow-action="approve"] #recordDrawerPrimary::before{content:"check";font-family:"Material Symbols Outlined";font-size:17px}
+            #recordDrawerLayer[data-record-workflow-action="approve"] .record-drawer-button .material-symbols-outlined{font-size:17px}
+            #recordDrawerLayer[data-record-workflow-action="approve"] .record-approval-decision .record-decision-group,
+            #recordDrawerLayer[data-record-workflow-action="approve"] .record-approval-decision .record-workflow-field{display:none}
+            #recordDrawerLayer[data-record-workflow-action="approve"] .record-approval-decision .record-detail-section-title{font-size:0}
+            #recordDrawerLayer[data-record-workflow-action="approve"] .record-approval-decision .record-detail-section-title::after{content:"审批意见";font-size:13px}
+        }
         @media (prefers-reduced-motion:reduce){.record-drawer{animation:none}.record-drawer-close,.record-drawer-button{transition:none}}
         /* 全局客户名称悬浮提示，fixed 定位避免被表格行遮挡 */
         .cust-global-tooltip{position:fixed;z-index:9999;background:#1f2937;color:#f3f4f6;padding:6px 10px;border-radius:6px;font-size:12px;line-height:1.5;max-width:260px;white-space:normal;word-break:break-all;pointer-events:none;opacity:0;transition:opacity .15s;box-shadow:0 4px 12px rgba(0,0,0,.15)}
@@ -3907,7 +3929,15 @@
                 </div>
             </div>
             <footer class="record-drawer-footer">
+                <div class="record-mobile-approval-composer" id="recordMobileApprovalComposer" hidden>
+                    <div class="record-mobile-approval-input-wrap">
+                        <input class="record-mobile-approval-input" type="text" id="recordMobileApprovalOpinion" placeholder="请填写审批意见" aria-label="审批意见">
+                        <button class="record-mobile-approval-attachment" type="button" id="recordMobileApprovalAttachment" aria-label="添加审批附件" title="添加审批附件"><span class="material-symbols-outlined" aria-hidden="true">attach_file</span></button>
+                    </div>
+                    <div class="record-mobile-attachment-status" id="recordMobileAttachmentStatus" hidden></div>
+                </div>
                 <button type="button" class="record-drawer-button" id="recordDrawerSecondary" data-record-drawer-close>关闭</button>
+                <button type="button" class="record-drawer-button" id="recordDrawerReject" hidden><span class="material-symbols-outlined" aria-hidden="true">close</span>驳回</button>
                 <button type="button" class="record-drawer-button primary" id="recordDrawerPrimary" hidden></button>
             </footer>
         </section>
@@ -7760,8 +7790,16 @@
         document.getElementById('recordDrawerSubtitle').hidden = isView;
         var secondary = document.getElementById('recordDrawerSecondary');
         var primary = document.getElementById('recordDrawerPrimary');
+        var reject = document.getElementById('recordDrawerReject');
+        var mobileComposer = document.getElementById('recordMobileApprovalComposer');
         secondary.textContent = isView ? '关闭' : '取消';
+        secondary.hidden = false;
         primary.hidden = isView;
+        reject.hidden = true;
+        mobileComposer.hidden = true;
+        document.getElementById('recordMobileApprovalOpinion').value = '';
+        document.getElementById('recordMobileAttachmentStatus').hidden = true;
+        document.getElementById('recordDrawerLayer').removeAttribute('data-record-workflow-action');
         document.getElementById('recordWorkflowError').hidden = true;
     }
 
@@ -8475,6 +8513,11 @@
 
         function syncWorkflowAttachments() {
             if (activeRecordWorkflow) activeRecordWorkflow.approvalAttachments = selectedFiles.slice();
+            var mobileStatus = document.getElementById('recordMobileAttachmentStatus');
+            if (mobileStatus) {
+                mobileStatus.hidden = selectedFiles.length === 0;
+                mobileStatus.textContent = selectedFiles.length ? '已添加 ' + selectedFiles.length + ' 个附件' : '';
+            }
         }
 
         function renderFiles() {
@@ -8679,6 +8722,7 @@
         renderRecordApprovalTimeline(timeline, buildRecordApprovalSteps(data));
         timelineSection.appendChild(timeline);
         var decisionSection = createApproveSection(container, '审批决定', 'how_to_reg');
+        decisionSection.classList.add('record-approval-decision');
         var group = createRecordWorkflowElement('div', 'record-decision-group');
         [['approve', '审批通过'], ['reject', '审批驳回']].forEach(function(optionData) {
             var option = createRecordWorkflowElement('label', 'record-decision-option');
@@ -8732,8 +8776,16 @@
         if (action === 'resubmit') renderResubmitWorkflow(content, data);
         if (action === 'approve') renderApproveWorkflow(content, data);
         var primary = document.getElementById('recordDrawerPrimary');
-        primary.textContent = config.primary;
+        var isMobileApproval = action === 'approve' && window.innerWidth <= 600;
+        var secondary = document.getElementById('recordDrawerSecondary');
+        var reject = document.getElementById('recordDrawerReject');
+        var mobileComposer = document.getElementById('recordMobileApprovalComposer');
+        layer.dataset.recordWorkflowAction = action;
+        primary.textContent = isMobileApproval ? '同意' : config.primary;
         primary.hidden = false;
+        secondary.hidden = isMobileApproval;
+        reject.hidden = !isMobileApproval;
+        mobileComposer.hidden = !isMobileApproval;
         layer.hidden = false;
         layer.setAttribute('aria-hidden', 'false');
         var drawerBody = layer.querySelector('.record-drawer-body');
@@ -8761,15 +8813,38 @@
         return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate()) + ' ' + pad(date.getHours()) + ':' + pad(date.getMinutes());
     }
 
-    function submitRecordWorkflow() {
+    function getRecordApprovalOpinionInput() {
+        if (activeRecordWorkflow && activeRecordWorkflow.action === 'approve' && !document.getElementById('recordMobileApprovalComposer').hidden) {
+            return document.getElementById('recordMobileApprovalOpinion');
+        }
+        return document.getElementById('recordApprovalOpinion');
+    }
+
+    function selectRecordApprovalDecision(decision) {
+        var radio = document.querySelector('input[name="recordApprovalDecision"][value="' + decision + '"]');
+        if (radio) radio.checked = true;
+    }
+
+    function submitRecordWorkflow(decisionOverride) {
         if (!activeRecordWorkflow) return;
         var error = document.getElementById('recordWorkflowError');
+        if (activeRecordWorkflow.action === 'approve' && decisionOverride) selectRecordApprovalDecision(decisionOverride);
         if (activeRecordWorkflow.action === 'approve' && !document.querySelector('input[name="recordApprovalDecision"]:checked')) {
             error.textContent = '请选择审批决定后再提交。';
             error.hidden = false;
             var firstDecision = document.querySelector('input[name="recordApprovalDecision"]');
             if (firstDecision) firstDecision.focus();
             return;
+        }
+        if (activeRecordWorkflow.action === 'approve' && !document.getElementById('recordMobileApprovalComposer').hidden) {
+            var mobileOpinion = getRecordApprovalOpinionInput();
+            if (!mobileOpinion.value.trim()) {
+                error.textContent = '请填写审批意见后再提交。';
+                error.hidden = false;
+                mobileOpinion.focus();
+                return;
+            }
+            document.getElementById('recordApprovalOpinion').value = mobileOpinion.value.trim();
         }
         var required = Array.from(document.querySelectorAll('#recordDrawerWorkflow [data-workflow-required="true"]')).find(function(field) {
             return !String(field.value || '').trim();
@@ -8784,7 +8859,7 @@
             var approvalDecision = document.querySelector('input[name="recordApprovalDecision"]:checked');
             activeRecordWorkflow.row._submittedApproval = {
                 decision: approvalDecision.value,
-                opinion: document.getElementById('recordApprovalOpinion').value.trim(),
+                opinion: getRecordApprovalOpinionInput().value.trim(),
                 attachments: (activeRecordWorkflow.approvalAttachments || []).map(function(file) {
                     return { name: file.name, size: file.size, type: file.type, sourceFile: file };
                 }),
@@ -8892,7 +8967,15 @@
                 closeRecordRevokeDialog();
             }
         });
-        document.getElementById('recordDrawerPrimary').addEventListener('click', submitRecordWorkflow);
+        document.getElementById('recordDrawerPrimary').addEventListener('click', function() {
+            var mobileApprove = activeRecordWorkflow && activeRecordWorkflow.action === 'approve' && !document.getElementById('recordMobileApprovalComposer').hidden;
+            submitRecordWorkflow(mobileApprove ? 'approve' : null);
+        });
+        document.getElementById('recordDrawerReject').addEventListener('click', function() { submitRecordWorkflow('reject'); });
+        document.getElementById('recordMobileApprovalAttachment').addEventListener('click', function() {
+            var attachmentInput = document.getElementById('recordApprovalAttachments');
+            if (attachmentInput) attachmentInput.click();
+        });
         document.querySelectorAll('[data-record-revoke-close]').forEach(function(control) {
             control.addEventListener('click', closeRecordRevokeDialog);
         });

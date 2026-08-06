@@ -12,6 +12,18 @@ function setupRecords() {
   return loaded;
 }
 
+function setupMobileRecords() {
+  const loaded = loadV2Dom({
+    beforeParse(window) {
+      Object.defineProperty(window, 'innerWidth', { configurable: true, value: 390 });
+    }
+  });
+  loaded.window.initRecordDownloadActions();
+  loaded.window.initRecordActionTips();
+  loaded.window.initRecordDetailDrawer();
+  return loaded;
+}
+
 function clickAction(document, window, actionName) {
   const action = document.querySelector(`[data-record-action="${actionName}"]`);
   assert.ok(action, `${actionName}操作应存在`);
@@ -368,6 +380,40 @@ test('审核抽屉展示完整判断依据并要求主动选择审批决定', ()
     assert.equal(downloadedFiles.at(-1).name, '客户情况说明.pdf');
   } finally {
     window.HTMLAnchorElement.prototype.click = originalAnchorClick;
+    dom.window.close();
+  }
+});
+
+test('移动端审核将审批意见、附件和同意操作收纳在固定页脚', () => {
+  const { dom, document, window } = setupMobileRecords();
+  try {
+    const approveAction = clickAction(document, window, 'approve');
+    const layer = document.getElementById('recordDrawerLayer');
+    const mobileComposer = document.getElementById('recordMobileApprovalComposer');
+    const primary = document.getElementById('recordDrawerPrimary');
+    const reject = document.getElementById('recordDrawerReject');
+    assert.equal(layer.dataset.recordWorkflowAction, 'approve');
+    assert.equal(mobileComposer.hidden, false);
+    assert.equal(document.getElementById('recordDrawerSecondary').hidden, true);
+    assert.equal(reject.hidden, false);
+    assert.equal(primary.textContent, '同意');
+    assert.ok(document.querySelector('.record-approval-decision'));
+
+    const attachmentInput = document.getElementById('recordApprovalAttachments');
+    const attachment = new window.File(['mobile-approval'], '移动端审批依据.pdf', { type: 'application/pdf', lastModified: 1 });
+    Object.defineProperty(attachmentInput, 'files', { configurable: true, value: [attachment] });
+    attachmentInput.dispatchEvent(new window.Event('change', { bubbles: true }));
+    assert.match(document.getElementById('recordMobileAttachmentStatus').textContent, /已添加 1 个附件/);
+
+    document.getElementById('recordMobileApprovalOpinion').value = '移动端核验完成，同意开通';
+    primary.click();
+    assert.equal(layer.hidden, true);
+    assert.match(document.getElementById('recordActionToastText').textContent, /审批通过已提交/);
+    const submitted = approveAction.closest('tr')._submittedApproval;
+    assert.equal(submitted.decision, 'approve');
+    assert.equal(submitted.opinion, '移动端核验完成，同意开通');
+    assert.equal(submitted.attachments[0].name, '移动端审批依据.pdf');
+  } finally {
     dom.window.close();
   }
 });
