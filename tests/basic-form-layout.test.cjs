@@ -6,7 +6,7 @@
  * 目标：验证 `测试设备授权平台V2.html` 中「申请产品授权」Tab 下的
  * 基本信息表单，符合已确认的新版卡片布局结构：
  *  - 外层容器带 basic-info-section
- *  - 标题下包含 basic-title-accent 强调线
+ *  - 标题左侧带蓝色竖线强调
  *  - 产品线+版本使用 basic-two-col-row 两列布局
  *  - 申请类型与授权场景各自使用 basic-full-row 全行布局
  *  - 区域+办事处使用标准两列布局
@@ -116,14 +116,18 @@ test('基本信息外层容器应带 basic-info-section 类', () => {
   );
 });
 
-test('基本信息标题下应包含 basic-title-accent 强调线', () => {
+test('基本信息标题左侧应带蓝色竖线强调', () => {
   const section = sectionBasic.closest('.basic-info-section');
   const title = section.querySelector('.section-title');
   assert.ok(title, '基本信息标题应存在');
   assert.strictEqual(title.textContent.trim(), '基本信息');
   assert.ok(
-    title.nextElementSibling?.classList.contains('basic-title-accent'),
-    '基本信息标题下应紧跟 .basic-title-accent'
+    !title.nextElementSibling?.classList.contains('basic-title-accent'),
+    '基本信息标题下不应再使用 basic-title-accent 横条'
+  );
+  assert.ok(
+    elementHasCssProperty(title, 'border-left', /3px\s*solid\s*#0050cb/),
+    '基本信息标题左侧应有 3px 蓝色竖线'
   );
 });
 
@@ -158,15 +162,15 @@ test('桌面端基础布局与标题强调线应符合样式合同', () => {
     '.basic-full-row 应为单列，使字段输入框占满整行'
   );
 
-  const accentRules = getCssRuleBodies('.basic-title-accent');
-  assert.ok(accentRules.length > 0, '.basic-title-accent 应有样式规则');
+  const titleRules = getCssRuleBodies('.special-form-section .section-title');
+  assert.ok(titleRules.length > 0, '.special-form-section .section-title 应有样式规则');
   assert.ok(
-    accentRules.some((body) => {
-      const height = getCssProperty(body, 'height');
-      const background = getCssProperty(body, 'background') || getCssProperty(body, 'background-color');
-      return /^(?!0(?:px|rem|em)?$)\d*\.?\d+(?:px|rem|em)$/.test(height) && background.length > 0;
+    titleRules.some((body) => {
+      const borderLeft = getCssProperty(body, 'border-left');
+      const borderLeftColor = getCssProperty(body, 'border-left-color') || borderLeft;
+      return /3px\s*solid\s*#0050cb/.test(borderLeft) || /#0050cb/.test(borderLeftColor);
     }),
-    '.basic-title-accent 应有可见高度和背景'
+    '.special-form-section .section-title 左侧应有 3px 蓝色竖线'
   );
 });
 

@@ -1373,49 +1373,111 @@
                             </div>
                         </div>
 
-                        <!-- 7. 上网行为管理 -->
-                        <div class="module-item" id="module-AC" data-module="上网行为管理">
+                        <!-- 7. AC 授权模块 -->
+                        <div class="module-item" id="module-AC-gateway" data-module="AC网关序列号">
                             <div class="module-head">
-                                <div class="toggle-switch active" data-target="module-AC"></div>
-                                <span class="module-name">上网行为管理</span>
-                                <span class="module-count">14个参数</span>
+                                <div class="toggle-switch active" data-target="module-AC-gateway"></div>
+                                <span class="module-name">网关序列号</span>
+                                <span class="module-count">3个参数</span>
                                 <span class="module-status on">已启用</span>
                                 <span class="module-chevron collapsed">▼</span>
                             </div>
                             <div class="module-body hidden">
                                 <div class="module-grid">
-                                    <div class="grid-field"><span class="gf-label">2Gbps带宽</span><div class="gf-val"><input type="text" name="ACvAC-2000" value="10"></div></div>
-                                    <div class="grid-field"><span class="gf-label">1Gbps带宽</span><div class="gf-val"><input type="text" name="ACvAC-1000" value="10"></div></div>
-                                    <div class="grid-field"><span class="gf-label">700Mbps带宽</span><div class="gf-val"><input type="text" name="ACvAC-700" value="10"></div></div>
-                                    <div class="grid-field"><span class="gf-label">500Mbps带宽</span><div class="gf-val"><input type="text" name="ACvAC-500" value="10"></div></div>
-                                    <div class="grid-field"><span class="gf-label">300Mbps带宽</span><div class="gf-val"><input type="text" name="ACvAC-300" value="10"></div></div>
-                                    <div class="grid-field"><span class="gf-label">200Mbps带宽</span><div class="gf-val"><input type="text" name="ACvAC-200" value="10"></div></div>
-                                    <div class="grid-field"><span class="gf-label">100Mbps带宽</span><div class="gf-val"><input type="text" name="ACvAC-100" value="10"></div></div>
-                                    <div class="grid-field"><span class="gf-label">50Mbps带宽</span><div class="gf-val"><input type="text" name="ACvAC-50" value="10"></div></div>
-                                    <div class="grid-field"><span class="gf-label">线路数</span><div class="gf-val"><input type="text" name="ACac_lines" value="100"></div></div>
-                                    <div class="grid-field"><span class="gf-label">移动用户数</span><div class="gf-val"><input type="text" name="ACac_users" value="100"></div></div>
-                                    <div class="grid-field"><span class="gf-label">支持AP数</span><div class="gf-val"><input type="text" name="ACac_wireless_ap" value="100"></div></div>
-                                    <div class="grid-field"><span class="gf-label">分支数</span><div class="gf-val"><input type="text" name="ACac_branch" value="100"></div></div>
-                                    <div class="grid-field"><span class="gf-label">服务到期时间</span><div class="gf-val"><input type="text" name="AC_service_time" value="2026-07-04"></div></div>
-                                    <div class="grid-field"><span class="gf-label">软件到期时间</span><div class="gf-val"><input type="text" name="AC_soft_time" value="2026-07-04"></div></div>
+                                    <div class="grid-field"><span class="gf-label">线路数</span><div class="gf-val"><input type="text" name="AC_gateway_lines" value="10"></div></div>
+                                    <div class="grid-field"><span class="gf-label">分支数</span><div class="gf-val"><input type="text" name="AC_gateway_branch" value="10"></div></div>
+                                    <div class="grid-field"><span class="gf-label">移动数</span><div class="gf-val"><input type="text" name="AC_gateway_mobile" value="10"></div></div>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="module-item" id="module-AC-multi" data-module="AC多功能序列号">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-AC-multi"></div>
+                                <span class="module-name">多功能序列号</span>
+                                <span class="module-count">7个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron collapsed">▼</span>
+                            </div>
+                            <div class="module-body hidden">
                                 <div class="module-features">
-                                    <span class="fl">功能：</span>
-                                    <span class="feat-pill off">× 防泄密外发审计序列号</span>
-                                    <span class="feat-pill off">× 上网代理</span>
-                                    <span class="feat-pill on">✓ 终端接入安全序列号</span>
-                                    <span class="feat-pill on">✓ 无线管理</span>
-                                    <span class="feat-pill off">× 软件升级</span>
-                                    <span class="feat-pill off">× 应用识别/URL库更新序列号</span>
-                                    <span class="feat-pill off">× 网关杀毒</span>
                                     <span class="feat-pill on">✓ SSL内容识别</span>
-                                    <span class="feat-pill off">× 日志中心DKey查询</span>
-                                    <span class="feat-pill off">× 个人通信内容审计</span>
-                                    <span class="feat-pill off">× 内容审计</span>
+                                    <span class="feat-pill on">✓ 日志中心DKey查询</span>
+                                    <span class="feat-pill on">✓ 应用审计</span>
+                                    <span class="feat-pill on">✓ 个人通信内容审计</span>
+                                    <span class="feat-pill on">✓ 内容审计</span>
                                     <span class="feat-pill on">✓ 行为审计</span>
-                                    <span class="feat-pill off">× VPN配置</span>
-                                    <span class="feat-pill off">× 跨运营商</span>
-                                    <span class="feat-pill off">× 网安</span>
+                                    <span class="feat-pill on">✓ VPN通道</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="module-item" id="module-AC-internet" data-module="AC上网安全授权序列号">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-AC-internet"></div>
+                                <span class="module-name">上网安全授权序列号</span>
+                                <span class="module-count">1个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron collapsed">▼</span>
+                            </div>
+                            <div class="module-body hidden">
+                                <div class="module-grid">
+                                    <div class="grid-field"><span class="gf-label">上网安全授权序列号</span><div class="gf-val"><input type="text" name="AC_internet_security_auth" value="2026-09-09"></div></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="module-item" id="module-AC-appurl" data-module="AC应用识别URL库更新序列号">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-AC-appurl"></div>
+                                <span class="module-name">应用识别/URL库更新序列号</span>
+                                <span class="module-count">1个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron collapsed">▼</span>
+                            </div>
+                            <div class="module-body hidden">
+                                <div class="module-grid">
+                                    <div class="grid-field"><span class="gf-label">应用识别/URL库更新序列号</span><div class="gf-val"><input type="text" name="AC_app_url_update" value="2026-09-09"></div></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="module-item" id="module-AC-terminal" data-module="AC终端接入安全序列号">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-AC-terminal"></div>
+                                <span class="module-name">终端接入安全序列号</span>
+                                <span class="module-count">2个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron collapsed">▼</span>
+                            </div>
+                            <div class="module-body hidden">
+                                <div class="module-grid">
+                                    <div class="grid-field"><span class="gf-label">授权终端数</span><div class="gf-val"><input type="text" name="AC_terminal_count" value="1000"></div></div>
+                                    <div class="grid-field"><span class="gf-label">终端接入安全序列号</span><div class="gf-val"><input type="text" name="AC_terminal_auth" value="2026-09-09"></div></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="module-item" id="module-AC-software" data-module="AC软件升级">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-AC-software"></div>
+                                <span class="module-name">软件升级</span>
+                                <span class="module-count">1个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron collapsed">▼</span>
+                            </div>
+                            <div class="module-body hidden">
+                                <div class="module-grid">
+                                    <div class="grid-field"><span class="gf-label">软件升级</span><div class="gf-val"><input type="text" name="AC_software_upgrade" value="2026-09-09"></div></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="module-item" id="module-AC-leak" data-module="AC防泄密外发审计序列号">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-AC-leak"></div>
+                                <span class="module-name">防泄密外发审计序列号</span>
+                                <span class="module-count">1个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron collapsed">▼</span>
+                            </div>
+                            <div class="module-body hidden">
+                                <div class="module-grid">
+                                    <div class="grid-field"><span class="gf-label">防泄密外发审计序列号</span><div class="gf-val"><input type="text" name="AC_leak_audit" value="2026-09-09"></div></div>
                                 </div>
                             </div>
                         </div>
@@ -2181,7 +2243,13 @@
         <div class="module-nav-item enabled" data-target="module-aNET">网络虚拟化</div>
         <div class="module-nav-item enabled" data-target="module-NGAF">下一代防火墙</div>
         <div class="module-nav-item enabled" data-target="module-AD">应用交付</div>
-        <div class="module-nav-item enabled" data-target="module-AC">上网行为管理</div>
+        <div class="module-nav-item enabled" data-target="module-AC-gateway">网关序列号</div>
+        <div class="module-nav-item enabled" data-target="module-AC-multi">多功能序列号</div>
+        <div class="module-nav-item enabled" data-target="module-AC-internet">上网安全授权序列号</div>
+        <div class="module-nav-item enabled" data-target="module-AC-appurl">应用识别/URL库更新序列号</div>
+        <div class="module-nav-item enabled" data-target="module-AC-terminal">终端接入安全序列号</div>
+        <div class="module-nav-item enabled" data-target="module-AC-software">软件升级</div>
+        <div class="module-nav-item enabled" data-target="module-AC-leak">防泄密外发审计序列号</div>
         <div class="module-nav-item enabled" data-target="module-SSL">移动办公</div>
         <div class="module-nav-item enabled" data-target="module-WOC">广域网优化</div>
         <div class="module-nav-item enabled" data-target="module-DAS">数据库审计</div>
@@ -4241,7 +4309,13 @@ function updateXaasFamilyCounts() {
                 { id: 'module-WOC', name: '广域网优化' }
             ],
             '1': [ // AC
-                { id: 'module-AC', name: '上网行为管理' },
+                { id: 'module-AC-gateway', name: '网关序列号' },
+                { id: 'module-AC-multi', name: '多功能序列号' },
+                { id: 'module-AC-internet', name: '上网安全授权序列号' },
+                { id: 'module-AC-appurl', name: '应用识别/URL库更新序列号' },
+                { id: 'module-AC-terminal', name: '终端接入安全序列号' },
+                { id: 'module-AC-software', name: '软件升级' },
+                { id: 'module-AC-leak', name: '防泄密外发审计序列号' },
                 { id: 'module-SSL', name: '移动办公' },
                 { id: 'module-WOC', name: '广域网优化' }
             ],
