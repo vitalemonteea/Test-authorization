@@ -170,7 +170,8 @@ test('V2 新 Tab 完整表现借测单有效、未审批、已归还、已撤销
     assert.equal(document.getElementById('solutionBorrowInfo').hidden, false);
     assert.match(document.getElementById('solutionLockedName').value, /企业云一体化方案/);
     assert.equal(document.getElementById('solutionLockedName').readOnly, true);
-    assert.equal(document.querySelectorAll('#solutionLockedLines .solution-chip').length, 5);
+    assert.equal(document.querySelectorAll('#solutionLockedLines .solution-chip').length, 6);
+    assert.match(document.getElementById('solutionLockedLines').textContent, /SaaS-XDR/, '企业云一体化方案演示设备授权与 XaaS 授权并存');
     assert.equal(document.querySelectorAll('#solutionLockedLines button, #solutionLockedLines input, #solutionLockedLines select').length, 0);
   } finally { dom.window.close(); }
 });
@@ -192,7 +193,7 @@ test('纯软件本地申请只选择启用配置并锁定产品线', () => {
       input.value = `LOCAL-${line}-${index + 1}`;
       input.dispatchEvent(new window.Event('input', { bubbles: true }));
     });
-    assert.equal(document.querySelectorAll('#solutionLockedLines .solution-chip').length, 5);
+    assert.equal(document.querySelectorAll('#solutionLockedLines .solution-chip').length, 6);
     click(document, window, 'solutionPreviewWhole');
     assert.match(document.getElementById('solutionApprovalContent').textContent, /纯软件本地申请/);
   } finally { dom.window.close(); }
@@ -232,6 +233,9 @@ test('全部产品成功后向 V2 现有记录表新增一组解决方案主行�
     assert.notEqual(detail.style.display, 'none');
     assert.match(detail.textContent, /HCI-6\.8\.1-VKEY/);
     assert.match(detail.textContent, /LIC-HCI-806/);
+    assert.match(detail.textContent, /SaaS-XDR 标准版/);
+    assert.match(detail.textContent, /LIC-SaaS-XDR-806/);
+    assert.match(detail.textContent, /云图ID: YT-10010101/);
   } finally { dom.window.close(); }
 });
 
@@ -287,7 +291,7 @@ test('本地 XaaS 申请必须选择带云图身份的客户，缺失产品参�
     const config = document.getElementById('solutionLocalConfig');
     config.value = 'SOL-XAAS-004';
     config.dispatchEvent(new window.Event('change', { bubbles: true }));
-    selectLocalCustomer(document, window, 'C100101');
+    selectLocalCustomer(document, window, 'C100102');
     click(document, window, 'solutionPreviewWhole');
     assert.match(document.getElementById('solutionApprovalContent').textContent, /云图账号和云图ID/);
     selectLocalCustomer(document, window, 'C100106');

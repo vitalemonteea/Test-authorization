@@ -1131,6 +1131,7 @@
         #solutionLocalCustomerInfoDisplay .customer-summary-main { flex: 1; }
         #solutionLocalCustomerInfoDisplay .customer-summary-copy { flex-wrap: nowrap; }
         #solutionLocalCustomerInfoDisplay .customer-summary-name { font-size: 13px; }
+        .solution-borrow-controls { display: flex; align-items: center; gap: 10px; }
         .solution-borrow-controls .solution-select { flex: 1; min-width: 0; }
         .solution-borrow-controls .solution-btn { flex: 0 0 auto; }
         .solution-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px 16px; }
@@ -1247,7 +1248,8 @@
             .solution-form-label { display: block; width: auto; padding: 0 0 6px; }
             #solutionBorrowCustomerInfoDisplay .customer-summary-copy,
             #solutionLocalCustomerInfoDisplay .customer-summary-copy { flex-wrap: wrap; }
-            .solution-borrow-controls { flex-direction: column; }
+            .solution-borrow-controls { flex-direction: column; gap: 8px; }
+            .solution-borrow-controls .solution-btn { width: 100%; }
             .solution-workspace-inner { display: block; }
             .solution-product-nav { display: flex; gap: 5px; overflow-x: auto; border-right: 0; border-bottom: 1px solid #eef1f7; padding: 9px 12px; }
             .solution-product-nav button { flex: 0 0 auto; width: auto; margin: 0; }
@@ -3445,8 +3447,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">企业云一体化方案</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="中国工商银行股份有限公司" title="中国工商银行股份有限公司">中国工商银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-amber-100 text-amber-800 border border-amber-200">KA</span></div></td>
-<td class="py-3 px-4 whitespace-nowrap text-[#424656]"><span class="device-summary" data-full="GW-HCI-001&#10;GW-AC-005&#10;GW-NGAF-003&#10;GW-AD-002&#10;GW-WOC-001">5个设备</span></td>
-<td class="py-3 px-4 whitespace-nowrap text-[#424656]"><span class="device-summary" data-full="SN-HCI-001&#10;SN-AC-005&#10;SN-NGAF-003&#10;SN-AD-002&#10;SN-WOC-001">5个设备</span></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]"><span class="device-summary" data-full="GW-HCI-001&#10;GW-AC-005&#10;GW-NGAF-003&#10;GW-AD-002&#10;GW-WOC-001&#10;YT-10200001">6个设备</span></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]"><span class="device-summary" data-full="SN-HCI-001&#10;SN-AC-005&#10;SN-NGAF-003&#10;SN-AD-002&#10;SN-WOC-001&#10;—">6个设备</span></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">杭州区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-01 ~ 2026-12-28</td>
@@ -3468,6 +3470,7 @@
 <tr class="hover:bg-[#eef4ff]"><td class="py-2 px-3">NGAF</td><td class="py-2 px-3">NGAF-8.0.15</td><td class="py-2 px-3">GW-NGAF-003</td><td class="py-2 px-3">SN-NGAF-003</td><td class="py-2 px-3">上海区</td><td class="py-2 px-3">2026-07-01~2026-12-28</td><td class="py-2 px-3">LIC-NGAF-003</td></tr>
 <tr class="hover:bg-[#eef4ff]"><td class="py-2 px-3">AD</td><td class="py-2 px-3">AD-7.0.8</td><td class="py-2 px-3">GW-AD-002</td><td class="py-2 px-3">SN-AD-002</td><td class="py-2 px-3">上海区</td><td class="py-2 px-3">2026-07-01~2026-12-28</td><td class="py-2 px-3">LIC-AD-002</td></tr>
 <tr class="hover:bg-[#eef4ff]"><td class="py-2 px-3">WOC</td><td class="py-2 px-3">WOC-8.0.5</td><td class="py-2 px-3">GW-WOC-001</td><td class="py-2 px-3">SN-WOC-001</td><td class="py-2 px-3">上海区</td><td class="py-2 px-3">2026-07-01~2026-12-28</td><td class="py-2 px-3">LIC-WOC-001</td></tr>
+<tr class="hover:bg-[#eef4ff]"><td class="py-2 px-3">SaaS-XDR</td><td class="py-2 px-3">SaaS-XDR 标准版</td><td class="py-2 px-3">云图ID: YT-10200001</td><td class="py-2 px-3">—</td><td class="py-2 px-3">上海区</td><td class="py-2 px-3">2026-07-01~2026-12-28</td><td class="py-2 px-3">LIC-SaaS-XDR-001</td></tr>
 </tbody></table></div></div></div></td>
 </tr>
 
@@ -10007,13 +10010,13 @@
             WAF: ['Web 防护', 'CC 防护', '合规审计']
         };
         var configs = [
-            { code: 'SOL-CLOUD-001', name: '企业云一体化方案', productLines: ['HCI', 'AC', 'NGAF', 'AD', 'WOC'], status: 'enabled', updatedAt: '2026-08-06 09:30' },
+            { code: 'SOL-CLOUD-001', name: '企业云一体化方案', productLines: ['HCI', 'AC', 'NGAF', 'AD', 'WOC', 'SaaS-XDR'], status: 'enabled', updatedAt: '2026-08-06 09:30' },
             { code: 'SOL-SEC-002', name: '安全态势感知方案', productLines: ['XDR', 'NGAF', 'WAF'], status: 'enabled', updatedAt: '2026-08-05 16:20' },
             { code: 'SOL-XAAS-004', name: '云网安全运营方案', productLines: ['SASE-GA', 'SaaS-XDR'], status: 'enabled', updatedAt: '2026-08-06 10:30' },
             { code: 'SOL-LEGACY-003', name: '旧版云安全方案', productLines: ['HCI', 'WAF'], status: 'disabled', updatedAt: '2026-07-28 10:12' }
         ];
         var borrowOrders = {
-            'BOR-202608-001': { number: 'BOR-202608-001', approvalStatus: '审批通过', returned: false, revoked: false, applicant: '李晓', customer: '华东智造集团有限公司', solutionCode: 'SOL-CLOUD-001', solution: '企业云一体化方案', productLines: ['HCI', 'AC', 'NGAF', 'AD', 'WOC'], devices: { HCI: 'GW-HCI-208', AC: 'GW-AC-512', NGAF: 'GW-NGAF-318', AD: 'GW-AD-209', WOC: 'GW-WOC-115' }, startDate: '2026-08-06', endDate: '2026-11-04', approvalInfo: '资产系统审批通过（Mock）' },
+            'BOR-202608-001': { number: 'BOR-202608-001', approvalStatus: '审批通过', returned: false, revoked: false, applicant: '李晓', customer: '华东智造集团有限公司', solutionCode: 'SOL-CLOUD-001', solution: '企业云一体化方案', productLines: ['HCI', 'AC', 'NGAF', 'AD', 'WOC', 'SaaS-XDR'], devices: { HCI: 'GW-HCI-208', AC: 'GW-AC-512', NGAF: 'GW-NGAF-318', AD: 'GW-AD-209', WOC: 'GW-WOC-115' }, startDate: '2026-08-06', endDate: '2026-11-04', approvalInfo: '资产系统审批通过（Mock）', cloud: { account: 'huadong-admin', tenantId: 'YT-10010101' } },
             'BOR-202608-002': { number: 'BOR-202608-002', approvalStatus: '审批中', returned: false, revoked: false },
             'BOR-202608-005': { number: 'BOR-202608-005', approvalStatus: '审批通过', returned: false, revoked: false, applicant: '陈卓', customer: '星海智联科技有限公司', solutionCode: 'SOL-XAAS-004', solution: '云网安全运营方案', productLines: ['SASE-GA', 'SaaS-XDR'], devices: {}, startDate: '2026-08-08', endDate: '2026-08-23', approvalInfo: '资产系统审批通过（Mock）', cloud: { account: 'xinghai-admin', tenantId: 'YT-10010688' } },
             'BOR-202608-003': { number: 'BOR-202608-003', approvalStatus: '审批通过', returned: true, revoked: false },
@@ -10025,7 +10028,7 @@
         var solutionBorrowCustomer = null;
         var solutionLocalCustomer = null;
         var solutionBorrowCustomers = [
-            { id: 'C100101', name: '华东智造集团有限公司', type: 'KA', sales: '周青', orders: ['BOR-202608-001'] },
+            { id: 'C100101', name: '华东智造集团有限公司', type: 'KA', sales: '周青', orders: ['BOR-202608-001'], cloud: { account: 'huadong-admin', tenantId: 'YT-10010101' } },
             { id: 'C100102', name: '北辰智慧能源有限公司', type: 'normal', sales: '赵凯', orders: ['BOR-202608-002'] },
             { id: 'C100103', name: '苏州新零售集团有限公司', type: 'KA', sales: '林舟', orders: ['BOR-202608-003'] },
             { id: 'C100104', name: '西南智慧物流有限公司', type: 'normal', sales: '陈颖', orders: ['BOR-202608-004'] },
@@ -10425,7 +10428,7 @@
             applyScope(config, order);
             var info = id('solutionBorrowInfo');
             info.hidden = false;
-            info.innerHTML = '<div class="solution-info-grid"><div class="solution-info-item"><small>借测单号</small>' + order.number + '</div><div class="solution-info-item"><small>申请人</small>' + order.applicant + '</div><div class="solution-info-item"><small>客户</small>' + order.customer + '</div><div class="solution-info-item"><small>借测期限</small>' + order.startDate + ' 至 ' + order.endDate + '</div><div class="solution-info-item"><small>资产审批</small>' + order.approvalInfo + '</div><div class="solution-info-item"><small>设备</small>' + order.productLines.length + ' 个产品设备</div></div>';
+            info.innerHTML = '<div class="solution-info-grid"><div class="solution-info-item"><small>借测单号</small>' + order.number + '</div><div class="solution-info-item"><small>申请人</small>' + order.applicant + '</div><div class="solution-info-item"><small>客户</small>' + order.customer + '</div><div class="solution-info-item"><small>借测期限</small>' + order.startDate + ' 至 ' + order.endDate + '</div><div class="solution-info-item"><small>资产审批</small>' + order.approvalInfo + '</div><div class="solution-info-item"><small>产品/服务</small>' + order.productLines.length + ' 个产品/服务</div></div>';
         }
         function selectLocalSolution() {
             resetApplication();

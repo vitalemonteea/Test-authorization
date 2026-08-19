@@ -70,7 +70,7 @@ test('多设备记录悬浮展开设备ID明细', () => {
       assert.ok(summary.getAttribute('data-full').includes('\n'), '明细应为多行设备ID');
     });
 
-    const solutionSummary = summaries.find((el) => el.textContent.trim() === '5个设备');
+    const solutionSummary = summaries.find((el) => el.textContent.trim() === '6个设备');
     solutionSummary.dispatchEvent(new window.MouseEvent('mouseenter'));
     const tooltip = document.getElementById('recordsActionTooltip');
     assert.ok(tooltip.classList.contains('show'));
@@ -467,7 +467,7 @@ test('授权记录表新增设备SN与云授权ID两列', () => {
     const solutionRow = rows.find((row) => row.textContent.includes('SOL-20260701-001'));
     const snSummary = solutionRow.cells[7].querySelector('.device-summary');
     assert.ok(snSummary, '方案行 SN 列应为悬浮展开入口');
-    assert.equal(snSummary.textContent.trim(), '5个设备');
+    assert.equal(snSummary.textContent.trim(), '6个设备');
     ['SN-HCI-001', 'SN-AC-005', 'SN-NGAF-003', 'SN-AD-002', 'SN-WOC-001'].forEach((sn) => {
       assert.ok(snSummary.getAttribute('data-full').includes(sn), `SN 明细应包含 ${sn}`);
     });

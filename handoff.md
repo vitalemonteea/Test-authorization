@@ -161,3 +161,24 @@ git diff --check
 - 桌面端和移动端无重叠、溢出或不可操作控件。
 
 若用户要求打包，必须按 `AGENTS.md` 使用 `web-mock-build-deploy`，打包入口重命名为 `index.html` 并包含全部静态资源。
+
+## 11. 改动历史
+
+### 2026-08-19 为「企业云一体化方案」补充 SaaS-XDR 授权，演示设备+XaaS 重叠场景
+
+背景：业务上同一解决方案可同时存在设备授权（产品线授权）与 XaaS 授权。此前 mock 数据全部同质化（SOL-CLOUD-001/SOL-SEC-002 纯设备，SOL-XAAS-004 纯 XaaS），缺一个"设备 + XaaS 并存"的样例。代码本身已支持混合方案（`isXaasLine()`、工作台按产品线渲染、含 XaaS 线时校验客户云图身份），本次只补齐 mock 数据与展示。
+
+改动：
+
+- `测试设备授权平台V2.html`
+  - `configs` 中 `SOL-CLOUD-001 企业云一体化方案` 的 `productLines` 加入 `'SaaS-XDR'`（现 6 行：HCI/AC/NGAF/AD/WOC + SaaS-XDR）。
+  - `borrowOrders` 中 `BOR-202608-001` 的 `productLines` 同步加入 `'SaaS-XDR'`，并补 `cloud: { account: 'huadong-admin', tenantId: 'YT-10010101' }`（保持一致的原 5 台设备不变）。
+  - `solutionBorrowCustomers` 中 `C100101 华东智造集团有限公司` 补 `cloud: { account: 'huadong-admin', tenantId: 'YT-10010101' }`（单云图账号自动关联，行为与 C100106 一致）。
+  - 授权记录 tab 的既有 Solution 1（SOL-20260701-001）展开明细追加一条 SaaS-XDR 行（版本 `SaaS-XDR 标准版`、设备ID `云图ID: YT-10200001`、授权码 `LIC-SaaS-XDR-001`），主行汇总由 `5个设备` 改 `6个设备`（口径与运行时生成的 SOL 记录一致）。
+  - `lookupBorrowOrder` 借测信息统计文案由「个产品设备」改为「个产品/服务」（XaaS 非设备）。
+  - 布局微调：`.solution-borrow-controls` 显式声明 `display:flex` 并补 `gap:10px`（桌面端），解决「查询并关联」按钮与借测单下拉近距离贴合；移动端纵向排列时补 `gap:8px` 且按钮 `width:100%`。
+- `prototype-授权记录列表.html`：Solution 1（SOL-20260701-001）展开明细追加相同 SaaS-XDR 行，汇总改 `6个设备`。
+- `tests/solution-authorization-demo.test.cjs`：SOL-CLOUD-001 相关产品线 chip 断言 `5 → 6`；补 "设备 + XaaS 并存"（含 SaaS-XDR chip）断言；整单成功记录断言补 `LIC-SaaS-XDR-806` 与 `云图ID: YT-10010101`；负例客户（无云图身份）由 `C100101` 改为 `C100102`（因 C100101 已具备云图身份）。
+- `tests/records-columns.test.cjs`：Solution 1 悬浮/SN 汇总断言由 `5个设备` 改为 `6个设备`（随静态记录同步）。
+
+注意：`C100101 华东智造` 已具备云图身份，后续若需"无云图身份客户"作反例，请用 `C100102/C100103/C100104/C100105`。
