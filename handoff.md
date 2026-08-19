@@ -216,4 +216,5 @@ git diff --check
   - §9.1 已确认结论：追加「设备与 XaaS 并存」结论行（序号 13）。
   - §10 验收口径：补并存与云图身份的验收口径。
 - `docs/解决方案型测试授权申请需求方案.docx`：以更新后的 md 为源，用 docx-js 重新生成（标题保留「解决方案型测试授权申请需求方案」），内容与 md 对齐；XML 已校验 well-formed，全部 md 文本内容均已落入 docx（仅 md 文件自身 H1 标题替换为需求方案标题、mermaid 流程块合并为单段）。
-- 注：仓库中旧 `解决方案型测试授权申请概要方案.docx` 已被用户删除（git D 状态）；本次未恢复，仅保留《需求方案.docx》。PR 链接登记见下文 §11.1。
+- 注：仓库中旧 `解决方案型测试授权申请概要方案.docx` 已被用户删除（git D 状态）；本次未恢复，仅保留《需求方案.docx》。
+- PR：https://github.com/vitalemonteea/Test-authorization/pull/1（已合并，fast-forward）。
