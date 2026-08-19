@@ -1094,24 +1094,45 @@
         #content-solution * { box-sizing: border-box; }
         #content-solution [hidden] { display: none !important; }
         .solution-page { width: 100%; max-width: 900px; margin: 0 auto; padding: 4px 0 40px; }
-        .solution-page-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; margin: 4px 0 14px; }
-        .solution-page-head h1 { margin: 0; color: #1a1a2e; font-size: 20px; line-height: 30px; font-weight: 600; }
-        .solution-page-head p { margin: 3px 0 0; color: #687386; font-size: 13px; line-height: 20px; }
+        .solution-page-head { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin: 0 0 12px; padding: 0 4px; }
+        .solution-page-head h1 { margin: 0; color: #1a1a2e; font-size: 16px; line-height: 24px; font-weight: 600; }
+        .solution-page-head p { margin: 2px 0 0; color: #778194; font-size: 12px; line-height: 18px; }
         #content-solution .special-form-section { max-width: 900px; }
         #content-solution .section-title { display: flex; align-items: center; gap: 8px; padding-left: 12px; border-left: 3px solid #0050cb; line-height: 1.3; }
-        .solution-step-no { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; color: #fff; background: #0050cb; font-size: 12px; font-weight: 600; }
+        .solution-step-no { display: none; }
         .solution-lock-note { display: inline-flex; align-items: center; gap: 4px; margin-left: auto; color: #8a5a0b; font-size: 12px; font-weight: 400; }
         .solution-lock-note .material-symbols-outlined { font-size: 15px; }
         .solution-hint-note { color: #687386; }
         .solution-card-body { padding: 0; }
-        .solution-borrow-field { max-width: 620px; }
-        .solution-borrow-controls { display: flex; gap: 10px; }
+        .solution-form-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px 36px; max-width: 860px; margin: 0 auto 18px; }
+        .solution-form-row { display: flex; align-items: flex-start; min-width: 0; }
+        .solution-form-row-full { grid-column: 1 / -1; }
+        .solution-form-label { width: 120px; flex: 0 0 120px; padding: 9px 0; color: #0b1c30; font-size: 14px; font-weight: 600; line-height: 20px; }
+        .solution-form-control { flex: 1; min-width: 0; }
+        .solution-form-control .solution-input,
+        .solution-form-control .solution-select { min-height: 40px; border-color: #e5eeff; }
+        .solution-form-control .solution-input:hover,
+        .solution-form-control .solution-select:hover { border-color: #c2c6d8; }
+        .solution-form-control .search-select-box { width: 100%; max-width: none; }
+        .solution-form-control .solution-btn { min-height: 40px; }
+        .solution-borrow-query-grid { margin-bottom: 14px; }
+        #solutionBorrowCustomerField.has-selection .search-select-box { display: none; }
+        #solutionBorrowCustomerInfoDisplay { min-height: 40px; padding-top: 6px; padding-bottom: 6px; }
+        #solutionBorrowCustomerInfoDisplay .customer-summary-main { flex: 1; }
+        #solutionBorrowCustomerInfoDisplay .customer-summary-copy { flex-wrap: nowrap; }
+        #solutionBorrowCustomerInfoDisplay .customer-summary-name { font-size: 13px; }
+        #solutionBorrowCustomerInfoDisplay .sales-person-badge,
+        #solutionBorrowCustomerInfoDisplay .customer-type-badge,
+        #solutionLocalCustomerInfoDisplay .sales-person-badge,
+        #solutionLocalCustomerInfoDisplay .customer-type-badge { flex: 0 0 auto; white-space: nowrap; writing-mode: horizontal-tb; }
+        .solution-customer-cloud { min-width: 0; overflow: hidden; color: #687386; font-size: 12px; line-height: 18px; text-overflow: ellipsis; white-space: nowrap; }
+        #solutionLocalCustomerField.has-selection .search-select-box { display: none; }
+        #solutionLocalCustomerInfoDisplay { min-height: 40px; padding-top: 6px; padding-bottom: 6px; }
+        #solutionLocalCustomerInfoDisplay .customer-summary-main { flex: 1; }
+        #solutionLocalCustomerInfoDisplay .customer-summary-copy { flex-wrap: nowrap; }
+        #solutionLocalCustomerInfoDisplay .customer-summary-name { font-size: 13px; }
         .solution-borrow-controls .solution-select { flex: 1; min-width: 0; }
         .solution-borrow-controls .solution-btn { flex: 0 0 auto; }
-        .solution-source-tabs { display: inline-flex; gap: 6px; margin-bottom: 16px; padding: 4px; border-radius: 12px; background: #e8edf8; }
-        .solution-source-tab { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; padding: 0 16px; border: 0; border-radius: 9px; color: #536177; background: transparent; cursor: pointer; font-size: 13px; }
-        .solution-source-tab .material-symbols-outlined { font-size: 17px; }
-        .solution-source-tab.is-active { color: #0050cb; background: #fff; font-weight: 600; box-shadow: 0 1px 3px rgba(9,23,45,.14); }
         .solution-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px 16px; }
         .solution-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .solution-field { min-width: 0; }
@@ -1130,34 +1151,35 @@
         .solution-btn.danger { color: #ba1a1a; border-color: #ebc7c3; background: #fff5f4; }
         .solution-lookup-state { margin-top: 12px; padding: 10px 12px; border: 1px solid #efd89b; border-radius: 8px; color: #754f08; background: #fff8e7; font-size: 13px; line-height: 20px; }
         .solution-lookup-state.error { color: #9d3028; border-color: #efc9c5; background: #fff5f4; }
-        .solution-info-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 14px; }
+        .solution-info-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; max-width: 860px; margin: 14px auto 0; }
         .solution-info-item { padding: 10px 12px; border: 1px solid #e6ecf7; border-radius: 8px; background: #fff; font-size: 13px; }
         .solution-info-item small { display: block; margin-bottom: 4px; color: #778194; font-size: 12px; }
         .solution-chip-list { display: flex; flex-wrap: wrap; gap: 6px; min-height: 38px; align-items: center; }
         .solution-chip { display: inline-flex; align-items: center; min-height: 26px; padding: 2px 10px; border: 1px solid #c9d9f5; border-radius: 14px; color: #0050cb; background: #eff4ff; font-size: 12px; }
         .solution-field.solution-field-full { grid-column: 1 / -1; }
-        .solution-checkbox-group { display: flex; flex-wrap: wrap; gap: 8px 14px; min-height: 38px; align-items: center; padding: 4px 0; }
-        .solution-checkbox { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border: 1px solid #d8dee9; border-radius: 8px; background: #fff; color: #2a3342; font-size: 13px; cursor: pointer; user-select: none; transition: border-color .15s, background .15s, color .15s; }
-        .solution-checkbox input { margin: 0; accent-color: #0050cb; }
+        .solution-checkbox-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(138px, 1fr)); gap: 8px; width: 100%; min-height: 48px; padding: 8px; border: 1px solid #e0e8f5; border-radius: 8px; background: #f8faff; }
+        #content-solution .solution-field label.solution-checkbox { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 6px; min-height: 34px; margin: 0; padding: 0 10px; border: 1px solid #d8dee9; border-radius: 6px; background: #fff; color: #2a3342; font-size: 13px; line-height: 16px; cursor: pointer; user-select: none; transition: border-color .15s, background .15s, color .15s; white-space: nowrap; }
+        .solution-checkbox input[type="checkbox"] { display: block; flex: 0 0 16px; width: 16px !important; height: 16px !important; margin: 0 !important; accent-color: #0050cb; }
+        .solution-checkbox span { display: flex; align-items: center; min-height: 16px; }
         .solution-checkbox:has(input:checked) { border-color: #0050cb; background: #eff4ff; color: #0050cb; font-weight: 500; }
-        .solution-file-input { display: flex; align-items: center; gap: 10px; min-height: 38px; }
+        .solution-file-input { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 48px; padding: 5px 8px; border: 1px solid #d8dee9; border-radius: 8px; background: #fff; }
         .solution-file-btn { display: inline-flex; align-items: center; gap: 5px; padding: 0 14px; min-height: 36px; border: 1px solid #0050cb; border-radius: 8px; color: #0050cb; background: #fff; cursor: pointer; font-size: 13px; }
         .solution-file-btn:hover { background: #eff4ff; }
         .solution-file-btn .material-symbols-outlined { font-size: 18px; }
-        .solution-file-name { color: #536177; font-size: 13px; }
+        .solution-file-name { min-width: 0; overflow: hidden; color: #536177; font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
         .solution-file-name.empty { color: #9aa6b5; }
         .solution-file-input input[type=file] { display: none; }
-        .solution-workspace-inner { display: grid; grid-template-columns: 190px minmax(0, 1fr); overflow: hidden; border: 1px solid #e6ecf7; border-radius: 10px; background: #fff; }
-        .solution-product-nav { padding: 10px; border-right: 1px solid #eef1f7; background: #fafbff; }
+        .solution-workspace-inner { display: grid; grid-template-columns: 180px minmax(0, 1fr); max-width: 860px; margin: 0 auto; overflow: hidden; border: 1px solid #e5eeff; border-radius: 8px; background: #fff; }
+        .solution-product-nav { padding: 10px; border-right: 1px solid #e5eeff; background: #fafbff; }
         .solution-product-nav button { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 36px; margin: 2px 0; padding: 0 10px; border: 1px solid transparent; border-radius: 8px; color: #536177; background: transparent; cursor: pointer; font-size: 13px; }
         .solution-product-nav button small { color: #9aa4b5; }
         .solution-product-nav button.is-active { color: #0050cb; border-color: #d4e1f9; background: #eff4ff; font-weight: 600; }
-        .solution-product-panel { padding: 16px; }
+        .solution-product-panel { padding: 18px 20px; }
         .solution-product-panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
         .solution-product-panel-head h3 { margin: 0; color: #1a1a2e; font-size: 15px; }
         .solution-product-panel-head span { color: #778194; font-size: 12px; }
-        .solution-workflow { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; padding: 14px 20px; border-radius: 12px; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
-        .solution-workflow-copy { flex: 1 1 280px; color: #59677b; font-size: 13px; line-height: 20px; }
+        .solution-workflow { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; width: 100%; max-width: 900px; min-width: 0; margin: 0 auto 14px; padding: 16px 20px; border-radius: 12px; background: #f8f9ff; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+        .solution-workflow-copy { flex: 1 1 280px; min-width: 0; color: #59677b; font-size: 13px; line-height: 20px; }
         .solution-workflow-actions { display: flex; gap: 8px; flex-wrap: wrap; }
         .solution-workflow .solution-form-error { flex: 1 1 100%; margin: 0; }
         .solution-status { display: inline-flex; align-items: center; gap: 5px; min-height: 24px; padding: 2px 8px; border: 1px solid; border-radius: 12px; font-size: 12px; white-space: nowrap; }
@@ -1219,9 +1241,12 @@
         @media (max-width: 768px) {
             .solution-page { padding-bottom: 24px; }
             .solution-page-head p, .solution-lock-note { display: none; }
-            .solution-grid, .solution-grid.two, .solution-info-grid { grid-template-columns: 1fr; }
-            .solution-source-tabs { display: flex; width: 100%; }
-            .solution-source-tab { flex: 1; justify-content: center; padding: 0 7px; }
+            .solution-grid, .solution-grid.two, .solution-info-grid, .solution-form-grid { grid-template-columns: 1fr; }
+            .solution-form-grid { gap: 15px; margin-bottom: 15px; }
+            .solution-form-row { display: block; }
+            .solution-form-label { display: block; width: auto; padding: 0 0 6px; }
+            #solutionBorrowCustomerInfoDisplay .customer-summary-copy,
+            #solutionLocalCustomerInfoDisplay .customer-summary-copy { flex-wrap: wrap; }
             .solution-borrow-controls { flex-direction: column; }
             .solution-workspace-inner { display: block; }
             .solution-product-nav { display: flex; gap: 5px; overflow-x: auto; border-right: 0; border-bottom: 1px solid #eef1f7; padding: 9px 12px; }
@@ -3082,53 +3107,105 @@
                             <div><h1>解决方案型测试授权</h1><p>关联借测单或创建纯软件申请，一套方案整单审批、整单授权。</p></div>
                             <span class="solution-status draft" id="solutionApplicationStatus">草稿</span>
                         </div>
-                        <!-- 步骤 1：选择申请入口 -->
+                        <!-- 基本信息：复用产品授权的表单栅格 -->
                         <div class="special-form-section">
-                            <div class="section-title"><span class="solution-step-no">1</span>选择申请入口</div>
+                            <div class="section-title">基本信息</div>
 
-                            <div class="solution-source-tabs" role="tablist" aria-label="解决方案申请来源">
-                                <button type="button" class="solution-source-tab is-active" data-solution-source="borrow"><span class="material-symbols-outlined">link</span>关联借测单</button>
-                                <button type="button" class="solution-source-tab" data-solution-source="local"><span class="material-symbols-outlined">deployed_code</span>纯软件本地申请</button>
+                            <div class="solution-form-grid">
+                                <div class="solution-form-row">
+                                    <label class="solution-form-label" for="solutionSourceSelect"><span class="solution-required">*</span>授权类型</label>
+                                    <div class="solution-form-control">
+                                        <select class="solution-select" id="solutionSourceSelect" aria-label="授权类型">
+                                            <option value="borrow">关联借测单</option>
+                                            <option value="local">纯软件本地申请</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                             <div class="solution-card-body" id="solutionBorrowSource">
-                                <div class="solution-field solution-borrow-field">
-                                    <label for="solutionBorrowOrder"><span class="solution-required">*</span>借测单号</label>
-                                    <div class="solution-borrow-controls">
-                                        <select class="solution-select" id="solutionBorrowOrder"><option value="">请选择 Mock 借测单</option><option value="BOR-202608-001">BOR-202608-001 | 审批通过，借测中</option><option value="BOR-202608-002">BOR-202608-002 | 尚未审批</option><option value="BOR-202608-003">BOR-202608-003 | 已归还</option><option value="BOR-202608-004">BOR-202608-004 | 已撤销</option><option value="BOR-202608-ERR">BOR-202608-ERR | 查询失败</option></select>
-                                        <button type="button" class="solution-btn" id="solutionBorrowLookup"><span class="material-symbols-outlined">search</span>查询并关联</button>
+                                <div class="solution-form-grid solution-borrow-query-grid">
+                                    <div class="solution-form-row solution-form-row-full" id="solutionBorrowCustomerField">
+                                        <label class="solution-form-label" for="solutionBorrowCustomerSearch"><span class="solution-required">*</span>客户</label>
+                                        <div class="solution-form-control">
+                                            <div class="search-select-box">
+                                                <input type="text" class="solution-input" id="solutionBorrowCustomerSearch" placeholder="输入客户名称或编码筛选借测单" autocomplete="off" required aria-required="true">
+                                                <div class="search-dropdown" id="solutionBorrowCustomerDropdown"></div>
+                                            </div>
+                                            <div class="customer-info-display" id="solutionBorrowCustomerInfoDisplay" aria-live="polite">
+                                                <div class="customer-summary-main">
+                                                    <span class="material-symbols-outlined customer-summary-icon" aria-hidden="true">domain</span>
+                                                    <div class="customer-summary-copy">
+                                                        <span class="customer-summary-name" id="solutionBorrowCustomerName">-</span>
+                                                        <span class="sales-person-badge" id="solutionBorrowCustomerSales" style="display:none;"></span>
+                                                        <span class="customer-type-badge" id="solutionBorrowCustomerType" style="display:none;"></span>
+                                                        <span class="solution-customer-cloud" id="solutionBorrowCustomerCloud"></span>
+                                                    </div>
+                                                </div>
+                                                <button type="button" class="customer-change-button" id="solutionBorrowCustomerChange" title="重新选择客户"><span class="material-symbols-outlined" aria-hidden="true">edit</span><span>更换</span></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="solution-form-row solution-form-row-full">
+                                        <label class="solution-form-label" for="solutionBorrowOrder"><span class="solution-required">*</span>借测单号</label>
+                                        <div class="solution-form-control">
+                                            <div class="solution-borrow-controls">
+                                                <select class="solution-select" id="solutionBorrowOrder" disabled><option value="">请先选择客户</option></select>
+                                                <button type="button" class="solution-btn" id="solutionBorrowLookup"><span class="material-symbols-outlined">search</span>查询并关联</button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div id="solutionBorrowState" hidden></div>
                                 <div id="solutionBorrowInfo" hidden></div>
                             </div>
                             <div class="solution-card-body" id="solutionLocalSource" hidden>
-                                <div class="solution-grid">
-                                    <div class="solution-field"><label for="solutionLocalConfig"><span class="solution-required">*</span>解决方案</label><select class="solution-select" id="solutionLocalConfig"><option value="">请选择启用方案</option></select></div>
-                                    <div class="solution-field"><label for="solutionLocalApplicant"><span class="solution-required">*</span>申请人</label><input class="solution-input" id="solutionLocalApplicant" value="钱金城94903"></div>
-                                    <div class="solution-field"><label for="solutionLocalCustomer"><span class="solution-required">*</span>客户</label><input class="solution-input" id="solutionLocalCustomer" placeholder="请输入客户名称"></div>
+                                <div class="solution-form-grid">
+                                    <div class="solution-form-row"><label class="solution-form-label" for="solutionLocalConfig"><span class="solution-required">*</span>解决方案</label><div class="solution-form-control"><select class="solution-select" id="solutionLocalConfig"><option value="">请选择启用方案</option></select></div></div>
+                                    <div class="solution-form-row"><label class="solution-form-label" for="solutionLocalApplicant"><span class="solution-required">*</span>申请人</label><div class="solution-form-control"><input class="solution-input" id="solutionLocalApplicant" value="钱金城94903"></div></div>
+                                    <div class="solution-form-row solution-form-row-full" id="solutionLocalCustomerField">
+                                        <label class="solution-form-label" for="solutionLocalCustomerSearch"><span class="solution-required">*</span>客户</label>
+                                        <div class="solution-form-control">
+                                            <div class="search-select-box">
+                                                <input type="text" class="solution-input" id="solutionLocalCustomerSearch" placeholder="输入客户名称或编码选择客户" autocomplete="off" required aria-required="true">
+                                                <div class="search-dropdown" id="solutionLocalCustomerDropdown"></div>
+                                            </div>
+                                            <div class="customer-info-display" id="solutionLocalCustomerInfoDisplay" aria-live="polite">
+                                                <div class="customer-summary-main">
+                                                    <span class="material-symbols-outlined customer-summary-icon" aria-hidden="true">domain</span>
+                                                    <div class="customer-summary-copy">
+                                                        <span class="customer-summary-name" id="solutionLocalCustomerName">-</span>
+                                                        <span class="sales-person-badge" id="solutionLocalCustomerSales" style="display:none;"></span>
+                                                        <span class="customer-type-badge" id="solutionLocalCustomerType" style="display:none;"></span>
+                                                        <span class="solution-customer-cloud" id="solutionLocalCustomerCloud"></span>
+                                                    </div>
+                                                </div>
+                                                <button type="button" class="customer-change-button" id="solutionLocalCustomerChange" title="重新选择客户"><span class="material-symbols-outlined" aria-hidden="true">edit</span><span>更换</span></button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- 步骤 2：确认方案范围（只读锁定） -->
+                        <!-- 方案范围：保持只读，沿用产品授权表单行 -->
                         <div class="special-form-section" id="solutionLockedScope" hidden>
-                            <div class="section-title"><span class="solution-step-no">2</span>确认方案范围<span class="solution-lock-note"><span class="material-symbols-outlined">lock</span>方案和产品线来自已审批借测单或启用配置，不可增删或替换</span></div>
+                            <div class="section-title">方案范围<span class="solution-lock-note"><span class="material-symbols-outlined">lock</span>方案和产品线来自已审批借测单或启用配置，不可增删或替换</span></div>
 
-                            <div class="solution-grid two">
-                                <div class="solution-field"><label for="solutionLockedName">解决方案</label><input class="solution-input" id="solutionLockedName" readonly data-solution-readonly></div>
-                                <div class="solution-field"><label>关联产品线</label><div class="solution-chip-list" id="solutionLockedLines" data-product-lines-readonly></div></div>
+                            <div class="solution-form-grid">
+                                <div class="solution-form-row"><label class="solution-form-label" for="solutionLockedName">解决方案</label><div class="solution-form-control"><input class="solution-input" id="solutionLockedName" readonly data-solution-readonly></div></div>
+                                <div class="solution-form-row"><span class="solution-form-label">关联产品线</span><div class="solution-form-control"><div class="solution-chip-list" id="solutionLockedLines" data-product-lines-readonly></div></div></div>
                             </div>
                         </div>
 
-                        <!-- 步骤 3：填写产品授权参数 -->
+                        <!-- 授权参数：解决方案特有的多产品线工作台 -->
                         <div class="special-form-section" id="solutionProductWorkspace" hidden>
-                            <div class="section-title"><span class="solution-step-no">3</span>填写产品授权参数<span class="solution-lock-note solution-hint-note"><span class="material-symbols-outlined">tune</span>按产品线逐个填写，全部为必填项</span></div>
+                            <div class="section-title">授权参数<span class="solution-lock-note solution-hint-note"><span class="material-symbols-outlined">tune</span>按产品线逐个填写，全部为必填项</span></div>
 
                             <div class="solution-workspace-inner"><aside class="solution-product-nav" id="solutionProductNav" aria-label="产品线定位"></aside><div class="solution-product-panel" id="solutionProductPanel"></div></div>
                         </div>
 
                         <!-- 提交栏与执行结果 -->
-                        <div class="solution-workflow" id="solutionWorkflow"><div class="solution-workflow-copy">请选择申请入口并确认方案范围。</div></div>
+                        <div class="special-form-section solution-workflow" id="solutionWorkflow"><div class="solution-workflow-copy">请选择授权类型并确认方案范围。</div></div>
                         <div class="solution-result" id="solutionAuthorizationResult" hidden></div>
                     </div>
                     <div class="solution-modal-layer" id="solutionApprovalModal" hidden aria-hidden="true"><div class="solution-modal" role="dialog" aria-modal="true" aria-labelledby="solutionApprovalTitle"><div class="solution-modal-head"><h2 id="solutionApprovalTitle">W3 整单审批预览</h2><button type="button" class="solution-table-action" data-solution-approval-close>关闭</button></div><div class="solution-modal-body" id="solutionApprovalContent"></div><div class="solution-modal-foot"><button type="button" class="solution-btn plain" data-solution-approval-close>返回修改</button><button type="button" class="solution-btn" id="solutionSubmitWhole"><span class="material-symbols-outlined">send</span>提交 W3 整单审批</button></div></div></div>
@@ -9899,7 +9976,7 @@
     (function() {
         'use strict';
 
-        var productCatalog = ['HCI', 'AC', 'NGAF', 'AD', 'WOC', 'XDR', 'SASE', 'WAF'];
+        var productCatalog = ['HCI', 'AC', 'NGAF', 'AD', 'WOC', 'XDR', 'SASE', 'WAF', 'SASE-GA', 'SaaS-XDR'];
         var productDefaults = {
             HCI: { version: 'HCI-6.8.1-VKEY', modules: ['计算虚拟化'], spec: '16 核 / 100 TB', clusterId: 'GW-HCI-208' },
             AC: {
@@ -9915,7 +9992,9 @@
             WOC: { version: 'WOC-8.0.5', modules: ['广域网优化'], spec: '带宽 200 Mbps' },
             XDR: { version: 'XDR-2.1.0', modules: ['威胁检测'], spec: '2 亿条' },
             SASE: { version: 'SASE-5.0.0', modules: ['零信任访问'], spec: '100 用户' },
-            WAF: { version: 'WAF-7.0.5', modules: ['Web 防护'], spec: 'QPS 3000' }
+            WAF: { version: 'WAF-7.0.5', modules: ['Web 防护'], spec: 'QPS 3000' },
+            'SASE-GA': { version: 'SASE-GA 标准版', modules: [], spec: '带宽 10M' },
+            'SaaS-XDR': { version: 'SaaS-XDR 标准版', modules: [], spec: '日志量 20,000 万条' }
         };
         var moduleCatalog = {
             HCI: ['计算虚拟化', '存储虚拟化', '网络虚拟化', '容灾备份', '数据库服务'],
@@ -9930,17 +10009,29 @@
         var configs = [
             { code: 'SOL-CLOUD-001', name: '企业云一体化方案', productLines: ['HCI', 'AC', 'NGAF', 'AD', 'WOC'], status: 'enabled', updatedAt: '2026-08-06 09:30' },
             { code: 'SOL-SEC-002', name: '安全态势感知方案', productLines: ['XDR', 'NGAF', 'WAF'], status: 'enabled', updatedAt: '2026-08-05 16:20' },
+            { code: 'SOL-XAAS-004', name: '云网安全运营方案', productLines: ['SASE-GA', 'SaaS-XDR'], status: 'enabled', updatedAt: '2026-08-06 10:30' },
             { code: 'SOL-LEGACY-003', name: '旧版云安全方案', productLines: ['HCI', 'WAF'], status: 'disabled', updatedAt: '2026-07-28 10:12' }
         ];
         var borrowOrders = {
             'BOR-202608-001': { number: 'BOR-202608-001', approvalStatus: '审批通过', returned: false, revoked: false, applicant: '李晓', customer: '华东智造集团有限公司', solutionCode: 'SOL-CLOUD-001', solution: '企业云一体化方案', productLines: ['HCI', 'AC', 'NGAF', 'AD', 'WOC'], devices: { HCI: 'GW-HCI-208', AC: 'GW-AC-512', NGAF: 'GW-NGAF-318', AD: 'GW-AD-209', WOC: 'GW-WOC-115' }, startDate: '2026-08-06', endDate: '2026-11-04', approvalInfo: '资产系统审批通过（Mock）' },
             'BOR-202608-002': { number: 'BOR-202608-002', approvalStatus: '审批中', returned: false, revoked: false },
+            'BOR-202608-005': { number: 'BOR-202608-005', approvalStatus: '审批通过', returned: false, revoked: false, applicant: '陈卓', customer: '星海智联科技有限公司', solutionCode: 'SOL-XAAS-004', solution: '云网安全运营方案', productLines: ['SASE-GA', 'SaaS-XDR'], devices: {}, startDate: '2026-08-08', endDate: '2026-08-23', approvalInfo: '资产系统审批通过（Mock）', cloud: { account: 'xinghai-admin', tenantId: 'YT-10010688' } },
             'BOR-202608-003': { number: 'BOR-202608-003', approvalStatus: '审批通过', returned: true, revoked: false },
             'BOR-202608-004': { number: 'BOR-202608-004', approvalStatus: '审批通过', returned: false, revoked: true },
             'BOR-202608-ERR': { number: 'BOR-202608-ERR', error: true }
         };
-        var application = { source: 'borrow', solution: null, lines: [], params: {}, applicant: '', customer: '', borrow: null, activeLine: '', status: 'draft', recordId: '' };
+        var application = { source: 'borrow', solution: null, lines: [], params: {}, applicant: '', customer: '', cloud: null, borrow: null, activeLine: '', status: 'draft', recordId: '' };
         var editingConfigCode = '';
+        var solutionBorrowCustomer = null;
+        var solutionLocalCustomer = null;
+        var solutionBorrowCustomers = [
+            { id: 'C100101', name: '华东智造集团有限公司', type: 'KA', sales: '周青', orders: ['BOR-202608-001'] },
+            { id: 'C100102', name: '北辰智慧能源有限公司', type: 'normal', sales: '赵凯', orders: ['BOR-202608-002'] },
+            { id: 'C100103', name: '苏州新零售集团有限公司', type: 'KA', sales: '林舟', orders: ['BOR-202608-003'] },
+            { id: 'C100104', name: '西南智慧物流有限公司', type: 'normal', sales: '陈颖', orders: ['BOR-202608-004'] },
+            { id: 'C100105', name: '星澜数字服务有限公司', type: 'normal', sales: '沈思', orders: ['BOR-202608-ERR'] },
+            { id: 'C100106', name: '星海智联科技有限公司', type: 'KA', sales: '许岚', orders: ['BOR-202608-005'], cloud: { account: 'xinghai-admin', tenantId: 'YT-10010688' } }
+        ];
 
         function id(name) { return document.getElementById(name); }
         function escapeHtml(value) {
@@ -10042,15 +10133,48 @@
             id('solutionAuthorizationResult').hidden = true;
             renderWorkflow();
         }
+        function isXaasLine(line) { return line === 'SASE-GA' || line === 'SaaS-XDR'; }
         function createParams(line, deviceId, endDate) {
             var defaults = productDefaults[line] || { version: '', modules: [], spec: '' };
             var params = {
                 version: defaults.version,
                 deviceId: deviceId || '',
                 modules: (defaults.modules || []).slice(),
-                spec: defaults.spec
+                spec: defaults.spec,
+                endDate: endDate || '2026-11-04'
             };
-            params.endDate = endDate || '2026-11-04';
+            if (line === 'SASE-GA') {
+                return {
+                    version: defaults.version,
+                    endDate: endDate || '2026-08-23',
+                    bandwidth: '10',
+                    customerNeed: '验证海外办公与国内核心业务访问质量',
+                    projectScale: '覆盖 3 个海外区域，约 800 名办公用户',
+                    competitor: '传统国际专线方案'
+                };
+            }
+            if (line === 'SaaS-XDR') {
+                return {
+                    version: defaults.version,
+                    endDate: endDate || '2026-08-23',
+                    logAmount: '20000',
+                    testScenario: '新建安全运营场景',
+                    testDriver: '各类安全设备告警量大且误报多，威胁运营效率低',
+                    coreNeed: '作为常态化威胁检测/运营中心',
+                    expectedResult: '威胁运营成果展示',
+                    isPk: '仅产品',
+                    competitorName: '示例安全运营平台',
+                    customerEnv: '已部署 AF、SIP 与终端安全组件',
+                    securityOpMode: 'SIP运营',
+                    securityStaff: '3个以上',
+                    existingComponents: ['AF', 'SIP'],
+                    thirdPartyDevices: '第三方 EDR 8.2、日志平台 3.0',
+                    budgetInfo: '当年预算',
+                    securityBudget: '50-80W',
+                    projectLandingDate: '2026-10-15',
+                    collectedFile: '星海-XDR客户信息收集表.xlsx'
+                };
+            }
             if (line === 'HCI') {
                 params.infoFile = deviceId ? ('硬件信息-' + deviceId + '.xlsx') : '';
                 params.clusterId = defaults.clusterId || deviceId || '';
@@ -10069,15 +10193,133 @@
             }
             return params;
         }
+        function getBorrowOrderStatus(order) {
+            if (order.error) return '查询失败';
+            if (order.approvalStatus !== '审批通过') return order.approvalStatus || '未审批';
+            if (order.returned) return '已归还';
+            if (order.revoked) return '已撤销';
+            return '审批通过，借测中';
+        }
+        function renderSolutionBorrowOrders() {
+            var select = id('solutionBorrowOrder');
+            var selected = select.value;
+            var hasCustomer = !!solutionBorrowCustomer;
+            var orders = hasCustomer ? Object.keys(borrowOrders).map(function(number) { return borrowOrders[number]; }).filter(function(order) {
+                return solutionBorrowCustomer.orders.indexOf(order.number) !== -1;
+            }) : [];
+            select.disabled = !hasCustomer;
+            select.innerHTML = '<option value="">' + (hasCustomer ? '请选择该客户的 Mock 借测单' : '请先选择客户') + '</option>' + orders.map(function(order) {
+                return '<option value="' + order.number + '">' + order.number + ' | ' + getBorrowOrderStatus(order) + '</option>';
+            }).join('');
+            if (orders.some(function(order) { return order.number === selected; })) select.value = selected;
+        }
+        function resetSolutionBorrowLookup() {
+            id('solutionBorrowOrder').value = '';
+            id('solutionBorrowState').hidden = true;
+            id('solutionBorrowInfo').hidden = true;
+            resetApplication();
+        }
+        function renderSolutionCustomerOptions(keyword, dropdownId, attributeName) {
+            var normalized = String(keyword || '').trim().toLowerCase();
+            var matched = solutionBorrowCustomers.filter(function(customer) {
+                return !normalized || customer.name.toLowerCase().indexOf(normalized) !== -1 || customer.id.toLowerCase().indexOf(normalized) !== -1;
+            });
+            var dropdown = id(dropdownId);
+            dropdown.innerHTML = matched.length ? matched.map(function(customer) {
+                var isKa = customer.type === 'KA';
+                return '<div class="search-item" ' + attributeName + '="' + escapeHtml(customer.id) + '"><span class="item-left"><span class="item-name">' + escapeHtml(customer.name) + '</span></span>' + (customer.sales ? '<span class="sales-person-badge" style="margin-left:6px;">' + escapeHtml(customer.sales) + '</span>' : '') + '<span class="' + (isKa ? 'item-badge ka' : 'item-badge normal') + '">' + (isKa ? 'KA客户' : '普通客户') + '</span></div>';
+            }).join('') : '<div class="search-item" style="cursor:default;color:#778194;">没有匹配的 Mock 客户</div>';
+            dropdown.classList.add('show');
+        }
+        function renderSolutionBorrowCustomers(keyword) { renderSolutionCustomerOptions(keyword, 'solutionBorrowCustomerDropdown', 'data-solution-borrow-customer'); }
+        function renderSolutionLocalCustomers(keyword) { renderSolutionCustomerOptions(keyword, 'solutionLocalCustomerDropdown', 'data-solution-local-customer'); }
+        function solutionRequiresCloudIdentity() {
+            return !!application.solution && application.lines.some(isXaasLine);
+        }
+        function getSolutionCustomerCloudAccounts(customer) {
+            if (!customer) return [];
+            if (Array.isArray(customer.cloudAccounts)) return customer.cloudAccounts;
+            return customer.cloud ? [customer.cloud] : [];
+        }
+        function refreshSolutionCustomerCloudSummary() {
+            [['solutionBorrowCustomer', solutionBorrowCustomer], ['solutionLocalCustomer', solutionLocalCustomer]].forEach(function(entry) {
+                var cloud = id(entry[0] + 'Cloud');
+                var accounts = getSolutionCustomerCloudAccounts(entry[1]);
+                var shouldShow = solutionRequiresCloudIdentity() && accounts.length > 1;
+                cloud.hidden = !shouldShow;
+                cloud.textContent = shouldShow ? '请选择所属云图账号（共 ' + accounts.length + ' 个）' : '';
+            });
+        }
+        function setSolutionCustomerSummary(prefix, customer) {
+            id(prefix + 'Name').textContent = customer.name;
+            var sales = id(prefix + 'Sales');
+            sales.textContent = customer.sales || '';
+            sales.style.display = customer.sales ? 'inline-block' : 'none';
+            var type = id(prefix + 'Type');
+            var isKa = customer.type === 'KA';
+            type.textContent = isKa ? 'KA客户' : '普通客户';
+            type.className = 'customer-type-badge ' + (isKa ? 'ka' : 'normal');
+            type.style.display = 'inline-block';
+            refreshSolutionCustomerCloudSummary();
+        }
+        function clearSolutionCustomerSummary(prefix) {
+            id(prefix + 'Name').textContent = '-';
+            id(prefix + 'Sales').textContent = '';
+            id(prefix + 'Sales').style.display = 'none';
+            id(prefix + 'Type').textContent = '';
+            id(prefix + 'Type').style.display = 'none';
+            id(prefix + 'Cloud').textContent = '';
+            id(prefix + 'Cloud').hidden = true;
+        }
+        function selectSolutionBorrowCustomer(customer) {
+            solutionBorrowCustomer = customer;
+            id('solutionBorrowCustomerSearch').value = customer.name;
+            setSolutionCustomerSummary('solutionBorrowCustomer', customer);
+            id('solutionBorrowCustomerInfoDisplay').classList.add('show');
+            id('solutionBorrowCustomerField').classList.add('has-selection');
+            id('solutionBorrowCustomerDropdown').classList.remove('show');
+            renderSolutionBorrowOrders();
+            resetSolutionBorrowLookup();
+        }
+        function clearSolutionBorrowCustomer(shouldReset) {
+            solutionBorrowCustomer = null;
+            id('solutionBorrowCustomerSearch').value = '';
+            clearSolutionCustomerSummary('solutionBorrowCustomer');
+            id('solutionBorrowCustomerInfoDisplay').classList.remove('show');
+            id('solutionBorrowCustomerField').classList.remove('has-selection');
+            id('solutionBorrowCustomerDropdown').classList.remove('show');
+            renderSolutionBorrowOrders();
+            if (shouldReset !== false) resetSolutionBorrowLookup();
+        }
+        function selectSolutionLocalCustomer(customer) {
+            solutionLocalCustomer = customer;
+            id('solutionLocalCustomerSearch').value = customer.name;
+            setSolutionCustomerSummary('solutionLocalCustomer', customer);
+            id('solutionLocalCustomerInfoDisplay').classList.add('show');
+            id('solutionLocalCustomerField').classList.add('has-selection');
+            id('solutionLocalCustomerDropdown').classList.remove('show');
+            if (id('solutionLocalConfig').value) selectLocalSolution();
+        }
+        function clearSolutionLocalCustomer(shouldReset) {
+            solutionLocalCustomer = null;
+            id('solutionLocalCustomerSearch').value = '';
+            clearSolutionCustomerSummary('solutionLocalCustomer');
+            id('solutionLocalCustomerInfoDisplay').classList.remove('show');
+            id('solutionLocalCustomerField').classList.remove('has-selection');
+            id('solutionLocalCustomerDropdown').classList.remove('show');
+            if (shouldReset !== false) resetApplication();
+        }
         function applyScope(config, details) {
             application.solution = { code: config.code, name: config.name };
             application.lines = details.productLines.slice();
             application.applicant = details.applicant || id('solutionLocalApplicant').value.trim();
-            application.customer = details.customer || id('solutionLocalCustomer').value.trim();
+            application.customer = details.customer || (solutionLocalCustomer ? solutionLocalCustomer.name : '');
+            application.cloud = details.cloud || (solutionLocalCustomer && solutionLocalCustomer.cloud) || (solutionBorrowCustomer && solutionBorrowCustomer.cloud) || null;
             application.borrow = details.number ? details : null;
             application.params = {};
             application.lines.forEach(function(line) { application.params[line] = createParams(line, details.devices && details.devices[line], details.endDate); });
             application.activeLine = application.lines[0];
+            refreshSolutionCustomerCloudSummary();
             setStatus('draft');
             id('solutionAuthorizationResult').hidden = true;
             renderLockedScope();
@@ -10089,29 +10331,66 @@
             id('solutionLockedName').value = application.solution.code + ' | ' + application.solution.name;
             id('solutionLockedLines').innerHTML = application.lines.map(function(line) { return '<span class="solution-chip">' + line + '</span>'; }).join('');
         }
+        function solutionSelectOptions(options, selected) {
+            return '<option value="">请选择</option>' + options.map(function(option) { return '<option value="' + escapeHtml(option) + '"' + (option === selected ? ' selected' : '') + '>' + escapeHtml(option) + '</option>'; }).join('');
+        }
+        function renderXaasFields(line, values) {
+            var fields = '<div class="solution-field"><label><span class="solution-required">*</span>版本</label><input class="solution-input" data-solution-param="version" value="' + escapeHtml(values.version || '') + '"></div>' +
+                '<div class="solution-field"><label><span class="solution-required">*</span>授权有效期</label><input class="solution-input" type="date" data-solution-param="endDate" value="' + escapeHtml(values.endDate || '') + '"></div>';
+            if (line === 'SASE-GA') {
+                return fields +
+                    '<div class="solution-field"><label><span class="solution-required">*</span>带宽（M）</label><input class="solution-input" type="number" min="1" data-solution-param="bandwidth" value="' + escapeHtml(values.bandwidth || '') + '"></div>' +
+                    '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>客户需求</label><textarea class="solution-input" data-solution-param="customerNeed">' + escapeHtml(values.customerNeed || '') + '</textarea></div>' +
+                    '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>项目规模</label><textarea class="solution-input" data-solution-param="projectScale">' + escapeHtml(values.projectScale || '') + '</textarea></div>' +
+                    '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>竞争对手</label><textarea class="solution-input" data-solution-param="competitor">' + escapeHtml(values.competitor || '') + '</textarea></div>';
+            }
+            var isPk = values.isPk || '';
+            var componentOptions = ['AF', 'aES', 'SIP', 'XDR', 'STA'];
+            return fields +
+                '<div class="solution-field"><label><span class="solution-required">*</span>日志量（万条）</label><input class="solution-input" type="number" min="1" data-solution-param="logAmount" value="' + escapeHtml(values.logAmount || '') + '"></div>' +
+                '<div class="solution-field"><label><span class="solution-required">*</span>测试场景</label><select class="solution-select" data-solution-param="testScenario">' + solutionSelectOptions(['原有NDR升级场景', '新建安全运营场景', 'SOC替换场景', '多分支统一管理场景'], values.testScenario) + '</select></div>' +
+                '<div class="solution-field"><label><span class="solution-required">*</span>测试驱动力</label><select class="solution-select" data-solution-param="testDriver">' + solutionSelectOptions(['各类安全设备告警量大且误报多，威胁运营效率低', '现有威胁运营平台不达预期想替换', '重大安全问题，需要加强安全建设', '被监管单位通报，需要加强安全建设', '护网重保缺少统一值守平台，值守难度大', '应对外部各类合规要求', 'MSS不支持接入STA/三方组件，影响服务效果', '客户有创新及体现政绩的诉求', '其他'], values.testDriver) + '</select></div>' +
+                '<div class="solution-field"><label><span class="solution-required">*</span>核心需求</label><select class="solution-select" data-solution-param="coreNeed">' + solutionSelectOptions(['作为常态化威胁检测/运营中心', '作为护网重保值守平台', '作为分析溯源平台', '满足外部的各类合规需求', '仅作为安全大屏使用', 'MSS不支持接入STA/三方组件，影响服务效果', '客户有创新及体现政绩的诉求'], values.coreNeed) + '</select></div>' +
+                '<div class="solution-field"><label><span class="solution-required">*</span>测试效果预期</label><select class="solution-select" data-solution-param="expectedResult">' + solutionSelectOptions(['全流量检测', '聚合降噪', '全量高经验盘', '智能化对抗', '威胁运营成果展示'], values.expectedResult) + '</select></div>' +
+                '<div class="solution-field"><label><span class="solution-required">*</span>是否PK</label><select class="solution-select" data-solution-param="isPk">' + solutionSelectOptions(['否', '仅MSS', '仅产品', '两者都PK'], isPk) + '</select></div>' +
+                '<div class="solution-field" data-solution-pk-field' + (isPk === '否' ? ' hidden' : '') + '><label><span class="solution-required">*</span>PK友商公司名</label><input class="solution-input" data-solution-param="competitorName" value="' + escapeHtml(values.competitorName || '') + '"></div>' +
+                '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>客户环境信息</label><input class="solution-input" data-solution-param="customerEnv" value="' + escapeHtml(values.customerEnv || '') + '"></div>' +
+                '<div class="solution-field"><label><span class="solution-required">*</span>安全运营模式</label><select class="solution-select" data-solution-param="securityOpMode">' + solutionSelectOptions(['无运营', '单点运维', 'SIP运营', '友商平台', '代运营'], values.securityOpMode) + '</select></div>' +
+                '<div class="solution-field"><label><span class="solution-required">*</span>安全人员配置</label><select class="solution-select" data-solution-param="securityStaff">' + solutionSelectOptions(['1个', '2个', '3个以上', '渠道代维', '客户自己运维'], values.securityStaff) + '</select></div>' +
+                '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>深信服现有设备/组件</label><div class="solution-checkbox-group" data-solution-param="existingComponents">' + componentOptions.map(function(option) { return '<label class="solution-checkbox"><input type="checkbox" value="' + option + '"' + ((values.existingComponents || []).indexOf(option) !== -1 ? ' checked' : '') + '><span>' + option + '</span></label>'; }).join('') + '</div></div>' +
+                '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>第三方设备类型及版本号</label><input class="solution-input" data-solution-param="thirdPartyDevices" value="' + escapeHtml(values.thirdPartyDevices || '') + '"></div>' +
+                '<div class="solution-field"><label><span class="solution-required">*</span>预算信息</label><select class="solution-select" data-solution-param="budgetInfo">' + solutionSelectOptions(['当年预算', '明年预算'], values.budgetInfo) + '</select></div>' +
+                '<div class="solution-field"><label><span class="solution-required">*</span>安全预算区间</label><select class="solution-select" data-solution-param="securityBudget">' + solutionSelectOptions(['10-20W', '20-30W', '30-50W', '50-80W', '80W+'], values.securityBudget) + '</select></div>' +
+                '<div class="solution-field"><label><span class="solution-required">*</span>项目预计落地时间</label><input class="solution-input" type="date" data-solution-param="projectLandingDate" value="' + escapeHtml(values.projectLandingDate || '') + '"></div>' +
+                '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>客户信息收集表</label><div class="solution-file-input"><label class="solution-file-btn"><span class="material-symbols-outlined">upload_file</span>上传收集表<input type="file" accept=".xlsx,.xls" data-solution-param="collectedFile"></label><span class="solution-file-name' + (values.collectedFile ? '' : ' empty') + '">' + escapeHtml(values.collectedFile || '未选择文件') + '</span></div></div>';
+        }
         function renderProductWorkspace() {
             id('solutionProductWorkspace').hidden = false;
-            id('solutionProductNav').innerHTML = application.lines.map(function(line, index) { return '<button type="button" data-solution-line="' + line + '" class="' + (line === application.activeLine ? 'is-active' : '') + '"><span>' + line + '</span><small>' + (index + 1) + '/' + application.lines.length + '</small></button>'; }).join('');
+            id('solutionProductNav').innerHTML = application.lines.map(function(line, index) { return '<button type="button" data-solution-line="' + line + '" class="' + (line === application.activeLine ? 'is-active' : '') + '"><span>' + line + (isXaasLine(line) ? ' · XaaS' : '') + '</span><small>' + (index + 1) + '/' + application.lines.length + '</small></button>'; }).join('');
             var line = application.activeLine;
             var values = application.params[line];
             var isHci = line === 'HCI';
             var fields = '';
-            fields += '<div class="solution-field"><label><span class="solution-required">*</span>版本</label><input class="solution-input" data-solution-param="version" value="' + escapeHtml(values.version) + '"></div>';
-            if (isHci) {
-                var infoName = values.infoFile ? escapeHtml(values.infoFile) : '未选择文件';
-                var infoEmpty = values.infoFile ? '' : ' empty';
-                fields += '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>硬件信息文件</label><div class="solution-file-input"><label class="solution-file-btn"><span class="material-symbols-outlined">upload_file</span>上传硬件信息文件<input type="file" data-solution-param="infoFile"></label><span class="solution-file-name' + infoEmpty + '">' + infoName + '</span></div></div>';
-                fields += '<div class="solution-field"><label><span class="solution-required">*</span>集群标识</label><input class="solution-input" data-solution-param="clusterId" value="' + escapeHtml(values.clusterId) + '"></div>';
-            }
-            fields += '<div class="solution-field"><label><span class="solution-required">*</span>设备 ID</label><input class="solution-input" data-solution-param="deviceId" value="' + escapeHtml(values.deviceId) + '"></div>';
-            if (line === 'AC') {
-                fields += renderACFields(values);
+            if (isXaasLine(line)) {
+                fields = renderXaasFields(line, values);
             } else {
-                var moduleOptions = moduleCatalog[line] || [];
-                fields += '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>授权模块（多选）</label><div class="solution-checkbox-group" data-solution-param="modules">' + moduleOptions.map(function(m) { return '<label class="solution-checkbox"><input type="checkbox" value="' + escapeHtml(m) + '"' + (values.modules.indexOf(m) !== -1 ? ' checked' : '') + '><span>' + escapeHtml(m) + '</span></label>'; }).join('') + '</div></div>';
-                fields += '<div class="solution-field"><label><span class="solution-required">*</span>规格参数</label><input class="solution-input" data-solution-param="spec" value="' + escapeHtml(values.spec) + '"></div>';
+                fields += '<div class="solution-field"><label><span class="solution-required">*</span>版本</label><input class="solution-input" data-solution-param="version" value="' + escapeHtml(values.version) + '"></div>';
+                if (isHci) {
+                    var infoName = values.infoFile ? escapeHtml(values.infoFile) : '未选择文件';
+                    var infoEmpty = values.infoFile ? '' : ' empty';
+                    fields += '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>硬件信息文件</label><div class="solution-file-input"><label class="solution-file-btn"><span class="material-symbols-outlined">upload_file</span>上传硬件信息文件<input type="file" data-solution-param="infoFile"></label><span class="solution-file-name' + infoEmpty + '">' + infoName + '</span></div></div>';
+                    fields += '<div class="solution-field"><label><span class="solution-required">*</span>集群标识</label><input class="solution-input" data-solution-param="clusterId" value="' + escapeHtml(values.clusterId) + '"></div>';
+                }
+                fields += '<div class="solution-field"><label><span class="solution-required">*</span>设备 ID</label><input class="solution-input" data-solution-param="deviceId" value="' + escapeHtml(values.deviceId) + '"></div>';
+                if (line === 'AC') {
+                    fields += renderACFields(values);
+                } else {
+                    var moduleOptions = moduleCatalog[line] || [];
+                    fields += '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>授权模块（多选）</label><div class="solution-checkbox-group" data-solution-param="modules">' + moduleOptions.map(function(m) { return '<label class="solution-checkbox"><input type="checkbox" value="' + escapeHtml(m) + '"' + (values.modules.indexOf(m) !== -1 ? ' checked' : '') + '><span>' + escapeHtml(m) + '</span></label>'; }).join('') + '</div></div>';
+                    fields += '<div class="solution-field"><label><span class="solution-required">*</span>规格参数</label><input class="solution-input" data-solution-param="spec" value="' + escapeHtml(values.spec) + '"></div>';
+                }
             }
-            id('solutionProductPanel').innerHTML = '<div class="solution-product-panel-head"><h3>' + line + ' 授权参数</h3><span>' + (application.lines.indexOf(line) + 1) + ' / ' + application.lines.length + '</span></div><div class="solution-grid two solution-product-fields" data-product-line="' + line + '">' + fields + '</div>';
+            id('solutionProductPanel').innerHTML = '<div class="solution-product-panel-head"><h3>' + line + (isXaasLine(line) ? ' XaaS 授权参数' : ' 授权参数') + '</h3><span>' + (application.lines.indexOf(line) + 1) + ' / ' + application.lines.length + '</span></div><div class="solution-grid two solution-product-fields" data-product-line="' + line + '">' + fields + '</div>';
         }
         function renderACFields(values) {
             var features = ['SSL内容识别','日志中心DKey查询','应用审计','个人通信内容审计','内容审计','行为审计','VPN通道'];
@@ -10131,10 +10410,11 @@
                 '<div class="solution-field solution-field-full solution-field-inline"><label>多功能序列号：</label><div class="solution-switch-group" data-solution-param="multiFeatures">' + featureHtml + '</div></div>';
         }
         function lookupBorrowOrder() {
-            var order = borrowOrders[id('solutionBorrowOrder').value];
             resetApplication();
             id('solutionBorrowInfo').hidden = true;
             var state = id('solutionBorrowState');
+            if (!solutionBorrowCustomer) { state.hidden = false; state.className = 'solution-lookup-state error'; state.textContent = '请先选择客户后再查询并关联借测单。'; return; }
+            var order = borrowOrders[id('solutionBorrowOrder').value];
             if (!order) { state.hidden = false; state.className = 'solution-lookup-state'; state.textContent = '请选择借测单后查询。'; return; }
             if (order.error) { state.hidden = false; state.className = 'solution-lookup-state error'; state.textContent = '查询失败：资产系统暂时不可用（Mock），当前内容不可提交。'; return; }
             if (order.approvalStatus !== '审批通过') { state.hidden = false; state.className = 'solution-lookup-state error'; state.textContent = '无法关联：该借测单尚未审批通过，当前状态为“' + order.approvalStatus + '”。'; return; }
@@ -10151,18 +10431,35 @@
             resetApplication();
             var config = findConfig(id('solutionLocalConfig').value);
             if (!config || config.status !== 'enabled') return;
-            applyScope(config, { productLines: config.productLines, endDate: '2026-11-04' });
+            applyScope(config, {
+                productLines: config.productLines,
+                endDate: config.productLines.some(isXaasLine) ? '2026-08-23' : '2026-11-04',
+                customer: solutionLocalCustomer ? solutionLocalCustomer.name : '',
+                cloud: solutionLocalCustomer && solutionLocalCustomer.cloud
+            });
         }
         function validateApplication() {
             if (!application.solution) return '请先关联有效借测单或选择启用方案。';
             if (application.source === 'local') {
                 application.applicant = id('solutionLocalApplicant').value.trim();
-                application.customer = id('solutionLocalCustomer').value.trim();
+                application.customer = solutionLocalCustomer ? solutionLocalCustomer.name : '';
+                application.cloud = solutionLocalCustomer && solutionLocalCustomer.cloud;
             }
             if (!application.applicant || !application.customer) return '请补全申请人和客户。';
+            if (application.lines.some(isXaasLine) && (!application.cloud || !application.cloud.tenantId)) return 'XaaS 产品线需选择已关联云图账号和云图ID的客户。';
             for (var i = 0; i < application.lines.length; i++) {
                 var line = application.lines[i];
                 var value = application.params[line];
+                if (line === 'SASE-GA') {
+                    if (!value.version || !value.endDate || !value.bandwidth || !value.customerNeed || !value.projectScale || !value.competitor) return 'SASE-GA 的授权参数未填写完整。';
+                    continue;
+                }
+                if (line === 'SaaS-XDR') {
+                    var xdrFields = ['version', 'endDate', 'logAmount', 'testScenario', 'testDriver', 'coreNeed', 'expectedResult', 'isPk', 'customerEnv', 'securityOpMode', 'securityStaff', 'thirdPartyDevices', 'budgetInfo', 'securityBudget', 'projectLandingDate', 'collectedFile'];
+                    if (xdrFields.some(function(field) { return !value[field]; }) || !value.existingComponents || !value.existingComponents.length) return 'SaaS-XDR 的授权参数未填写完整。';
+                    if (value.isPk !== '否' && !value.competitorName) return 'SaaS-XDR 请填写 PK 友商公司名。';
+                    continue;
+                }
                 if (!value.version || !value.deviceId) return line + ' 的授权参数未填写完整。';
                 if (line === 'AC') {
                     if (!value.gatewayLines || !value.gatewayBranch || !value.gatewayMobile || !value.internetSecurityAuth || !value.appUrlUpdate || !value.terminalCount || !value.terminalAuth || !value.softwareUpgrade || !value.leakAudit) return line + ' 的授权参数未填写完整。';
@@ -10183,11 +10480,19 @@
             if (application.status === 'success') { box.innerHTML = '<div class="solution-workflow-copy">全部产品授权成功，已生成一条 ' + application.recordId + ' 解决方案记录。</div><div class="solution-workflow-actions"><button type="button" class="solution-btn plain" id="solutionGoRecords">查看授权记录</button></div>'; return; }
             box.innerHTML = '<div class="solution-workflow-copy">任一产品失败，整单不可交付；已成功产品已回滚。</div><div class="solution-workflow-actions"><button type="button" class="solution-btn plain" id="solutionReturnDraft">返回修改</button></div>';
         }
+        function getSolutionLineSummary(line, item) {
+            if (line === 'SASE-GA') return '云图ID ' + (application.cloud ? application.cloud.tenantId : '-') + ' | 带宽 ' + item.bandwidth + 'M | ' + item.customerNeed;
+            if (line === 'SaaS-XDR') return '云图ID ' + (application.cloud ? application.cloud.tenantId : '-') + ' | 日志量 ' + item.logAmount + ' 万条 | ' + item.coreNeed;
+            if (line === 'HCI') return item.deviceId + ' | ' + (item.modules || []).join('、') + ' | 集群 ' + item.clusterId + ' | ' + item.spec;
+            if (line === 'AC') return item.deviceId + ' | 网关：线路' + item.gatewayLines + '/分支' + item.gatewayBranch + '/移动' + item.gatewayMobile + ' | 多功能：' + (item.multiFeatures || []).join('、') + ' | 终端' + item.terminalCount;
+            return item.deviceId + ' | ' + (item.modules || []).join('、') + ' | ' + item.spec;
+        }
         function openApprovalPreview() {
             var source = application.source === 'borrow' ? '关联借测单 ' + application.borrow.number : '纯软件本地申请';
             var error = validateApplication();
             var errorHtml = error ? '<div class="solution-form-error">' + escapeHtml(error) + '</div>' : '';
-            id('solutionApprovalContent').innerHTML = errorHtml + '<div class="solution-grid two"><div class="solution-info-item"><small>申请来源</small>' + source + '</div><div class="solution-info-item"><small>审批粒度</small>整套方案，一张 W3 申请单</div><div class="solution-info-item"><small>解决方案</small>' + escapeHtml(application.solution.name) + '</div><div class="solution-info-item"><small>客户</small>' + escapeHtml(application.customer) + '</div></div><ul class="solution-approval-list">' + application.lines.map(function(line) { var item = application.params[line]; var summary; if (line === 'HCI') { summary = item.deviceId + ' | ' + (item.modules || []).join('、') + ' | 集群 ' + item.clusterId + ' | ' + item.spec; } else if (line === 'AC') { summary = item.deviceId + ' | 网关：线路' + item.gatewayLines + '/分支' + item.gatewayBranch + '/移动' + item.gatewayMobile + ' | 多功能：' + (item.multiFeatures || []).join('、') + ' | 终端' + item.terminalCount; } else { summary = item.deviceId + ' | ' + (item.modules || []).join('、') + ' | ' + item.spec; } return '<li><strong>' + line + ' · ' + escapeHtml(item.version) + '</strong><span>' + escapeHtml(summary) + '</span></li>'; }).join('') + '</ul>';
+            var cloudHtml = application.lines.some(isXaasLine) ? '<div class="solution-info-item"><small>云图身份</small>' + escapeHtml(application.cloud ? application.cloud.account + ' | ' + application.cloud.tenantId : '-') + '</div>' : '';
+            id('solutionApprovalContent').innerHTML = errorHtml + '<div class="solution-grid two"><div class="solution-info-item"><small>申请来源</small>' + source + '</div><div class="solution-info-item"><small>审批粒度</small>整套方案，一张 W3 申请单</div><div class="solution-info-item"><small>解决方案</small>' + escapeHtml(application.solution.name) + '</div><div class="solution-info-item"><small>客户</small>' + escapeHtml(application.customer) + '</div>' + cloudHtml + '</div><ul class="solution-approval-list">' + application.lines.map(function(line) { var item = application.params[line]; return '<li><strong>' + line + ' · ' + escapeHtml(item.version) + '</strong><span>' + escapeHtml(getSolutionLineSummary(line, item)) + '</span></li>'; }).join('') + '</ul>';
             id('solutionApprovalModal').hidden = false;
             id('solutionApprovalModal').setAttribute('aria-hidden', 'false');
         }
@@ -10223,13 +10528,15 @@
             application.recordId = 'SOL-20260806-003';
             var rows = application.lines.map(function(line, index) {
                 var value = application.params[line];
-                return { line: line, version: value.version, deviceId: value.deviceId, sn: 'SN-' + line + '-' + String(index + 1).padStart(3, '0'), endDate: value.endDate, license: 'LIC-' + line + '-806' };
+                var xaas = isXaasLine(line);
+                return { line: line, version: value.version, deviceId: xaas ? '云图ID: ' + (application.cloud ? application.cloud.tenantId : '-') : value.deviceId, sn: xaas ? '—' : 'SN-' + line + '-' + String(index + 1).padStart(3, '0'), endDate: value.endDate, license: 'LIC-' + line + '-806' };
             });
             var deviceIds = rows.map(function(row) { return row.deviceId; }).join('&#10;');
             var sns = rows.map(function(row) { return row.sn; }).join('&#10;');
             var tbody = document.querySelector('#content-records .table-scroll-wrap > table > tbody');
-            var record = '<tr class="hover:bg-[#eef3ff]/40 transition-colors solution-parent" data-solution-generated="true"><td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-1"><button class="text-[#424656] hover:text-primary border-0 bg-transparent p-0 leading-none" onclick="toggleSolution(this)" aria-label="展开方案明细"><span class="material-symbols-outlined text-[16px] expand-icon">chevron_right</span></button><a class="text-primary hover:underline font-medium" href="javascript:;">' + application.recordId + '</a></div></td><td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-50 text-amber-700 border border-amber-200">解决方案</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td><td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">' + escapeHtml(application.solution.name) + '</td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td><td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="' + escapeHtml(application.customer) + '">' + escapeHtml(application.customer) + '</span></div></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]"><span class="device-summary" data-full="' + deviceIds + '">' + rows.length + '个设备</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]"><span class="device-summary" data-full="' + sns + '">' + rows.length + '个设备</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本地申请</td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-08-06 ~ ' + rows[0].endDate + '</td><td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">' + escapeHtml(application.applicant) + '</td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-08-06 10:10</td><td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已授权</span><div class="flex items-center gap-0.5 ml-auto"></div></div></td></tr>';
-            var detail = '<tr class="solution-detail-row" style="display:none;" data-solution-generated-detail="true"><td colspan="14" class="p-0 bg-[#f8f9ff]" style="border-top:2px solid #e5eeff;"><div style="padding:6px 12px 10px;"><div class="solution-expand-wrap"><div class="bg-white rounded border border-[#c2c6d8]/20 overflow-hidden" style="font-size:11.5px;"><table class="w-full"><thead><tr class="border-b border-[#c2c6d8]/30 bg-[#e8eeff]"><th class="py-2 px-3">产品线</th><th class="py-2 px-3">版本号</th><th class="py-2 px-3">设备ID</th><th class="py-2 px-3">设备SN</th><th class="py-2 px-3">授权有效期</th><th class="py-2 px-3">授权码</th></tr></thead><tbody>' + rows.map(function(row) { return '<tr><td class="py-2 px-3">' + row.line + '</td><td class="py-2 px-3">' + escapeHtml(row.version) + '</td><td class="py-2 px-3">' + escapeHtml(row.deviceId) + '</td><td class="py-2 px-3">' + row.sn + '</td><td class="py-2 px-3">至 ' + row.endDate + '</td><td class="py-2 px-3">' + row.license + '</td></tr>'; }).join('') + '</tbody></table></div></div></div></td></tr>';
+            var sourceLabel = application.source === 'borrow' ? '关联借测单' : '本地申请';
+            var record = '<tr class="hover:bg-[#eef3ff]/40 transition-colors solution-parent" data-solution-generated="true"><td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-1"><button class="text-[#424656] hover:text-primary border-0 bg-transparent p-0 leading-none" onclick="toggleSolution(this)" aria-label="展开方案明细"><span class="material-symbols-outlined text-[16px] expand-icon">chevron_right</span></button><a class="text-primary hover:underline font-medium" href="javascript:;">' + application.recordId + '</a></div></td><td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-50 text-amber-700 border border-amber-200">解决方案</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td><td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">' + escapeHtml(application.solution.name) + '</td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td><td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="' + escapeHtml(application.customer) + '">' + escapeHtml(application.customer) + '</span></div></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]"><span class="device-summary" data-full="' + deviceIds + '">' + rows.length + '个设备</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]"><span class="device-summary" data-full="' + sns + '">' + rows.length + '个设备</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">' + sourceLabel + '</td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-08-06 ~ ' + rows[0].endDate + '</td><td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">' + escapeHtml(application.applicant) + '</td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-08-06 10:10</td><td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已授权</span><div class="flex items-center gap-0.5 ml-auto"></div></div></td></tr>';
+            var detail = '<tr class="solution-detail-row" style="display:none;" data-solution-generated-detail="true"><td colspan="14" class="p-0 bg-[#f8f9ff]" style="border-top:2px solid #e5eeff;"><div style="padding:6px 12px 10px;"><div class="solution-expand-wrap"><div class="bg-white rounded border border-[#c2c6d8]/20 overflow-hidden" style="font-size:11.5px;"><table class="w-full"><thead><tr class="border-b border-[#c2c6d8]/30 bg-[#e8eeff]"><th class="py-2 px-3">产品线</th><th class="py-2 px-3">版本号</th><th class="py-2 px-3">设备ID/云图ID</th><th class="py-2 px-3">设备SN</th><th class="py-2 px-3">授权有效期</th><th class="py-2 px-3">授权码</th></tr></thead><tbody>' + rows.map(function(row) { return '<tr><td class="py-2 px-3">' + row.line + '</td><td class="py-2 px-3">' + escapeHtml(row.version) + '</td><td class="py-2 px-3">' + escapeHtml(row.deviceId) + '</td><td class="py-2 px-3">' + row.sn + '</td><td class="py-2 px-3">至 ' + row.endDate + '</td><td class="py-2 px-3">' + row.license + '</td></tr>'; }).join('') + '</tbody></table></div></div></div></td></tr>';
             tbody.insertAdjacentHTML('afterbegin', record + detail);
             if (typeof window.initRecordsPagination === 'function') window.initRecordsPagination();
         }
@@ -10242,18 +10549,44 @@
 
         function bindEvents() {
             document.querySelectorAll('[data-solution-drawer-close]').forEach(function(el) { el.addEventListener('click', closeSolutionConfigDrawer); });
-            document.querySelectorAll('[data-solution-source]').forEach(function(button) {
-                button.addEventListener('click', function() {
-                    application.source = button.dataset.solutionSource;
-                    document.querySelectorAll('[data-solution-source]').forEach(function(item) { item.classList.toggle('is-active', item === button); });
-                    id('solutionBorrowSource').hidden = application.source !== 'borrow';
-                    id('solutionLocalSource').hidden = application.source !== 'local';
-                    id('solutionBorrowOrder').value = '';
-                    id('solutionLocalConfig').value = '';
-                    id('solutionBorrowState').hidden = true;
-                    id('solutionBorrowInfo').hidden = true;
-                    resetApplication();
-                });
+            id('solutionSourceSelect').addEventListener('change', function() {
+                application.source = this.value;
+                id('solutionBorrowSource').hidden = application.source !== 'borrow';
+                id('solutionLocalSource').hidden = application.source !== 'local';
+                id('solutionLocalConfig').value = '';
+                clearSolutionBorrowCustomer(false);
+                clearSolutionLocalCustomer(false);
+                id('solutionBorrowState').hidden = true;
+                id('solutionBorrowInfo').hidden = true;
+                resetApplication();
+            });
+            id('solutionBorrowCustomerSearch').addEventListener('focus', function() { renderSolutionBorrowCustomers(this.value); });
+            id('solutionBorrowCustomerSearch').addEventListener('input', function() { renderSolutionBorrowCustomers(this.value); });
+            id('solutionBorrowCustomerDropdown').addEventListener('click', function(event) {
+                var item = event.target.closest('[data-solution-borrow-customer]');
+                if (!item) return;
+                var customer = solutionBorrowCustomers.find(function(entry) { return entry.id === item.dataset.solutionBorrowCustomer; });
+                if (customer) selectSolutionBorrowCustomer(customer);
+            });
+            id('solutionBorrowCustomerChange').addEventListener('click', function() {
+                clearSolutionBorrowCustomer();
+                id('solutionBorrowCustomerSearch').focus();
+            });
+            id('solutionLocalCustomerSearch').addEventListener('focus', function() { renderSolutionLocalCustomers(this.value); });
+            id('solutionLocalCustomerSearch').addEventListener('input', function() { renderSolutionLocalCustomers(this.value); });
+            id('solutionLocalCustomerDropdown').addEventListener('click', function(event) {
+                var item = event.target.closest('[data-solution-local-customer]');
+                if (!item) return;
+                var customer = solutionBorrowCustomers.find(function(entry) { return entry.id === item.dataset.solutionLocalCustomer; });
+                if (customer) selectSolutionLocalCustomer(customer);
+            });
+            id('solutionLocalCustomerChange').addEventListener('click', function() {
+                clearSolutionLocalCustomer();
+                id('solutionLocalCustomerSearch').focus();
+            });
+            document.addEventListener('click', function(event) {
+                if (!event.target.closest('#solutionBorrowCustomerField')) id('solutionBorrowCustomerDropdown').classList.remove('show');
+                if (!event.target.closest('#solutionLocalCustomerField')) id('solutionLocalCustomerDropdown').classList.remove('show');
             });
             id('solutionBorrowLookup').addEventListener('click', lookupBorrowOrder);
             id('solutionLocalConfig').addEventListener('change', selectLocalSolution);
@@ -10280,7 +10613,10 @@
                     return;
                 }
                 var inputEl = target.closest('[data-solution-param]');
-                if (inputEl) application.params[application.activeLine][inputEl.dataset.solutionParam] = inputEl.value;
+                if (inputEl) {
+                    application.params[application.activeLine][inputEl.dataset.solutionParam] = inputEl.value;
+                    if (inputEl.dataset.solutionParam === 'isPk') renderProductWorkspace();
+                }
             }
             id('solutionProductPanel').addEventListener('input', collectSolutionParam);
             id('solutionProductPanel').addEventListener('change', collectSolutionParam);
@@ -10318,7 +10654,7 @@
         window.toggleSettingsDropdown = toggleSettingsDropdown;
         window.openSolutionConfigDrawer = openSolutionConfigDrawer;
         window.closeSolutionConfigDrawer = closeSolutionConfigDrawer;
-        function initSolutionTab() { if (!id('content-solution')) return; renderConfigs(); bindEvents(); }
+        function initSolutionTab() { if (!id('content-solution')) return; renderConfigs(); renderSolutionBorrowOrders(); bindEvents(); }
         initSolutionTab();
     }());
     </script>
