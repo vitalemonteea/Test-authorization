@@ -142,6 +142,18 @@
 - 改动前先检查 `git status`，不要覆盖用户已有修改。
 - 手动修改文件使用 `apply_patch`。
 
+## 9.1 Git 提交流程：每次提交都走 PR
+
+从 2026-08-19 起，本仓库的每一次代码改动都必须通过 Pull Request 合并，不直接往主分支 `codex/solution-authorization-demo` push。流程：
+
+1. 从主分支切出独立特性分支（如 `feat/<改动简述>`）。
+2. 完成后提交到该特性分支，并 push 到远端。
+3. 用 `gh pr create` 发起 Pull Request（base = `codex/solution-authorization-demo`，head = 特性分支）。
+4. 合并 PR，随后删除本地和远端的特性分支。
+5. 在 `handoff.md`「改动历史」登记本次 PR 链接/编号。
+
+约定：任何会对主分支产生远期可见影响的改动，都必须在合并前有对应的 PR 记录。
+
 ## 10. 验证与交付
 
 完成修改后至少执行：
