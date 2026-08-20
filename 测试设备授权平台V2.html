@@ -380,11 +380,19 @@
         #section-basic .auth-scene-tag.warning { color: #8a4b00; background: #fff1d6; }
         #section-basic #overlimit-fields { row-gap: 16px; }
         #section-basic #overlimit-fields[hidden] { display: none; }
+        #section-basic #overlimit-fields .layui-form-label { white-space: nowrap; }
         #section-basic #overlimit-fields .layui-textarea { display: block; width: 100%; min-height: 80px; padding: 10px 12px; color: #0b1c30; background: #fff; border: 1px solid #d8deea; border-radius: 8px; box-sizing: border-box; font-family: inherit; font-size: 13px; line-height: 20px; resize: none; transition: border-color .15s, box-shadow .15s; }
         #section-basic #overlimit-fields .layui-textarea::placeholder { color: #8b92a5; }
         #section-basic #overlimit-fields .layui-textarea:focus { outline: none; border-color: #0050cb; box-shadow: 0 0 0 2px rgba(0,80,203,.12); }
-        #section-basic #overlimit-fields .hw-upload-area { width: 100%; }
-        #section-basic #overlimit-fields .hw-file-info { flex: 1 1 auto; width: auto; min-width: 0; }
+        #section-basic #overlimit-fields .hw-upload-area { width: 100%; align-items: flex-start; }
+        #section-basic #overlimit-fields .hw-file-info { flex: 1 1 auto; width: auto; min-width: 0; height: auto; min-height: 40px; flex-direction: column; align-items: stretch; justify-content: center; row-gap: 4px; }
+        #section-basic #overlimit-fields .hw-file-list { display: flex; flex-direction: column; gap: 4px; }
+        #section-basic #overlimit-fields .overlimit-file-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
+        #section-basic #overlimit-fields .overlimit-file-row .hw-file-name { flex: 1; min-width: 0; }
+        #section-basic #overlimit-fields .overlimit-file-row .hw-file-meta { flex-shrink: 0; }
+        #section-basic #overlimit-fields .overlimit-file-row .hw-file-clear { display: inline-flex; }
+        #section-basic #overlimit-fields .layui-input { display: block; width: 100%; max-width: 420px; height: 38px; padding: 0 12px; color: #0b1c30; background: #fff; border: 1px solid #d8deea; border-radius: 8px; box-sizing: border-box; font-family: inherit; font-size: 13px; transition: border-color .15s, box-shadow .15s; }
+        #section-basic #overlimit-fields .layui-input:focus { outline: none; border-color: #0050cb; box-shadow: 0 0 0 2px rgba(0,80,203,.12); }
         #section-basic .request-content-group { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
         #section-basic .request-content-option { position: relative; display: flex; align-items: center; gap: 9px; min-width: 0; min-height: 44px; padding: 9px 12px; color: #424656; background: #fff; border: 1px solid #d8deea; border-radius: 8px; box-sizing: border-box; cursor: pointer; transition: border-color .15s, background-color .15s, box-shadow .15s; }
         #section-basic .request-content-option:hover { border-color: #8eaae0; background: #f7faff; }
@@ -959,6 +967,11 @@
         .record-detail-label{display:block;margin:0;color:#6b7890;font-size:12px;line-height:20px}
         .record-detail-value{display:block;color:#0b1c30;font-size:13px;line-height:20px;overflow-wrap:anywhere}
         .record-detail-value.is-code{font-family:Consolas,"SFMono-Regular",monospace;color:#003f9e}
+        .record-detail-attachments{display:flex;flex-wrap:wrap;gap:6px}
+        .record-detail-attachment{display:inline-flex;align-items:center;gap:4px;max-width:100%;min-height:24px;padding:3px 7px;color:#35506f;background:#eef4ff;border:0;border-radius:4px;font:inherit;font-size:11px;line-height:16px;cursor:pointer}
+        .record-detail-attachment:hover{background:#e0eaff}
+        .record-detail-attachment .material-symbols-outlined{flex:0 0 auto;font-size:14px}
+        .record-detail-attachment span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
         .record-xaas-only[hidden],.record-product-auth-only[hidden],.record-product-only[hidden]{display:none!important}
         .record-xaas-subscriptions{display:flex;flex-direction:column;gap:10px}
         .record-xaas-subscription{padding:12px 14px;background:#f7f9fc;border:1px solid #e3e8f1;border-radius:6px}
@@ -1885,21 +1898,35 @@
 
                     <!-- 超期申请补充材料，仅在规则识别为累计超期时展示 -->
                     <div class="basic-full-row" id="overlimit-fields" hidden>
+                    <div class="basic-two-col-row">
                     <div class="layui-form-item">
-                        <label class="layui-form-label">申请理由<span class="required-mark">*</span></label>
+                        <label class="layui-form-label">项目预计发标时间<span class="required-mark">*</span></label>
+                        <div class="layui-input-block">
+                            <input type="date" id="projectTenderDate" class="layui-input" value="">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">项目名称</label>
+                        <div class="layui-input-block">
+                            <input type="text" id="projectName" class="layui-input" placeholder="请输入项目名称">
+                        </div>
+                    </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">申请原因<span class="required-mark">*</span></label>
                         <div class="layui-input-block">
                             <textarea id="overlimitReason" class="layui-textarea" placeholder="请说明超期后仍需申请授权的业务原因" rows="3"></textarea>
                         </div>
                     </div>
                     <div class="layui-form-item">
-                        <label class="layui-form-label">证明材料</label>
+                        <label class="layui-form-label">当前测试报告</label>
                         <div class="layui-input-block">
                             <div class="hw-upload-area">
-                                <input type="file" id="overlimitFileInput">
+                                <input type="file" id="overlimitFileInput" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.xlsx,.xls">
                                 <div class="hw-file-info" id="overlimitFileInfo">
-                                    <span class="hw-file-name empty" id="overlimitFileName">未选择文件（支持常见格式）</span>
-                                    <span class="hw-file-meta" id="overlimitFileMeta"></span>
-                                    <span class="hw-file-clear" id="overlimitFileClear" title="删除文件">&times;</span>
+                                    <div class="hw-file-list" id="overlimitFileList">
+                                        <span class="hw-file-name empty" id="overlimitFileName">未选择文件（支持常见格式）</span>
+                                    </div>
                                 </div>
                                 <label class="hw-upload-btn" for="overlimitFileInput"><span class="upload-icon">&#8679;</span> 上传文件</label>
                             </div>
@@ -3401,6 +3428,24 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-03 ~ 2026-10-01</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">王五</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-03 09:15</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-amber-50 text-amber-700 border border-amber-200"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>审批中</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span></div></div></td>
+</tr>
+
+<!-- 累计超期·审批中 演示记录 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-status="审批中" data-overdue-app="true">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260820-200</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>
+
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">NGAF</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">NGAF-8.0.15</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="华为技术有限公司" title="华为技术有限公司">华为技术有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-amber-100 text-amber-800 border border-amber-200">KA</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]"><span class="inline-flex items-center gap-1.5"><span class="device-id">OVERDUE-NGAF-001</span><span class="inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-orange-100 text-orange-700 border border-orange-200">累计超期</span></span></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SN-OVERDUE-NGAF-001</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">上海区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-08-20 ~ 2026-11-18</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">赵六</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-08-20 09:30</td>
 <td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-amber-50 text-amber-700 border border-amber-200"><span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>审批中</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span></div></div></td>
 </tr>
 
@@ -5198,6 +5243,8 @@
             overlimitFields.hidden = !visible;
             if (visible) return;
             document.getElementById('overlimitReason').value = '';
+            document.getElementById('projectTenderDate').value = '';
+            document.getElementById('projectName').value = '';
             document.getElementById('overlimitFileInput').value = '';
             clearOverlimitFile();
         }
@@ -5243,6 +5290,8 @@
             document.getElementById('overlimitFileInput').value = '';
             clearOverlimitFile();
             document.getElementById('overlimitReason').value = '';
+            document.getElementById('projectTenderDate').value = '';
+            document.getElementById('projectName').value = '';
             clearRenewalDetection();
             // 重置版本字段回默认值
             setCustomSelectValue('cloudVersion', '6.8.1_1');
@@ -5573,32 +5622,62 @@
             setCustomSelectValue('cloudVersion', '6.8.1_1');
         });
 
-        // ===== 超规附件上传 =====
+        // ===== 超规附件上传（支持多文件） =====
         var overlimitFileInput = document.getElementById('overlimitFileInput');
-        var overlimitFileName = document.getElementById('overlimitFileName');
         var overlimitFileInfo = document.getElementById('overlimitFileInfo');
-        var overlimitFileMeta = document.getElementById('overlimitFileMeta');
-        var overlimitFileClear = document.getElementById('overlimitFileClear');
+        var overlimitFileList = document.getElementById('overlimitFileList');
+        var overlimitFiles = [];
+
+        function renderOverlimitFiles() {
+            overlimitFileList.textContent = '';
+            if (overlimitFiles.length) {
+                overlimitFileInfo.classList.add('has-file');
+                overlimitFiles.forEach(function(file, index) {
+                    var row = document.createElement('div');
+                    row.className = 'overlimit-file-row';
+                    var name = document.createElement('span');
+                    name.className = 'hw-file-name';
+                    name.textContent = file.name;
+                    var meta = document.createElement('span');
+                    meta.className = 'hw-file-meta';
+                    meta.textContent = formatFileSize(file.size);
+                    var clear = document.createElement('span');
+                    clear.className = 'hw-file-clear';
+                    clear.title = '删除文件';
+                    clear.textContent = '×';
+                    clear.addEventListener('click', function() {
+                        overlimitFiles.splice(index, 1);
+                        renderOverlimitFiles();
+                    });
+                    row.appendChild(name);
+                    row.appendChild(meta);
+                    row.appendChild(clear);
+                    overlimitFileList.appendChild(row);
+                });
+            } else {
+                overlimitFileInfo.classList.remove('has-file');
+                var placeholder = document.createElement('span');
+                placeholder.className = 'hw-file-name empty';
+                placeholder.id = 'overlimitFileName';
+                placeholder.textContent = '未选择文件（支持常见格式）';
+                overlimitFileList.appendChild(placeholder);
+            }
+        }
 
         overlimitFileInput.addEventListener('change', function() {
-            var file = this.files[0];
-            if (!file) { clearOverlimitFile(); return; }
-            overlimitFileName.textContent = file.name;
-            overlimitFileName.className = 'hw-file-name';
-            overlimitFileMeta.textContent = formatFileSize(file.size);
-            overlimitFileInfo.classList.add('has-file');
-        });
-
-        overlimitFileClear.addEventListener('click', function() {
-            overlimitFileInput.value = '';
-            clearOverlimitFile();
+            Array.from(this.files || []).forEach(function(file) {
+                var duplicated = overlimitFiles.some(function(existing) {
+                    return existing.name === file.name && existing.size === file.size && existing.lastModified === file.lastModified;
+                });
+                if (!duplicated) overlimitFiles.push(file);
+            });
+            this.value = '';
+            renderOverlimitFiles();
         });
 
         function clearOverlimitFile() {
-            overlimitFileName.textContent = '未选择文件（支持常见格式）';
-            overlimitFileName.className = 'hw-file-name empty';
-            overlimitFileMeta.textContent = '';
-            overlimitFileInfo.classList.remove('has-file');
+            overlimitFiles = [];
+            renderOverlimitFiles();
         }
 
         // ===== 硬件信息文件上传 =====
@@ -6593,7 +6672,7 @@
 
         function updateStandardActionReadiness() {
             var hardConflict = applicationState.compatibilityIssues.some(function(issue) { return issue.hard; });
-            var missingOverdueReason = !overlimitFields.hidden && !document.getElementById('overlimitReason').value.trim();
+            var missingOverdueReason = !overlimitFields.hidden && (!document.getElementById('overlimitReason').value.trim() || !document.getElementById('projectTenderDate').value);
             var statusText = '请先识别设备或上传硬件信息';
             var statusIcon = 'info';
             var statusClass = '';
@@ -6606,7 +6685,7 @@
             } else if (applicationState.baseScene === 'adjust' && !applicationState.requestContents.length) {
                 statusText = '请选择申请内容';
             } else if (missingOverdueReason) {
-                statusText = '请填写超期申请理由';
+                statusText = '请填写超期申请理由与项目预计发标时间';
             } else if (applicationState.deviceFacts.length > 0) {
                 statusText = '已识别 ' + applicationState.deviceFacts.length + ' 台设备，可以提交';
                 statusIcon = 'check_circle';
@@ -6620,6 +6699,7 @@
         }
 
         document.getElementById('overlimitReason').addEventListener('input', updateStandardActionReadiness);
+        document.getElementById('projectTenderDate').addEventListener('change', updateStandardActionReadiness);
 
         function buildDeviceApplications(facts) {
             return facts.map(function(fact) {
@@ -7970,9 +8050,15 @@
 
         var overlimitFields = document.getElementById('overlimit-fields');
         var overlimitReason = document.getElementById('overlimitReason');
+        var projectTenderDate = document.getElementById('projectTenderDate');
         if (!overlimitFields.hidden && !overlimitReason.value.trim()) {
             alert('请填写超期申请理由');
             overlimitReason.focus();
+            return;
+        }
+        if (!overlimitFields.hidden && !projectTenderDate.value) {
+            alert('请选择项目预计发标时间');
+            projectTenderDate.focus();
             return;
         }
 
@@ -8228,7 +8314,7 @@
             version: cells[4] ? cells[4].textContent.trim() : '',
             customer: cells[5] ? (cells[5].querySelector('.cust-name') || cells[5]).textContent.trim() : '',
             customerType: customerBadge ? customerBadge.textContent.trim() : '普通客户',
-            device: cells[6] ? cells[6].textContent.trim() : '',
+            device: cells[6] ? ((cells[6].querySelector('.device-id') || cells[6]).textContent.trim()) : '',
             deviceSn: cells[7] ? cells[7].textContent.trim() : '',
             cloudAuthId: cells[8] ? cells[8].textContent.trim() : '',
             region: cells[9] ? cells[9].textContent.trim() : '',
@@ -8236,6 +8322,7 @@
             applicant: cells[11] ? cells[11].textContent.trim() : '',
             appliedAt: cells[12] ? cells[12].textContent.trim() : '',
             status: getRecordRowStatus(row),
+            overdueExtended: row.dataset && row.dataset.overdueApp === 'true' || null,
             submittedApproval: row._submittedApproval || null
         };
     }
@@ -8381,7 +8468,7 @@
         var authorized = data.status === '已授权' || data.status === '已过期';
         var isClusterProduct = data.product === 'HCI' || data.product === 'SCP';
         var isFirstOpening = data.applicationNo === 'AUTH-20260701-001';
-        var isOverdue = data.status === '已过期';
+        var isOverdue = data.status === '已过期' || !!data.overdueExtended;
         var scene = isFirstOpening ? '首次开通测试授权' : (isOverdue ? '重新开通测试授权' : '有效期内调整');
         var requestItems = isFirstOpening ? '开通测试授权' : (isOverdue ? '延期' : '延期、增开模块、扩容');
         var modules = getRecordModules(data.product);
@@ -8432,7 +8519,13 @@
         if (isOverdue) {
             sceneItems.push(
                 { label: '申请原因', value: '原测试周期结束后仍需完成压力验证，申请重新开通测试授权。', full: true },
-                { label: '附件', value: '超期测试说明.pdf', full: true }
+                { label: '项目预计发标时间', value: '2026-11-30', full: true },
+                { label: '项目名称', value: '某金融客户安全加固项目', full: true },
+                { label: '附件', value: [
+                    { name: '超期测试说明.pdf', url: '' },
+                    { name: '测试报告.docx', url: '' },
+                    { name: '压测截图.png', url: '' }
+                ], full: true }
             );
         }
 
@@ -8478,11 +8571,34 @@
             var label = document.createElement('span');
             label.className = 'record-detail-label';
             label.textContent = item.label;
-            var value = document.createElement('span');
-            value.className = 'record-detail-value' + (item.code ? ' is-code' : '');
-            value.textContent = item.value || '—';
             wrap.appendChild(label);
-            wrap.appendChild(value);
+            if (Array.isArray(item.value)) {
+                var value = document.createElement('span');
+                value.className = 'record-detail-value record-detail-attachments' + (item.code ? ' is-code' : '');
+                item.value.forEach(function(file) {
+                    var att = document.createElement('button');
+                    att.type = 'button';
+                    att.className = 'record-detail-attachment';
+                    att.title = file.name || '';
+                    att.setAttribute('aria-label', '下载附件 ' + (file.name || ''));
+                    var icon = document.createElement('span');
+                    icon.className = 'material-symbols-outlined';
+                    icon.setAttribute('aria-hidden', 'true');
+                    icon.textContent = 'attach_file';
+                    var name = document.createElement('span');
+                    name.textContent = file.name || '';
+                    att.appendChild(icon);
+                    att.appendChild(name);
+                    att.addEventListener('click', function() { downloadRecordApprovalAttachment(file); });
+                    value.appendChild(att);
+                });
+                wrap.appendChild(value);
+            } else {
+                var value = document.createElement('span');
+                value.className = 'record-detail-value' + (item.code ? ' is-code' : '');
+                value.textContent = item.value || '—';
+                wrap.appendChild(value);
+            }
             container.appendChild(wrap);
         });
     }
@@ -8609,11 +8725,13 @@
         return items.filter(function(item) {
             return /附件|文件|收集表/.test(item.label || '') && item.value && item.value !== '—';
         }).map(function(item) {
-            return {
-                name: String(item.value).replace(/（已上传）$/, ''),
-                url: item.url || ''
-            };
-        });
+            if (Array.isArray(item.value)) {
+                return item.value.map(function(file) {
+                    return { name: String(file.name || '').replace(/（已上传）$/, ''), url: file.url || '' };
+                });
+            }
+            return [{ name: String(item.value).replace(/（已上传）$/, ''), url: item.url || '' }];
+        }).reduce(function(acc, group) { return acc.concat(group); }, []);
     }
 
     function buildRecordApprovalSteps(data) {

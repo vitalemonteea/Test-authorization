@@ -176,6 +176,27 @@ test('超期产品提示升级审批，解决方案仍使用通用授权信息',
   }
 });
 
+test('累计超期·审批中记录的详情展示多个可下载附件', () => {
+  const { dom, document, window } = setupRecords();
+  try {
+    const rows = [...document.querySelectorAll('#content-records .table-scroll-wrap > table > tbody > tr:not(.solution-detail-row)')];
+    const overdueRow = rows.find((row) => row.children[0]?.textContent.includes('AUTH-20260820-200'));
+    assert.ok(overdueRow, '应存在累计超期·审批中 Mock 记录');
+    overdueRow.querySelector('[data-record-action="view"]').dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+
+    const grid = document.getElementById('recordProductSupplementGrid');
+    assert.match(grid.textContent, /升级审批/);
+    assert.match(grid.textContent, /申请原因/);
+    const attachments = grid.querySelectorAll('.record-detail-attachment');
+    assert.equal(attachments.length, 3, '详情应展示 3 个附件');
+    assert.match(grid.textContent, /超期测试说明\.pdf/);
+    assert.match(grid.textContent, /测试报告\.docx/);
+    assert.match(grid.textContent, /压测截图\.png/);
+  } finally {
+    dom.window.close();
+  }
+});
+
 test('查看支持键盘打开、Escape关闭并恢复焦点', () => {
   const { dom, document, window } = setupRecords();
   try {

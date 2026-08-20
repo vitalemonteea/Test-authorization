@@ -231,15 +231,60 @@ test('重新开通与累计超期可以在场景卡中同时显示', () => {
     assert.equal(document.getElementById('overlimit-fields').hidden, false);
     assert.equal(document.getElementById('requestContentsRow').nextElementSibling.id, 'overlimit-fields');
     assert.ok(document.getElementById('overlimitReason'));
+    assert.ok(document.getElementById('projectTenderDate'));
+    assert.ok(document.getElementById('projectName'));
     assert.ok(document.getElementById('overlimitFileInput'));
     assert.match(document.getElementById('standardActionStatusText').textContent, /请填写超期申请理由/);
 
+    // 累计超期补充区必填：申请原因 + 项目预计发标时间
     document.getElementById('overlimitReason').value = '客户仍需完成压力验证';
     document.getElementById('overlimitReason').dispatchEvent(new window.Event('input', { bubbles: true }));
+    assert.match(document.getElementById('standardActionStatusText').textContent, /还不能提交|预计发标时间/);
+    document.getElementById('projectTenderDate').value = '2026-12-31';
+    document.getElementById('projectTenderDate').dispatchEvent(new window.Event('change', { bubbles: true }));
     assert.match(document.getElementById('standardActionStatusText').textContent, /可以提交/);
     window.removeDeviceChip('OVERDUE-NGAF-001');
     assert.equal(document.getElementById('overlimit-fields').hidden, true);
     assert.equal(document.getElementById('overlimitReason').value, '');
+    assert.equal(document.getElementById('projectTenderDate').value, '');
+    assert.equal(document.getElementById('projectName').value, '');
+    assert.deepEqual(errors, []);
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('累计超期补充表单支持多文件上传并可单个删除', () => {
+  const { dom, document, window, errors } = loadV2Dom();
+  try {
+    const product = document.getElementById('plname');
+    product.value = '22';
+    fireChange(product, window);
+    window.addChip('OVERDUE-NGAF-001');
+    assert.equal(document.getElementById('overlimit-fields').hidden, false);
+
+    const fileInput = document.getElementById('overlimitFileInput');
+    const files = [
+      new window.File(['pdf'], '超期测试说明.pdf', { type: 'application/pdf' }),
+      new window.File(['docx'], '测试报告.docx', { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' }),
+      new window.File(['png'], '压测截图.png', { type: 'image/png' })
+    ];
+    Object.defineProperty(fileInput, 'files', { configurable: true, value: files });
+    fireChange(fileInput, window);
+
+    let rows = document.querySelectorAll('#overlimitFileList .overlimit-file-row');
+    assert.equal(rows.length, 3, '应展示 3 个上传文件');
+    assert.match(document.getElementById('overlimitFileList').textContent, /超期测试说明\.pdf/);
+    assert.match(document.getElementById('overlimitFileList').textContent, /测试报告\.docx/);
+    assert.match(document.getElementById('overlimitFileList').textContent, /压测截图\.png/);
+
+    // 删除第二个文件
+    rows[1].querySelector('.hw-file-clear').click();
+    rows = document.querySelectorAll('#overlimitFileList .overlimit-file-row');
+    assert.equal(rows.length, 2, '删除一个后应剩 2 个文件');
+    assert.doesNotMatch(document.getElementById('overlimitFileList').textContent, /测试报告\.docx/);
+    assert.match(document.getElementById('overlimitFileList').textContent, /超期测试说明\.pdf/);
+
     assert.deepEqual(errors, []);
   } finally {
     dom.window.close();
