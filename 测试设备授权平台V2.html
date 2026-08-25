@@ -507,6 +507,9 @@
         body[data-active-tab="xaas"] .module-nav,
         body[data-active-tab="solution"] .module-nav,
         body[data-active-tab="records"] .module-nav { display: none !important; }
+        /* 解决方案配置抽屉/新增编辑弹窗打开时隐藏模块导航：抽屉嵌在内容区堆叠上下文内，导航会浮在遮罩之上 */
+        body:has(#solutionConfigDrawer:not([hidden])) .module-nav,
+        body:has(#solutionConfigModal:not([hidden])) .module-nav { display: none !important; }
         .module-nav-title { padding: 4px 10px 10px; font-size: 13px; font-weight: 600; color: #1a1a2e; letter-spacing: 0; text-transform: none; }
         .module-nav-item { display: flex; align-items: center; padding: 8px 10px; font-size: 13px; color: #424656; cursor: pointer; transition: all 0.15s; border-radius: 8px; margin-bottom: 2px; border-left: none; }
         .module-nav-item:hover { background: #eff4ff; color: #0050cb; }
