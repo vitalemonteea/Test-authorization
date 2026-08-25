@@ -507,7 +507,7 @@ test('扩大容量仅展示已授权模块且导航同步', () => {
     increase.checked = true;
     increase.dispatchEvent(new window.Event('change', { bubbles: true }));
 
-    const ngafCard = document.getElementById('module-NGAF');
+    const ngafCard = document.getElementById('module-NGAF-intelligent-ops');
     assert.equal(ngafCard.hidden, false, '已授权模块应保持展示');
     assert.equal(ngafCard.dataset.currentlyAuthorized, 'true');
     const unauthorizedCards = [...document.querySelectorAll('#content .module-item')].filter(
@@ -520,14 +520,20 @@ test('扩大容量仅展示已授权模块且导航同步', () => {
       if (navItem) assert.equal(navItem.hidden, true, `未授权模块导航 ${card.id} 应隐藏`);
     });
 
-    // 追加勾选增开模块后恢复全部模块展示
+    // 追加勾选增开模块后恢复当前产品线全部模块展示（其它产品线的模块卡保持隐藏）
     const addModule = document.querySelector('#requestContentGroup input[value="add_module"]');
     addModule.checked = true;
     addModule.dispatchEvent(new window.Event('change', { bubbles: true }));
+    const ngafLineIds = ['module-NGAF-gateway', 'module-NGAF-ssl-vpn', 'module-NGAF-advanced-functionality',
+      'module-NGAF-engine-zero', 'module-NGAF-vmware', 'module-NGAF-hardware-specs', 'module-NGAF-engine-model',
+      'module-NGAF-neural-x-new', 'module-NGAF-neural-x-unknown', 'module-NGAF-website',
+      'module-NGAF-software-update', 'module-NGAF-threat-deception', 'module-NGAF-intelligent-ops',
+      'module-NGAF-threat-intel-gateway', 'module-NGAF-sofast', 'module-NGAF-iot', 'module-NGAF-fingerprint'];
     [...document.querySelectorAll('#content .module-item')].forEach((card) => {
-      assert.equal(card.hidden, false, `增开模块场景 ${card.id} 应展示`);
+      const inLine = ngafLineIds.includes(card.id);
+      assert.equal(card.hidden, !inLine, inLine ? `增开模块场景 ${card.id} 应展示` : `非本产品线模块 ${card.id} 应保持隐藏`);
       const navItem = document.querySelector(`.module-nav-item[data-target="${card.id}"]`);
-      if (navItem) assert.equal(navItem.hidden, false);
+      if (navItem) assert.equal(navItem.hidden, !inLine);
     });
     assert.deepEqual(errors, []);
   } finally {

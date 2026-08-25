@@ -99,6 +99,7 @@ test('V2 解决方案配置收进顶部设置抽屉，支持筛选、新增、�
     click(document, window, 'solutionConfigNew');
     document.getElementById('solutionConfigCode').value = 'SOL-DEMO-006';
     document.getElementById('solutionConfigName').value = '演示组合方案';
+    document.getElementById('solutionConfigAuthEndDate').value = '2026-12-31';
     document.querySelector('#solutionConfigChecks input[value="HCI"]').checked = true;
     document.querySelector('#solutionConfigChecks input[value="XDR"]').checked = true;
     click(document, window, 'solutionConfigSave');
@@ -196,6 +197,52 @@ test('纯软件本地申请只选择启用配置并锁定产品线', () => {
     assert.equal(document.querySelectorAll('#solutionLockedLines .solution-chip').length, 6);
     click(document, window, 'solutionPreviewWhole');
     assert.match(document.getElementById('solutionApprovalContent').textContent, /纯软件本地申请/);
+  } finally { dom.window.close(); }
+});
+
+test('产品授权工作区模块以独立开关卡片展示（NGAF/HCI 对齐产品授权）', () => {
+  const { dom, document, window } = loadV2Dom();
+  try {
+    openSolutionTab(document);
+    chooseBorrowOrder(document, window, 'BOR-202608-001');
+
+    document.querySelector('[data-solution-line="NGAF"]').click();
+    let panel = document.getElementById('solutionProductPanel');
+    const ngafCards = panel.querySelectorAll('.solution-module-card-list .module-item');
+    assert.equal(ngafCards.length, 17, 'NGAF 应展示 17 张独立模块卡');
+    assert.match(panel.textContent, /Gateway/);
+    assert.match(panel.textContent, /SSL VPN/);
+    assert.match(panel.textContent, /Fingerprint Signature Database Update/);
+    assert.ok(panel.querySelector('[data-solution-param="NGAF_gateway_max_users"]'), 'Gateway 卡应含参数输入');
+    assert.doesNotMatch(panel.textContent, /授权模块（多选）/, '不应残留 checkbox 多选形态');
+
+    // toggle 独立开关：关闭 Gateway 不影响其它卡
+    const gwToggle = panel.querySelector('[data-solution-module-toggle="Gateway"]');
+    gwToggle.click();
+    assert.equal(gwToggle.closest('.module-item').classList.contains('disabled'), true);
+    assert.equal(gwToggle.closest('.module-item').querySelector('.module-status').textContent, '未启用');
+    gwToggle.click();
+    assert.equal(gwToggle.closest('.module-item').classList.contains('disabled'), false);
+
+    document.querySelector('[data-solution-line="HCI"]').click();
+    panel = document.getElementById('solutionProductPanel');
+    const hciCards = panel.querySelectorAll('.solution-module-card-list .module-item');
+    assert.equal(hciCards.length, 3, 'HCI 应展示 3 张模块卡');
+    assert.match(panel.textContent, /计算虚拟化/);
+    assert.match(panel.textContent, /网络虚拟化/);
+    assert.ok(panel.querySelector('[data-solution-param="aSVhost_cpu"]'), '计算虚拟化卡应含参数输入');
+
+    document.querySelector('[data-solution-line="AC"]').click();
+    panel = document.getElementById('solutionProductPanel');
+    const acCards = panel.querySelectorAll('.solution-module-card-list .module-item');
+    assert.equal(acCards.length, 8, 'AC 应展示 8 张独立模块卡');
+    assert.match(panel.textContent, /网关序列号/);
+    assert.match(panel.textContent, /多功能序列号/);
+    assert.match(panel.textContent, /防泄密外发审计序列号/);
+    assert.match(panel.textContent, /VPN配置/);
+    assert.match(panel.textContent, /代理上网/);
+    assert.ok(panel.querySelector('[data-solution-param="gatewayLines"]'), '网关序列号卡应含线路数输入');
+    assert.equal(panel.querySelectorAll('[data-solution-param="multiFeatures"] .solution-switch').length, 7, '多功能序列号应含 7 个功能开关');
   } finally { dom.window.close(); }
 });
 

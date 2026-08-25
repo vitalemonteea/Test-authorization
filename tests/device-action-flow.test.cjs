@@ -189,6 +189,11 @@ test('操作栏按识别与申请内容状态提供提交提示', () => {
     fireChange(extend, window);
     assert.equal(status.textContent.trim(), '已识别 1 台设备，可以提交');
     assert.equal(document.getElementById('standardActionStatus').classList.contains('is-ready'), true);
+    // aTrust 历史授权应点亮专属模块卡并回填到期日
+    const aTrustCard = document.getElementById('module-aTRUST');
+    assert.equal(aTrustCard.dataset.currentlyAuthorized, 'true');
+    assert.match(aTrustCard.querySelector('.module-authorization-validity').textContent, /授权至 2026-10-31/);
+    assert.equal(aTrustCard.querySelector('input[name="aTRUST_upgrade_auth_time"]').value, '2026-10-31');
     assert.deepEqual(errors, []);
   } finally {
     dom.window.close();
@@ -519,13 +524,13 @@ test('已有授权直接映射为模块卡开关、状态和有效期', () => {
     addModule.checked = true;
     fireChange(addModule, window);
 
-    const ngafCard = document.getElementById('module-NGAF');
+    const ngafCard = document.getElementById('module-NGAF-intelligent-ops');
     assert.equal(ngafCard.dataset.currentlyAuthorized, 'true');
     assert.equal(ngafCard.querySelector('.toggle-switch').classList.contains('active'), true);
     assert.equal(ngafCard.querySelector('.toggle-switch').getAttribute('aria-disabled'), 'true');
     assert.equal(ngafCard.querySelector('.module-status').textContent.trim(), '已授权');
     assert.equal(ngafCard.querySelector('.module-authorization-validity').textContent.trim(), '授权至 2026-08-31');
-    assert.equal(ngafCard.querySelector('input[name="NGAF_service_time"]').value, '2026-08-31');
+    assert.equal(ngafCard.querySelector('input[name="NGAF_intelligent_operations_time"]').value, '2026-08-31');
 
     ngafCard.querySelector('.toggle-switch').click();
     assert.equal(ngafCard.querySelector('.toggle-switch').classList.contains('active'), true, '已有授权模块不可在增开场景中关闭');

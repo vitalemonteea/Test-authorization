@@ -240,3 +240,4 @@
 5. 首次开通、重新开通和有效期内调整是基础场景；“销售设备”“累计超期”是并行标签，不是额外场景。
 6. 多设备基础场景、超期等级、来源或借测单不一致时，系统会提示拆单。
 7. 设备不绑定固定客户；同一设备切换客户后应按新客户的历史重新识别场景。
+8. 模块参数已对齐生产环境：NGAF（`22`）模块配置区为多张独立子模块卡（Gateway/SSL VPN/Advanced Functionality/Sangfor Engine Zero/VMware Bandwidth/Hardware Specifications/Engine Model Update/Neural-X New·Unknown Threat Protection Update/Website Protection/Software Update/Threat Deception/Intelligent Operations/Threat Intelligence Gateway/SOFAST Optimization & BEST Path Selection/IoT Security/Fingerprint Signature Database Update），逐项可独立启停；aTrust（`20`）为专属「零信任分析中心」模块卡（升级授权/规则库升级授权/数据泄露分析等授权项权限）。历史授权到期日会回填到对应子模块卡内 `*_time` 字段。模块配置区仅在识别设备并选择相应申请内容后展示。

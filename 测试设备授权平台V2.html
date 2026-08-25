@@ -463,10 +463,14 @@
 
         /* 双栏网格 */
         .module-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 24px; }
+        .grid-group { grid-column: 1 / -1; margin: 10px 0 2px; padding-bottom: 4px; font-size: 13px; font-weight: 600; color: #0b1c30; border-bottom: 1px solid #e8edf4; }
         .grid-field { display: flex; align-items: center; padding: 6px 0; gap: 8px; }
         .grid-field .gf-label { font-size: 14px; color: #424656; flex-shrink: 0; font-weight: 500; width: 120px; line-height: 1.4; }
         .grid-field .gf-val { flex-shrink: 0; }
         .grid-field .gf-val input { width: 100%; max-width: 180px; height: 38px; border: 1px solid #e5eeff; border-radius: 8px; padding: 0 12px; font-size: 14px; background: #fff; outline: none; transition: all 0.15s; }
+        .grid-field .gf-val select.gf-select { width: 100%; max-width: 180px; height: 38px; border: 1px solid #e5eeff; border-radius: 8px; padding: 0 8px; font-size: 14px; background: #fff; outline: none; transition: all 0.15s; cursor: pointer; }
+        .grid-field .gf-val select.gf-select:hover { border-color: #c2c6d8; }
+        .grid-field .gf-val select.gf-select:focus { border-color: #0050cb; background: #fff; box-shadow: 0 0 0 3px rgba(0,80,203,.08); }
         .grid-field .gf-val input:hover { border-color: #c2c6d8; }
         .grid-field .gf-val input:focus { border-color: #0050cb; background: #fff; box-shadow: 0 0 0 3px rgba(0,80,203,.08); }
         .grid-field .gf-hint { font-size: 12px; color: #ba1a1a; flex-shrink: 0; }
@@ -1175,16 +1179,19 @@
         .solution-chip { display: inline-flex; align-items: center; min-height: 26px; padding: 2px 10px; border: 1px solid #c9d9f5; border-radius: 14px; color: #0050cb; background: #eff4ff; font-size: 12px; }
         .solution-field.solution-field-full { grid-column: 1 / -1; }
         .solution-checkbox-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(138px, 1fr)); gap: 8px; width: 100%; min-height: 48px; padding: 8px; border: 1px solid #e0e8f5; border-radius: 8px; background: #f8faff; }
+        .solution-module-card-list { display: flex; flex-direction: column; gap: 10px; width: 100%; grid-column: 1 / -1; }
+        .solution-module-card-list .module-item { max-width: none; margin: 0; }
+        .solution-module-card-list .module-item.disabled .module-body { display: none; }
         #content-solution .solution-field label.solution-checkbox { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 6px; min-height: 34px; margin: 0; padding: 0 10px; border: 1px solid #d8dee9; border-radius: 6px; background: #fff; color: #2a3342; font-size: 13px; line-height: 16px; cursor: pointer; user-select: none; transition: border-color .15s, background .15s, color .15s; white-space: nowrap; }
         .solution-checkbox input[type="checkbox"] { display: block; flex: 0 0 16px; width: 16px !important; height: 16px !important; margin: 0 !important; accent-color: #0050cb; }
         .solution-checkbox span { display: flex; align-items: center; min-height: 16px; }
         .solution-checkbox:has(input:checked) { border-color: #0050cb; background: #eff4ff; color: #0050cb; font-weight: 500; }
-        .solution-file-input { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 48px; padding: 5px 8px; border: 1px solid #d8dee9; border-radius: 8px; background: #fff; }
-        .solution-file-btn { display: inline-flex; align-items: center; gap: 5px; padding: 0 14px; min-height: 36px; border: 1px solid #0050cb; border-radius: 8px; color: #0050cb; background: #fff; cursor: pointer; font-size: 13px; }
-        .solution-file-btn:hover { background: #eff4ff; }
-        .solution-file-btn .material-symbols-outlined { font-size: 18px; }
-        .solution-file-name { min-width: 0; overflow: hidden; color: #536177; font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
-        .solution-file-name.empty { color: #9aa6b5; }
+        .solution-file-input { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 44px; padding: 4px 6px 4px 4px; border: 1px solid #d8dee9; border-radius: 8px; background: #fff; }
+        .solution-file-input .solution-file-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 36px; min-height: 36px; padding: 0 16px; border: none; border-radius: 7px; color: #fff !important; background: #0050cb; cursor: pointer; font-size: 13px; font-weight: 500; line-height: 36px; white-space: nowrap; flex-shrink: 0; transition: all 0.2s; }
+        .solution-file-input .solution-file-btn:hover { background: #0043a8; box-shadow: 0 2px 8px rgba(0,80,203,.25); }
+        .solution-file-input .solution-file-btn .material-symbols-outlined { font-size: 17px; line-height: 1; display: inline-flex; align-items: center; max-width: 20px; overflow: hidden; flex-shrink: 0; }
+        .solution-file-name { flex: 1 1 auto; min-width: 0; overflow: hidden; color: #536177; font-size: 13px; text-overflow: ellipsis; white-space: nowrap; padding: 6px 10px; background: #f7f9fc; border-radius: 6px; }
+        .solution-file-name.empty { color: #9aa6b5; background: transparent; }
         .solution-file-input input[type=file] { display: none; }
         .solution-workspace-inner { display: grid; grid-template-columns: 180px minmax(0, 1fr); max-width: 860px; margin: 0 auto; overflow: hidden; border: 1px solid #e5eeff; border-radius: 8px; background: #fff; }
         .solution-product-nav { padding: 10px; border-right: 1px solid #e5eeff; background: #fafbff; }
@@ -2193,58 +2200,296 @@
                             </div>
                         </div>
 
-                        <!-- 5. 下一代防火墙 -->
-                        <div class="module-item" id="module-NGAF" data-module="下一代防火墙">
+                        <!-- 4b. 零信任分析中心 aTrust（字段对齐生产环境） -->
+                        <div class="module-item" id="module-aTRUST" data-module="零信任分析中心">
                             <div class="module-head">
-                                <div class="toggle-switch active" data-target="module-NGAF"></div>
-                                <span class="module-name">下一代防火墙</span>
-                                <span class="module-count">15个参数</span>
+                                <div class="toggle-switch active" data-target="module-aTRUST"></div>
+                                <span class="module-name">零信任分析中心</span>
+                                <span class="module-count">5个参数</span>
                                 <span class="module-status on">已启用</span>
                                 <span class="module-chevron collapsed">▼</span>
                             </div>
                             <div class="module-body hidden">
                                 <div class="module-grid">
-                                    <div class="grid-field"><span class="gf-label">1.6Gbps带宽</span><div class="gf-val"><input type="text" name="NGAFaf_bandwidth_1.6G" value="10"></div></div>
-                                    <div class="grid-field"><span class="gf-label">800Mbps带宽</span><div class="gf-val"><input type="text" name="NGAFaf_bandwidth_800M" value="10"></div></div>
-                                    <div class="grid-field"><span class="gf-label">400Mbps带宽</span><div class="gf-val"><input type="text" name="NGAFaf_bandwidth_400M" value="10"></div></div>
-                                    <div class="grid-field"><span class="gf-label">200Mbps带宽</span><div class="gf-val"><input type="text" name="NGAFaf_bandwidth_200M" value="10"></div></div>
-                                    <div class="grid-field"><span class="gf-label">100Mbps带宽</span><div class="gf-val"><input type="text" name="NGAFaf_bandwidth_100M" value="10"></div></div>
-                                    <div class="grid-field"><span class="gf-label">SSL VPN用户数</span><div class="gf-val"><input type="text" name="NGAFaf_ssl_vpn" value="100"></div></div>
-                                    <div class="grid-field"><span class="gf-label">网站篡改防护数</span><div class="gf-val"><input type="text" name="NGAFaf_tamper" value="100"></div></div>
-                                    <div class="grid-field"><span class="gf-label">物联网安全功能</span><div class="gf-val"><input type="text" name="NGAFaf_iot" value="100"></div></div>
-                                    <div class="grid-field"><span class="gf-label">云蜜罐订阅服务</span><div class="gf-val"><input type="text" name="NGAFaf_honeypot" value="100"></div></div>
-                                    <div class="grid-field"><span class="gf-label">SOFAST优化&BEST选路</span><div class="gf-val"><input type="text" name="NGAFaf_sofast_best" value="100"></div></div>
-                                    <div class="grid-field"><span class="gf-label">线路数</span><div class="gf-val"><input type="text" name="NGAFaf_line" value="100"></div></div>
-                                    <div class="grid-field"><span class="gf-label">移动用户数</span><div class="gf-val"><input type="text" name="NGAFaf_users" value="100"></div></div>
-                                    <div class="grid-field"><span class="gf-label">分支数</span><div class="gf-val"><input type="text" name="NGAFaf_branch" value="100"></div></div>
-                                    <div class="grid-field"><span class="gf-label">服务到期时间</span><div class="gf-val"><input type="text" name="NGAF_service_time" value="2026-07-04"></div></div>
-                                    <div class="grid-field"><span class="gf-label">软件到期时间</span><div class="gf-val"><input type="text" name="NGAF_soft_time" value="2026-07-04"></div></div>
+                                    <div class="grid-field"><span class="gf-label">升级授权（授权项权限）</span><div class="gf-val"><input type="text" name="aTRUST_upgrade_auth_time" value="2026-10-24"></div></div>
+                                    <div class="grid-field"><span class="gf-label">零信任分析中心（授权项权限）</span><div class="gf-val"><input type="text" name="aTRUST_analysis_auth_time" value="2026-09-24"></div></div>
+                                    <div class="grid-field"><span class="gf-label">规则库升级授权（授权项权限）</span><div class="gf-val"><input type="text" name="aTRUST_rules_upgrade_auth_time" value="2026-10-24"></div></div>
+                                    <div class="grid-field"><span class="gf-label">数据泄露分析（授权项权限）</span><div class="gf-val"><input type="text" name="aTRUST_dlp_count" value="10"></div></div>
+                                    <div class="grid-field"><span class="gf-label">数据泄露分析（授权有效期）</span><div class="gf-val"><input type="text" name="aTRUST_dlp_auth_time" value="2026-09-24"></div></div>
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- 5. NGAF 授权模块（逐项独立卡，对齐生产环境） -->
+                        <div class="module-item" id="module-NGAF-gateway" data-module="Gateway">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-NGAF-gateway"></div>
+                                <span class="module-name">Gateway</span>
+                                <span class="module-count">3个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron collapsed">▼</span>
+                            </div>
+                            <div class="module-body hidden">
+                                <div class="module-grid">
+                                    <div class="grid-field"><span class="gf-label">Max Concurrent Users</span><div class="gf-val"><input type="text" name="NGAF_gateway_max_users" value="10"></div></div>
+                                    <div class="grid-field"><span class="gf-label">Lines</span><div class="gf-val"><input type="text" name="NGAF_line" value="10"></div></div>
+                                    <div class="grid-field"><span class="gf-label">Branch VPN Sites</span><div class="gf-val"><input type="text" name="NGAF_branch_vpn_sites" value="10"></div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5.1 SSL VPN -->
+                        <div class="module-item" id="module-NGAF-ssl-vpn" data-module="SSL VPN">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-NGAF-ssl-vpn"></div>
+                                <span class="module-name">SSL VPN</span>
+                                <span class="module-count">1个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron collapsed">▼</span>
+                            </div>
+                            <div class="module-body hidden">
+                                <div class="module-grid">
+                                    <div class="grid-field"><span class="gf-label">Max Concurrent Users</span><div class="gf-val"><input type="text" name="NGAF_ssl_vpn_users" value="10"></div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5.2 Advanced Functionality -->
+                        <div class="module-item" id="module-NGAF-advanced-functionality" data-module="Advanced Functionality">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-NGAF-advanced-functionality"></div>
+                                <span class="module-name">Advanced Functionality</span>
+                                <span class="module-count">1个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron collapsed">▼</span>
+                            </div>
+                            <div class="module-body hidden">
                                 <div class="module-features">
-                                    <span class="fl">功能：</span>
-                                    <span class="feat-pill on">✓ 门户网站保护订阅服务</span>
-                                    <span class="feat-pill on">✓ 云脑-云鉴未知威胁和杀毒订阅服务</span>
-                                    <span class="feat-pill on">✓ 云脑-云智最新威胁防御规则库订阅服务</span>
-                                    <span class="feat-pill on">✓ 应用识别库</span>
-                                    <span class="feat-pill on">✓ URL库</span>
-                                    <span class="feat-pill on">✓ 数据泄密防护库</span>
-                                    <span class="feat-pill on">✓ 僵尸网络识别库</span>
-                                    <span class="feat-pill on">✓ 杀毒引擎更新</span>
-                                    <span class="feat-pill on">✓ WEB应用防护库</span>
-                                    <span class="feat-pill on">✓ IPS漏洞特征识别库</span>
-                                    <span class="feat-pill on">✓ 软件升级</span>
-                                    <span class="feat-pill on">✓ 增强功能开通</span>
-                                    <span class="feat-pill on">✓ 实时漏洞分析</span>
-                                    <span class="feat-pill on">✓ 僵尸网络</span>
-                                    <span class="feat-pill off">× 数据泄密防护</span>
-                                    <span class="feat-pill on">✓ WEB过滤</span>
-                                    <span class="feat-pill on">✓ 应用控制</span>
-                                    <span class="feat-pill on">✓ 流量控制</span>
-                                    <span class="feat-pill off">× WEB应用防护</span>
-                                    <span class="feat-pill on">✓ 网关杀毒功能开通</span>
-                                    <span class="feat-pill on">✓ IPS</span>
-                                    <span class="feat-pill on">✓ IPSec VPN</span>
-                                    <span class="feat-pill off">× 跨运营商</span>
+                                    <span class="feat-pill on">✓ Advanced Functionality</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5.3 Sangfor Engine Zero -->
+                        <div class="module-item" id="module-NGAF-engine-zero" data-module="Sangfor Engine Zero">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-NGAF-engine-zero"></div>
+                                <span class="module-name">Sangfor Engine Zero</span>
+                                <span class="module-count">1个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron collapsed">▼</span>
+                            </div>
+                            <div class="module-body hidden">
+                                <div class="module-features">
+                                    <span class="feat-pill on">✓ Sangfor Engine Zero</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5.4 VMware Bandwidth -->
+                        <div class="module-item" id="module-NGAF-vmware" data-module="VMware Bandwidth">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-NGAF-vmware"></div>
+                                <span class="module-name">VMware Bandwidth</span>
+                                <span class="module-count">1个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron collapsed">▼</span>
+                            </div>
+                            <div class="module-body hidden">
+                                <div class="module-grid">
+                                    <div class="grid-field"><span class="gf-label">VMware Bandwidth</span><div class="gf-val"><select name="NGAF_vmware_bandwidth" class="layui-select gf-select"><option>100 Mbps</option><option>200 Mbps</option><option>500 Mbps</option><option>1 Gbps</option></select></div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5.5 Hardware Specifications -->
+                        <div class="module-item" id="module-NGAF-hardware-specs" data-module="Hardware Specifications">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-NGAF-hardware-specs"></div>
+                                <span class="module-name">Hardware Specifications</span>
+                                <span class="module-count">1个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron collapsed">▼</span>
+                            </div>
+                            <div class="module-body hidden">
+                                <div class="module-grid">
+                                    <div class="grid-field"><span class="gf-label">CPU Cores</span><div class="gf-val"><select name="NGAF_cpu_cores" class="layui-select gf-select"><option>2 cores</option><option>4 cores</option><option>8 cores</option><option>16 cores</option></select></div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5.6 Engine Model Update -->
+                        <div class="module-item" id="module-NGAF-engine-model" data-module="Engine Model Update">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-NGAF-engine-model"></div>
+                                <span class="module-name">Engine Model Update</span>
+                                <span class="module-count">1个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron collapsed">▼</span>
+                            </div>
+                            <div class="module-body hidden">
+                                <div class="module-grid">
+                                    <div class="grid-field"><span class="gf-label">Engine Model Update</span><div class="gf-val"><input type="text" name="NGAF_engine_model_update_time" value="2026-09-24"></div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5.7 Neural-X New Threat Protection Update -->
+                        <div class="module-item" id="module-NGAF-neural-x-new" data-module="Neural-X New Threat Protection Update">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-NGAF-neural-x-new"></div>
+                                <span class="module-name">Neural-X New Threat Protection Update</span>
+                                <span class="module-count">1个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron collapsed">▼</span>
+                            </div>
+                            <div class="module-body hidden">
+                                <div class="module-grid">
+                                    <div class="grid-field"><span class="gf-label">Neural-X New Threat Protection Update</span><div class="gf-val"><input type="text" name="NGAF_neural_x_new_threat_time" value="2026-09-24"></div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5.8 Neural-X Unknown Threat Protection Update -->
+                        <div class="module-item" id="module-NGAF-neural-x-unknown" data-module="Neural-X Unknown Threat Protection Update">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-NGAF-neural-x-unknown"></div>
+                                <span class="module-name">Neural-X Unknown Threat Protection Update</span>
+                                <span class="module-count">1个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron collapsed">▼</span>
+                            </div>
+                            <div class="module-body hidden">
+                                <div class="module-grid">
+                                    <div class="grid-field"><span class="gf-label">Neural-X Unknown Threat Protection Update</span><div class="gf-val"><input type="text" name="NGAF_neural_x_unknown_threat_time" value="2026-09-24"></div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5.9 Website Protection -->
+                        <div class="module-item" id="module-NGAF-website" data-module="Website Protection">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-NGAF-website"></div>
+                                <span class="module-name">Website Protection</span>
+                                <span class="module-count">1个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron collapsed">▼</span>
+                            </div>
+                            <div class="module-body hidden">
+                                <div class="module-grid">
+                                    <div class="grid-field"><span class="gf-label">Website Protection</span><div class="gf-val"><input type="text" name="NGAF_website_protection_time" value="2026-09-24"></div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5.10 Software Update -->
+                        <div class="module-item" id="module-NGAF-software-update" data-module="Software Update">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-NGAF-software-update"></div>
+                                <span class="module-name">Software Update</span>
+                                <span class="module-count">1个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron collapsed">▼</span>
+                            </div>
+                            <div class="module-body hidden">
+                                <div class="module-grid">
+                                    <div class="grid-field"><span class="gf-label">Software Update</span><div class="gf-val"><input type="text" name="NGAF_software_update_time" value="2026-09-24"></div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5.11 Threat Deception -->
+                        <div class="module-item" id="module-NGAF-threat-deception" data-module="Threat Deception">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-NGAF-threat-deception"></div>
+                                <span class="module-name">Threat Deception</span>
+                                <span class="module-count">1个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron collapsed">▼</span>
+                            </div>
+                            <div class="module-body hidden">
+                                <div class="module-grid">
+                                    <div class="grid-field"><span class="gf-label">Threat Deception</span><div class="gf-val"><input type="text" name="NGAF_threat_deception_time" value="2026-09-24"></div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5.12 Intelligent Operations -->
+                        <div class="module-item" id="module-NGAF-intelligent-ops" data-module="Intelligent Operations">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-NGAF-intelligent-ops"></div>
+                                <span class="module-name">Intelligent Operations</span>
+                                <span class="module-count">1个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron collapsed">▼</span>
+                            </div>
+                            <div class="module-body hidden">
+                                <div class="module-grid">
+                                    <div class="grid-field"><span class="gf-label">Intelligent Operations</span><div class="gf-val"><input type="text" name="NGAF_intelligent_operations_time" value="2026-09-24"></div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5.13 Threat Intelligence Gateway -->
+                        <div class="module-item" id="module-NGAF-threat-intel-gateway" data-module="Threat Intelligence Gateway">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-NGAF-threat-intel-gateway"></div>
+                                <span class="module-name">Threat Intelligence Gateway</span>
+                                <span class="module-count">1个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron collapsed">▼</span>
+                            </div>
+                            <div class="module-body hidden">
+                                <div class="module-grid">
+                                    <div class="grid-field"><span class="gf-label">Threat Intelligence Gateway</span><div class="gf-val"><input type="text" name="NGAF_threat_intel_gateway_time" value="2026-09-24"></div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5.14 SOFAST Optimization & BEST Path Selection -->
+                        <div class="module-item" id="module-NGAF-sofast" data-module="SOFAST Optimization & BEST Path Selection">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-NGAF-sofast"></div>
+                                <span class="module-name">SOFAST Optimization &amp; BEST Path Selection</span>
+                                <span class="module-count">1个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron collapsed">▼</span>
+                            </div>
+                            <div class="module-body hidden">
+                                <div class="module-grid">
+                                    <div class="grid-field"><span class="gf-label">SOFAST Optimization &amp; BEST Path Selection</span><div class="gf-val"><input type="text" name="NGAF_sofast_best_time" value="2026-09-24"></div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5.15 IoT Security -->
+                        <div class="module-item" id="module-NGAF-iot" data-module="IoT Security">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-NGAF-iot"></div>
+                                <span class="module-name">IoT Security</span>
+                                <span class="module-count">1个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron collapsed">▼</span>
+                            </div>
+                            <div class="module-body hidden">
+                                <div class="module-features">
+                                    <span class="feat-pill on">✓ IoT Security</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5.16 Fingerprint Signature Database Update -->
+                        <div class="module-item" id="module-NGAF-fingerprint" data-module="Fingerprint Signature Database Update">
+                            <div class="module-head">
+                                <div class="toggle-switch active" data-target="module-NGAF-fingerprint"></div>
+                                <span class="module-name">Fingerprint Signature Database Update</span>
+                                <span class="module-count">1个参数</span>
+                                <span class="module-status on">已启用</span>
+                                <span class="module-chevron collapsed">▼</span>
+                            </div>
+                            <div class="module-body hidden">
+                                <div class="module-grid">
+                                    <div class="grid-field"><span class="gf-label">Fingerprint Signature Database Update</span><div class="gf-val"><input type="text" name="NGAF_fingerprint_signature_time" value="2026-09-24"></div></div>
                                 </div>
                             </div>
                         </div>
@@ -3193,7 +3438,7 @@
                             <div class="solution-card-body" id="solutionLocalSource" hidden>
                                 <div class="solution-form-grid">
                                     <div class="solution-form-row"><label class="solution-form-label" for="solutionLocalConfig"><span class="solution-required">*</span>解决方案</label><div class="solution-form-control"><select class="solution-select" id="solutionLocalConfig"><option value="">请选择启用方案</option></select></div></div>
-                                    <div class="solution-form-row"><label class="solution-form-label" for="solutionLocalApplicant"><span class="solution-required">*</span>申请人</label><div class="solution-form-control"><input class="solution-input" id="solutionLocalApplicant" value="钱金城94903"></div></div>
+                                    <div class="solution-form-row"><label class="solution-form-label" for="solutionEmail">接收邮箱</label><div class="solution-form-control"><input class="solution-input" id="solutionEmail" placeholder="请输入接收邮箱，建议优先填写客户邮箱" title="用于接收授权结果及相关文件"></div></div>
                                     <div class="solution-form-row solution-form-row-full" id="solutionLocalCustomerField">
                                         <label class="solution-form-label" for="solutionLocalCustomerSearch"><span class="solution-required">*</span>客户</label>
                                         <div class="solution-form-control">
@@ -5772,18 +6017,27 @@
                 { id: 'module-aHM', name: '异构管理' },
                 { id: 'module-others', name: '其他配置' }
             ],
-            '22': [ // NGAF
-                { id: 'module-NGAF', name: '下一代防火墙' },
-                { id: 'module-AD', name: '应用交付' },
-                { id: 'module-AC-gateway', name: '网关序列号' },
-                { id: 'module-AC-multi', name: '多功能序列号' },
-                { id: 'module-AC-internet', name: '上网安全授权序列号' },
-                { id: 'module-AC-appurl', name: '应用识别/URL库更新序列号' },
-                { id: 'module-AC-terminal', name: '终端接入安全序列号' },
-                { id: 'module-AC-software', name: '软件升级' },
-                { id: 'module-AC-leak', name: '防泄密外发审计序列号' },
-                { id: 'module-SSL', name: '移动办公' },
-                { id: 'module-WOC', name: '广域网优化' }
+            '20': [ // aTrust
+                { id: 'module-aTRUST', name: '零信任分析中心' }
+            ],
+            '22': [ // NGAF（对齐生产环境子模块）
+                { id: 'module-NGAF-gateway', name: 'Gateway' },
+                { id: 'module-NGAF-ssl-vpn', name: 'SSL VPN' },
+                { id: 'module-NGAF-advanced-functionality', name: 'Advanced Functionality' },
+                { id: 'module-NGAF-engine-zero', name: 'Sangfor Engine Zero' },
+                { id: 'module-NGAF-vmware', name: 'VMware Bandwidth' },
+                { id: 'module-NGAF-hardware-specs', name: 'Hardware Specifications' },
+                { id: 'module-NGAF-engine-model', name: 'Engine Model Update' },
+                { id: 'module-NGAF-neural-x-new', name: 'Neural-X New Threat Protection Update' },
+                { id: 'module-NGAF-neural-x-unknown', name: 'Neural-X Unknown Threat Protection Update' },
+                { id: 'module-NGAF-website', name: 'Website Protection' },
+                { id: 'module-NGAF-software-update', name: 'Software Update' },
+                { id: 'module-NGAF-threat-deception', name: 'Threat Deception' },
+                { id: 'module-NGAF-intelligent-ops', name: 'Intelligent Operations' },
+                { id: 'module-NGAF-threat-intel-gateway', name: 'Threat Intelligence Gateway' },
+                { id: 'module-NGAF-sofast', name: 'SOFAST Optimization & BEST Path Selection' },
+                { id: 'module-NGAF-iot', name: 'IoT Security' },
+                { id: 'module-NGAF-fingerprint', name: 'Fingerprint Signature Database Update' }
             ],
             '1': [ // AC
                 { id: 'module-AC-gateway', name: '网关序列号' },
@@ -5844,6 +6098,10 @@
                     setActiveModuleNav(this.dataset.target);
                 });
             });
+            // 模块卡显隐统一交由 updateAuthorizationConfigurationVisibility 按场景+产品线计算
+            if (typeof updateAuthorizationConfigurationVisibility === 'function') {
+                updateAuthorizationConfigurationVisibility();
+            }
         }
 
         var plnameSelect = document.getElementById('plname');
@@ -6814,13 +7072,16 @@
             // 仅勾选扩大容量/规格时，只展示当前已授权模块，未开通模块隐藏
             var onlyAuthorized = !isOpening && applicationState.requestContents.indexOf('increase_capacity') !== -1 &&
                 applicationState.requestContents.indexOf('add_module') === -1;
+            // 当前产品线的模块清单（不在清单内的卡无论何种场景都不展示）
+            var currentModuleIds = (productModules[plnameSelect.value] || productModules['45']).map(function(m) { return m.id; });
             if (dateBar) dateBar.hidden = !showDate;
             if (moduleToolbar) moduleToolbar.hidden = !showModules;
             if (simplifiedModulesTitle) simplifiedModulesTitle.hidden = !showModules;
             moduleCards.forEach(function(card) {
-                card.hidden = !showModules || (onlyAuthorized && card.dataset.currentlyAuthorized !== 'true');
+                var notInLine = currentModuleIds.indexOf(card.id) === -1;
+                card.hidden = notInLine || !showModules || (onlyAuthorized && card.dataset.currentlyAuthorized !== 'true');
                 var navItem = document.querySelector('.module-nav-item[data-target="' + card.id + '"]');
-                if (navItem) navItem.hidden = onlyAuthorized && card.dataset.currentlyAuthorized !== 'true';
+                if (navItem) navItem.hidden = notInLine || (onlyAuthorized && card.dataset.currentlyAuthorized !== 'true');
             });
         }
 
@@ -7023,10 +7284,10 @@
                 '计算虚拟化': 'module-aSV',
                 '桌面虚拟化': 'module-aDESK',
                 '网络虚拟化': 'module-aNET',
-                '基础防护': 'module-NGAF',
-                'IPS': 'module-NGAF',
-                '应用控制': 'module-NGAF',
-                '基础接入': 'module-SSL',
+                '基础防护': 'module-NGAF-intelligent-ops',
+                'IPS': 'module-NGAF-intelligent-ops',
+                '应用控制': 'module-NGAF-intelligent-ops',
+                '基础接入': 'module-aTRUST',
                 '分布式存储': 'module-others',
                 '云管平台': 'module-others'
             };
@@ -10103,19 +10364,20 @@
 
         var productCatalog = ['HCI', 'AC', 'NGAF', 'AD', 'WOC', 'XDR', 'SASE', 'WAF', 'SASE-GA', 'SaaS-XDR'];
         var productDefaults = {
-            HCI: { version: 'HCI-6.8.1-VKEY', modules: ['计算虚拟化'], spec: '16 核 / 100 TB', clusterId: 'GW-HCI-208' },
+            HCI: { version: 'HCI-6.8.1-VKEY', modules: ['计算虚拟化', '桌面虚拟化', '网络虚拟化'], spec: '16 核 / 100 TB', clusterId: 'GW-HCI-208' },
             AC: {
-                version: 'AC-13.0.3', modules: ['应用交付'], spec: '并发 200',
+                version: 'AC-13.0.3', modules: ['网关序列号','多功能序列号','上网安全授权序列号','应用识别/URL库更新序列号','终端接入安全序列号','软件升级','防泄密外发审计序列号','上网代理'], spec: '并发 200',
                 gatewayLines: '10', gatewayBranch: '10', gatewayMobile: '10',
-                multiFeatures: ['SSL内容识别','日志中心DKey查询','应用审计','个人通信内容审计','内容审计','行为审计','VPN通道'],
-                internetSecurityAuth: '2026-09-09', appUrlUpdate: '2026-09-09',
-                terminalCount: '1000', terminalAuth: '2026-09-09',
-                softwareUpgrade: '2026-09-09', leakAudit: '2026-09-09'
+                multiFeatures: ['SSL内容识别','日志中心DKey查询','应用审计','个人通信内容审计','内容审计','行为审计','VPN配置'],
+                proxyFeatures: ['代理上网'],
+                internetSecurityAuth: '2026-09-24', appUrlUpdate: '2026-09-24',
+                terminalCount: '1000', terminalAuth: '2026-09-24',
+                softwareUpgrade: '2026-09-24', leakAudit: '2026-09-24'
             },
-            NGAF: { version: 'NGAF-8.0.15', modules: ['下一代防火墙'], spec: '8 核 / 1 Gbps' },
+            NGAF: { version: 'NGAF-8.0.15', modules: ['Gateway','SSL VPN','Advanced Functionality','Sangfor Engine Zero','VMware Bandwidth','Hardware Specifications','Engine Model Update','Neural-X New Threat Protection Update','Neural-X Unknown Threat Protection Update','Website Protection','Software Update','Threat Deception','Intelligent Operations','Threat Intelligence Gateway','SOFAST Optimization & BEST Path Selection','IoT Security','Fingerprint Signature Database Update'], spec: '8 核 / 1 Gbps' },
             AD: { version: 'AD-7.0.8', modules: ['应用交付'], spec: '并发 100' },
             WOC: { version: 'WOC-8.0.5', modules: ['广域网优化'], spec: '带宽 200 Mbps' },
-            XDR: { version: 'XDR-2.1.0', modules: ['威胁检测'], spec: '2 亿条' },
+            XDR: { version: 'XDR 标准版', modules: [], spec: '日志量 20,000 万条' },
             SASE: { version: 'SASE-5.0.0', modules: ['零信任访问'], spec: '100 用户' },
             WAF: { version: 'WAF-7.0.5', modules: ['Web 防护'], spec: 'QPS 3000' },
             'SASE-GA': { version: 'SASE-GA 标准版', modules: [], spec: '带宽 10M' },
@@ -10130,6 +10392,103 @@
             XDR: ['威胁检测', '事件响应', '溯源分析'],
             SASE: ['零信任访问', '云防火墙', '终端安全'],
             WAF: ['Web 防护', 'CC 防护', '合规审计']
+        };
+        // 方案型产品工作区模块卡定义：NGAF/HCI/AC 与产品授权 Tab 及生产环境字段一致
+        var solutionModuleCards = {
+            AC: [
+                { name: '网关序列号', params: [
+                    { label: '线路数', key: 'gatewayLines', type: 'text', value: '10' },
+                    { label: '分支数', key: 'gatewayBranch', type: 'text', value: '10' },
+                    { label: '移动数', key: 'gatewayMobile', type: 'text', value: '10' }
+                ] },
+                { name: '多功能序列号', switches: { key: 'multiFeatures', options: ['SSL内容识别','日志中心DKey查询','应用审计','个人通信内容审计','内容审计','行为审计','VPN配置'] } },
+                { name: '上网安全授权序列号', params: [
+                    { label: '上网安全授权序列号', key: 'internetSecurityAuth', type: 'text', value: '2026-09-24' }
+                ] },
+                { name: '应用识别/URL库更新序列号', params: [
+                    { label: '应用识别/URL库更新序列号', key: 'appUrlUpdate', type: 'text', value: '2026-09-24' }
+                ] },
+                { name: '终端接入安全序列号', params: [
+                    { label: '授权终端数', key: 'terminalCount', type: 'text', value: '1000' },
+                    { label: '终端接入安全序列号', key: 'terminalAuth', type: 'text', value: '2026-09-24' }
+                ] },
+                { name: '软件升级', params: [
+                    { label: '软件升级', key: 'softwareUpgrade', type: 'text', value: '2026-09-24' }
+                ] },
+                { name: '防泄密外发审计序列号', params: [
+                    { label: '防泄密外发审计序列号', key: 'leakAudit', type: 'text', value: '2026-09-24' }
+                ] },
+                { name: '上网代理', switches: { key: 'proxyFeatures', options: ['代理上网'] } }
+            ],
+            NGAF: [
+                { name: 'Gateway', params: [
+                    { label: 'Max Concurrent Users', key: 'NGAF_gateway_max_users', type: 'text', value: '10' },
+                    { label: 'Lines', key: 'NGAF_line', type: 'text', value: '10' },
+                    { label: 'Branch VPN Sites', key: 'NGAF_branch_vpn_sites', type: 'text', value: '10' }
+                ] },
+                { name: 'SSL VPN', params: [
+                    { label: 'Max Concurrent Users', key: 'NGAF_ssl_vpn_users', type: 'text', value: '10' }
+                ] },
+                { name: 'Advanced Functionality', toggle: 'Advanced Functionality' },
+                { name: 'Sangfor Engine Zero', toggle: 'Sangfor Engine Zero' },
+                { name: 'VMware Bandwidth', params: [
+                    { label: 'VMware Bandwidth', key: 'NGAF_vmware_bandwidth', type: 'select', value: '100 Mbps', options: ['100 Mbps', '200 Mbps', '500 Mbps', '1 Gbps'] }
+                ] },
+                { name: 'Hardware Specifications', params: [
+                    { label: 'CPU Cores', key: 'NGAF_cpu_cores', type: 'select', value: '2 cores', options: ['2 cores', '4 cores', '8 cores', '16 cores'] }
+                ] },
+                { name: 'Engine Model Update', params: [
+                    { label: 'Engine Model Update', key: 'NGAF_engine_model_update_time', type: 'text', value: '2026-09-24' }
+                ] },
+                { name: 'Neural-X New Threat Protection Update', params: [
+                    { label: 'Neural-X New Threat Protection Update', key: 'NGAF_neural_x_new_threat_time', type: 'text', value: '2026-09-24' }
+                ] },
+                { name: 'Neural-X Unknown Threat Protection Update', params: [
+                    { label: 'Neural-X Unknown Threat Protection Update', key: 'NGAF_neural_x_unknown_threat_time', type: 'text', value: '2026-09-24' }
+                ] },
+                { name: 'Website Protection', params: [
+                    { label: 'Website Protection', key: 'NGAF_website_protection_time', type: 'text', value: '2026-09-24' }
+                ] },
+                { name: 'Software Update', params: [
+                    { label: 'Software Update', key: 'NGAF_software_update_time', type: 'text', value: '2026-09-24' }
+                ] },
+                { name: 'Threat Deception', params: [
+                    { label: 'Threat Deception', key: 'NGAF_threat_deception_time', type: 'text', value: '2026-09-24' }
+                ] },
+                { name: 'Intelligent Operations', params: [
+                    { label: 'Intelligent Operations', key: 'NGAF_intelligent_operations_time', type: 'text', value: '2026-09-24' }
+                ] },
+                { name: 'Threat Intelligence Gateway', params: [
+                    { label: 'Threat Intelligence Gateway', key: 'NGAF_threat_intel_gateway_time', type: 'text', value: '2026-09-24' }
+                ] },
+                { name: 'SOFAST Optimization & BEST Path Selection', params: [
+                    { label: 'SOFAST Optimization & BEST Path Selection', key: 'NGAF_sofast_best_time', type: 'text', value: '2026-09-24' }
+                ] },
+                { name: 'IoT Security', toggle: 'IoT Security' },
+                { name: 'Fingerprint Signature Database Update', params: [
+                    { label: 'Fingerprint Signature Database Update', key: 'NGAF_fingerprint_signature_time', type: 'text', value: '2026-09-24' }
+                ] }
+            ],
+            HCI: [
+                { name: '计算虚拟化', params: [
+                    { label: '集群内物理CPU颗数限制', key: 'aSVhost_cpu', type: 'text', value: '8', hint: '最大20' },
+                    { label: '升级授权', key: 'aSVupgrade_auth', type: 'text', value: '2026-09-24' },
+                    { label: '使用授权', key: 'aSVuse_auth', type: 'text', value: '2026-09-24' }
+                ] },
+                { name: '桌面虚拟化', params: [
+                    { label: 'GPU虚拟机最大CPU核数', key: 'aDESKvm3d_cpu_limit', type: 'text', value: '64' },
+                    { label: 'GPU虚拟机最大内存(GB)', key: 'aDESKvm3d_mem_limit', type: 'text', value: '64' },
+                    { label: '虚拟机最大CPU核数', key: 'aDESKvm2d_cpu_limit', type: 'text', value: '32' },
+                    { label: '虚拟机最大内存(GB)', key: 'aDESKvm2d_mem_limit', type: 'text', value: '64' },
+                    { label: '集群内物理CPU颗数限制', key: 'aDESKhost_cpu', type: 'text', value: '8', hint: '最大20' },
+                    { label: '升级授权', key: 'aDESKupgrade_auth', type: 'text', value: '2026-09-24' },
+                    { label: '软件到期时间', key: 'aDESKuse_auth', type: 'text', value: '2026-09-24' }
+                ] },
+                { name: '网络虚拟化', params: [
+                    { label: 'CPU颗数', key: 'aNETanet_cpu', type: 'text', value: '8', hint: '最大20' },
+                    { label: '使用授权结束时间', key: 'aNETend_time', type: 'text', value: '2026-09-24' }
+                ] }
+            ]
         };
         var configs = [
             { code: 'SOL-CLOUD-001', name: '企业云一体化方案', productLines: ['HCI', 'AC', 'NGAF', 'AD', 'WOC', 'SaaS-XDR'], status: 'enabled', authEndDate: '2026-11-04', updatedAt: '2026-08-06 09:30' },
@@ -10147,6 +10506,10 @@
         };
         var application = { source: 'borrow', solution: null, lines: [], params: {}, applicant: '', customer: '', cloud: null, borrow: null, authEndDate: '', activeLine: '', status: 'draft', recordId: '' };
         var editingConfigCode = '';
+        function getCurrentApplicant() {
+            var userNameEl = document.querySelector('.header-user .user-name');
+            return (userNameEl ? userNameEl.textContent.trim() : '钱金城94903');
+        }
         var solutionBorrowCustomer = null;
         var solutionLocalCustomer = null;
         var solutionBorrowCustomers = [
@@ -10263,7 +10626,7 @@
             id('solutionAuthorizationResult').hidden = true;
             renderWorkflow();
         }
-        function isXaasLine(line) { return line === 'SASE-GA' || line === 'SaaS-XDR'; }
+        function isXaasLine(line) { return line === 'XDR' || line === 'SASE-GA' || line === 'SaaS-XDR'; }
         function createParams(line, deviceId, endDate) {
             var defaults = productDefaults[line] || { version: '', modules: [], spec: '' };
             var params = {
@@ -10283,7 +10646,7 @@
                     competitor: '传统国际专线方案'
                 };
             }
-            if (line === 'SaaS-XDR') {
+            if (line === 'SaaS-XDR' || line === 'XDR') {
                 return {
                     version: defaults.version,
                     endDate: endDate || '2026-08-23',
@@ -10314,12 +10677,13 @@
                 params.gatewayBranch = defaults.gatewayBranch || '10';
                 params.gatewayMobile = defaults.gatewayMobile || '10';
                 params.multiFeatures = (defaults.multiFeatures || []).slice();
-                params.internetSecurityAuth = defaults.internetSecurityAuth || '2026-09-09';
-                params.appUrlUpdate = defaults.appUrlUpdate || '2026-09-09';
+                params.proxyFeatures = (defaults.proxyFeatures || []).slice();
+                params.internetSecurityAuth = defaults.internetSecurityAuth || '2026-09-24';
+                params.appUrlUpdate = defaults.appUrlUpdate || '2026-09-24';
                 params.terminalCount = defaults.terminalCount || '1000';
-                params.terminalAuth = defaults.terminalAuth || '2026-09-09';
-                params.softwareUpgrade = defaults.softwareUpgrade || '2026-09-09';
-                params.leakAudit = defaults.leakAudit || '2026-09-09';
+                params.terminalAuth = defaults.terminalAuth || '2026-09-24';
+                params.softwareUpgrade = defaults.softwareUpgrade || '2026-09-24';
+                params.leakAudit = defaults.leakAudit || '2026-09-24';
             }
             return params;
         }
@@ -10442,7 +10806,7 @@
         function applyScope(config, details) {
             application.solution = { code: config.code, name: config.name };
             application.lines = details.productLines.slice();
-            application.applicant = details.applicant || id('solutionLocalApplicant').value.trim();
+            application.applicant = details.applicant || getCurrentApplicant();
             application.customer = details.customer || (solutionLocalCustomer ? solutionLocalCustomer.name : '');
             application.cloud = details.cloud || (solutionLocalCustomer && solutionLocalCustomer.cloud) || (solutionBorrowCustomer && solutionBorrowCustomer.cloud) || null;
             application.borrow = details.number ? details : null;
@@ -10515,32 +10879,58 @@
                     fields += '<div class="solution-field"><label><span class="solution-required">*</span>集群标识</label><input class="solution-input" data-solution-param="clusterId" value="' + escapeHtml(values.clusterId) + '"></div>';
                 }
                 fields += '<div class="solution-field"><label><span class="solution-required">*</span>设备 ID</label><input class="solution-input" data-solution-param="deviceId" value="' + escapeHtml(values.deviceId) + '"></div>';
-                if (line === 'AC') {
-                    fields += renderACFields(values);
-                } else {
-                    var moduleOptions = moduleCatalog[line] || [];
-                    fields += '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>授权模块（多选）</label><div class="solution-checkbox-group" data-solution-param="modules">' + moduleOptions.map(function(m) { return '<label class="solution-checkbox"><input type="checkbox" value="' + escapeHtml(m) + '"' + (values.modules.indexOf(m) !== -1 ? ' checked' : '') + '><span>' + escapeHtml(m) + '</span></label>'; }).join('') + '</div></div>';
-                    fields += '<div class="solution-field"><label><span class="solution-required">*</span>规格参数</label><input class="solution-input" data-solution-param="spec" value="' + escapeHtml(values.spec) + '"></div>';
-                }
+                fields += renderSolutionModuleCards(line, values);
             }
             id('solutionProductPanel').innerHTML = '<div class="solution-product-panel-head"><h3>' + line + (isXaasLine(line) ? ' XaaS 授权参数' : ' 授权参数') + '</h3><span>' + (application.lines.indexOf(line) + 1) + ' / ' + application.lines.length + '</span></div><div class="solution-grid two solution-product-fields" data-product-line="' + line + '">' + fields + '</div>';
         }
-        function renderACFields(values) {
-            var features = ['SSL内容识别','日志中心DKey查询','应用审计','个人通信内容审计','内容审计','行为审计','VPN通道'];
-            var featureHtml = features.map(function(f) {
-                var checked = (values.multiFeatures || []).indexOf(f) !== -1;
-                return '<label class="solution-switch"><input type="checkbox" value="' + escapeHtml(f) + '"' + (checked ? ' checked' : '') + '><span>' + escapeHtml(f) + '</span></label>';
-            }).join('');
-            return '<div class="solution-field"><label><span class="solution-required">*</span>线路数</label><input class="solution-input" data-solution-param="gatewayLines" value="' + escapeHtml(values.gatewayLines || '') + '"></div>' +
-                '<div class="solution-field"><label><span class="solution-required">*</span>分支数</label><input class="solution-input" data-solution-param="gatewayBranch" value="' + escapeHtml(values.gatewayBranch || '') + '"></div>' +
-                '<div class="solution-field"><label><span class="solution-required">*</span>移动数</label><input class="solution-input" data-solution-param="gatewayMobile" value="' + escapeHtml(values.gatewayMobile || '') + '"></div>' +
-                '<div class="solution-field"><label><span class="solution-required">*</span>上网安全授权序列号</label><input class="solution-input" data-solution-param="internetSecurityAuth" value="' + escapeHtml(values.internetSecurityAuth || '') + '"></div>' +
-                '<div class="solution-field"><label><span class="solution-required">*</span>应用识别/URL库更新序列号</label><input class="solution-input" data-solution-param="appUrlUpdate" value="' + escapeHtml(values.appUrlUpdate || '') + '"></div>' +
-                '<div class="solution-field"><label><span class="solution-required">*</span>授权终端数</label><input class="solution-input" data-solution-param="terminalCount" value="' + escapeHtml(values.terminalCount || '') + '"></div>' +
-                '<div class="solution-field"><label><span class="solution-required">*</span>终端接入安全序列号</label><input class="solution-input" data-solution-param="terminalAuth" value="' + escapeHtml(values.terminalAuth || '') + '"></div>' +
-                '<div class="solution-field"><label><span class="solution-required">*</span>软件升级</label><input class="solution-input" data-solution-param="softwareUpgrade" value="' + escapeHtml(values.softwareUpgrade || '') + '"></div>' +
-                '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>防泄密外发审计序列号</label><input class="solution-input" data-solution-param="leakAudit" value="' + escapeHtml(values.leakAudit || '') + '"></div>' +
-                '<div class="solution-field solution-field-full solution-field-inline"><label>多功能序列号：</label><div class="solution-switch-group" data-solution-param="multiFeatures">' + featureHtml + '</div></div>';
+        function renderSolutionModuleCards(line, values) {
+            var cards = solutionModuleCards[line];
+            if (!cards) {
+                // 其它产品授权产品线：用 productDefaults.modules 名单生成简约卡（每张卡一个 spec 输入）
+                var names = (values.modules && values.modules.length ? values.modules : (productDefaults[line] || {}).modules || []);
+                cards = names.map(function(m) {
+                    return { name: m, params: [{ label: '规格参数', key: 'spec_' + m, type: 'text', value: values.spec || '' }] };
+                });
+            }
+            var enabled = values.modules || [];
+            var html = '';
+            cards.forEach(function(card, index) {
+                var cardId = 'solution-module-' + line + '-' + index;
+                var isOn = enabled.indexOf(card.name) !== -1;
+                var bodyHtml = '';
+                var paramCount = 0;
+                if (card.toggle) {
+                    bodyHtml = '<div class="module-features"><span class="feat-pill on">✓ ' + escapeHtml(card.toggle) + '</span></div>';
+                    paramCount = 1;
+                } else if (card.switches) {
+                    var selected = values[card.switches.key] || [];
+                    var switchHtml = (card.switches.options || []).map(function(f) {
+                        return '<label class="solution-switch"><input type="checkbox" value="' + escapeHtml(f) + '"' + (selected.indexOf(f) !== -1 ? ' checked' : '') + '><span>' + escapeHtml(f) + '</span></label>';
+                    }).join('');
+                    bodyHtml = '<div class="module-grid"><div class="grid-field"><div class="solution-switch-group" data-solution-param="' + escapeHtml(card.switches.key) + '">' + switchHtml + '</div></div></div>';
+                    paramCount = (card.switches.options || []).length;
+                } else {
+                    var gridFields = (card.params || []).map(function(p) {
+                        var field = p.type === 'select'
+                            ? '<select class="layui-select gf-select" data-solution-param="' + escapeHtml(p.key) + '">' + (p.options || []).map(function(o) { return '<option' + (o === p.value ? ' selected' : '') + '>' + escapeHtml(o) + '</option>'; }).join('') + '</select>'
+                            : '<input type="text" data-solution-param="' + escapeHtml(p.key) + '" value="' + escapeHtml(p.value) + '">';
+                        return '<div class="grid-field"><span class="gf-label">' + escapeHtml(p.label) + '</span><div class="gf-val">' + field + '</div>' + (p.hint ? '<span class="gf-hint">' + escapeHtml(p.hint) + '</span>' : '') + '</div>';
+                    }).join('');
+                    bodyHtml = '<div class="module-grid">' + gridFields + '</div>';
+                    paramCount = (card.params || []).length;
+                }
+                html += '<div class="module-item' + (isOn ? '' : ' disabled') + '" id="' + cardId + '">' +
+                    '<div class="module-head">' +
+                        '<div class="toggle-switch' + (isOn ? ' active' : '') + '" data-solution-module-toggle="' + escapeHtml(card.name) + '"></div>' +
+                        '<span class="module-name">' + escapeHtml(card.name) + '</span>' +
+                        '<span class="module-count">' + paramCount + '个参数</span>' +
+                        '<span class="module-status ' + (isOn ? 'on' : 'off') + '">' + (isOn ? '已启用' : '未启用') + '</span>' +
+                        '<span class="module-chevron collapsed">▼</span>' +
+                    '</div>' +
+                    '<div class="module-body hidden">' + bodyHtml + '</div>' +
+                '</div>';
+            });
+            return '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>授权模块</label><div class="solution-module-card-list" data-solution-param="modules" data-solution-module-cards="true">' + html + '</div></div>';
         }
         function lookupBorrowOrder() {
             resetApplication();
@@ -10573,7 +10963,7 @@
         function validateApplication() {
             if (!application.solution) return '请先关联有效借测单或选择启用方案。';
             if (application.source === 'local') {
-                application.applicant = id('solutionLocalApplicant').value.trim();
+                application.applicant = getCurrentApplicant();
                 application.customer = solutionLocalCustomer ? solutionLocalCustomer.name : '';
                 application.cloud = solutionLocalCustomer && solutionLocalCustomer.cloud;
             }
@@ -10586,10 +10976,10 @@
                     if (!value.version || !value.endDate || !value.bandwidth || !value.customerNeed || !value.projectScale || !value.competitor) return 'SASE-GA 的授权参数未填写完整。';
                     continue;
                 }
-                if (line === 'SaaS-XDR') {
+                if (line === 'SaaS-XDR' || line === 'XDR') {
                     var xdrFields = ['version', 'endDate', 'logAmount', 'testScenario', 'testDriver', 'coreNeed', 'expectedResult', 'isPk', 'customerEnv', 'securityOpMode', 'securityStaff', 'thirdPartyDevices', 'budgetInfo', 'securityBudget', 'projectLandingDate', 'collectedFile'];
-                    if (xdrFields.some(function(field) { return !value[field]; }) || !value.existingComponents || !value.existingComponents.length) return 'SaaS-XDR 的授权参数未填写完整。';
-                    if (value.isPk !== '否' && !value.competitorName) return 'SaaS-XDR 请填写 PK 友商公司名。';
+                    if (xdrFields.some(function(field) { return !value[field]; }) || !value.existingComponents || !value.existingComponents.length) return line + ' 的授权参数未填写完整。';
+                    if (value.isPk !== '否' && !value.competitorName) return line + ' 请填写 PK 友商公司名。';
                     continue;
                 }
                 if (!value.version || !value.deviceId) return line + ' 的授权参数未填写完整。';
@@ -10614,12 +11004,11 @@
         }
         function getSolutionLineSummary(line, item) {
             if (line === 'SASE-GA') return '云图ID ' + (application.cloud ? application.cloud.tenantId : '-') + ' | 带宽 ' + item.bandwidth + 'M | ' + item.customerNeed;
-            if (line === 'SaaS-XDR') return '云图ID ' + (application.cloud ? application.cloud.tenantId : '-') + ' | 日志量 ' + item.logAmount + ' 万条 | ' + item.coreNeed;
+            if (line === 'SaaS-XDR' || line === 'XDR') return '云图ID ' + (application.cloud ? application.cloud.tenantId : '-') + ' | 日志量 ' + item.logAmount + ' 万条 | ' + item.coreNeed;
             if (line === 'HCI') return item.deviceId + ' | ' + (item.modules || []).join('、') + ' | 集群 ' + item.clusterId + ' | ' + item.spec;
             if (line === 'AC') return item.deviceId + ' | 网关：线路' + item.gatewayLines + '/分支' + item.gatewayBranch + '/移动' + item.gatewayMobile + ' | 多功能：' + (item.multiFeatures || []).join('、') + ' | 终端' + item.terminalCount;
             return item.deviceId + ' | ' + (item.modules || []).join('、') + ' | ' + item.spec;
-        }
-        function openApprovalPreview() {
+        }        function openApprovalPreview() {
             var source = application.source === 'borrow' ? '关联借测单 ' + application.borrow.number : '纯软件本地申请';
             var error = validateApplication();
             var errorHtml = error ? '<div class="solution-form-error">' + escapeHtml(error) + '</div>' : '';
@@ -10752,6 +11141,39 @@
             }
             id('solutionProductPanel').addEventListener('input', collectSolutionParam);
             id('solutionProductPanel').addEventListener('change', collectSolutionParam);
+            // 方案型模块卡片：toggle 开关 + 卡头展开/收起
+            id('solutionProductPanel').addEventListener('click', function(event) {
+                var toggle = event.target.closest('[data-solution-module-toggle]');
+                if (toggle) {
+                    var moduleName = toggle.dataset.solutionModuleToggle;
+                    var card = toggle.closest('.module-item');
+                    var body = card ? card.querySelector('.module-body') : null;
+                    var chevron = card ? card.querySelector('.module-chevron') : null;
+                    var status = card ? card.querySelector('.module-status') : null;
+                    var isOn = !toggle.classList.contains('active');
+                    toggle.classList.toggle('active', isOn);
+                    if (card) card.classList.toggle('disabled', !isOn);
+                    if (body) body.classList.toggle('hidden', !isOn);
+                    if (chevron) chevron.classList.toggle('collapsed', !isOn);
+                    if (status) { status.className = 'module-status ' + (isOn ? 'on' : 'off'); status.textContent = isOn ? '已启用' : '未启用'; }
+                    var params = application.params[application.activeLine];
+                    if (params && Array.isArray(params.modules)) {
+                        var idx = params.modules.indexOf(moduleName);
+                        if (isOn && idx === -1) params.modules.push(moduleName);
+                        if (!isOn && idx !== -1) params.modules.splice(idx, 1);
+                    }
+                    return;
+                }
+                var head = event.target.closest('.module-head');
+                if (head && !head.querySelector('[data-solution-module-toggle]')) return;
+                if (head) {
+                    var bodyEl = head.parentElement.querySelector('.module-body');
+                    if (bodyEl) {
+                        bodyEl.classList.toggle('hidden');
+                        head.querySelector('.module-chevron') && head.querySelector('.module-chevron').classList.toggle('collapsed');
+                    }
+                }
+            });
             id('solutionWorkflow').addEventListener('click', function(event) {
                 var button = event.target.closest('button'); if (!button) return;
                 if (button.id === 'solutionPreviewWhole') openApprovalPreview();
