@@ -56,7 +56,9 @@ test('产品授权详情沿用 XaaS 信息骨架并展示授权对象、配置�
     assert.equal(document.getElementById('recordAuthorizationSection').hidden, true);
     assert.equal(document.getElementById('recordCustomerSection').hidden, false);
     assert.match(document.getElementById('recordApplicationGrid').textContent, /授权场景首次开通测试授权/);
-    assert.match(document.getElementById('recordApplicationGrid').textContent, /申请事项开通测试授权/);
+    assert.doesNotMatch(document.getElementById('recordApplicationGrid').textContent, /申请事项/);
+    assert.match(document.getElementById('recordApplicationGrid').textContent, /申请类型硬件借测/);
+    assert.match(document.getElementById('recordApplicationGrid').textContent, /办事处上海办/);
     assert.doesNotMatch(document.getElementById('recordApplicationGrid').textContent, /规则判断|申请原因|附件/);
     assert.match(document.getElementById('recordCustomerGrid').textContent, /客户名称深圳市腾讯计算机系统有限公司/);
     assert.match(document.getElementById('recordCustomerGrid').textContent, /客户类型KA/);

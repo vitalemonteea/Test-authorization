@@ -563,8 +563,7 @@ test('授权有效期按最先到期模块取值并在详情展示模块明细',
     assert.match(changeList, /授权至—2026-10-29/, '其余模块授权至展示各自日期');
     const deliveryText = document.getElementById('recordProductDeliveryGrid').textContent;
     assert.match(deliveryText, /2026-07-01 ~ 2026-09-29（按最先到期模块）/);
-    assert.match(deliveryText, /计算虚拟化（至 2026-09-29）/, '首个模块到期日应与列值一致');
-    assert.match(deliveryText, /分布式存储（至 2026-10-29）/, '其余模块展示各自到期日');
+    assert.doesNotMatch(deliveryText, /计算虚拟化（至/, '开通结果不再逐模块列出到期日（模块明细见配置变更）');
     assert.deepEqual(errors, []);
   } finally {
     dom.window.close();
