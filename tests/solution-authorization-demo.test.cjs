@@ -99,7 +99,7 @@ test('V2 解决方案配置收进顶部设置抽屉，支持筛选、新增、�
     click(document, window, 'solutionConfigNew');
     document.getElementById('solutionConfigCode').value = 'SOL-DEMO-006';
     document.getElementById('solutionConfigName').value = '演示组合方案';
-    document.getElementById('solutionConfigAuthEndDate').value = '2026-12-31';
+    document.getElementById('solutionConfigAuthDays').value = '90';
     document.querySelector('#solutionConfigChecks input[value="HCI"]').checked = true;
     document.querySelector('#solutionConfigChecks input[value="XDR"]').checked = true;
     click(document, window, 'solutionConfigSave');
