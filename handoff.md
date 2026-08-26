@@ -176,6 +176,22 @@ git diff --check
 
 ## 11. 改动历史
 
+### 2026-08-26 授权天数模型补全 + 配置抽屉遮挡模块导航修复
+
+背景：PR #2 落地「统一授权到期时间」后，用户将配置模型由固定到期日改为「授权时间（天）」（`authDays`，申请时按当天日期 + 天数动态计算到期日），该重构有若干遗漏引用；同时用户反馈在「申请产品授权」Tab 打开齿轮配置抽屉时，右侧模块导航浮在抽屉遮罩之上。
+
+改动（PR #3，3 个提交）：
+
+- `测试设备授权平台V2.html`
+  - 模拟资产系统读取 payload：废弃的 `authEndDate`（恒为空串）→ `authDays`（`Number(item.authDays) || 0`）。
+  - `application` 初始对象与 `resetApplication` 补充 `authDays: 0` 清理。
+  - 模块导航遮挡修复：导航直接挂在 body 下（z-index 2100），抽屉嵌在内容区堆叠上下文内（声明 5600 但被封顶）压不住；改为 `body:has(#solutionConfigDrawer:not([hidden])) .module-nav` 与 `#solutionConfigModal` 同理，抽屉/弹窗打开时直接隐藏导航，关闭自动恢复。
+- `tests/solution-authorization-demo.test.cjs`：新增方案用例改用 `solutionConfigAuthDays` 字段（原引用已删除的 `solutionConfigAuthEndDate` 导致 TypeError）。
+- `.gitignore` 补 `.DS_Store`。
+- 全量测试 160/160 通过。
+
+另：PR #2（https://github.com/vitalemonteea/Test-authorization/pull/2 ，已合并）落地「解决方案配置新增统一授权到期时间」：配置抽屉表格新增「授权时间」列、新增/编辑弹窗必填该字段、申请页方案范围新增只读授权到期时间模块、各产品线授权有效期改只读并锁定为方案授权时间、审批预览展示统一到期时间；其测试适配提交 `3c5d2ec` 由代码审查发现补齐（新增必填字段后原用例被拦截）。
+
 ### 2026-08-19 为「企业云一体化方案」补充 SaaS-XDR 授权，演示设备+XaaS 重叠场景
 
 背景：业务上同一解决方案可同时存在设备授权（产品线授权）与 XaaS 授权。此前 mock 数据全部同质化（SOL-CLOUD-001/SOL-SEC-002 纯设备，SOL-XAAS-004 纯 XaaS），缺一个"设备 + XaaS 并存"的样例。代码本身已支持混合方案（`isXaasLine()`、工作台按产品线渲染、含 XaaS 线时校验客户云图身份），本次只补齐 mock 数据与展示。
