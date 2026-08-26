@@ -61,11 +61,9 @@ function chooseSolutionSource(document, window, value) {
 }
 
 function submitForApproval(document, window) {
-  click(document, window, 'solutionPreviewWhole');
-  assert.equal(document.getElementById('solutionApprovalModal').hidden, false);
-  assert.match(document.getElementById('solutionApprovalContent').textContent, /整套方案，一张 W3 申请单/);
+  assert.equal(document.getElementById('solutionSubmitError').hidden, true, '提交前不应显示校验错误');
   click(document, window, 'solutionSubmitWhole');
-  assert.match(document.getElementById('solutionApplicationStatus').textContent, /待 W3 审批/);
+  assert.match(document.getElementById('solutionApplicationStatus').textContent, /已授权/);
 }
 
 test('解决方案型授权作为 V2 新 Tab 打开，不再使用独立页面', () => {
@@ -194,9 +192,16 @@ test('纯软件本地申请只选择启用配置并锁定产品线', () => {
       input.value = `LOCAL-${line}-${index + 1}`;
       input.dispatchEvent(new window.Event('input', { bubbles: true }));
     });
+    document.querySelector('[data-solution-line="HCI"]').click();
+    document.querySelector('[data-solution-param="clusterId"]').value = 'LOCAL-HCI-CLUSTER';
+    document.querySelector('[data-solution-param="clusterId"]').dispatchEvent(new window.Event('input', { bubbles: true }));
+    const hciInfoInput = document.querySelector('[data-solution-line="HCI"] ~ * [data-solution-param="infoFile"], .solution-product-fields [data-solution-param="infoFile"]');
+    Object.defineProperty(hciInfoInput, 'files', { value: [new window.File(['info'], 'LOCAL-HCI.info')], configurable: true });
+    hciInfoInput.dispatchEvent(new window.Event('change', { bubbles: true }));
     assert.equal(document.querySelectorAll('#solutionLockedLines .solution-chip').length, 6);
-    click(document, window, 'solutionPreviewWhole');
-    assert.match(document.getElementById('solutionApprovalContent').textContent, /纯软件本地申请/);
+    assert.equal(document.getElementById('solutionSubmitError').hidden, true, '提交前不应显示校验错误');
+    click(document, window, 'solutionSubmitWhole');
+    assert.match(document.getElementById('solutionApplicationStatus').textContent, /已授权/);
   } finally { dom.window.close(); }
 });
 
@@ -246,20 +251,18 @@ test('产品授权工作区模块以独立开关卡片展示（NGAF/HCI 对齐�
   } finally { dom.window.close(); }
 });
 
-test('V2 解决方案整单审批支持驳回重提和授权失败回滚', () => {
+test('提交后直接生成授权记录（不再有演示审批环节）', () => {
   const { dom, document, window } = loadV2Dom();
   try {
     openSolutionTab(document);
     chooseBorrowOrder(document, window, 'BOR-202608-001');
     submitForApproval(document, window);
-    click(document, window, 'solutionSimulateReject');
-    assert.match(document.getElementById('solutionApplicationStatus').textContent, /驳回/);
-    click(document, window, 'solutionResubmit');
-    click(document, window, 'solutionSimulateFailure');
-    assert.match(document.getElementById('solutionApplicationStatus').textContent, /整单失败/);
-    assert.match(document.getElementById('solutionAuthorizationResult').textContent, /已回滚/);
-    assert.match(document.getElementById('solutionAuthorizationResult').textContent, /授权失败/);
-    assert.equal(document.querySelectorAll('#content-records [data-solution-generated="true"]').length, 0);
+    const parent = document.querySelector('#content-records .solution-parent[data-solution-generated="true"]');
+    assert.ok(parent, '提交后应立即生成解决方案记录');
+    assert.equal(document.getElementById('solutionAuthorizationResult'), null, '结果面板已移除，提交后不再展示后续交互');
+    assert.equal(document.getElementById('solutionWorkflow').textContent.trim(), '', '提交成功后工作流栏应清空');
+    assert.equal(document.getElementById('solutionWorkflow').textContent.includes('演示'), false, '不应再保留演示审批按钮');
+    assert.equal(document.querySelectorAll('#content-records [data-solution-generated="true"]').length, 1);
   } finally { dom.window.close(); }
 });
 
@@ -269,7 +272,6 @@ test('全部产品成功后向 V2 现有记录表新增一组解决方案主行�
     openSolutionTab(document);
     chooseBorrowOrder(document, window, 'BOR-202608-001');
     submitForApproval(document, window);
-    click(document, window, 'solutionSimulateSuccess');
     const parent = document.querySelector('#content-records .solution-parent[data-solution-generated="true"]');
     assert.ok(parent);
     assert.match(parent.textContent, /SOL-20260806-003/);
@@ -339,20 +341,19 @@ test('本地 XaaS 申请必须选择带云图身份的客户，缺失产品参�
     config.value = 'SOL-XAAS-004';
     config.dispatchEvent(new window.Event('change', { bubbles: true }));
     selectLocalCustomer(document, window, 'C100102');
-    click(document, window, 'solutionPreviewWhole');
-    assert.match(document.getElementById('solutionApprovalContent').textContent, /云图账号和云图ID/);
+    click(document, window, 'solutionSubmitWhole');
+    assert.match(document.getElementById('solutionSubmitError').textContent, /云图账号和云图ID/);
     selectLocalCustomer(document, window, 'C100106');
     document.querySelector('[data-solution-line="SaaS-XDR"]').click();
     const logAmount = document.querySelector('[data-solution-param="logAmount"]');
     logAmount.value = '';
     logAmount.dispatchEvent(new window.Event('input', { bubbles: true }));
-    click(document, window, 'solutionPreviewWhole');
-    assert.match(document.getElementById('solutionApprovalContent').textContent, /SaaS-XDR 的授权参数未填写完整/);
+    click(document, window, 'solutionSubmitWhole');
+    assert.match(document.getElementById('solutionSubmitError').textContent, /SaaS-XDR 的授权参数未填写完整/);
     logAmount.value = '20000';
     logAmount.dispatchEvent(new window.Event('input', { bubbles: true }));
-    click(document, window, 'solutionPreviewWhole');
-    assert.doesNotMatch(document.getElementById('solutionApprovalContent').textContent, /授权参数未填写完整/);
-    assert.match(document.getElementById('solutionApprovalContent').textContent, /xinghai-admin/);
+    click(document, window, 'solutionSubmitWhole');
+    assert.match(document.getElementById('solutionApplicationStatus').textContent, /已授权/);
   } finally { dom.window.close(); }
 });
 
@@ -362,7 +363,6 @@ test('XaaS 方案整单成功后复用 SOL 主行和展开明细展示云图ID�
     openSolutionTab(document);
     chooseBorrowOrder(document, window, 'BOR-202608-005');
     submitForApproval(document, window);
-    click(document, window, 'solutionSimulateSuccess');
     const parent = document.querySelector('#content-records .solution-parent[data-solution-generated="true"]');
     assert.match(parent.textContent, /云网安全运营方案/);
     assert.match(parent.textContent, /关联借测单/);
