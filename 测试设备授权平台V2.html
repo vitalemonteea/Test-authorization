@@ -974,6 +974,11 @@
         .record-detail-label{display:block;margin:0;color:#6b7890;font-size:12px;line-height:20px}
         .record-detail-value{display:block;color:#0b1c30;font-size:13px;line-height:20px;overflow-wrap:anywhere}
         .record-detail-value.is-code{font-family:Consolas,"SFMono-Regular",monospace;color:#003f9e}
+        .record-detail-nowrap{white-space:nowrap}
+        .record-detail-value-row{display:flex;align-items:center;gap:6px;min-width:0}
+        .record-detail-copy{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;padding:0;color:#6b7890;background:transparent;border:0;border-radius:5px;cursor:pointer;flex:0 0 auto}
+        .record-detail-copy:hover{color:#0050cb;background:#eef4ff}
+        .record-detail-copy .material-symbols-outlined{font-size:16px}
         .record-detail-attachments{display:flex;flex-wrap:wrap;gap:6px}
         .record-detail-attachment{display:inline-flex;align-items:center;gap:4px;max-width:100%;min-height:24px;padding:3px 7px;color:#35506f;background:#eef4ff;border:0;border-radius:4px;font:inherit;font-size:11px;line-height:16px;cursor:pointer}
         .record-detail-attachment:hover{background:#e0eaff}
@@ -8571,27 +8576,49 @@
         document.getElementById('recordWorkflowError').hidden = true;
     }
 
+    function isClusterProductName(product) {
+        return product === 'HCI' || product === 'SCP';
+    }
+    // 记录详情补充字段派生：办事处（按区域）、申请类型（按是否集群产品）、所属销售（按客户）
+    var RECORD_OFFICE_BY_REGION = {"上海区":"上海办", "北京区":"北京办", "深圳区":"深圳办", "广州区":"广州办", "成都区":"成都办", "杭州区":"杭州办", "南京区":"南京办", "武汉区":"武汉办", "重庆区":"重庆办", "天津区":"天津办", "西安区":"西安办", "长沙区":"长沙办", "华南区":"广州办", "华中区":"武汉办", "华北区":"北京办", "东北区":"沈阳办", "西北区":"西安办", "西南区":"成都办", "四川区":"成都办", "山东区":"济南办", "江苏区":"南京办", "河北区":"石家庄办", "河南区":"郑州办"};
+    function getRecordOffice(region) {
+        return RECORD_OFFICE_BY_REGION[region] || '上海办';
+    }
+    var RECORD_SALES_BY_CUSTOMER = {"深圳市腾讯计算机系统有限公司":"王建国", "华为技术有限公司":"李静", "中国南方电网有限责任公司":"张伟", "北京百度网讯科技有限公司":"刘洋", "中国石油天然气集团有限公司":"陈琳", "浙江大学信息技术中心":"杨帆", "长沙银行股份有限公司":"赵磊", "兴业银行股份有限公司":"黄敏", "上海银行股份有限公司":"周涛", "南京银行股份有限公司":"吴婷", "成都银行股份有限公司":"徐强", "上海浦东发展银行":"孙丽", "中信银行股份有限公司":"马超", "中国农业银行股份有限公司":"朱琳", "武汉农村商业银行":"胡俊", "上海农村商业银行":"郭静", "郑州银行股份有限公司":"林峰", "中国铁路工程集团有限公司":"何丽", "中国光大银行股份有限公司":"高翔", "北京农村商业银行":"罗敏", "北京银行股份有限公司":"郑浩", "成都农村商业银行":"梁雪", "中国民生银行股份有限公司":"谢东", "中国邮政集团公司":"宋佳", "厦门国际银行":"唐伟", "重庆银行股份有限公司":"韩梅", "重庆农村商业银行":"冯军", "广发银行股份有限公司":"董静", "招商银行股份有限公司":"萧亮", "天津滨海农村商业银行":"程雪", "中国移动通信集团":"曹锐"};
+    function getRecordSales(customer) {
+        return RECORD_SALES_BY_CUSTOMER[customer] || '钱金城';
+    }
+    function getRecordApplicationType(product) {
+        return isClusterProductName(product) ? '硬件借测' : '纯软测试';
+    }
+
     function getRecordRowData(row) {
         var cells = row.querySelectorAll('td');
         var customerBadge = cells[5] ? cells[5].querySelector('.cust-badge') : null;
+        var productRaw = cells[3] ? cells[3].textContent.trim() : '';
+        var regionRaw = cells[9] ? cells[9].textContent.trim() : '';
+        var customerRaw = cells[5] ? (cells[5].querySelector('.cust-name') || cells[5]).textContent.trim() : '';
         return {
             applicationNo: cells[0] ? cells[0].textContent.trim().replace(/^chevron_right\s*/, '') : '',
             authorizationType: cells[1] ? cells[1].textContent.trim() : '',
             platform: cells[2] ? cells[2].textContent.trim() : '',
-            product: cells[3] ? cells[3].textContent.trim() : '',
+            product: productRaw,
             version: cells[4] ? cells[4].textContent.trim() : '',
-            customer: cells[5] ? (cells[5].querySelector('.cust-name') || cells[5]).textContent.trim() : '',
+            customer: customerRaw,
             customerType: customerBadge ? customerBadge.textContent.trim() : '普通客户',
             device: cells[6] ? ((cells[6].querySelector('.device-id') || cells[6]).textContent.trim()) : '',
             deviceSn: cells[7] ? cells[7].textContent.trim() : '',
             cloudAuthId: cells[8] ? cells[8].textContent.trim() : '',
-            region: cells[9] ? cells[9].textContent.trim() : '',
+            region: regionRaw,
             validity: cells[10] ? cells[10].textContent.trim() : '',
             applicant: cells[11] ? cells[11].textContent.trim() : '',
             appliedAt: cells[12] ? cells[12].textContent.trim() : '',
             status: getRecordRowStatus(row),
             overdueExtended: row.dataset && row.dataset.overdueApp === 'true' || null,
-            submittedApproval: row._submittedApproval || null
+            submittedApproval: row._submittedApproval || null,
+            office: row.dataset.office || getRecordOffice(regionRaw),
+            applicationType: row.dataset.applicationType || getRecordApplicationType(productRaw),
+            sales: row.dataset.sales || getRecordSales(customerRaw)
         };
     }
 
@@ -8756,8 +8783,7 @@
                 { label: '云授权ID', value: data.cloudAuthId || '—', code: true },
                 { label: '来源', value: '硬件借测系统' },
                 { label: '最新授权有效期', value: data.validity },
-                { label: '累计测试', value: isOverdue ? '270 天' : '90 天' },
-                { label: '历史申请', value: isFirstOpening ? '0 次' : '2 次' }
+                { label: '累计测试', value: isOverdue ? '270 天' : '90 天' }
             ];
             if (isFirstOpening) {
                 objectItems.push(
@@ -8774,8 +8800,7 @@
                 { label: '云授权ID', value: data.cloudAuthId || '—', code: true },
                 { label: '来源', value: '销售设备台账' },
                 { label: '最新授权有效期', value: data.validity },
-                { label: '累计测试', value: isOverdue ? '270 天' : '120 天' },
-                { label: '历史申请', value: isOverdue ? '3 次' : '1 次' }
+                { label: '累计测试', value: isOverdue ? '270 天' : '120 天' }
             ];
         }
 
@@ -8797,6 +8822,22 @@
             );
         }
 
+        var licenseCodeVal = authorized ? 'LIC-' + data.applicationNo.replace(/[^A-Z0-9]/gi, '').slice(-12) : '待生成';
+        var licenseFileVal = authorized ? '授权信息-' + data.applicationNo : '待生成';
+        var actualValidityVal = authorized ? data.validity + (moduleValidityDetail ? '（按最先到期模块）' : '') : '待审批通过后确认';
+        var emailContent = [
+            '尊敬的' + data.customer + '：',
+            '',
+            '您提交的测试授权申请（申请编号 ' + data.applicationNo + '），授权信息如下：',
+            '产品/版本：' + data.product + ' · ' + data.version,
+            '实际授权有效期：' + actualValidityVal,
+            '授权码：' + licenseCodeVal,
+            '授权文件：' + licenseFileVal,
+            '生成时间：' + (authorized ? data.appliedAt : '待生成'),
+            '',
+            '请妥善保管以上授权信息。'
+        ].join('\n');
+
         return {
             scene: sceneItems,
             object: objectItems,
@@ -8808,13 +8849,11 @@
                 { label: '授权容量', before: previousCapacity, after: capacity }
             ],
             delivery: [
-                { label: '实际授权有效期', value: authorized ? data.validity + (moduleValidityDetail ? '（按最先到期模块）' : '') : '待审批通过后确认' },
-                { label: '最终授权模块', value: authorized ? (moduleValidityDetail || modules) : '待审批通过后确认', full: !!moduleValidityDetail },
-                { label: '最终授权容量', value: authorized ? capacity : '待审批通过后确认' },
-                { label: '授权码', value: authorized ? 'LIC-' + data.applicationNo.replace(/[^A-Z0-9]/gi, '').slice(-12) : '待生成', code: true },
-                { label: '授权文件', value: authorized ? '授权信息-' + data.applicationNo : '待生成' },
-                { label: '生成时间', value: authorized ? data.appliedAt : '待生成' },
-                { label: '接收邮箱', value: 'license-recipient@sangfor.com.cn', full: true }
+                { label: '实际授权有效期', value: actualValidityVal, full: true, nowrap: true },
+                { label: '授权码', value: licenseCodeVal, code: true },
+                { label: '授权文件', value: licenseFileVal },
+                { label: '生成时间', value: authorized ? data.appliedAt : '待生成', full: true },
+                { label: '接收邮箱', value: 'license-recipient@sangfor.com.cn', full: true, copyable: true, copyLabel: '复制邮件内容', toastText: '已复制邮件内容', copyText: emailContent }
             ]
         };
     }
@@ -8863,9 +8902,29 @@
                 wrap.appendChild(value);
             } else {
                 var value = document.createElement('span');
-                value.className = 'record-detail-value' + (item.code ? ' is-code' : '');
+                value.className = 'record-detail-value' + (item.code ? ' is-code' : '') + (item.nowrap ? ' record-detail-nowrap' : '');
                 value.textContent = item.value || '—';
-                wrap.appendChild(value);
+                if (item.copyable) {
+                    var valueRow = document.createElement('div');
+                    valueRow.className = 'record-detail-value-row';
+                    valueRow.appendChild(value);
+                    var copyLabel = item.copyLabel || ('复制' + (item.label || ''));
+                    var copyText = item.copyText || item.value || '';
+                    var copyBtn = document.createElement('button');
+                    copyBtn.type = 'button';
+                    copyBtn.className = 'record-detail-copy';
+                    copyBtn.setAttribute('aria-label', copyLabel);
+                    copyBtn.title = copyLabel;
+                    copyBtn.innerHTML = '<span class="material-symbols-outlined" aria-hidden="true">content_copy</span>';
+                    copyBtn.addEventListener('click', function() {
+                        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(copyText);
+                        if (typeof showRecordActionToast === 'function') showRecordActionToast(item.toastText || ('已复制' + (item.label || '')));
+                    });
+                    valueRow.appendChild(copyBtn);
+                    wrap.appendChild(valueRow);
+                } else {
+                    wrap.appendChild(value);
+                }
             }
             container.appendChild(wrap);
         });
@@ -9141,31 +9200,34 @@
     function getRecordApplicationItems(data, xaasDetail, productDetail) {
         var isXaas = Boolean(xaasDetail);
         var isProductAuth = Boolean(productDetail);
-        var items = [
+        if (!isProductAuth) {
+            return [
+                { label: '授权类型', value: data.authorizationType },
+                { label: '申请平台', value: data.platform },
+                { label: '申请人', value: data.applicant },
+                { label: '区域', value: data.region },
+                { label: '申请时间', value: data.appliedAt },
+                { label: isXaas ? '申请动作' : '客户名称', value: isXaas ? xaasDetail.action : data.customer }
+            ];
+        }
+        return [
             { label: '授权类型', value: data.authorizationType },
             { label: '申请平台', value: data.platform },
             { label: '申请人', value: data.applicant },
-            { label: '区域', value: data.region },
             { label: '申请时间', value: data.appliedAt },
-            {
-                label: isXaas ? '申请动作' : (isProductAuth ? '授权场景' : '客户名称'),
-                value: isXaas ? xaasDetail.action : (isProductAuth ? productDetail.scene[0].value : data.customer)
-            }
+            { label: '区域', value: data.region },
+            { label: '办事处', value: data.office },
+            { label: '授权场景', value: productDetail.scene[0].value },
+            { label: '申请类型', value: data.applicationType }
         ];
-        if (isProductAuth) {
-            items.push(
-                { label: '申请事项', value: productDetail.scene[1].value },
-                { label: '申请有效期', value: data.validity }
-            );
-        }
-        return items;
     }
 
     function getRecordCustomerItems(data, xaasDetail) {
         if (!xaasDetail) {
             return [
-                { label: '客户名称', value: data.customer },
-                { label: '客户类型', value: data.customerType }
+                { label: '客户名称', value: data.customer, full: true },
+                { label: '客户类型', value: data.customerType },
+                { label: '所属销售', value: data.sales }
             ];
         }
         return [
