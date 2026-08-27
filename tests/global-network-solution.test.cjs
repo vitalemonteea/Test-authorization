@@ -65,12 +65,13 @@ test('全球组网方案：借测单入口锁定 AF+SASE-GA+SASE-SWG 并可整�
     assert.ok(afPanel.querySelector('[data-solution-param="af_vmware_bw"]'), 'VMware带宽授权应为下拉');
     assert.equal(document.querySelector('[data-solution-param="af_cpu"]').value, '授权CPU2核', '硬件规格默认授权CPU2核');
 
-    // SASE-GA 面板：带宽为生产对齐五档下拉
+    // SASE-GA 面板：带宽为生产对齐五档下拉，无版本区分
     document.querySelector('[data-solution-line="SASE-GA"]').click();
     const gaPanel = document.getElementById('solutionProductPanel');
     assert.match(gaPanel.textContent, /带宽/);
     assert.equal(gaPanel.querySelector('[data-solution-param="bandwidth"]').tagName, 'SELECT', 'SASE-GA 带宽应为档位下拉');
     assert.deepEqual([...gaPanel.querySelectorAll('[data-solution-param="bandwidth"] option')].map((option) => option.textContent), ['5M', '10M', '20M', '30M', '50M']);
+    assert.equal(gaPanel.querySelector('[data-solution-param="version"]'), null, 'SASE-GA 无版本区分，不应渲染版本字段');
 
     // SASE-SWG 面板：默认关闭态，显示按需提示而非表单
     document.querySelector('[data-solution-line="SASE-SWG"]').click();
@@ -107,7 +108,7 @@ test('全球组网方案：借测单入口锁定 AF+SASE-GA+SASE-SWG 并可整�
     assert.ok(parent, '应生成解决方案记录主行');
     const detail = parent.nextElementSibling;
     assert.match(detail.textContent, /AF-8\.0\.99/);
-    assert.match(detail.textContent, /SASE-GA 标准版/);
+    assert.doesNotMatch(detail.textContent, /SASE-GA 标准版/, 'SASE-GA 无版本区分，不应出现标准版');
     assert.doesNotMatch(detail.textContent, /SASE-SWG 标准版/, '关闭态下记录明细不应含 SASE-SWG');
     assert.match(detail.textContent, /云图ID: YT-10010777/);
 

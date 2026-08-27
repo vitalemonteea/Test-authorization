@@ -374,7 +374,7 @@ test('XaaS 方案整单成功后复用 SOL 主行和展开明细展示云图ID�
     parent.querySelector('button').click();
     assert.match(detail.textContent, /设备ID\/云图ID/);
     assert.match(detail.textContent, /云图ID: YT-10010688/);
-    assert.match(detail.textContent, /SASE-GA 标准版/);
+    assert.doesNotMatch(detail.textContent, /SASE-GA 标准版/, 'SASE-GA 无版本区分，不应出现标准版');
     assert.match(detail.textContent, /SaaS-XDR 标准版/);
     assert.match(detail.textContent, /LIC-SASE-GA-806/);
     assert.match(detail.textContent, /LIC-SaaS-XDR-806/);

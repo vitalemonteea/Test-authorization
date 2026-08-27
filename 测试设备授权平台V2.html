@@ -10451,7 +10451,7 @@
             SASE: { version: 'SASE-5.0.0', modules: ['零信任访问'], spec: '100 用户' },
             WAF: { version: 'WAF-7.0.5', modules: ['Web 防护'], spec: 'QPS 3000' },
             AF: { version: 'AF-8.0.99', modules: ['网关序列号', 'SSL VPN序列号', '增强功能序列号', '网关杀毒功能开通', 'VMware带宽授权', '硬件规格', '杀毒引擎更新', '云脑-云智', '云脑-云鉴', '门户网站保护订阅服务', '软件升级序列号', '云蜜罐订阅服务', '智能运营服务', 'SOFAST优化&BEST选路', '物联网安全功能开通', '物联网资产指纹规则库更新'], spec: '标准规格' },
-            'SASE-GA': { version: 'SASE-GA 标准版', modules: [], spec: '带宽 10M' },
+            'SASE-GA': { version: '', modules: [], spec: '带宽 10M' },
             'SASE-SWG': { version: 'SASE-SWG 标准版', modules: [], spec: '用户版 50 用户' },
             'SaaS-XDR': { version: 'SaaS-XDR 标准版', modules: [], spec: '日志量 20,000 万条' }
         };
@@ -10761,7 +10761,7 @@
             };
             if (line === 'SASE-GA') {
                 return {
-                    version: defaults.version,
+                    version: '',
                     endDate: endDate || '2026-08-23',
                     bandwidth: '5',
                     customerNeed: '验证海外办公与国内核心业务访问质量',
@@ -10999,25 +10999,27 @@
             return '<option value="">请选择</option>' + options.map(function(option) { return '<option value="' + escapeHtml(option) + '"' + (option === selected ? ' selected' : '') + '>' + escapeHtml(option) + '</option>'; }).join('');
         }
         function renderXaasFields(line, values) {
-            var fields = '<div class="solution-field"><label><span class="solution-required">*</span>版本</label><input class="solution-input" data-solution-param="version" value="' + escapeHtml(values.version || '') + '"></div>' +
-                '<div class="solution-field"><label><span class="solution-required">*</span>授权有效期<span class="solution-readonly-note"><span class="material-symbols-outlined">lock</span>统一取方案授权时间</span></label><input class="solution-input" type="date" data-solution-param="endDate" value="' + escapeHtml(values.endDate || '') + '" readonly data-solution-readonly></div>';
+            var baseFields = '<div class="solution-field"><label><span class="solution-required">*</span>授权有效期<span class="solution-readonly-note"><span class="material-symbols-outlined">lock</span>统一取方案授权时间</span></label><input class="solution-input" type="date" data-solution-param="endDate" value="' + escapeHtml(values.endDate || '') + '" readonly data-solution-readonly></div>';
+            var versionFields = '<div class="solution-field"><label><span class="solution-required">*</span>版本</label><input class="solution-input" data-solution-param="version" value="' + escapeHtml(values.version || '') + '"></div>';
             if (line === 'SASE-GA') {
+                // SASE-GA 无版本区分，只填带宽档位与业务说明
                 var gaBandwidthOptions = ['5', '10', '20', '30', '50'];
-                return fields +
+                return baseFields +
                     '<div class="solution-field"><label><span class="solution-required">*</span>带宽<span class="solution-readonly-note">档位：5M / 10M / 20M / 30M / 50M</span></label><select class="solution-select" data-solution-param="bandwidth">' + gaBandwidthOptions.map(function(option) { return '<option value="' + option + '"' + (String(values.bandwidth) === option ? ' selected' : '') + '>' + option + 'M</option>'; }).join('') + '</select></div>' +
                     '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>客户需求</label><textarea class="solution-input" data-solution-param="customerNeed">' + escapeHtml(values.customerNeed || '') + '</textarea></div>' +
                     '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>项目规模</label><textarea class="solution-input" data-solution-param="projectScale">' + escapeHtml(values.projectScale || '') + '</textarea></div>' +
                     '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>竞争对手</label><textarea class="solution-input" data-solution-param="competitor">' + escapeHtml(values.competitor || '') + '</textarea></div>';
             }
             if (line === 'SASE-SWG') {
-                return fields +
+                return baseFields +
                     '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>客户需求</label><textarea class="solution-input" data-solution-param="customerNeed">' + escapeHtml(values.customerNeed || '') + '</textarea></div>' +
                     '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>项目规模</label><textarea class="solution-input" data-solution-param="projectScale">' + escapeHtml(values.projectScale || '') + '</textarea></div>' +
                     '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>竞争对手</label><textarea class="solution-input" data-solution-param="competitor">' + escapeHtml(values.competitor || '') + '</textarea></div>';
             }
             var isPk = values.isPk || '';
             var componentOptions = ['AF', 'aES', 'SIP', 'XDR', 'STA'];
-            return fields +
+            return versionFields +
+                baseFields +
                 '<div class="solution-field"><label><span class="solution-required">*</span>日志量（万条）</label><input class="solution-input" type="number" min="1" data-solution-param="logAmount" value="' + escapeHtml(values.logAmount || '') + '"></div>' +
                 '<div class="solution-field"><label><span class="solution-required">*</span>测试场景</label><select class="solution-select" data-solution-param="testScenario">' + solutionSelectOptions(['原有NDR升级场景', '新建安全运营场景', 'SOC替换场景', '多分支统一管理场景'], values.testScenario) + '</select></div>' +
                 '<div class="solution-field"><label><span class="solution-required">*</span>测试驱动力</label><select class="solution-select" data-solution-param="testDriver">' + solutionSelectOptions(['各类安全设备告警量大且误报多，威胁运营效率低', '现有威胁运营平台不达预期想替换', '重大安全问题，需要加强安全建设', '被监管单位通报，需要加强安全建设', '护网重保缺少统一值守平台，值守难度大', '应对外部各类合规要求', 'MSS不支持接入STA/三方组件，影响服务效果', '客户有创新及体现政绩的诉求', '其他'], values.testDriver) + '</select></div>' +
@@ -11040,10 +11042,9 @@
             id('solutionProductNav').innerHTML = application.lines.map(function(line, index) {
                 var optional = optionalSolutionLines.indexOf(line) !== -1;
                 var enabled = isLineEnabled(line);
-                var badge = isXaasLine(line) ? ' · XaaS' : '';
                 var toggleHtml = optional ? '<div class="toggle-switch' + (enabled ? ' active' : '') + ' solution-line-switch" data-solution-line-switch="' + line + '" role="switch" aria-checked="' + enabled + '" aria-label="启用 ' + line + '" title="' + line + ' 按需启用（未上线，默认关闭）"></div>' : '';
                 var orderHtml = optional ? '' : '<small>' + (activeLines().indexOf(line) + 1) + '/' + activeLines().length + '</small>';
-                return '<button type="button" data-solution-line="' + line + '" class="' + (line === application.activeLine ? 'is-active' : '') + (!enabled ? ' is-off' : '') + '"><span>' + line + badge + '</span>' + toggleHtml + orderHtml + '</button>';
+                return '<button type="button" data-solution-line="' + line + '" class="' + (line === application.activeLine ? 'is-active' : '') + (!enabled ? ' is-off' : '') + '"><span>' + line + '</span>' + toggleHtml + orderHtml + '</button>';
             }).join('');
             var line = application.activeLine;
             var values = application.params[line];
@@ -11067,7 +11068,7 @@
             }
             var active = activeLines();
             var headCount = optionalSolutionLines.indexOf(line) !== -1 ? '' : '<span>' + (active.indexOf(line) + 1) + ' / ' + active.length + '</span>';
-            id('solutionProductPanel').innerHTML = '<div class="solution-product-panel-head"><h3>' + line + (isXaasLine(line) ? ' XaaS 授权参数' : ' 授权参数') + '</h3>' + headCount + '</div><div class="solution-grid two solution-product-fields" data-product-line="' + line + '">' + fields + '</div>';
+            id('solutionProductPanel').innerHTML = '<div class="solution-product-panel-head"><h3>' + line + ' 授权参数</h3>' + headCount + '</div><div class="solution-grid two solution-product-fields" data-product-line="' + line + '">' + fields + '</div>';
         }
         function renderSolutionModuleCards(line, values) {
             var cards = solutionModuleCards[line];
@@ -11160,7 +11161,7 @@
                 var line = active[i];
                 var value = application.params[line];
                 if (line === 'SASE-GA') {
-                    if (!value.version || !value.endDate || !value.bandwidth || !value.customerNeed || !value.projectScale || !value.competitor) return 'SASE-GA 的授权参数未填写完整。';
+                    if (!value.endDate || !value.bandwidth || !value.customerNeed || !value.projectScale || !value.competitor) return 'SASE-GA 的授权参数未填写完整。';
                     continue;
                 }
                 if (line === 'SASE-SWG') {
