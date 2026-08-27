@@ -312,7 +312,11 @@ test('XaaS 产品线展示专属完整参数并正确联动 PK 条件字段', ()
     openSolutionTab(document);
     chooseBorrowOrder(document, window, 'BOR-202608-005');
     const sasePanel = document.getElementById('solutionProductPanel');
-    assert.match(sasePanel.textContent, /带宽（M）/);
+    assert.match(sasePanel.textContent, /带宽/);
+    const gaBandwidthSelect = sasePanel.querySelector('[data-solution-param="bandwidth"]');
+    assert.equal(gaBandwidthSelect.tagName, 'SELECT', 'SASE-GA 带宽应为档位下拉');
+    assert.deepEqual([...gaBandwidthSelect.options].map((option) => option.textContent), ['5M', '10M', '20M', '30M', '50M'], '带宽档位与生产环境一致');
+    assert.equal(gaBandwidthSelect.value, '5', '默认带宽 5M');
     assert.match(sasePanel.textContent, /客户需求/);
     assert.doesNotMatch(sasePanel.textContent, /设备 ID|授权模块/);
     document.querySelector('[data-solution-line="SaaS-XDR"]').click();

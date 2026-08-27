@@ -50,15 +50,27 @@ test('全球组网方案：借测单入口锁定 AF+SASE-GA+SASE-SWG 并可整�
     assert.deepEqual(chips, ['AF', 'SASE-GA', 'SASE-SWG']);
     assert.match(document.getElementById('solutionLockedAuthEndDate').value, /（30天）/);
 
-    // AF 硬件线工作台：设备ID 已从借测单带入
+    // AF 硬件线工作台：设备ID 已从借测单带入，模块卡按生产环境 AF 授权表单展示
     const afPanel = document.getElementById('solutionProductPanel');
     assert.match(afPanel.textContent, /设备 ID/);
     assert.match(document.querySelector('[data-solution-param="deviceId"]').value, /GW-AF-930/);
-    assert.match(afPanel.textContent, /应用层防火墙/, 'AF 应展示模块卡');
+    const afCards = afPanel.querySelectorAll('.solution-module-card-list .module-item');
+    assert.equal(afCards.length, 16, 'AF 应展示 16 张生产对齐模块卡');
+    assert.match(afPanel.textContent, /网关序列号/);
+    assert.match(afPanel.textContent, /分支机构数/);
+    assert.match(afPanel.textContent, /增强功能\(waf,pvs,dlp,tamper\)/);
+    assert.match(afPanel.textContent, /云脑-云智/);
+    assert.ok(afPanel.querySelector('[data-solution-param="af_gw_users"]'), '网关序列号卡应含用户个数输入');
+    assert.equal(document.querySelector('[data-solution-param="af_gw_users"]').value, '10', '用户个数默认 10');
+    assert.ok(afPanel.querySelector('[data-solution-param="af_vmware_bw"]'), 'VMware带宽授权应为下拉');
+    assert.equal(document.querySelector('[data-solution-param="af_cpu"]').value, '授权CPU2核', '硬件规格默认授权CPU2核');
 
-    // SASE-GA 面板
+    // SASE-GA 面板：带宽为生产对齐五档下拉
     document.querySelector('[data-solution-line="SASE-GA"]').click();
-    assert.match(document.getElementById('solutionProductPanel').textContent, /带宽（M）/);
+    const gaPanel = document.getElementById('solutionProductPanel');
+    assert.match(gaPanel.textContent, /带宽/);
+    assert.equal(gaPanel.querySelector('[data-solution-param="bandwidth"]').tagName, 'SELECT', 'SASE-GA 带宽应为档位下拉');
+    assert.deepEqual([...gaPanel.querySelectorAll('[data-solution-param="bandwidth"] option')].map((option) => option.textContent), ['5M', '10M', '20M', '30M', '50M']);
 
     // SASE-SWG 面板：默认关闭态，显示按需提示而非表单
     document.querySelector('[data-solution-line="SASE-SWG"]').click();
