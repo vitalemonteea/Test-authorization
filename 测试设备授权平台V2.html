@@ -3490,6 +3490,23 @@
                             </div>
                         </div>
 
+                        <!-- 业务申请信息：分布式安全运营方案专用，供业务人员审批评估 -->
+                        <div class="special-form-section" id="solutionBizSection" hidden>
+                            <div class="section-title">业务申请信息<span class="solution-lock-note solution-hint-note"><span class="material-symbols-outlined">assignment</span>分布式安全运营方案专用字段，支持业务人员审批评估</span></div>
+
+                            <div class="solution-grid two" id="solutionBizGrid">
+                                <div class="solution-field"><label><span class="solution-required">*</span>KA客户</label><select class="solution-select" data-solution-biz-param="kaCustomer"><option value="是">是</option><option value="否">否</option></select></div>
+                                <div class="solution-field"><label><span class="solution-required">*</span>测试主打场景</label><select class="solution-select" data-solution-biz-param="mainScenario"><option value="">请选择</option><option>原有NDR升级场景（我司SIP/友商NDR）</option><option selected>新建安全运营场景</option><option>SOC替换场景（含SOC保存）</option><option>多分支统一管理场景</option></select></div>
+                                <div class="solution-field solution-field-full"><label><span class="solution-required">*</span>测试驱动力</label><div class="solution-checkbox-group" data-solution-biz-param="testDrivers"><label class="solution-checkbox"><input type="checkbox" value="各类安全设备告警量大且误报多，威胁运营效率低，各分支无法统一监测" checked><span>各类安全设备告警量大且误报多，威胁运营效率低，各分支无法统一监测</span></label><label class="solution-checkbox"><input type="checkbox" value="现有威胁运营平台不达预期，想替换"><span>现有威胁运营平台不达预期，想替换</span></label><label class="solution-checkbox"><input type="checkbox" value="重大安全问题，需要加强安全建设"><span>重大安全问题，需要加强安全建设</span></label><label class="solution-checkbox"><input type="checkbox" value="被监管单位通报，需要加强安全建设"><span>被监管单位通报，需要加强安全建设</span></label><label class="solution-checkbox"><input type="checkbox" value="护网重保缺少统一值守平台，值守难度较大"><span>护网重保缺少统一值守平台，值守难度较大</span></label><label class="solution-checkbox"><input type="checkbox" value="客户有创新及体现政绩的诉求"><span>客户有创新及体现政绩的诉求</span></label></div></div>
+                                <div class="solution-field solution-field-full"><label><span class="solution-required">*</span>客户预期效果</label><div class="solution-checkbox-group" data-solution-biz-param="expectedEffects"><label class="solution-checkbox"><input type="checkbox" value="全流量检测：自有产品及三方产品统一接入，实现全流量威胁检测"><span>全流量检测：自有产品及三方产品统一接入，实现全流量威胁检测</span></label><label class="solution-checkbox"><input type="checkbox" value="聚合降噪：海量告警基于GPT能力聚合成少量精准事件，有效降低误报，识别关键攻击" checked><span>聚合降噪：海量告警基于GPT能力聚合成少量精准事件，有效降低误报，识别关键攻击</span></label><label class="solution-checkbox"><input type="checkbox" value="告警研判：安全GPT智能研判告警及事件，故事线+时间还原攻击过程，提升效率"><span>告警研判：安全GPT智能研判告警及事件，故事线+时间还原攻击过程，提升效率</span></label><label class="solution-checkbox"><input type="checkbox" value="智能对抗：外联或外部攻击实现自动化对抗，提升处置效率"><span>智能对抗：外联或外部攻击实现自动化对抗，提升处置效率</span></label><label class="solution-checkbox"><input type="checkbox" value="威胁运营成果展示：报表/大屏直观展示威胁运营成果"><span>威胁运营成果展示：报表/大屏直观展示威胁运营成果</span></label></div></div>
+                                <div class="solution-field solution-field-full"><label><span class="solution-required">*</span>平台接入组件说明</label><textarea class="solution-input" data-solution-biz-param="componentNotes"></textarea></div>
+                                <div class="solution-field"><label><span class="solution-required">*</span>申请平台接入日志量</label><input class="solution-input" data-solution-biz-param="dailyLogAmount" placeholder="如：3 亿条/天"></div>
+                                <div class="solution-field solution-field-full"><label><span class="solution-required">*</span>申请测试的高功能模块</label><div class="solution-checkbox-group" data-solution-biz-param="highFunctionModules"><label class="solution-checkbox"><input type="checkbox" value="第三方日志分析模块-SIEM" checked><span>第三方日志分析模块-SIEM</span></label><label class="solution-checkbox"><input type="checkbox" value="SOAR" checked><span>SOAR</span></label><label class="solution-checkbox"><input type="checkbox" value="绩效考核"><span>绩效考核</span></label><label class="solution-checkbox"><input type="checkbox" value="高级漏洞管理"><span>高级漏洞管理</span></label><label class="solution-checkbox"><input type="checkbox" value="知识库"><span>知识库</span></label><label class="solution-checkbox"><input type="checkbox" value="等保管理"><span>等保管理</span></label><label class="solution-checkbox"><input type="checkbox" value="云端威胁情报"><span>云端威胁情报</span></label><label class="solution-checkbox"><input type="checkbox" value="移动运营小助手"><span>移动运营小助手</span></label><label class="solution-checkbox"><input type="checkbox" value="物联网安全分析系统"><span>物联网安全分析系统</span></label><label class="solution-checkbox"><input type="checkbox" value="云环境风险感知"><span>云环境风险感知</span></label></div></div>
+                                <div class="solution-field solution-field-full"><label><span class="solution-required">*</span>测试需求调研文档</label><div class="solution-file-input"><label class="solution-file-btn"><span class="material-symbols-outlined">upload_file</span>上传调研文档<input type="file" accept=".doc,.docx,.pdf,.xlsx,.xls" data-solution-biz-param="researchDoc"></label><span class="solution-file-name empty">未选择文件</span></div></div>
+                                <div class="solution-field solution-field-full"><label><span class="solution-required">*</span>客户原因及后续转销计划说明</label><textarea class="solution-input" data-solution-biz-param="resalePlan"></textarea></div>
+                            </div>
+                        </div>
+
                         <!-- 授权参数：解决方案特有的多产品线工作台 -->
                         <div class="special-form-section" id="solutionProductWorkspace" hidden>
                             <div class="section-title">授权参数<span class="solution-lock-note solution-hint-note"><span class="material-symbols-outlined">tune</span>按产品线逐个填写，全部为必填项</span></div>
@@ -10432,7 +10449,7 @@
     (function() {
         'use strict';
 
-        var productCatalog = ['HCI', 'AC', 'NGAF', 'AD', 'WOC', 'XDR', 'SASE', 'WAF', 'AF', 'SASE-GA', 'SASE-SWG', 'SaaS-XDR', 'SASE-ZTNA', 'aTrust'];
+        var productCatalog = ['HCI', 'AC', 'NGAF', 'AD', 'WOC', 'XDR', 'SASE', 'WAF', 'AF', 'SASE-GA', 'SASE-SWG', 'SaaS-XDR', 'SASE-ZTNA', 'aTrust', 'STA'];
         var productDefaults = {
             HCI: { version: 'HCI-6.8.1-VKEY', modules: ['计算虚拟化', '桌面虚拟化', '网络虚拟化'], spec: '16 核 / 100 TB', clusterId: 'GW-HCI-208' },
             AC: {
@@ -10455,7 +10472,8 @@
             'SASE-SWG': { version: 'SASE-SWG 标准版', modules: [], spec: '用户版 50 用户' },
             'SaaS-XDR': { version: 'SaaS-XDR 标准版', modules: [], spec: '日志量 20,000 万条' },
             'SASE-ZTNA': { version: 'SASE-ZTNA 标准版', modules: [], spec: '用户版 200 用户' },
-            aTrust: { version: 'aTrust-3.0.28', modules: [], spec: '标准规格' }
+            aTrust: { version: 'aTrust-3.0.28', modules: [], spec: '标准规格' },
+            STA: { version: 'STA3.0.25', modules: ['网关序列号', '软件升级', 'Web应用防护'], spec: '标准规格' }
         };
         var moduleCatalog = {
             HCI: ['计算虚拟化', '存储虚拟化', '网络虚拟化', '容灾备份', '数据库服务'],
@@ -10609,6 +10627,66 @@
                     { label: 'CPU颗数', key: 'aNETanet_cpu', type: 'text', value: '8', hint: '最大20' },
                     { label: '使用授权结束时间', key: 'aNETend_time', type: 'text', value: '2026-09-24' }
                 ] }
+            ],
+            XDR: [
+                { name: 'XDR平台软件', params: [
+                    { label: '数量（亿条）', key: 'xdr_platform_count', type: 'text', value: '3' },
+                    { label: '授权有效期', key: 'xdr_platform_end', type: 'text', value: '2026-10-02' }
+                ] },
+                { name: '辅助运营GPT', params: [
+                    { label: 'gpt部署场景', key: 'xdr_ops_gpt_scene', type: 'select', options: ['云上部署', '本地部署'], value: '云上部署' },
+                    { label: '授权有效期', key: 'xdr_ops_gpt_end', type: 'text', value: '2026-10-02' },
+                    { label: '是否启用', key: 'xdr_ops_gpt_enabled', type: 'select', options: ['是', '否'], value: '是' }
+                ] },
+                { name: '智能值守GPT', params: [
+                    { label: 'gpt部署场景', key: 'xdr_duty_gpt_scene', type: 'select', options: ['云上部署', '本地部署'], value: '云上部署' },
+                    { label: 'cot功能类型', key: 'xdr_duty_gpt_cot', type: 'select', options: ['匹配3节点XDR', '匹配5节点XDR', '匹配10节点XDR'], value: '匹配3节点XDR' },
+                    { label: '授权有效期', key: 'xdr_duty_gpt_end', type: 'text', value: '2026-10-02' },
+                    { label: '是否启用', key: 'xdr_duty_gpt_enabled', type: 'select', options: ['是', '否'], value: '是' }
+                ] },
+                { name: '每天日志接入量上限', params: [
+                    { label: '数量（条）', key: 'xdr_daily_log_count', type: 'text', value: '1' },
+                    { label: '授权有效期', key: 'xdr_daily_log_end', type: 'text', value: '2026-10-02' }
+                ] },
+                { name: '流量检测GPT', params: [
+                    { label: '授权有效期', key: 'xdr_traffic_gpt_end', type: 'text', value: '2026-10-02' },
+                    { label: '是否启用', key: 'xdr_traffic_gpt_enabled', type: 'select', options: ['是', '否'], value: '否' }
+                ] },
+                { name: '软件升级授权', params: [{ label: '授权有效期', key: 'xdr_software_upgrade', type: 'text', value: '2026-10-02' }] },
+                { name: '规则库更新授权', params: [{ label: '授权有效期', key: 'xdr_rule_update', type: 'text', value: '2026-10-02' }] },
+                { name: '高级漏洞管理', params: [{ label: '授权有效期', key: 'xdr_vuln_mgmt', type: 'text', value: '2026-10-02' }] },
+                { name: '第三方日志分析-SIEM', params: [{ label: '授权有效期', key: 'xdr_siem', type: 'text', value: '2026-10-02' }] },
+                { name: 'XDR性能扩容授权', params: [
+                    { label: '数量（套）', key: 'xdr_perf_scale_count', type: 'text', value: '1' },
+                    { label: '授权有效期', key: 'xdr_perf_scale_end', type: 'text', value: '2026-10-02' }
+                ] },
+                { name: '自有组件接入授权', params: [
+                    { label: '数量（个）', key: 'xdr_component_count', type: 'text', value: '10' },
+                    { label: '授权有效期', key: 'xdr_component_end', type: 'text', value: '2026-10-02' }
+                ] },
+                { name: '威胁情报服务', params: [{ label: '授权有效期', key: 'xdr_threat_intel', type: 'text', value: '2026-10-02' }] },
+                { name: '安全事件深度挖掘XTH', params: [{ label: '授权有效期', key: 'xdr_xth', type: 'text', value: '2026-10-02' }] },
+                { name: '移动运营小助手', params: [{ label: '授权有效期', key: 'xdr_mobile_assistant', type: 'text', value: '2026-10-02' }] },
+                { name: '物联网安全管控模块', params: [{ label: '授权有效期', key: 'xdr_iot_control', type: 'text', value: '2026-10-02' }] },
+                { name: 'SOAR', params: [{ label: '授权有效期', key: 'xdr_soar', type: 'text', value: '2026-10-02' }] },
+                { name: '自定义工单流程', params: [{ label: '授权有效期', key: 'xdr_custom_workflow', type: 'text', value: '2026-10-02' }] },
+                { name: '云安全中心', params: [
+                    { label: '授权版本', key: 'xdr_cloud_center_version', type: 'select', options: ['云环境接入(免费版)', '云环境接入(付费版)'], value: '云环境接入(免费版)' },
+                    { label: '授权点数', key: 'xdr_cloud_center_points', type: 'text', value: '1000' },
+                    { label: '授权有效期', key: 'xdr_cloud_center_end', type: 'text', value: '2026-10-02' }
+                ] },
+                { name: '知识库', params: [{ label: '授权有效期', key: 'xdr_knowledge_base', type: 'text', value: '2026-10-02' }] },
+                { name: '等保合规管理', params: [{ label: '授权有效期', key: 'xdr_compliance', type: 'text', value: '2026-10-02' }] },
+                { name: '绩效考核', params: [{ label: '授权有效期', key: 'xdr_performance', type: 'text', value: '2026-10-02' }] }
+            ],
+            STA: [
+                { name: '网关序列号', params: [
+                    { label: '线路数', key: 'sta_lines', type: 'text', value: '4' },
+                    { label: '移动数', key: 'sta_mobile', type: 'text', value: '10' },
+                    { label: '分支数', key: 'sta_branch', type: 'text', value: '10' }
+                ] },
+                { name: '软件升级', params: [{ label: '软件升级序列号', key: 'sta_software_upgrade', type: 'text', value: '2026-10-02' }] },
+                { name: 'Web应用防护', params: [{ label: 'Web应用防护', key: 'sta_web_protection', type: 'text', value: '2026-10-02' }] }
             ]
         };
         var configs = [
@@ -10618,6 +10696,7 @@
             { code: 'SOL-GLOBAL-005', name: '全球组网方案', productLines: ['AF', 'SASE-GA', 'SASE-SWG'], status: 'enabled', authDays: 30, updatedAt: '2026-08-26 14:30' },
             { code: 'SOL-ACCEL-006', name: '全球加速方案-SaaS版', productLines: ['SASE-ZTNA', 'SASE-GA'], status: 'enabled', authDays: 30, updatedAt: '2026-09-02 10:00' },
             { code: 'SOL-ACCEL-007', name: '全球加速方案-本地版', productLines: ['aTrust', 'SASE-GA'], status: 'enabled', authDays: 30, updatedAt: '2026-09-02 10:10' },
+            { code: 'SOL-DSOC-008', name: '分布式安全运营方案', productLines: ['XDR', 'STA', 'AF'], status: 'enabled', authDays: 30, updatedAt: '2026-09-02 11:00' },
             { code: 'SOL-LEGACY-003', name: '旧版云安全方案', productLines: ['HCI', 'WAF'], status: 'disabled', authDays: 15, updatedAt: '2026-07-28 10:12' }
         ];
         var borrowOrders = {
@@ -10626,11 +10705,12 @@
             'BOR-202608-005': { number: 'BOR-202608-005', approvalStatus: '审批通过', returned: false, revoked: false, applicant: '陈卓', customer: '星海智联科技有限公司', solutionCode: 'SOL-XAAS-004', solution: '云网安全运营方案', productLines: ['SASE-GA', 'SaaS-XDR'], devices: {}, startDate: '2026-08-08', endDate: '2026-08-23', approvalInfo: '资产系统审批通过（Mock）', cloud: { account: 'xinghai-admin', tenantId: 'YT-10010688' } },
             'BOR-202608-006': { number: 'BOR-202608-006', approvalStatus: '审批通过', returned: false, revoked: false, applicant: '韩磊', customer: '环球致远贸易有限公司', solutionCode: 'SOL-GLOBAL-005', solution: '全球组网方案', productLines: ['AF', 'SASE-GA', 'SASE-SWG'], devices: { AF: 'GW-AF-930' }, startDate: '2026-08-20', endDate: '2026-11-18', approvalInfo: '资产系统审批通过（Mock）', cloud: { account: 'global-admin', tenantId: 'YT-10010777' } },
             'BOR-202608-007': { number: 'BOR-202608-007', approvalStatus: '审批通过', returned: false, revoked: false, applicant: '韩梅', customer: '环宇速联科技有限公司', solutionCode: 'SOL-ACCEL-006', solution: '全球加速方案-SaaS版', productLines: ['SASE-ZTNA', 'SASE-GA'], devices: {}, startDate: '2026-08-25', endDate: '2026-09-24', approvalInfo: '资产系统审批通过（Mock）', cloud: { account: 'oceanlink-admin', tenantId: 'YT-10010888' } },
+            'BOR-202608-008': { number: 'BOR-202608-008', approvalStatus: '审批通过', returned: false, revoked: false, applicant: '秦峰', customer: '明澈水务集团有限公司', solutionCode: 'SOL-DSOC-008', solution: '分布式安全运营方案', productLines: ['XDR', 'STA', 'AF'], devices: { AF: 'GW-AF-771', STA: 'GW-STA-352' }, startDate: '2026-08-28', endDate: '2026-09-27', approvalInfo: '资产系统审批通过（Mock）', cloud: { account: 'mingche-admin', tenantId: 'YT-10010999' } },
             'BOR-202608-003': { number: 'BOR-202608-003', approvalStatus: '审批通过', returned: true, revoked: false },
             'BOR-202608-004': { number: 'BOR-202608-004', approvalStatus: '审批通过', returned: false, revoked: true },
             'BOR-202608-ERR': { number: 'BOR-202608-ERR', error: true }
         };
-        var application = { source: 'borrow', solution: null, lines: [], params: {}, applicant: '', customer: '', cloud: null, borrow: null, authDays: 0, authEndDate: '', activeLine: '', status: 'draft', recordId: '' };
+        var application = { source: 'borrow', solution: null, lines: [], params: {}, biz: {}, applicant: '', customer: '', cloud: null, borrow: null, authDays: 0, authEndDate: '', activeLine: '', status: 'draft', recordId: '' };
         var editingConfigCode = '';
         function getCurrentApplicant() {
             var userNameEl = document.querySelector('.header-user .user-name');
@@ -10651,8 +10731,21 @@
             { id: 'C100105', name: '星澜数字服务有限公司', type: 'normal', sales: '沈思', orders: ['BOR-202608-ERR'] },
             { id: 'C100106', name: '星海智联科技有限公司', type: 'KA', sales: '许岚', orders: ['BOR-202608-005'], cloud: { account: 'xinghai-admin', tenantId: 'YT-10010688' } },
             { id: 'C100107', name: '环球致远贸易有限公司', type: 'KA', sales: '宋雨', orders: ['BOR-202608-006'], cloud: { account: 'global-admin', tenantId: 'YT-10010777' } },
-            { id: 'C100108', name: '环宇速联科技有限公司', type: 'KA', sales: '宋雨', orders: ['BOR-202608-007'], cloud: { account: 'oceanlink-admin', tenantId: 'YT-10010888' } }
+            { id: 'C100108', name: '环宇速联科技有限公司', type: 'KA', sales: '宋雨', orders: ['BOR-202608-007'], cloud: { account: 'oceanlink-admin', tenantId: 'YT-10010888' } },
+            { id: 'C100109', name: '明澈水务集团有限公司', type: 'KA', sales: '许岚', orders: ['BOR-202608-008'], cloud: { account: 'mingche-admin', tenantId: 'YT-10010999' } }
         ];
+        // 分布式安全运营方案专用业务申请字段默认值（Mock 预填）
+        var solutionBizDefaults = {
+            kaCustomer: '是',
+            mainScenario: '新建安全运营场景',
+            testDrivers: ['各类安全设备告警量大且误报多，威胁运营效率低，各分支无法统一监测'],
+            expectedEffects: ['聚合降噪：海量告警基于GPT能力聚合成少量精准事件，有效降低误报，识别关键攻击'],
+            componentNotes: '已部署 SIP 与深信服 AF，XDR 平台对接三方日志组件统一接入',
+            dailyLogAmount: '3 亿条/天',
+            highFunctionModules: ['第三方日志分析模块-SIEM', 'SOAR'],
+            researchDoc: '',
+            resalePlan: '测试通过后转销，计划 Q4 完成采购流程'
+        };
 
         function id(name) { return document.getElementById(name); }
         function escapeHtml(value) {
@@ -10750,12 +10843,16 @@
             application.authEndDate = '';
             application.activeLine = '';
             application.recordId = '';
+            application.biz = {};
             setStatus('draft');
             id('solutionLockedScope').hidden = true;
+            id('solutionBizSection').hidden = true;
             id('solutionProductWorkspace').hidden = true;
             renderWorkflow();
         }
         function isXaasLine(line) { return line === 'XDR' || line === 'SASE-GA' || line === 'SASE-SWG' || line === 'SaaS-XDR' || line === 'SASE-ZTNA'; }
+        // 分布式安全运营方案：XDR 走生产对齐授权模块卡，且整单附带业务申请信息模块
+        function isDsocSolution() { return !!application.solution && application.solution.code === 'SOL-DSOC-008'; }
         function createParams(line, deviceId, endDate) {
             var defaults = productDefaults[line] || { version: '', modules: [], spec: '' };
             var params = {
@@ -10791,6 +10888,46 @@
                     customerNeed: '验证海外与移动办公人员零信任安全接入体验',
                     projectScale: '覆盖 4 个海外办公点，约 200 名移动办公用户',
                     competitor: 'Zscaler 私有接入'
+                };
+            }
+            if (line === 'XDR' && isDsocSolution()) {
+                return {
+                    version: 'LOCAL-XDR2.0.12及以上版本（XDR+GPT）',
+                    endDate: endDate || '2026-10-02',
+                    modules: ['XDR平台软件', '辅助运营GPT', '智能值守GPT', '每天日志接入量上限', '流量检测GPT', '软件升级授权', '规则库更新授权', '高级漏洞管理', '第三方日志分析-SIEM', 'XDR性能扩容授权', '自有组件接入授权', '威胁情报服务', '安全事件深度挖掘XTH', '移动运营小助手', '物联网安全管控模块', 'SOAR', '自定义工单流程', '云安全中心', '知识库', '等保合规管理', '绩效考核'],
+                    xdr_platform_count: '3',
+                    xdr_platform_end: '2026-10-02',
+                    xdr_ops_gpt_scene: '云上部署',
+                    xdr_ops_gpt_end: '2026-10-02',
+                    xdr_ops_gpt_enabled: '是',
+                    xdr_duty_gpt_scene: '云上部署',
+                    xdr_duty_gpt_cot: '匹配3节点XDR',
+                    xdr_duty_gpt_end: '2026-10-02',
+                    xdr_duty_gpt_enabled: '是',
+                    xdr_daily_log_count: '1',
+                    xdr_daily_log_end: '2026-10-02',
+                    xdr_traffic_gpt_end: '2026-10-02',
+                    xdr_traffic_gpt_enabled: '否',
+                    xdr_software_upgrade: '2026-10-02',
+                    xdr_rule_update: '2026-10-02',
+                    xdr_vuln_mgmt: '2026-10-02',
+                    xdr_siem: '2026-10-02',
+                    xdr_perf_scale_count: '1',
+                    xdr_perf_scale_end: '2026-10-02',
+                    xdr_component_count: '10',
+                    xdr_component_end: '2026-10-02',
+                    xdr_threat_intel: '2026-10-02',
+                    xdr_xth: '2026-10-02',
+                    xdr_mobile_assistant: '2026-10-02',
+                    xdr_iot_control: '2026-10-02',
+                    xdr_soar: '2026-10-02',
+                    xdr_custom_workflow: '2026-10-02',
+                    xdr_cloud_center_version: '云环境接入(免费版)',
+                    xdr_cloud_center_points: '1000',
+                    xdr_cloud_center_end: '2026-10-02',
+                    xdr_knowledge_base: '2026-10-02',
+                    xdr_compliance: '2026-10-02',
+                    xdr_performance: '2026-10-02'
                 };
             }
             if (line === 'SaaS-XDR' || line === 'XDR') {
@@ -10855,6 +10992,13 @@
                 params.terminalAuth = defaults.terminalAuth || '2026-09-24';
                 params.softwareUpgrade = defaults.softwareUpgrade || '2026-09-24';
                 params.leakAudit = defaults.leakAudit || '2026-09-24';
+            }
+            if (line === 'STA') {
+                params.sta_lines = '4';
+                params.sta_mobile = '10';
+                params.sta_branch = '10';
+                params.sta_software_upgrade = '2026-10-02';
+                params.sta_web_protection = '2026-10-02';
             }
             return params;
         }
@@ -10990,11 +11134,30 @@
             // 按需产品线开关（如未上线的 SASE-SWG）：默认关闭，关闭时不参与填写/校验/提交
             application.lineSwitches = {};
             application.lines.forEach(function(line) { if (optionalSolutionLines.indexOf(line) !== -1) application.lineSwitches[line] = false; });
+            application.biz = isDsocSolution() ? JSON.parse(JSON.stringify(solutionBizDefaults)) : {};
             refreshSolutionCustomerCloudSummary();
             setStatus('draft');
             renderLockedScope();
+            renderBizSection();
             renderProductWorkspace();
             renderWorkflow();
+        }
+        // 业务申请信息模块：仅分布式安全运营方案展示，按 application.biz 同步表单状态
+        function renderBizSection() {
+            var dsoc = isDsocSolution();
+            id('solutionBizSection').hidden = !dsoc;
+            if (!dsoc) return;
+            var biz = application.biz;
+            id('solutionBizGrid').querySelectorAll('[data-solution-biz-param]').forEach(function(node) {
+                var key = node.dataset.solutionBizParam;
+                if (node.type === 'checkbox') {
+                    node.checked = (biz[key] || []).indexOf(node.value) !== -1;
+                } else if (node.type !== 'file') {
+                    node.value = biz[key] || '';
+                }
+            });
+            var nameEl = id('solutionBizGrid').querySelector('.solution-file-name');
+            if (nameEl) { nameEl.textContent = biz.researchDoc || '未选择文件'; nameEl.classList.toggle('empty', !biz.researchDoc); }
         }
         // 未上线/按需选择的产品线：导航展示开关，关闭时不渲染表单项且不参与校验与提交
         var optionalSolutionLines = ['SASE-SWG'];
@@ -11073,6 +11236,10 @@
             var fields = '';
             if (!isLineEnabled(line)) {
                 fields = '<div class="solution-line-off-note"><span class="material-symbols-outlined" aria-hidden="true">info</span>' + line + ' 为按需产品线（当前未上线），默认不参与本单申请；打开右上角开关后填写参数。</div>';
+            } else if (line === 'XDR' && isDsocSolution()) {
+                fields += '<div class="solution-field"><label><span class="solution-required">*</span>版本</label><input class="solution-input" data-solution-param="version" value="' + escapeHtml(values.version) + '"></div>';
+                fields += '<div class="solution-field"><label><span class="solution-required">*</span>授权有效期<span class="solution-readonly-note"><span class="material-symbols-outlined">lock</span>统一取方案授权时间</span></label><input class="solution-input" type="date" data-solution-param="endDate" value="' + escapeHtml(values.endDate) + '" readonly data-solution-readonly></div>';
+                fields += renderSolutionModuleCards(line, values);
             } else if (isXaasLine(line)) {
                 fields = renderXaasFields(line, values);
             } else {
@@ -11176,6 +11343,11 @@
                 application.cloud = solutionLocalCustomer && solutionLocalCustomer.cloud;
             }
             if (!application.applicant || !application.customer) return '请补全申请人和客户。';
+            if (isDsocSolution()) {
+                var biz = application.biz || {};
+                if (!biz.kaCustomer || !biz.mainScenario || !biz.componentNotes || !biz.dailyLogAmount || !biz.resalePlan || !biz.researchDoc) return '请补全业务申请信息（分布式安全运营）。';
+                if (!biz.testDrivers || !biz.testDrivers.length || !biz.expectedEffects || !biz.expectedEffects.length || !biz.highFunctionModules || !biz.highFunctionModules.length) return '请补全业务申请信息（分布式安全运营）。';
+            }
             var active = activeLines();
             if (active.some(isXaasLine) && (!application.cloud || !application.cloud.tenantId)) return 'XaaS 产品线需选择已关联云图账号和云图ID的客户。';
             for (var i = 0; i < active.length; i++) {
@@ -11193,6 +11365,10 @@
                     if (!value.version || !value.endDate || !value.customerNeed || !value.projectScale || !value.competitor) return 'SASE-ZTNA 的授权参数未填写完整。';
                     continue;
                 }
+                if (line === 'XDR' && isDsocSolution()) {
+                    if (!value.version || !value.modules || !value.modules.length) return 'XDR 的授权参数未填写完整。';
+                    continue;
+                }
                 if (line === 'SaaS-XDR' || line === 'XDR') {
                     var xdrFields = ['version', 'endDate', 'logAmount', 'testScenario', 'testDriver', 'coreNeed', 'expectedResult', 'isPk', 'customerEnv', 'securityOpMode', 'securityStaff', 'thirdPartyDevices', 'budgetInfo', 'securityBudget', 'projectLandingDate', 'collectedFile'];
                     if (xdrFields.some(function(field) { return !value[field]; }) || !value.existingComponents || !value.existingComponents.length) return line + ' 的授权参数未填写完整。';
@@ -11206,6 +11382,10 @@
                 }
                 if (line === 'aTrust') {
                     if (!value.version || !value.deviceId) return 'aTrust 的授权参数未填写完整。';
+                    continue;
+                }
+                if (line === 'STA') {
+                    if (!value.version || !value.deviceId) return 'STA 的授权参数未填写完整。';
                     continue;
                 }
                 if (!value.version || !value.deviceId) return line + ' 的授权参数未填写完整。';
@@ -11350,6 +11530,27 @@
             }
             id('solutionProductPanel').addEventListener('input', collectSolutionParam);
             id('solutionProductPanel').addEventListener('change', collectSolutionParam);
+            function collectBizParam(event) {
+                var target = event.target;
+                var field = target.closest ? target.closest('[data-solution-biz-param]') : null;
+                if (!field) return;
+                var key = field.dataset.solutionBizParam;
+                if (target.type === 'checkbox') {
+                    application.biz[key] = Array.prototype.slice.call(field.querySelectorAll('input:checked')).map(function(c) { return c.value; });
+                    return;
+                }
+                if (target.type === 'file') {
+                    var docName = target.files.length ? target.files[0].name : '';
+                    application.biz[key] = docName;
+                    var docWrap = field.closest('.solution-file-input');
+                    var docNameEl = docWrap && docWrap.querySelector('.solution-file-name');
+                    if (docNameEl) { docNameEl.textContent = docName || '未选择文件'; docNameEl.classList.toggle('empty', !docName); }
+                    return;
+                }
+                application.biz[key] = target.value;
+            }
+            id('solutionBizGrid').addEventListener('input', collectBizParam);
+            id('solutionBizGrid').addEventListener('change', collectBizParam);
             // 方案型模块卡片：toggle 开关 + 卡头展开/收起
             id('solutionProductPanel').addEventListener('click', function(event) {
                 var toggle = event.target.closest('[data-solution-module-toggle]');
