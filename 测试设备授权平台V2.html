@@ -1167,7 +1167,6 @@
         .solution-required { color: #c62828; margin-right: 3px; }
         .solution-readonly-note { display: inline-flex; align-items: center; gap: 2px; margin-left: 8px; color: #8a5a0b; font-size: 11px; font-weight: 400; }
         .solution-readonly-note .material-symbols-outlined { font-size: 13px; }
-        .solution-mock-link { color: #0050cb; text-decoration: underline; cursor: pointer; font-weight: 500; }
         .solution-input, .solution-select { width: 100%; min-height: 38px; padding: 0 12px; border: 1px solid #d8dee9; border-radius: 8px; outline: none; color: #0b1c30; background: #fff; font-size: 13px; transition: border-color .15s, box-shadow .15s; }
         .solution-input:focus, .solution-select:focus { border-color: #0050cb; box-shadow: 0 0 0 3px rgba(0,80,203,.10); }
         .solution-input[readonly] { color: #536177; background: #f5f7fa; cursor: not-allowed; }
@@ -3513,13 +3512,13 @@
                             <div class="section-title">业务申请信息<span class="solution-lock-note solution-hint-note"><span class="material-symbols-outlined">assignment</span>全球加速方案专用字段，支持业务人员审批评估</span></div>
 
                             <div class="solution-grid two" id="solutionAccelBizGrid">
-                                <div class="solution-field"><label><span class="solution-required">*</span>客户名称<span class="solution-readonly-note">自动补齐，<a class="solution-mock-link" data-solution-mock-link>跳转销管新建</a></span></label><input class="solution-input" data-solution-accel-param="customerName" readonly></div>
-                                <div class="solution-field"><label><span class="solution-required">*</span>客户类型<span class="solution-readonly-note">自动补齐，支持修改</span></label><select class="solution-select" data-solution-accel-param="customerType"><option value="KA客户">KA客户</option><option value="普通客户">普通客户</option></select></div>
+                                <div class="solution-field"><label><span class="solution-required">*</span>客户名称</label><input class="solution-input" data-solution-accel-param="customerName" readonly></div>
+                                <div class="solution-field"><label><span class="solution-required">*</span>客户类型</label><select class="solution-select" data-solution-accel-param="customerType"><option value="KA客户">KA客户</option><option value="普通客户">普通客户</option></select></div>
                                 <div class="solution-field solution-field-full"><label><span class="solution-required">*</span>客户需求</label><textarea class="solution-input" data-solution-accel-param="customerNeed"></textarea></div>
                                 <div class="solution-field"><label><span class="solution-required">*</span>客户所在省份/国家</label><input class="solution-input" data-solution-accel-param="region"></div>
-                                <div class="solution-field"><label>云图ID<span class="solution-readonly-note">若有，自动带出</span></label><input class="solution-input" data-solution-accel-param="cloudTenantId" readonly></div>
-                                <div class="solution-field"><label>硬件借测单号<span class="solution-readonly-note">自动带出，<a class="solution-mock-link" data-solution-mock-link>跳转申请</a></span></label><input class="solution-input" data-solution-accel-param="hardwareBorrowNo" readonly></div>
-                                <div class="solution-field"><label><span class="solution-required">*</span>测试时间和规格<span class="solution-readonly-note">已按默认填写，支持修改</span></label><input class="solution-input" data-solution-accel-param="testTimeSpec"><div class="solution-lock-note" id="accelTestTimeHint" hidden><span class="material-symbols-outlined">warning</span>测试时间和规格已修改，提交后需人工审批</div></div>
+                                <div class="solution-field"><label>云图ID</label><input class="solution-input" data-solution-accel-param="cloudTenantId" readonly></div>
+                                <div class="solution-field"><label>硬件借测单号</label><input class="solution-input" data-solution-accel-param="hardwareBorrowNo" readonly></div>
+                                <div class="solution-field"><label><span class="solution-required">*</span>测试时间和规格</label><input class="solution-input" data-solution-accel-param="testTimeSpec"><div class="solution-lock-note" id="accelTestTimeHint" hidden><span class="material-symbols-outlined">warning</span>测试时间和规格已修改，提交后需人工审批</div></div>
                                 <div class="solution-field solution-field-full"><label>备注</label><textarea class="solution-input" data-solution-accel-param="remark"></textarea></div>
                                 <!-- 延期申请理由：申请时不显示，仅延期申请时展示，届时上方其他内容自动显示 -->
                             </div>
@@ -11731,10 +11730,6 @@
             }
             id('solutionAccelBizGrid').addEventListener('input', collectAccelBizParam);
             id('solutionAccelBizGrid').addEventListener('change', collectAccelBizParam);
-            id('solutionAccelBizGrid').addEventListener('click', function(event) {
-                var link = event.target.closest('[data-solution-mock-link]');
-                if (link) event.preventDefault();
-            });
             // 方案型模块卡片：toggle 开关 + 卡头展开/收起
             id('solutionProductPanel').addEventListener('click', function(event) {
                 var toggle = event.target.closest('[data-solution-module-toggle]');

@@ -105,6 +105,11 @@ test('全球加速方案-SaaS版：借测单入口锁定 SASE-ZTNA+SASE-GA 并�
     assert.match(accelGrid.textContent, /硬件借测单号/);
     assert.match(accelGrid.textContent, /测试时间和规格/);
     assert.match(accelGrid.textContent, /备注/);
+    assert.equal(accelGrid.querySelectorAll('.solution-readonly-note').length, 0, 'SaaS版业务字段标签不应显示辅助文案');
+    assert.equal(accelGrid.querySelectorAll('[data-solution-mock-link]').length, 0, 'SaaS版业务字段不应显示跳转链接');
+    ['customerName', 'customerType', 'cloudTenantId', 'hardwareBorrowNo', 'testTimeSpec'].forEach((field) => {
+      assert.ok(accelGrid.querySelector(`[data-solution-accel-param="${field}"]`), `SaaS版应保留 ${field} 字段`);
+    });
     assert.equal(document.querySelector('[data-solution-accel-param="customerName"]').value, '环宇速联科技有限公司');
     assert.equal(document.querySelector('[data-solution-accel-param="customerType"]').value, 'KA客户');
     assert.equal(document.querySelector('[data-solution-accel-param="cloudTenantId"]').value, 'YT-10010888');
@@ -164,6 +169,12 @@ test('全球加速方案-本地版：本地申请入口锁定 aTrust+SASE-GA 并
 
     // 业务申请信息模块：本地申请无硬件借测单号，云图ID 来自所选客户
     assert.equal(document.getElementById('solutionAccelBizSection').hidden, false);
+    const accelGrid = document.getElementById('solutionAccelBizGrid');
+    assert.equal(accelGrid.querySelectorAll('.solution-readonly-note').length, 0, '本地版业务字段标签不应显示辅助文案');
+    assert.equal(accelGrid.querySelectorAll('[data-solution-mock-link]').length, 0, '本地版业务字段不应显示跳转链接');
+    ['customerName', 'customerType', 'cloudTenantId', 'hardwareBorrowNo', 'testTimeSpec'].forEach((field) => {
+      assert.ok(accelGrid.querySelector(`[data-solution-accel-param="${field}"]`), `本地版应保留 ${field} 字段`);
+    });
     assert.equal(document.querySelector('[data-solution-accel-param="hardwareBorrowNo"]').value, '', '本地申请不应带出硬件借测单号');
     assert.equal(document.querySelector('[data-solution-accel-param="cloudTenantId"]').value, 'YT-10010688');
 
