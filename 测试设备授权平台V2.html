@@ -10679,6 +10679,53 @@
                 { name: '等保合规管理', params: [{ label: '授权有效期', key: 'xdr_compliance', type: 'text', value: '2026-10-02' }] },
                 { name: '绩效考核', params: [{ label: '授权有效期', key: 'xdr_performance', type: 'text', value: '2026-10-02' }] }
             ],
+            XDR_V45: [
+                { name: 'XDR平台软件', params: [
+                    { label: '数量（亿条）', key: 'xdr_platform_count', type: 'text', value: '3' },
+                    { label: '授权有效期', key: 'xdr_platform_end', type: 'text', value: '2026-10-02' }
+                ] },
+                { name: '辅助运营GPT', params: [
+                    { label: 'gpt部署场景', key: 'xdr_ops_gpt_scene', type: 'select', options: ['云上部署', '本地部署'], value: '云上部署' },
+                    { label: '授权有效期', key: 'xdr_ops_gpt_end', type: 'text', value: '2026-10-02' }
+                ] },
+                { name: '智能值守GPT', params: [
+                    { label: 'gpt部署场景', key: 'xdr_duty_gpt_scene', type: 'select', options: ['云上部署', '本地部署'], value: '云上部署' },
+                    { label: 'cot功能类型', key: 'xdr_duty_gpt_cot', type: 'select', options: ['匹配3节点XDR', '匹配5节点XDR', '匹配10节点XDR'], value: '匹配3节点XDR' },
+                    { label: '授权有效期', key: 'xdr_duty_gpt_end', type: 'text', value: '2026-10-02' }
+                ] },
+                { name: '级联服务授权', params: [
+                    { label: '数量（个）', key: 'xdr_cascade_count', type: 'text', value: '1' },
+                    { label: '授权有效期', key: 'xdr_cascade_end', type: 'text', value: '2026-10-02' }
+                ] },
+                { name: 'XDR性能扩容授权(天日志量)', params: [
+                    { label: '数量（亿条）', key: 'xdr_perf_log_count', type: 'text', value: '1' },
+                    { label: '授权有效期', key: 'xdr_perf_log_end', type: 'text', value: '2026-10-02' }
+                ] },
+                { name: '流量检测GPT', params: [{ label: '授权有效期', key: 'xdr_traffic_gpt_end', type: 'text', value: '2026-10-02' }] },
+                { name: '软件升级授权', params: [{ label: '授权有效期', key: 'xdr_software_upgrade', type: 'text', value: '2026-10-02' }] },
+                { name: '规则库更新授权', params: [{ label: '授权有效期', key: 'xdr_rule_update', type: 'text', value: '2026-10-02' }] },
+                { name: '高级漏洞管理', params: [{ label: '授权有效期', key: 'xdr_vuln_mgmt', type: 'text', value: '2026-10-02' }] },
+                { name: '第三方日志分析-SIEM', params: [{ label: '授权有效期', key: 'xdr_siem', type: 'text', value: '2026-10-02' }] },
+                { name: '自有组件接入授权', params: [
+                    { label: '数量（个）', key: 'xdr_component_count', type: 'text', value: '10' },
+                    { label: '授权有效期', key: 'xdr_component_end', type: 'text', value: '2026-10-02' }
+                ] },
+                { name: '威胁情报服务', params: [{ label: '授权有效期', key: 'xdr_threat_intel', type: 'text', value: '2026-10-02' }] },
+                { name: '安全事件深度挖掘XTH', params: [{ label: '授权有效期', key: 'xdr_xth', type: 'text', value: '2026-10-02' }] },
+                { name: '移动运营小助手', params: [{ label: '授权有效期', key: 'xdr_mobile_assistant', type: 'text', value: '2026-10-02' }] },
+                { name: '物联网安全管控模块', params: [{ label: '授权有效期', key: 'xdr_iot_control', type: 'text', value: '2026-10-02' }] },
+                { name: 'SOAR', params: [{ label: '授权有效期', key: 'xdr_soar', type: 'text', value: '2026-10-02' }] },
+                { name: '自定义工单流程', params: [{ label: '授权有效期', key: 'xdr_custom_workflow', type: 'text', value: '2026-10-02' }] },
+                { name: '云安全中心', params: [
+                    { label: '授权版本', key: 'xdr_cloud_center_version', type: 'select', options: ['云环境接入(免费版)', '云环境接入(付费版)'], value: '云环境接入(免费版)' },
+                    { label: '授权点数', key: 'xdr_cloud_center_points', type: 'text', value: '1000' },
+                    { label: '授权有效期', key: 'xdr_cloud_center_end', type: 'text', value: '2026-10-02' }
+                ] },
+                { name: '知识库', params: [{ label: '授权有效期', key: 'xdr_knowledge_base', type: 'text', value: '2026-10-02' }] },
+                { name: '等保合规管理', params: [{ label: '授权有效期', key: 'xdr_compliance', type: 'text', value: '2026-10-02' }] },
+                { name: '绩效考核', params: [{ label: '授权有效期', key: 'xdr_performance', type: 'text', value: '2026-10-02' }] },
+                { name: '智能对抗服务', params: [{ label: '授权有效期', key: 'xdr_smart_defense', type: 'text', value: '2026-10-02' }] }
+            ],
             STA: [
                 { name: '网关序列号', params: [
                     { label: '线路数', key: 'sta_lines', type: 'text', value: '4' },
@@ -10853,7 +10900,7 @@
         function isXaasLine(line) { return line === 'XDR' || line === 'SASE-GA' || line === 'SASE-SWG' || line === 'SaaS-XDR' || line === 'SASE-ZTNA'; }
         // 分布式安全运营方案：XDR 走生产对齐授权模块卡，且整单附带业务申请信息模块
         function isDsocSolution() { return !!application.solution && application.solution.code === 'SOL-DSOC-008'; }
-        function createParams(line, deviceId, endDate) {
+        function createParams(line, deviceId, endDate, versionOption) {
             var defaults = productDefaults[line] || { version: '', modules: [], spec: '' };
             var params = {
                 version: defaults.version,
@@ -10891,29 +10938,67 @@
                 };
             }
             if (line === 'XDR' && isDsocSolution()) {
+                var dsocVersion = versionOption || 'LOCAL-XDR2.0.45及以上版本（XDR+GPT）';
+                if (dsocVersion === 'LOCAL-XDR2.0.12及以上版本（XDR+GPT）') {
+                    return {
+                        version: dsocVersion,
+                        endDate: endDate || '2026-10-02',
+                        modules: ['XDR平台软件', '辅助运营GPT', '智能值守GPT', '每天日志接入量上限', '流量检测GPT', '软件升级授权', '规则库更新授权', '高级漏洞管理', '第三方日志分析-SIEM', 'XDR性能扩容授权', '自有组件接入授权', '威胁情报服务', '安全事件深度挖掘XTH', '移动运营小助手', '物联网安全管控模块', 'SOAR', '自定义工单流程', '云安全中心', '知识库', '等保合规管理', '绩效考核'],
+                        xdr_platform_count: '3',
+                        xdr_platform_end: '2026-10-02',
+                        xdr_ops_gpt_scene: '云上部署',
+                        xdr_ops_gpt_end: '2026-10-02',
+                        xdr_ops_gpt_enabled: '是',
+                        xdr_duty_gpt_scene: '云上部署',
+                        xdr_duty_gpt_cot: '匹配3节点XDR',
+                        xdr_duty_gpt_end: '2026-10-02',
+                        xdr_duty_gpt_enabled: '是',
+                        xdr_daily_log_count: '1',
+                        xdr_daily_log_end: '2026-10-02',
+                        xdr_traffic_gpt_end: '2026-10-02',
+                        xdr_traffic_gpt_enabled: '否',
+                        xdr_software_upgrade: '2026-10-02',
+                        xdr_rule_update: '2026-10-02',
+                        xdr_vuln_mgmt: '2026-10-02',
+                        xdr_siem: '2026-10-02',
+                        xdr_perf_scale_count: '1',
+                        xdr_perf_scale_end: '2026-10-02',
+                        xdr_component_count: '10',
+                        xdr_component_end: '2026-10-02',
+                        xdr_threat_intel: '2026-10-02',
+                        xdr_xth: '2026-10-02',
+                        xdr_mobile_assistant: '2026-10-02',
+                        xdr_iot_control: '2026-10-02',
+                        xdr_soar: '2026-10-02',
+                        xdr_custom_workflow: '2026-10-02',
+                        xdr_cloud_center_version: '云环境接入(免费版)',
+                        xdr_cloud_center_points: '1000',
+                        xdr_cloud_center_end: '2026-10-02',
+                        xdr_knowledge_base: '2026-10-02',
+                        xdr_compliance: '2026-10-02',
+                        xdr_performance: '2026-10-02'
+                    };
+                }
                 return {
-                    version: 'LOCAL-XDR2.0.12及以上版本（XDR+GPT）',
+                    version: dsocVersion,
                     endDate: endDate || '2026-10-02',
-                    modules: ['XDR平台软件', '辅助运营GPT', '智能值守GPT', '每天日志接入量上限', '流量检测GPT', '软件升级授权', '规则库更新授权', '高级漏洞管理', '第三方日志分析-SIEM', 'XDR性能扩容授权', '自有组件接入授权', '威胁情报服务', '安全事件深度挖掘XTH', '移动运营小助手', '物联网安全管控模块', 'SOAR', '自定义工单流程', '云安全中心', '知识库', '等保合规管理', '绩效考核'],
+                    modules: ['XDR平台软件', '辅助运营GPT', '智能值守GPT', '级联服务授权', 'XDR性能扩容授权(天日志量)', '流量检测GPT', '软件升级授权', '规则库更新授权', '高级漏洞管理', '第三方日志分析-SIEM', '自有组件接入授权', '威胁情报服务', '安全事件深度挖掘XTH', '移动运营小助手', '物联网安全管控模块', 'SOAR', '自定义工单流程', '云安全中心', '知识库', '等保合规管理', '绩效考核', '智能对抗服务'],
                     xdr_platform_count: '3',
                     xdr_platform_end: '2026-10-02',
                     xdr_ops_gpt_scene: '云上部署',
                     xdr_ops_gpt_end: '2026-10-02',
-                    xdr_ops_gpt_enabled: '是',
                     xdr_duty_gpt_scene: '云上部署',
                     xdr_duty_gpt_cot: '匹配3节点XDR',
                     xdr_duty_gpt_end: '2026-10-02',
-                    xdr_duty_gpt_enabled: '是',
-                    xdr_daily_log_count: '1',
-                    xdr_daily_log_end: '2026-10-02',
+                    xdr_cascade_count: '1',
+                    xdr_cascade_end: '2026-10-02',
+                    xdr_perf_log_count: '1',
+                    xdr_perf_log_end: '2026-10-02',
                     xdr_traffic_gpt_end: '2026-10-02',
-                    xdr_traffic_gpt_enabled: '否',
                     xdr_software_upgrade: '2026-10-02',
                     xdr_rule_update: '2026-10-02',
                     xdr_vuln_mgmt: '2026-10-02',
                     xdr_siem: '2026-10-02',
-                    xdr_perf_scale_count: '1',
-                    xdr_perf_scale_end: '2026-10-02',
                     xdr_component_count: '10',
                     xdr_component_end: '2026-10-02',
                     xdr_threat_intel: '2026-10-02',
@@ -10927,7 +11012,8 @@
                     xdr_cloud_center_end: '2026-10-02',
                     xdr_knowledge_base: '2026-10-02',
                     xdr_compliance: '2026-10-02',
-                    xdr_performance: '2026-10-02'
+                    xdr_performance: '2026-10-02',
+                    xdr_smart_defense: '2026-10-02'
                 };
             }
             if (line === 'SaaS-XDR' || line === 'XDR') {
@@ -11237,9 +11323,11 @@
             if (!isLineEnabled(line)) {
                 fields = '<div class="solution-line-off-note"><span class="material-symbols-outlined" aria-hidden="true">info</span>' + line + ' 为按需产品线（当前未上线），默认不参与本单申请；打开右上角开关后填写参数。</div>';
             } else if (line === 'XDR' && isDsocSolution()) {
-                fields += '<div class="solution-field"><label><span class="solution-required">*</span>版本</label><input class="solution-input" data-solution-param="version" value="' + escapeHtml(values.version) + '"></div>';
+                var dsocVersions = ['LOCAL-XDR2.0.45及以上版本（XDR+GPT）', 'LOCAL-XDR2.0.12及以上版本（XDR+GPT）'];
+                fields += '<div class="solution-field"><label><span class="solution-required">*</span>版本</label><select class="solution-select" data-solution-param="version">' + dsocVersions.map(function(option) { return '<option value="' + escapeHtml(option) + '"' + (option === values.version ? ' selected' : '') + '>' + escapeHtml(option) + '</option>'; }).join('') + '</select></div>';
                 fields += '<div class="solution-field"><label><span class="solution-required">*</span>授权有效期<span class="solution-readonly-note"><span class="material-symbols-outlined">lock</span>统一取方案授权时间</span></label><input class="solution-input" type="date" data-solution-param="endDate" value="' + escapeHtml(values.endDate) + '" readonly data-solution-readonly></div>';
-                fields += renderSolutionModuleCards(line, values);
+                var dsocCards = values.version === 'LOCAL-XDR2.0.12及以上版本（XDR+GPT）' ? solutionModuleCards.XDR : solutionModuleCards.XDR_V45;
+                fields += renderModuleCardsById(line, dsocCards, values);
             } else if (isXaasLine(line)) {
                 fields = renderXaasFields(line, values);
             } else {
@@ -11267,6 +11355,9 @@
                     return { name: m, params: [{ label: '规格参数', key: 'spec_' + m, type: 'text', value: values.spec || '' }] };
                 });
             }
+            return renderModuleCardsById(line, cards, values);
+        }
+        function renderModuleCardsById(line, cards, values) {
             var enabled = values.modules || [];
             var html = '';
             cards.forEach(function(card, index) {
@@ -11526,6 +11617,11 @@
                 if (inputEl) {
                     application.params[application.activeLine][inputEl.dataset.solutionParam] = inputEl.value;
                     if (inputEl.dataset.solutionParam === 'isPk') renderProductWorkspace();
+                    // 分布式安全运营 XDR：切换版本后按版本重建授权模块卡
+                    if (isDsocSolution() && application.activeLine === 'XDR' && inputEl.dataset.solutionParam === 'version') {
+                        application.params.XDR = createParams('XDR', '', application.authEndDate, inputEl.value);
+                        renderProductWorkspace();
+                    }
                 }
             }
             id('solutionProductPanel').addEventListener('input', collectSolutionParam);

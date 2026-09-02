@@ -77,24 +77,46 @@ test('分布式安全运营方案：借测单入口展示业务申请信息模�
     assert.equal(bizGrid.querySelectorAll('[data-solution-biz-param="expectedEffects"] input').length, 5, '客户预期效果应为五项多选');
     assert.equal(bizGrid.querySelectorAll('[data-solution-biz-param="highFunctionModules"] input').length, 10, '申请测试的高功能模块应为十项多选');
 
-    // XDR 面板：生产对齐版本 + 21 张授权模块卡
+    // XDR 面板：版本下拉默认 LOCAL-XDR2.0.45，22 张生产对齐授权模块卡
     const xdrPanel = document.getElementById('solutionProductPanel');
     assert.match(xdrPanel.textContent, /XDR 授权参数/);
-    assert.equal(document.querySelector('[data-solution-param="version"]').value, 'LOCAL-XDR2.0.12及以上版本（XDR+GPT）');
+    const versionSelect = document.querySelector('[data-solution-param="version"]');
+    assert.equal(versionSelect.tagName, 'SELECT', 'XDR 版本应为下拉可选');
+    assert.equal(versionSelect.value, 'LOCAL-XDR2.0.45及以上版本（XDR+GPT）', '默认选中 LOCAL-XDR2.0.45');
     const xdrCards = xdrPanel.querySelectorAll('.solution-module-card-list .module-item');
-    assert.equal(xdrCards.length, 21, 'XDR 应展示 21 张生产对齐授权模块卡');
+    assert.equal(xdrCards.length, 22, 'XDR 2.0.45 应展示 22 张生产对齐授权模块卡');
     assert.match(xdrPanel.textContent, /XDR平台软件/);
     assert.match(xdrPanel.textContent, /辅助运营GPT/);
     assert.match(xdrPanel.textContent, /智能值守GPT/);
     assert.match(xdrPanel.textContent, /cot功能类型/);
-    assert.match(xdrPanel.textContent, /流量检测GPT/);
+    assert.match(xdrPanel.textContent, /级联服务授权/, '2.0.45 新增级联服务授权卡');
+    assert.match(xdrPanel.textContent, /XDR性能扩容授权\(天日志量\)/);
+    assert.match(xdrPanel.textContent, /智能对抗服务/, '2.0.45 新增智能对抗服务卡');
     assert.match(xdrPanel.textContent, /云安全中心/);
+    assert.doesNotMatch(xdrPanel.textContent, /每天日志接入量上限/, '2.0.45 不应有每天日志接入量上限卡');
     assert.equal(document.querySelector('[data-solution-param="xdr_platform_count"]').value, '3', '平台软件默认 3 亿条');
-    assert.equal(document.querySelector('[data-solution-param="xdr_ops_gpt_enabled"]').tagName, 'SELECT', '是否启用应为下拉');
-    assert.equal(document.querySelector('[data-solution-param="xdr_ops_gpt_enabled"]').value, '是');
-    assert.equal(document.querySelector('[data-solution-param="xdr_traffic_gpt_enabled"]').value, '否', '流量检测GPT 默认不启用');
+    assert.equal(document.querySelector('[data-solution-param="xdr_cascade_count"]').value, '1', '级联服务授权默认 1 个');
+    assert.equal(document.querySelector('[data-solution-param="xdr_perf_log_count"]').value, '1', '性能扩容(天日志量)默认 1 亿条');
+    assert.equal(document.querySelector('[data-solution-param="xdr_ops_gpt_enabled"]'), null, '2.0.45 辅助运营GPT 无是否启用字段');
+    assert.equal(document.querySelector('[data-solution-param="xdr_traffic_gpt_enabled"]'), null, '2.0.45 流量检测GPT 无是否启用字段');
     assert.equal(document.querySelector('[data-solution-param="xdr_duty_gpt_cot"]').value, '匹配3节点XDR');
     assert.equal(document.querySelector('[data-solution-param="xdr_cloud_center_points"]').value, '1000');
+
+    // 切换到 2.0.12 版本 → 字段集跟随版本变化（21 张卡，GPT 卡带是否启用，扩容按套）
+    versionSelect.value = 'LOCAL-XDR2.0.12及以上版本（XDR+GPT）';
+    versionSelect.dispatchEvent(new window.Event('change', { bubbles: true }));
+    const panel12 = document.getElementById('solutionProductPanel');
+    assert.equal(panel12.querySelectorAll('.solution-module-card-list .module-item').length, 21, '切换 2.0.12 后应展示 21 张卡');
+    assert.match(panel12.textContent, /每天日志接入量上限/, '2.0.12 保留每天日志接入量上限卡');
+    assert.equal(document.querySelector('[data-solution-param="xdr_ops_gpt_enabled"]').value, '是', '2.0.12 辅助运营GPT 带是否启用');
+    assert.equal(document.querySelector('[data-solution-param="xdr_perf_scale_count"]').value, '1', '2.0.12 扩容授权按套');
+    assert.equal(document.querySelector('[data-solution-param="xdr_cascade_count"]'), null, '2.0.12 无级联服务授权');
+
+    // 切回 2.0.45
+    const versionSelectBack = document.querySelector('[data-solution-param="version"]');
+    versionSelectBack.value = 'LOCAL-XDR2.0.45及以上版本（XDR+GPT）';
+    versionSelectBack.dispatchEvent(new window.Event('change', { bubbles: true }));
+    assert.equal(document.querySelectorAll('#solutionProductPanel .solution-module-card-list .module-item').length, 22, '切回 2.0.45 恢复 22 张卡');
 
     // STA 面板：版本默认 + 设备ID 从借测单带入 + 3 张模块卡
     document.querySelector('[data-solution-line="STA"]').click();
@@ -138,7 +160,7 @@ test('分布式安全运营方案：未上传调研文档阻断提交，补全�
     assert.ok(parent, '应生成解决方案记录主行');
     assert.match(parent.textContent, /分布式安全运营方案/);
     const detail = parent.nextElementSibling;
-    assert.match(detail.textContent, /LOCAL-XDR2\.0\.12及以上版本（XDR\+GPT）/);
+    assert.match(detail.textContent, /LOCAL-XDR2\.0\.45及以上版本（XDR\+GPT）/);
     assert.match(detail.textContent, /STA3\.0\.25/);
     assert.match(detail.textContent, /云图ID: YT-10010999/);
     assert.match(detail.textContent, /LIC-STA-806/);
