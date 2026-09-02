@@ -10432,7 +10432,7 @@
     (function() {
         'use strict';
 
-        var productCatalog = ['HCI', 'AC', 'NGAF', 'AD', 'WOC', 'XDR', 'SASE', 'WAF', 'AF', 'SASE-GA', 'SASE-SWG', 'SaaS-XDR'];
+        var productCatalog = ['HCI', 'AC', 'NGAF', 'AD', 'WOC', 'XDR', 'SASE', 'WAF', 'AF', 'SASE-GA', 'SASE-SWG', 'SaaS-XDR', 'SASE-ZTNA', 'aTrust'];
         var productDefaults = {
             HCI: { version: 'HCI-6.8.1-VKEY', modules: ['计算虚拟化', '桌面虚拟化', '网络虚拟化'], spec: '16 核 / 100 TB', clusterId: 'GW-HCI-208' },
             AC: {
@@ -10453,7 +10453,9 @@
             AF: { version: 'AF-8.0.99', modules: ['网关序列号', 'SSL VPN序列号', '增强功能序列号', '网关杀毒功能开通', 'VMware带宽授权', '硬件规格', '杀毒引擎更新', '云脑-云智', '云脑-云鉴', '门户网站保护订阅服务', '软件升级序列号', '云蜜罐订阅服务', '智能运营服务', 'SOFAST优化&BEST选路', '物联网安全功能开通', '物联网资产指纹规则库更新'], spec: '标准规格' },
             'SASE-GA': { version: '', modules: [], spec: '带宽 10M' },
             'SASE-SWG': { version: 'SASE-SWG 标准版', modules: [], spec: '用户版 50 用户' },
-            'SaaS-XDR': { version: 'SaaS-XDR 标准版', modules: [], spec: '日志量 20,000 万条' }
+            'SaaS-XDR': { version: 'SaaS-XDR 标准版', modules: [], spec: '日志量 20,000 万条' },
+            'SASE-ZTNA': { version: 'SASE-ZTNA 标准版', modules: [], spec: '用户版 200 用户' },
+            aTrust: { version: 'aTrust-3.0.28', modules: [], spec: '标准规格' }
         };
         var moduleCatalog = {
             HCI: ['计算虚拟化', '存储虚拟化', '网络虚拟化', '容灾备份', '数据库服务'],
@@ -10614,6 +10616,8 @@
             { code: 'SOL-SEC-002', name: '安全态势感知方案', productLines: ['XDR', 'NGAF', 'WAF'], status: 'enabled', authDays: 60, updatedAt: '2026-08-05 16:20' },
             { code: 'SOL-XAAS-004', name: '云网安全运营方案', productLines: ['SASE-GA', 'SaaS-XDR'], status: 'enabled', authDays: 30, updatedAt: '2026-08-06 10:30' },
             { code: 'SOL-GLOBAL-005', name: '全球组网方案', productLines: ['AF', 'SASE-GA', 'SASE-SWG'], status: 'enabled', authDays: 30, updatedAt: '2026-08-26 14:30' },
+            { code: 'SOL-ACCEL-006', name: '全球加速方案-SaaS版', productLines: ['SASE-ZTNA', 'SASE-GA'], status: 'enabled', authDays: 30, updatedAt: '2026-09-02 10:00' },
+            { code: 'SOL-ACCEL-007', name: '全球加速方案-本地版', productLines: ['aTrust', 'SASE-GA'], status: 'enabled', authDays: 30, updatedAt: '2026-09-02 10:10' },
             { code: 'SOL-LEGACY-003', name: '旧版云安全方案', productLines: ['HCI', 'WAF'], status: 'disabled', authDays: 15, updatedAt: '2026-07-28 10:12' }
         ];
         var borrowOrders = {
@@ -10621,6 +10625,7 @@
             'BOR-202608-002': { number: 'BOR-202608-002', approvalStatus: '审批中', returned: false, revoked: false },
             'BOR-202608-005': { number: 'BOR-202608-005', approvalStatus: '审批通过', returned: false, revoked: false, applicant: '陈卓', customer: '星海智联科技有限公司', solutionCode: 'SOL-XAAS-004', solution: '云网安全运营方案', productLines: ['SASE-GA', 'SaaS-XDR'], devices: {}, startDate: '2026-08-08', endDate: '2026-08-23', approvalInfo: '资产系统审批通过（Mock）', cloud: { account: 'xinghai-admin', tenantId: 'YT-10010688' } },
             'BOR-202608-006': { number: 'BOR-202608-006', approvalStatus: '审批通过', returned: false, revoked: false, applicant: '韩磊', customer: '环球致远贸易有限公司', solutionCode: 'SOL-GLOBAL-005', solution: '全球组网方案', productLines: ['AF', 'SASE-GA', 'SASE-SWG'], devices: { AF: 'GW-AF-930' }, startDate: '2026-08-20', endDate: '2026-11-18', approvalInfo: '资产系统审批通过（Mock）', cloud: { account: 'global-admin', tenantId: 'YT-10010777' } },
+            'BOR-202608-007': { number: 'BOR-202608-007', approvalStatus: '审批通过', returned: false, revoked: false, applicant: '韩梅', customer: '环宇速联科技有限公司', solutionCode: 'SOL-ACCEL-006', solution: '全球加速方案-SaaS版', productLines: ['SASE-ZTNA', 'SASE-GA'], devices: {}, startDate: '2026-08-25', endDate: '2026-09-24', approvalInfo: '资产系统审批通过（Mock）', cloud: { account: 'oceanlink-admin', tenantId: 'YT-10010888' } },
             'BOR-202608-003': { number: 'BOR-202608-003', approvalStatus: '审批通过', returned: true, revoked: false },
             'BOR-202608-004': { number: 'BOR-202608-004', approvalStatus: '审批通过', returned: false, revoked: true },
             'BOR-202608-ERR': { number: 'BOR-202608-ERR', error: true }
@@ -10645,7 +10650,8 @@
             { id: 'C100104', name: '西南智慧物流有限公司', type: 'normal', sales: '陈颖', orders: ['BOR-202608-004'] },
             { id: 'C100105', name: '星澜数字服务有限公司', type: 'normal', sales: '沈思', orders: ['BOR-202608-ERR'] },
             { id: 'C100106', name: '星海智联科技有限公司', type: 'KA', sales: '许岚', orders: ['BOR-202608-005'], cloud: { account: 'xinghai-admin', tenantId: 'YT-10010688' } },
-            { id: 'C100107', name: '环球致远贸易有限公司', type: 'KA', sales: '宋雨', orders: ['BOR-202608-006'], cloud: { account: 'global-admin', tenantId: 'YT-10010777' } }
+            { id: 'C100107', name: '环球致远贸易有限公司', type: 'KA', sales: '宋雨', orders: ['BOR-202608-006'], cloud: { account: 'global-admin', tenantId: 'YT-10010777' } },
+            { id: 'C100108', name: '环宇速联科技有限公司', type: 'KA', sales: '宋雨', orders: ['BOR-202608-007'], cloud: { account: 'oceanlink-admin', tenantId: 'YT-10010888' } }
         ];
 
         function id(name) { return document.getElementById(name); }
@@ -10749,7 +10755,7 @@
             id('solutionProductWorkspace').hidden = true;
             renderWorkflow();
         }
-        function isXaasLine(line) { return line === 'XDR' || line === 'SASE-GA' || line === 'SASE-SWG' || line === 'SaaS-XDR'; }
+        function isXaasLine(line) { return line === 'XDR' || line === 'SASE-GA' || line === 'SASE-SWG' || line === 'SaaS-XDR' || line === 'SASE-ZTNA'; }
         function createParams(line, deviceId, endDate) {
             var defaults = productDefaults[line] || { version: '', modules: [], spec: '' };
             var params = {
@@ -10776,6 +10782,15 @@
                     customerNeed: '验证海外办公人员上网安全防护与统一管控',
                     projectScale: '覆盖 5 个海外办公点，约 300 名办公用户',
                     competitor: 'Zscaler'
+                };
+            }
+            if (line === 'SASE-ZTNA') {
+                return {
+                    version: defaults.version,
+                    endDate: endDate || '2026-08-23',
+                    customerNeed: '验证海外与移动办公人员零信任安全接入体验',
+                    projectScale: '覆盖 4 个海外办公点，约 200 名移动办公用户',
+                    competitor: 'Zscaler 私有接入'
                 };
             }
             if (line === 'SaaS-XDR' || line === 'XDR') {
@@ -11016,6 +11031,12 @@
                     '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>项目规模</label><textarea class="solution-input" data-solution-param="projectScale">' + escapeHtml(values.projectScale || '') + '</textarea></div>' +
                     '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>竞争对手</label><textarea class="solution-input" data-solution-param="competitor">' + escapeHtml(values.competitor || '') + '</textarea></div>';
             }
+            if (line === 'SASE-ZTNA') {
+                return baseFields +
+                    '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>客户需求</label><textarea class="solution-input" data-solution-param="customerNeed">' + escapeHtml(values.customerNeed || '') + '</textarea></div>' +
+                    '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>项目规模</label><textarea class="solution-input" data-solution-param="projectScale">' + escapeHtml(values.projectScale || '') + '</textarea></div>' +
+                    '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>竞争对手</label><textarea class="solution-input" data-solution-param="competitor">' + escapeHtml(values.competitor || '') + '</textarea></div>';
+            }
             var isPk = values.isPk || '';
             var componentOptions = ['AF', 'aES', 'SIP', 'XDR', 'STA'];
             return versionFields +
@@ -11168,6 +11189,10 @@
                     if (!value.version || !value.endDate || !value.customerNeed || !value.projectScale || !value.competitor) return 'SASE-SWG 的授权参数未填写完整。';
                     continue;
                 }
+                if (line === 'SASE-ZTNA') {
+                    if (!value.version || !value.endDate || !value.customerNeed || !value.projectScale || !value.competitor) return 'SASE-ZTNA 的授权参数未填写完整。';
+                    continue;
+                }
                 if (line === 'SaaS-XDR' || line === 'XDR') {
                     var xdrFields = ['version', 'endDate', 'logAmount', 'testScenario', 'testDriver', 'coreNeed', 'expectedResult', 'isPk', 'customerEnv', 'securityOpMode', 'securityStaff', 'thirdPartyDevices', 'budgetInfo', 'securityBudget', 'projectLandingDate', 'collectedFile'];
                     if (xdrFields.some(function(field) { return !value[field]; }) || !value.existingComponents || !value.existingComponents.length) return line + ' 的授权参数未填写完整。';
@@ -11177,6 +11202,10 @@
                 if (line === 'AF') {
                     if (!value.version || !value.deviceId || !value.modules || !value.modules.length) return 'AF 的授权参数未填写完整。';
                     if (!value.af_gw_users || !value.af_gw_lines || !value.af_branches || !value.af_sslvpn_users) return 'AF 网关/SSL VPN 序列号参数未填写完整。';
+                    continue;
+                }
+                if (line === 'aTrust') {
+                    if (!value.version || !value.deviceId) return 'aTrust 的授权参数未填写完整。';
                     continue;
                 }
                 if (!value.version || !value.deviceId) return line + ' 的授权参数未填写完整。';
