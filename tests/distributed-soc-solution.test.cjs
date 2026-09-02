@@ -64,18 +64,22 @@ test('分布式安全运营方案：借测单入口展示业务申请信息模�
     // 业务申请信息模块：仅此方案展示，且业务字段默认预填
     assert.equal(document.getElementById('solutionBizSection').hidden, false, '分布式安全运营方案应展示业务申请信息模块');
     const bizGrid = document.getElementById('solutionBizGrid');
-    assert.match(bizGrid.textContent, /KA客户/);
     assert.match(bizGrid.textContent, /测试主打场景/);
     assert.match(bizGrid.textContent, /测试驱动力/);
     assert.match(bizGrid.textContent, /客户预期效果/);
     assert.match(bizGrid.textContent, /平台接入组件说明/);
-    assert.match(bizGrid.textContent, /申请平台接入日志量/);
-    assert.match(bizGrid.textContent, /申请测试的高功能模块/);
     assert.match(bizGrid.textContent, /测试需求调研文档/);
     assert.match(bizGrid.textContent, /客户原因及后续转销计划说明/);
     assert.equal(bizGrid.querySelectorAll('[data-solution-biz-param="testDrivers"] input').length, 6, '测试驱动力应为六项多选');
     assert.equal(bizGrid.querySelectorAll('[data-solution-biz-param="expectedEffects"] input').length, 5, '客户预期效果应为五项多选');
-    assert.equal(bizGrid.querySelectorAll('[data-solution-biz-param="highFunctionModules"] input').length, 10, '申请测试的高功能模块应为十项多选');
+    assert.doesNotMatch(bizGrid.textContent, /KA客户|申请平台接入日志量|申请测试的高功能模块/, '红框字段不应保留在业务申请信息模块');
+    assert.equal(bizGrid.querySelector('[data-solution-biz-param="kaCustomer"]'), null);
+    assert.equal(bizGrid.querySelector('[data-solution-biz-param="dailyLogAmount"]'), null);
+    assert.equal(bizGrid.querySelector('[data-solution-biz-param="highFunctionModules"]'), null);
+    const choice = bizGrid.querySelector('[data-solution-biz-param="testDrivers"] .solution-checkbox');
+    const choiceStyle = window.getComputedStyle(choice);
+    assert.equal(choiceStyle.whiteSpace, 'normal', '长文本多选项应允许换行');
+    assert.equal(choiceStyle.justifyContent, 'flex-start', '多选项文字应从左侧开始对齐');
 
     // XDR 面板：版本下拉默认 LOCAL-XDR2.0.45，22 张生产对齐授权模块卡
     const xdrPanel = document.getElementById('solutionProductPanel');

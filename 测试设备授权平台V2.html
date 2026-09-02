@@ -1194,6 +1194,12 @@
         .solution-checkbox input[type="checkbox"] { display: block; flex: 0 0 16px; width: 16px !important; height: 16px !important; margin: 0 !important; accent-color: #0050cb; }
         .solution-checkbox span { display: flex; align-items: center; min-height: 16px; }
         .solution-checkbox:has(input:checked) { border-color: #0050cb; background: #eff4ff; color: #0050cb; font-weight: 500; }
+        /* 分布式安全运营：长文本多选项使用可换行的两列布局，避免与复选框重叠。 */
+        #solutionBizGrid { gap: 16px; }
+        #solutionBizGrid .solution-checkbox-group { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 10px; }
+        #content-solution #solutionBizGrid .solution-field label.solution-checkbox { align-items: flex-start; justify-content: flex-start; min-height: 48px; padding: 8px 10px; white-space: normal; }
+        #solutionBizGrid .solution-checkbox input[type="checkbox"] { margin-top: 2px !important; }
+        #solutionBizGrid .solution-checkbox span { display: block; min-width: 0; min-height: 0; line-height: 20px; overflow-wrap: anywhere; }
         .solution-file-input { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 44px; padding: 4px 6px 4px 4px; border: 1px solid #d8dee9; border-radius: 8px; background: #fff; }
         .solution-file-input .solution-file-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 36px; min-height: 36px; padding: 0 16px; border: none; border-radius: 7px; color: #fff !important; background: #0050cb; cursor: pointer; font-size: 13px; font-weight: 500; line-height: 36px; white-space: nowrap; flex-shrink: 0; transition: all 0.2s; }
         .solution-file-input .solution-file-btn:hover { background: #0043a8; box-shadow: 0 2px 8px rgba(0,80,203,.25); }
@@ -1281,6 +1287,7 @@
             .solution-page { padding-bottom: 24px; }
             .solution-page-head p, .solution-lock-note { display: none; }
             .solution-grid, .solution-grid.two, .solution-info-grid, .solution-form-grid { grid-template-columns: 1fr; }
+            #solutionBizGrid .solution-checkbox-group { grid-template-columns: 1fr; }
             .solution-form-grid { gap: 15px; margin-bottom: 15px; }
             .solution-form-row { display: block; }
             .solution-form-label { display: block; width: auto; padding: 0 0 6px; }
@@ -3495,13 +3502,10 @@
                             <div class="section-title">业务申请信息<span class="solution-lock-note solution-hint-note"><span class="material-symbols-outlined">assignment</span>分布式安全运营方案专用字段，支持业务人员审批评估</span></div>
 
                             <div class="solution-grid two" id="solutionBizGrid">
-                                <div class="solution-field"><label><span class="solution-required">*</span>KA客户</label><select class="solution-select" data-solution-biz-param="kaCustomer"><option value="是">是</option><option value="否">否</option></select></div>
                                 <div class="solution-field"><label><span class="solution-required">*</span>测试主打场景</label><select class="solution-select" data-solution-biz-param="mainScenario"><option value="">请选择</option><option>原有NDR升级场景（我司SIP/友商NDR）</option><option selected>新建安全运营场景</option><option>SOC替换场景（含SOC保存）</option><option>多分支统一管理场景</option></select></div>
                                 <div class="solution-field solution-field-full"><label><span class="solution-required">*</span>测试驱动力</label><div class="solution-checkbox-group" data-solution-biz-param="testDrivers"><label class="solution-checkbox"><input type="checkbox" value="各类安全设备告警量大且误报多，威胁运营效率低，各分支无法统一监测" checked><span>各类安全设备告警量大且误报多，威胁运营效率低，各分支无法统一监测</span></label><label class="solution-checkbox"><input type="checkbox" value="现有威胁运营平台不达预期，想替换"><span>现有威胁运营平台不达预期，想替换</span></label><label class="solution-checkbox"><input type="checkbox" value="重大安全问题，需要加强安全建设"><span>重大安全问题，需要加强安全建设</span></label><label class="solution-checkbox"><input type="checkbox" value="被监管单位通报，需要加强安全建设"><span>被监管单位通报，需要加强安全建设</span></label><label class="solution-checkbox"><input type="checkbox" value="护网重保缺少统一值守平台，值守难度较大"><span>护网重保缺少统一值守平台，值守难度较大</span></label><label class="solution-checkbox"><input type="checkbox" value="客户有创新及体现政绩的诉求"><span>客户有创新及体现政绩的诉求</span></label></div></div>
                                 <div class="solution-field solution-field-full"><label><span class="solution-required">*</span>客户预期效果</label><div class="solution-checkbox-group" data-solution-biz-param="expectedEffects"><label class="solution-checkbox"><input type="checkbox" value="全流量检测：自有产品及三方产品统一接入，实现全流量威胁检测"><span>全流量检测：自有产品及三方产品统一接入，实现全流量威胁检测</span></label><label class="solution-checkbox"><input type="checkbox" value="聚合降噪：海量告警基于GPT能力聚合成少量精准事件，有效降低误报，识别关键攻击" checked><span>聚合降噪：海量告警基于GPT能力聚合成少量精准事件，有效降低误报，识别关键攻击</span></label><label class="solution-checkbox"><input type="checkbox" value="告警研判：安全GPT智能研判告警及事件，故事线+时间还原攻击过程，提升效率"><span>告警研判：安全GPT智能研判告警及事件，故事线+时间还原攻击过程，提升效率</span></label><label class="solution-checkbox"><input type="checkbox" value="智能对抗：外联或外部攻击实现自动化对抗，提升处置效率"><span>智能对抗：外联或外部攻击实现自动化对抗，提升处置效率</span></label><label class="solution-checkbox"><input type="checkbox" value="威胁运营成果展示：报表/大屏直观展示威胁运营成果"><span>威胁运营成果展示：报表/大屏直观展示威胁运营成果</span></label></div></div>
                                 <div class="solution-field solution-field-full"><label><span class="solution-required">*</span>平台接入组件说明</label><textarea class="solution-input" data-solution-biz-param="componentNotes"></textarea></div>
-                                <div class="solution-field"><label><span class="solution-required">*</span>申请平台接入日志量</label><input class="solution-input" data-solution-biz-param="dailyLogAmount" placeholder="如：3 亿条/天"></div>
-                                <div class="solution-field solution-field-full"><label><span class="solution-required">*</span>申请测试的高功能模块</label><div class="solution-checkbox-group" data-solution-biz-param="highFunctionModules"><label class="solution-checkbox"><input type="checkbox" value="第三方日志分析模块-SIEM" checked><span>第三方日志分析模块-SIEM</span></label><label class="solution-checkbox"><input type="checkbox" value="SOAR" checked><span>SOAR</span></label><label class="solution-checkbox"><input type="checkbox" value="绩效考核"><span>绩效考核</span></label><label class="solution-checkbox"><input type="checkbox" value="高级漏洞管理"><span>高级漏洞管理</span></label><label class="solution-checkbox"><input type="checkbox" value="知识库"><span>知识库</span></label><label class="solution-checkbox"><input type="checkbox" value="等保管理"><span>等保管理</span></label><label class="solution-checkbox"><input type="checkbox" value="云端威胁情报"><span>云端威胁情报</span></label><label class="solution-checkbox"><input type="checkbox" value="移动运营小助手"><span>移动运营小助手</span></label><label class="solution-checkbox"><input type="checkbox" value="物联网安全分析系统"><span>物联网安全分析系统</span></label><label class="solution-checkbox"><input type="checkbox" value="云环境风险感知"><span>云环境风险感知</span></label></div></div>
                                 <div class="solution-field solution-field-full"><label><span class="solution-required">*</span>测试需求调研文档</label><div class="solution-file-input"><label class="solution-file-btn"><span class="material-symbols-outlined">upload_file</span>上传调研文档<input type="file" accept=".doc,.docx,.pdf,.xlsx,.xls" data-solution-biz-param="researchDoc"></label><span class="solution-file-name empty">未选择文件</span></div></div>
                                 <div class="solution-field solution-field-full"><label><span class="solution-required">*</span>客户原因及后续转销计划说明</label><textarea class="solution-input" data-solution-biz-param="resalePlan"></textarea></div>
                             </div>
@@ -10800,13 +10804,10 @@
         ];
         // 分布式安全运营方案专用业务申请字段默认值（Mock 预填）
         var solutionBizDefaults = {
-            kaCustomer: '是',
             mainScenario: '新建安全运营场景',
             testDrivers: ['各类安全设备告警量大且误报多，威胁运营效率低，各分支无法统一监测'],
             expectedEffects: ['聚合降噪：海量告警基于GPT能力聚合成少量精准事件，有效降低误报，识别关键攻击'],
             componentNotes: '已部署 SIP 与深信服 AF，XDR 平台对接三方日志组件统一接入',
-            dailyLogAmount: '3 亿条/天',
-            highFunctionModules: ['第三方日志分析模块-SIEM', 'SOAR'],
             researchDoc: '',
             resalePlan: '测试通过后转销，计划 Q4 完成采购流程'
         };
@@ -11496,8 +11497,8 @@
             if (!application.applicant || !application.customer) return '请补全申请人和客户。';
             if (isDsocSolution()) {
                 var biz = application.biz || {};
-                if (!biz.kaCustomer || !biz.mainScenario || !biz.componentNotes || !biz.dailyLogAmount || !biz.resalePlan || !biz.researchDoc) return '请补全业务申请信息（分布式安全运营）。';
-                if (!biz.testDrivers || !biz.testDrivers.length || !biz.expectedEffects || !biz.expectedEffects.length || !biz.highFunctionModules || !biz.highFunctionModules.length) return '请补全业务申请信息（分布式安全运营）。';
+                if (!biz.mainScenario || !biz.componentNotes || !biz.resalePlan || !biz.researchDoc) return '请补全业务申请信息（分布式安全运营）。';
+                if (!biz.testDrivers || !biz.testDrivers.length || !biz.expectedEffects || !biz.expectedEffects.length) return '请补全业务申请信息（分布式安全运营）。';
             }
             if (isAccelSolution()) {
                 var accelBiz = application.accelBiz || {};
