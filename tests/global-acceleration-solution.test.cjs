@@ -94,15 +94,22 @@ test('全球加速方案-SaaS版：借测单入口锁定 SASE-ZTNA+SASE-GA 并�
     assert.match(document.getElementById('solutionLockedAuthEndDate').value, /（30天）/);
     assert.equal(document.querySelector('.solution-auth-end-icon'), null, '方案范围授权时间不应显示日历图标');
 
-    // 业务申请信息模块：仅保留全球加速业务评估所需的客户需求、区域和备注
+    // 业务申请信息模块：集中展示全球加速业务评估所需的客户需求、项目规模、竞争对手、区域和备注
     assert.equal(document.getElementById('solutionAccelBizSection').hidden, false, '全球加速方案应展示业务申请信息模块');
     assert.equal(document.getElementById('solutionBizSection').hidden, true, '分布式安全运营业务模块不应展示');
     const accelGrid = document.getElementById('solutionAccelBizGrid');
     assert.equal(accelGrid.querySelector('.solution-hint-note'), null, 'SaaS版业务信息标题不应显示右侧说明');
     assert.equal(window.getComputedStyle(accelGrid.querySelector('[data-solution-accel-param="customerNeed"]').closest('.solution-field')).display, 'grid', 'SaaS版业务字段应采用左右布局');
     assert.match(accelGrid.textContent, /客户需求/);
+    assert.match(accelGrid.textContent, /项目规模/);
+    assert.match(accelGrid.textContent, /竞争对手/);
     assert.match(accelGrid.textContent, /客户所在省份\/国家/);
     assert.match(accelGrid.textContent, /备注/);
+    ['customerNeed', 'projectScale', 'competitor'].forEach((field) => {
+      const control = accelGrid.querySelector(`[data-solution-accel-param="${field}"]`);
+      assert.ok(control, `业务信息模块应包含 ${field}`);
+      assert.ok(control.value, `${field} 应有 Mock 默认值`);
+    });
     assert.equal(accelGrid.querySelectorAll('.solution-readonly-note').length, 0, 'SaaS版业务字段标签不应显示辅助文案');
     assert.equal(accelGrid.querySelectorAll('[data-solution-mock-link]').length, 0, 'SaaS版业务字段不应显示跳转链接');
     ['customerName', 'customerType', 'cloudTenantId', 'hardwareBorrowNo', 'testTimeSpec'].forEach((field) => {
@@ -162,6 +169,9 @@ test('全球加速方案-本地版：本地申请入口锁定 aTrust+SASE-GA 并
     assert.equal(window.getComputedStyle(accelGrid.querySelector('[data-solution-accel-param="customerNeed"]').closest('.solution-field')).display, 'grid', '本地版业务字段应采用左右布局');
     assert.equal(accelGrid.querySelectorAll('.solution-readonly-note').length, 0, '本地版业务字段标签不应显示辅助文案');
     assert.equal(accelGrid.querySelectorAll('[data-solution-mock-link]').length, 0, '本地版业务字段不应显示跳转链接');
+    ['customerNeed', 'projectScale', 'competitor'].forEach((field) => {
+      assert.ok(accelGrid.querySelector(`[data-solution-accel-param="${field}"]`), `本地版业务信息模块应包含 ${field}`);
+    });
     ['customerName', 'customerType', 'cloudTenantId', 'hardwareBorrowNo', 'testTimeSpec'].forEach((field) => {
       assert.equal(accelGrid.querySelector(`[data-solution-accel-param="${field}"]`), null, `本地版不应显示 ${field} 字段`);
     });

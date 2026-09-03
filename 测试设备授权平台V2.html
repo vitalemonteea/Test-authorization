@@ -3539,6 +3539,8 @@
 
                             <div class="solution-grid two" id="solutionAccelBizGrid">
                                 <div class="solution-field solution-field-full"><label><span class="solution-required">*</span>客户需求</label><textarea class="solution-input" data-solution-accel-param="customerNeed"></textarea></div>
+                                <div class="solution-field solution-field-full"><label><span class="solution-required">*</span>项目规模</label><textarea class="solution-input" data-solution-accel-param="projectScale"></textarea></div>
+                                <div class="solution-field solution-field-full"><label><span class="solution-required">*</span>竞争对手</label><textarea class="solution-input" data-solution-accel-param="competitor"></textarea></div>
                                 <div class="solution-field"><label><span class="solution-required">*</span>客户所在省份/国家</label><input class="solution-input" data-solution-accel-param="region"></div>
                                 <div class="solution-field solution-field-full"><label>备注</label><textarea class="solution-input" data-solution-accel-param="remark"></textarea></div>
                                 <!-- 延期申请理由：申请时不显示，仅延期申请时展示，届时上方其他内容自动显示 -->
@@ -10838,6 +10840,8 @@
         // 全球加速方案专用业务申请字段默认值
         var solutionAccelBizDefaults = {
             customerNeed: '验证海外办公访问国内核心业务系统的加速与安全接入效果',
+            projectScale: '覆盖 3 个海外区域，约 800 名办公用户',
+            competitor: '传统国际专线方案',
             region: '新加坡',
             remark: ''
         };
@@ -11526,7 +11530,7 @@
             }
             if (isAccelSolution()) {
                 var accelBiz = application.accelBiz || {};
-                if (!accelBiz.customerNeed || !accelBiz.region) return '请补全业务申请信息（全球加速）。';
+                if (!accelBiz.customerNeed || !accelBiz.projectScale || !accelBiz.competitor || !accelBiz.region) return '请补全业务申请信息（全球加速）。';
             }
             var active = activeLines();
             if (active.some(isXaasLine) && (!application.cloud || !application.cloud.tenantId)) return 'XaaS 产品线需选择已关联云图账号和云图ID的客户。';
@@ -11594,7 +11598,7 @@
             box.innerHTML = '';
         }
         function getSolutionLineSummary(line, item) {
-            if (line === 'SASE-GA') return '云图ID ' + (application.cloud ? application.cloud.tenantId : '-') + ' | 带宽 ' + item.bandwidth + 'M | ' + item.customerNeed;
+            if (line === 'SASE-GA') return '云图ID ' + (application.cloud ? application.cloud.tenantId : '-') + ' | 带宽 ' + item.bandwidth + 'M | ' + (isAccelSolution() ? application.accelBiz.customerNeed : item.customerNeed);
             if (line === 'SASE-SWG') return '云图ID ' + (application.cloud ? application.cloud.tenantId : '-') + ' | ' + item.customerNeed;
             if (line === 'AF') return item.deviceId + ' | 网关' + (item.af_gw_users || '') + '用户/' + (item.af_gw_lines || '') + '线路 · SSL VPN ' + (item.af_sslvpn_users || '') + '用户 · 已启用 ' + (item.modules || []).length + ' 项授权功能';
             if (line === 'SaaS-XDR' || line === 'XDR') return '云图ID ' + (application.cloud ? application.cloud.tenantId : '-') + ' | 日志量 ' + item.logAmount + ' 万条 | ' + item.coreNeed;
