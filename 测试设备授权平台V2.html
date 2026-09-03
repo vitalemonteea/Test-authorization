@@ -3516,13 +3516,8 @@
                             <div class="section-title">业务申请信息<span class="solution-lock-note solution-hint-note"><span class="material-symbols-outlined">assignment</span>全球加速方案专用字段，支持业务人员审批评估</span></div>
 
                             <div class="solution-grid two" id="solutionAccelBizGrid">
-                                <div class="solution-field"><label><span class="solution-required">*</span>客户名称</label><input class="solution-input" data-solution-accel-param="customerName" readonly></div>
-                                <div class="solution-field"><label><span class="solution-required">*</span>客户类型</label><select class="solution-select" data-solution-accel-param="customerType"><option value="KA客户">KA客户</option><option value="普通客户">普通客户</option></select></div>
                                 <div class="solution-field solution-field-full"><label><span class="solution-required">*</span>客户需求</label><textarea class="solution-input" data-solution-accel-param="customerNeed"></textarea></div>
                                 <div class="solution-field"><label><span class="solution-required">*</span>客户所在省份/国家</label><input class="solution-input" data-solution-accel-param="region"></div>
-                                <div class="solution-field"><label>云图ID</label><input class="solution-input" data-solution-accel-param="cloudTenantId" readonly></div>
-                                <div class="solution-field"><label>硬件借测单号</label><input class="solution-input" data-solution-accel-param="hardwareBorrowNo" readonly></div>
-                                <div class="solution-field"><label><span class="solution-required">*</span>测试时间和规格</label><input class="solution-input" data-solution-accel-param="testTimeSpec"><div class="solution-lock-note" id="accelTestTimeHint" hidden><span class="material-symbols-outlined">warning</span>测试时间和规格已修改，提交后需人工审批</div></div>
                                 <div class="solution-field solution-field-full"><label>备注</label><textarea class="solution-input" data-solution-accel-param="remark"></textarea></div>
                                 <!-- 延期申请理由：申请时不显示，仅延期申请时展示，届时上方其他内容自动显示 -->
                             </div>
@@ -10811,15 +10806,12 @@
             researchDoc: '',
             resalePlan: '测试通过后转销，计划 Q4 完成采购流程'
         };
-        // 全球加速方案专用业务申请字段默认值（客户/云图ID/硬件借测单号在渲染时自动带出）
+        // 全球加速方案专用业务申请字段默认值
         var solutionAccelBizDefaults = {
-            customerType: '',
             customerNeed: '验证海外办公访问国内核心业务系统的加速与安全接入效果',
             region: '新加坡',
-            testTimeSpec: '',
             remark: ''
         };
-        var accelTestTimeDefault = '';
 
         function id(name) { return document.getElementById(name); }
         function escapeHtml(value) {
@@ -10919,7 +10911,6 @@
             application.recordId = '';
             application.biz = {};
             application.accelBiz = {};
-            accelTestTimeDefault = '';
             setStatus('draft');
             id('solutionLockedScope').hidden = true;
             id('solutionBizSection').hidden = true;
@@ -11254,12 +11245,6 @@
             application.lines.forEach(function(line) { if (optionalSolutionLines.indexOf(line) !== -1) application.lineSwitches[line] = false; });
             application.biz = isDsocSolution() ? JSON.parse(JSON.stringify(solutionBizDefaults)) : {};
             application.accelBiz = isAccelSolution() ? JSON.parse(JSON.stringify(solutionAccelBizDefaults)) : {};
-            if (isAccelSolution()) {
-                var accelSpec = application.authDays ? application.authDays + '天' : '';
-                if (application.params['SASE-GA'] && application.params['SASE-GA'].bandwidth) accelSpec += ' / 带宽' + application.params['SASE-GA'].bandwidth + 'M';
-                application.accelBiz.testTimeSpec = accelSpec;
-                accelTestTimeDefault = accelSpec;
-            }
             refreshSolutionCustomerCloudSummary();
             setStatus('draft');
             renderLockedScope();
@@ -11285,22 +11270,15 @@
             var nameEl = id('solutionBizGrid').querySelector('.solution-file-name');
             if (nameEl) { nameEl.textContent = biz.researchDoc || '未选择文件'; nameEl.classList.toggle('empty', !biz.researchDoc); }
         }
-        // 全球加速方案业务申请信息：客户/云图ID/硬件借测单号自动带出，测试时间和规格修改提示人工审批
+        // 全球加速方案业务申请信息
         function renderAccelBizSection() {
             var accel = isAccelSolution();
             id('solutionAccelBizSection').hidden = !accel;
-            id('accelTestTimeHint').hidden = true;
             if (!accel) return;
             var biz = application.accelBiz;
-            var customer = solutionBorrowCustomer || solutionLocalCustomer;
-            if (!biz.customerType) biz.customerType = customer && customer.type === 'KA' ? 'KA客户' : '普通客户';
-            biz.customerName = application.customer || '';
-            biz.cloudTenantId = application.cloud && application.cloud.tenantId ? application.cloud.tenantId : '';
-            biz.hardwareBorrowNo = application.borrow ? application.borrow.number : '';
             id('solutionAccelBizGrid').querySelectorAll('[data-solution-accel-param]').forEach(function(node) {
                 node.value = biz[node.dataset.solutionAccelParam] || '';
             });
-            id('accelTestTimeHint').hidden = !biz.testTimeSpec || biz.testTimeSpec === accelTestTimeDefault;
         }
         // 未上线/按需选择的产品线：导航展示开关，关闭时不渲染表单项且不参与校验与提交
         var optionalSolutionLines = ['SASE-SWG'];
@@ -11502,7 +11480,7 @@
             }
             if (isAccelSolution()) {
                 var accelBiz = application.accelBiz || {};
-                if (!accelBiz.customerName || !accelBiz.customerType || !accelBiz.customerNeed || !accelBiz.region || !accelBiz.testTimeSpec) return '请补全业务申请信息（全球加速）。';
+                if (!accelBiz.customerNeed || !accelBiz.region) return '请补全业务申请信息（全球加速）。';
             }
             var active = activeLines();
             if (active.some(isXaasLine) && (!application.cloud || !application.cloud.tenantId)) return 'XaaS 产品线需选择已关联云图账号和云图ID的客户。';
@@ -11725,9 +11703,6 @@
                 var field = target.closest ? target.closest('[data-solution-accel-param]') : null;
                 if (!field) return;
                 application.accelBiz[field.dataset.solutionAccelParam] = target.value;
-                if (field.dataset.solutionAccelParam === 'testTimeSpec') {
-                    id('accelTestTimeHint').hidden = !target.value || target.value === accelTestTimeDefault;
-                }
             }
             id('solutionAccelBizGrid').addEventListener('input', collectAccelBizParam);
             id('solutionAccelBizGrid').addEventListener('change', collectAccelBizParam);
