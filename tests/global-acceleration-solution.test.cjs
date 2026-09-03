@@ -92,6 +92,7 @@ test('全球加速方案-SaaS版：借测单入口锁定 SASE-ZTNA+SASE-GA 并�
     assert.match(document.getElementById('solutionLockedName').value, /SOL-ACCEL-006 \| 全球加速方案-SaaS版/);
     assert.deepEqual(chipsOf(document), ['SASE-ZTNA', 'SASE-GA']);
     assert.match(document.getElementById('solutionLockedAuthEndDate').value, /（30天）/);
+    assert.equal(document.querySelector('.solution-auth-end-icon'), null, '方案范围授权时间不应显示日历图标');
 
     // 业务申请信息模块：仅保留全球加速业务评估所需的客户需求、区域和备注
     assert.equal(document.getElementById('solutionAccelBizSection').hidden, false, '全球加速方案应展示业务申请信息模块');
