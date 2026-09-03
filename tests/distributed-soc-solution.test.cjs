@@ -28,7 +28,7 @@ function chipsOf(document) {
   return [...document.querySelectorAll('#solutionLockedLines .solution-chip')].map((node) => node.textContent);
 }
 
-test('分布式安全运营方案：配置页可见且资产读取包含 XDR+STA+AF', () => {
+test('分布式安全运营方案：配置页可见且资产读取包含 XDR+STA+AF+aES', () => {
   const { dom, document, window, errors } = loadV2Dom();
   try {
     openSolutionTab(document);
@@ -38,7 +38,7 @@ test('分布式安全运营方案：配置页可见且资产读取包含 XDR+STA
     assert.match(rows.textContent, /SOL-DSOC-008/);
     assert.match(rows.textContent, /分布式安全运营方案/);
     const dsocRow = rows.querySelector('[data-solution-config-code="SOL-DSOC-008"]');
-    assert.deepEqual([...dsocRow.querySelectorAll('.solution-chip')].map((chip) => chip.textContent), ['XDR', 'STA', 'AF']);
+    assert.deepEqual([...dsocRow.querySelectorAll('.solution-chip')].map((chip) => chip.textContent), ['XDR', 'STA', 'AF', 'aES']);
 
     click(document, window, 'solutionAssetRead');
     assert.match(document.getElementById('solutionAssetPreview').textContent, /SOL-DSOC-008/);
@@ -59,7 +59,7 @@ test('分布式安全运营方案：借测单入口展示业务申请信息模�
 
     // 锁定范围
     assert.match(document.getElementById('solutionLockedName').value, /SOL-DSOC-008 \| 分布式安全运营方案/);
-    assert.deepEqual(chipsOf(document), ['XDR', 'STA', 'AF']);
+    assert.deepEqual(chipsOf(document), ['XDR', 'STA', 'AF', 'aES']);
     assert.equal(document.querySelector('.solution-page-head p'), null, '解决方案页不应显示副描述');
 
     // 业务申请信息模块：仅此方案展示，且业务字段默认预填
@@ -135,11 +135,25 @@ test('分布式安全运营方案：借测单入口展示业务申请信息模�
     assert.match(staPanel.textContent, /Web应用防护/);
     assert.equal(document.querySelector('[data-solution-param="sta_lines"]').value, '4', 'STA 线路数默认 4');
 
-    // AF 面板：复用 16 张生产对齐模块卡，设备ID 从借测单带入
+    // AF 面板：默认关闭，不参与本单；打开后复用 16 张生产对齐模块卡
     document.querySelector('[data-solution-line="AF"]').click();
-    const afPanel = document.getElementById('solutionProductPanel');
+    let afPanel = document.getElementById('solutionProductPanel');
+    assert.match(afPanel.textContent, /按需产品线/);
+    assert.equal(afPanel.querySelectorAll('.solution-module-card-list .module-item').length, 0);
+    document.querySelector('[data-solution-line-switch="AF"]').click();
+    afPanel = document.getElementById('solutionProductPanel');
     assert.equal(afPanel.querySelectorAll('.solution-module-card-list .module-item').length, 16);
     assert.equal(document.querySelector('[data-solution-param="deviceId"]').value, 'GW-AF-771');
+
+    // aES 面板：默认关闭，打开后展示基础授权参数卡并读取设备ID
+    document.querySelector('[data-solution-line="aES"]').click();
+    let aesPanel = document.getElementById('solutionProductPanel');
+    assert.match(aesPanel.textContent, /按需产品线/);
+    document.querySelector('[data-solution-line-switch="aES"]').click();
+    aesPanel = document.getElementById('solutionProductPanel');
+    assert.match(aesPanel.textContent, /aES 授权参数/);
+    assert.equal(aesPanel.querySelectorAll('.solution-module-card-list .module-item').length, 1);
+    assert.equal(document.querySelector('[data-solution-param="deviceId"]').value, 'GW-aES-483');
     assert.deepEqual(errors, []);
   } finally { dom.window.close(); }
 });

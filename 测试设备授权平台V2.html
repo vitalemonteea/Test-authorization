@@ -10487,7 +10487,7 @@
     (function() {
         'use strict';
 
-        var productCatalog = ['HCI', 'AC', 'NGAF', 'AD', 'WOC', 'XDR', 'SASE', 'WAF', 'AF', 'SASE-GA', 'SASE-SWG', 'SaaS-XDR', 'SASE-ZTNA', 'aTrust', 'STA'];
+        var productCatalog = ['HCI', 'AC', 'NGAF', 'AD', 'WOC', 'XDR', 'SASE', 'WAF', 'AF', 'aES', 'SASE-GA', 'SASE-SWG', 'SaaS-XDR', 'SASE-ZTNA', 'aTrust', 'STA'];
         var productDefaults = {
             HCI: { version: 'HCI-6.8.1-VKEY', modules: ['计算虚拟化', '桌面虚拟化', '网络虚拟化'], spec: '16 核 / 100 TB', clusterId: 'GW-HCI-208' },
             AC: {
@@ -10506,6 +10506,7 @@
             SASE: { version: 'SASE-5.0.0', modules: ['零信任访问'], spec: '100 用户' },
             WAF: { version: 'WAF-7.0.5', modules: ['Web 防护'], spec: 'QPS 3000' },
             AF: { version: 'AF-8.0.99', modules: ['网关序列号', 'SSL VPN序列号', '增强功能序列号', '网关杀毒功能开通', 'VMware带宽授权', '硬件规格', '杀毒引擎更新', '云脑-云智', '云脑-云鉴', '门户网站保护订阅服务', '软件升级序列号', '云蜜罐订阅服务', '智能运营服务', 'SOFAST优化&BEST选路', '物联网安全功能开通', '物联网资产指纹规则库更新'], spec: '标准规格' },
+            aES: { version: 'aES-3.0.0', modules: ['aES平台软件'], spec: '标准规格' },
             'SASE-GA': { version: '', modules: [], spec: '带宽 10M' },
             'SASE-SWG': { version: 'SASE-SWG 标准版', modules: [], spec: '用户版 50 用户' },
             'SaaS-XDR': { version: 'SaaS-XDR 标准版', modules: [], spec: '日志量 20,000 万条' },
@@ -10646,6 +10647,12 @@
                     { label: '物联网资产指纹规则库更新', key: 'af_iot_fingerprint', type: 'text', value: '2026-09-26' }
                 ] }
             ],
+            aES: [
+                { name: 'aES平台软件', params: [
+                    { label: '授权数量', key: 'aes_license_count', type: 'text', value: '1' },
+                    { label: '授权有效期', key: 'aes_license_end', type: 'text', value: '2026-10-02' }
+                ] }
+            ],
             HCI: [
                 { name: '计算虚拟化', params: [
                     { label: '集群内物理CPU颗数限制', key: 'aSVhost_cpu', type: 'text', value: '8', hint: '最大20' },
@@ -10781,7 +10788,7 @@
             { code: 'SOL-GLOBAL-005', name: '全球组网方案', productLines: ['AF', 'SASE-GA', 'SASE-SWG'], status: 'enabled', authDays: 30, updatedAt: '2026-08-26 14:30' },
             { code: 'SOL-ACCEL-006', name: '全球加速方案-SaaS版', productLines: ['SASE-ZTNA', 'SASE-GA'], status: 'enabled', authDays: 30, updatedAt: '2026-09-02 10:00' },
             { code: 'SOL-ACCEL-007', name: '全球加速方案-本地版', productLines: ['aTrust', 'SASE-GA'], status: 'enabled', authDays: 30, updatedAt: '2026-09-02 10:10' },
-            { code: 'SOL-DSOC-008', name: '分布式安全运营方案', productLines: ['XDR', 'STA', 'AF'], status: 'enabled', authDays: 30, updatedAt: '2026-09-02 11:00' },
+            { code: 'SOL-DSOC-008', name: '分布式安全运营方案', productLines: ['XDR', 'STA', 'AF', 'aES'], status: 'enabled', authDays: 30, updatedAt: '2026-09-02 11:00' },
             { code: 'SOL-LEGACY-003', name: '旧版云安全方案', productLines: ['HCI', 'WAF'], status: 'disabled', authDays: 15, updatedAt: '2026-07-28 10:12' }
         ];
         var borrowOrders = {
@@ -10790,7 +10797,7 @@
             'BOR-202608-005': { number: 'BOR-202608-005', approvalStatus: '审批通过', returned: false, revoked: false, applicant: '陈卓', customer: '星海智联科技有限公司', solutionCode: 'SOL-XAAS-004', solution: '云网安全运营方案', productLines: ['SASE-GA', 'SaaS-XDR'], devices: {}, startDate: '2026-08-08', endDate: '2026-08-23', approvalInfo: '资产系统审批通过（Mock）', cloud: { account: 'xinghai-admin', tenantId: 'YT-10010688' } },
             'BOR-202608-006': { number: 'BOR-202608-006', approvalStatus: '审批通过', returned: false, revoked: false, applicant: '韩磊', customer: '环球致远贸易有限公司', solutionCode: 'SOL-GLOBAL-005', solution: '全球组网方案', productLines: ['AF', 'SASE-GA', 'SASE-SWG'], devices: { AF: 'GW-AF-930' }, startDate: '2026-08-20', endDate: '2026-11-18', approvalInfo: '资产系统审批通过（Mock）', cloud: { account: 'global-admin', tenantId: 'YT-10010777' } },
             'BOR-202608-007': { number: 'BOR-202608-007', approvalStatus: '审批通过', returned: false, revoked: false, applicant: '韩梅', customer: '环宇速联科技有限公司', solutionCode: 'SOL-ACCEL-006', solution: '全球加速方案-SaaS版', productLines: ['SASE-ZTNA', 'SASE-GA'], devices: {}, startDate: '2026-08-25', endDate: '2026-09-24', approvalInfo: '资产系统审批通过（Mock）', cloud: { account: 'oceanlink-admin', tenantId: 'YT-10010888' } },
-            'BOR-202608-008': { number: 'BOR-202608-008', approvalStatus: '审批通过', returned: false, revoked: false, applicant: '秦峰', customer: '明澈水务集团有限公司', solutionCode: 'SOL-DSOC-008', solution: '分布式安全运营方案', productLines: ['XDR', 'STA', 'AF'], devices: { AF: 'GW-AF-771', STA: 'GW-STA-352' }, startDate: '2026-08-28', endDate: '2026-09-27', approvalInfo: '资产系统审批通过（Mock）', cloud: { account: 'mingche-admin', tenantId: 'YT-10010999' } },
+            'BOR-202608-008': { number: 'BOR-202608-008', approvalStatus: '审批通过', returned: false, revoked: false, applicant: '秦峰', customer: '明澈水务集团有限公司', solutionCode: 'SOL-DSOC-008', solution: '分布式安全运营方案', productLines: ['XDR', 'STA', 'AF', 'aES'], devices: { AF: 'GW-AF-771', STA: 'GW-STA-352', aES: 'GW-aES-483' }, startDate: '2026-08-28', endDate: '2026-09-27', approvalInfo: '资产系统审批通过（Mock）', cloud: { account: 'mingche-admin', tenantId: 'YT-10010999' } },
             'BOR-202608-003': { number: 'BOR-202608-003', approvalStatus: '审批通过', returned: true, revoked: false },
             'BOR-202608-004': { number: 'BOR-202608-004', approvalStatus: '审批通过', returned: false, revoked: true },
             'BOR-202608-ERR': { number: 'BOR-202608-ERR', error: true }
@@ -11107,6 +11114,17 @@
                     af_iot_fingerprint: '2026-09-26'
                 };
             }
+            if (line === 'aES') {
+                return {
+                    version: defaults.version,
+                    endDate: endDate || '2026-10-02',
+                    deviceId: deviceId || '',
+                    modules: (defaults.modules || []).slice(),
+                    spec: defaults.spec,
+                    aes_license_count: '1',
+                    aes_license_end: endDate || '2026-10-02'
+                };
+            }
             if (line === 'HCI') {
                 params.infoFile = deviceId ? ('硬件信息-' + deviceId + '.xlsx') : '';
                 params.clusterId = defaults.clusterId || deviceId || '';
@@ -11264,7 +11282,7 @@
             application.activeLine = application.lines[0];
             // 按需产品线开关（如未上线的 SASE-SWG）：默认关闭，关闭时不参与填写/校验/提交
             application.lineSwitches = {};
-            application.lines.forEach(function(line) { if (optionalSolutionLines.indexOf(line) !== -1) application.lineSwitches[line] = false; });
+            application.lines.forEach(function(line) { if (isOptionalSolutionLine(line)) application.lineSwitches[line] = false; });
             application.biz = isDsocSolution() ? JSON.parse(JSON.stringify(solutionBizDefaults)) : {};
             application.accelBiz = isAccelSolution() ? JSON.parse(JSON.stringify(solutionAccelBizDefaults)) : {};
             refreshSolutionCustomerCloudSummary();
@@ -11304,6 +11322,9 @@
         }
         // 未上线/按需选择的产品线：导航展示开关，关闭时不渲染表单项且不参与校验与提交
         var optionalSolutionLines = ['SASE-SWG'];
+        function isOptionalSolutionLine(line) {
+            return optionalSolutionLines.indexOf(line) !== -1 || (isDsocSolution() && (line === 'AF' || line === 'aES'));
+        }
         function isLineEnabled(line) {
             return application.lineSwitches ? application.lineSwitches[line] !== false : true;
         }
@@ -11371,7 +11392,7 @@
         function renderProductWorkspace() {
             id('solutionProductWorkspace').hidden = false;
             id('solutionProductNav').innerHTML = application.lines.map(function(line, index) {
-                var optional = optionalSolutionLines.indexOf(line) !== -1;
+                var optional = isOptionalSolutionLine(line);
                 var enabled = isLineEnabled(line);
                 var toggleHtml = optional ? '<div class="toggle-switch' + (enabled ? ' active' : '') + ' solution-line-switch" data-solution-line-switch="' + line + '" role="switch" aria-checked="' + enabled + '" aria-label="启用 ' + line + '" title="' + line + ' 按需启用（未上线，默认关闭）"></div>' : '';
                 var orderHtml = optional ? '' : '<small>' + (activeLines().indexOf(line) + 1) + '/' + activeLines().length + '</small>';
@@ -11404,7 +11425,7 @@
                 fields += renderSolutionModuleCards(line, values);
             }
             var active = activeLines();
-            var headCount = optionalSolutionLines.indexOf(line) !== -1 ? '' : '<span>' + (active.indexOf(line) + 1) + ' / ' + active.length + '</span>';
+            var headCount = isOptionalSolutionLine(line) ? '' : '<span>' + (active.indexOf(line) + 1) + ' / ' + active.length + '</span>';
             id('solutionProductPanel').innerHTML = '<div class="solution-product-panel-head"><h3>' + line + ' 授权参数</h3>' + headCount + '</div><div class="solution-grid two solution-product-fields" data-product-line="' + line + '">' + fields + '</div>';
         }
         function renderSolutionModuleCards(line, values) {
