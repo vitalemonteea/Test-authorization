@@ -80,6 +80,11 @@ test('分布式安全运营方案：借测单入口展示业务申请信息模�
     const choiceStyle = window.getComputedStyle(choice);
     assert.equal(choiceStyle.whiteSpace, 'normal', '长文本多选项应允许换行');
     assert.equal(choiceStyle.justifyContent, 'flex-start', '多选项文字应从左侧开始对齐');
+    const mainScenarioField = bizGrid.querySelector('[data-solution-biz-param="mainScenario"]').closest('.solution-field');
+    const mainScenarioLabel = mainScenarioField.querySelector(':scope > label');
+    assert.equal(window.getComputedStyle(mainScenarioField).display, 'grid', '业务字段应采用左右布局');
+    assert.equal(window.getComputedStyle(mainScenarioField).columnGap, '18px', '标题与控件应保持固定间距');
+    assert.equal(window.getComputedStyle(mainScenarioLabel).marginTop, '8px', '左侧标题应与控件垂直对齐');
 
     // XDR 面板：版本下拉默认 LOCAL-XDR2.0.45，22 张生产对齐授权模块卡
     const xdrPanel = document.getElementById('solutionProductPanel');
