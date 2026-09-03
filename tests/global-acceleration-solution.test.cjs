@@ -98,6 +98,8 @@ test('全球加速方案-SaaS版：借测单入口锁定 SASE-ZTNA+SASE-GA 并�
     assert.equal(document.getElementById('solutionAccelBizSection').hidden, false, '全球加速方案应展示业务申请信息模块');
     assert.equal(document.getElementById('solutionBizSection').hidden, true, '分布式安全运营业务模块不应展示');
     const accelGrid = document.getElementById('solutionAccelBizGrid');
+    assert.equal(accelGrid.querySelector('.solution-hint-note'), null, 'SaaS版业务信息标题不应显示右侧说明');
+    assert.equal(window.getComputedStyle(accelGrid.querySelector('[data-solution-accel-param="customerNeed"]').closest('.solution-field')).display, 'grid', 'SaaS版业务字段应采用左右布局');
     assert.match(accelGrid.textContent, /客户需求/);
     assert.match(accelGrid.textContent, /客户所在省份\/国家/);
     assert.match(accelGrid.textContent, /备注/);
@@ -156,6 +158,8 @@ test('全球加速方案-本地版：本地申请入口锁定 aTrust+SASE-GA 并
     // 业务申请信息模块：本地版同样不显示红框中的五个字段
     assert.equal(document.getElementById('solutionAccelBizSection').hidden, false);
     const accelGrid = document.getElementById('solutionAccelBizGrid');
+    assert.equal(accelGrid.querySelector('.solution-hint-note'), null, '本地版业务信息标题不应显示右侧说明');
+    assert.equal(window.getComputedStyle(accelGrid.querySelector('[data-solution-accel-param="customerNeed"]').closest('.solution-field')).display, 'grid', '本地版业务字段应采用左右布局');
     assert.equal(accelGrid.querySelectorAll('.solution-readonly-note').length, 0, '本地版业务字段标签不应显示辅助文案');
     assert.equal(accelGrid.querySelectorAll('[data-solution-mock-link]').length, 0, '本地版业务字段不应显示跳转链接');
     ['customerName', 'customerType', 'cloudTenantId', 'hardwareBorrowNo', 'testTimeSpec'].forEach((field) => {
