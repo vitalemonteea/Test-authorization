@@ -11325,6 +11325,9 @@
         function isOptionalSolutionLine(line) {
             return optionalSolutionLines.indexOf(line) !== -1 || (isDsocSolution() && (line === 'AF' || line === 'aES'));
         }
+        function optionalSolutionLineHint(line) {
+            return isDsocSolution() && (line === 'AF' || line === 'aES') ? '按需启用（默认关闭）' : '按需启用（未上线，默认关闭）';
+        }
         function isLineEnabled(line) {
             return application.lineSwitches ? application.lineSwitches[line] !== false : true;
         }
@@ -11394,7 +11397,7 @@
             id('solutionProductNav').innerHTML = application.lines.map(function(line, index) {
                 var optional = isOptionalSolutionLine(line);
                 var enabled = isLineEnabled(line);
-                var toggleHtml = optional ? '<div class="toggle-switch' + (enabled ? ' active' : '') + ' solution-line-switch" data-solution-line-switch="' + line + '" role="switch" aria-checked="' + enabled + '" aria-label="启用 ' + line + '" title="' + line + ' 按需启用（未上线，默认关闭）"></div>' : '';
+                var toggleHtml = optional ? '<div class="toggle-switch' + (enabled ? ' active' : '') + ' solution-line-switch" data-solution-line-switch="' + line + '" role="switch" aria-checked="' + enabled + '" aria-label="启用 ' + line + '" title="' + line + ' ' + optionalSolutionLineHint(line) + '"></div>' : '';
                 var orderHtml = optional ? '' : '<small>' + (activeLines().indexOf(line) + 1) + '/' + activeLines().length + '</small>';
                 return '<button type="button" data-solution-line="' + line + '" class="' + (line === application.activeLine ? 'is-active' : '') + (!enabled ? ' is-off' : '') + '"><span>' + line + '</span>' + toggleHtml + orderHtml + '</button>';
             }).join('');
@@ -11403,7 +11406,7 @@
             var isHci = line === 'HCI';
             var fields = '';
             if (!isLineEnabled(line)) {
-                fields = '<div class="solution-line-off-note"><span class="material-symbols-outlined" aria-hidden="true">info</span>' + line + ' 为按需产品线（当前未上线），默认不参与本单申请；打开右上角开关后填写参数。</div>';
+                fields = '<div class="solution-line-off-note"><span class="material-symbols-outlined" aria-hidden="true">info</span>' + line + ' 为按需产品线，当前默认关闭，不参与本单申请；打开右上角开关后填写参数。</div>';
             } else if (line === 'XDR' && isDsocSolution()) {
                 var dsocVersions = ['LOCAL-XDR2.0.45及以上版本（XDR+GPT）'];
                 fields += '<div class="solution-field"><label><span class="solution-required">*</span>版本</label><select class="solution-select" data-solution-param="version">' + dsocVersions.map(function(option) { return '<option value="' + escapeHtml(option) + '"' + (option === values.version ? ' selected' : '') + '>' + escapeHtml(option) + '</option>'; }).join('') + '</select></div>';
