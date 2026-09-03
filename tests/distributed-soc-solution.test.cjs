@@ -85,6 +85,13 @@ test('分布式安全运营方案：借测单入口展示业务申请信息模�
     assert.equal(window.getComputedStyle(mainScenarioField).display, 'grid', '业务字段应采用左右布局');
     assert.equal(window.getComputedStyle(mainScenarioField).columnGap, '18px', '标题与控件应保持固定间距');
     assert.equal(window.getComputedStyle(mainScenarioLabel).marginTop, '8px', '左侧标题应与控件垂直对齐');
+    ['mainScenario', 'componentNotes', 'resalePlan'].forEach((field) => {
+      const control = bizGrid.querySelector(`[data-solution-biz-param="${field}"]`);
+      assert.equal(window.getComputedStyle(control).height, '44px', `${field} 控件高度应统一为 44px`);
+    });
+    const uploadBox = bizGrid.querySelector('[data-solution-biz-param="researchDoc"]').closest('.solution-file-input');
+    assert.equal(window.getComputedStyle(uploadBox).height, '44px', '上传区域高度应与其他控件一致');
+    assert.equal(window.getComputedStyle(uploadBox.querySelector('.solution-file-btn')).alignItems, 'center', '上传按钮文字应垂直居中');
 
     // XDR 面板：版本下拉默认 LOCAL-XDR2.0.45，22 张生产对齐授权模块卡
     const xdrPanel = document.getElementById('solutionProductPanel');
