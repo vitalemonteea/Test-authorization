@@ -85,8 +85,10 @@ test('分布式安全运营方案：借测单入口展示业务申请信息模�
     const mainScenarioField = bizGrid.querySelector('[data-solution-biz-param="mainScenario"]').closest('.solution-field');
     const mainScenarioLabel = mainScenarioField.querySelector(':scope > label');
     assert.equal(window.getComputedStyle(mainScenarioField).display, 'grid', '业务字段应采用左右布局');
-    assert.equal(window.getComputedStyle(mainScenarioField).columnGap, '18px', '标题与控件应保持固定间距');
+    assert.equal(window.getComputedStyle(mainScenarioField).gridTemplateColumns, '120px minmax(0, 1fr)', '业务字段控件起点应与前面模块对齐');
     assert.equal(window.getComputedStyle(mainScenarioLabel).marginTop, '8px', '左侧标题应与控件垂直对齐');
+    assert.equal(window.getComputedStyle(mainScenarioLabel).fontWeight, '500', '业务字段标题应使用常规字重');
+    assert.equal(window.getComputedStyle(document.querySelector('#solutionLockedScope .solution-form-label')).fontWeight, '500', '方案范围字段标题不应加粗');
     ['mainScenario', 'componentNotes', 'resalePlan'].forEach((field) => {
       const control = bizGrid.querySelector(`[data-solution-biz-param="${field}"]`);
       assert.equal(window.getComputedStyle(control).height, '44px', `${field} 控件高度应统一为 44px`);
