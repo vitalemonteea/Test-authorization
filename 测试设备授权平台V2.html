@@ -3533,7 +3533,7 @@
                             </div>
                         </div>
 
-                        <!-- 业务申请信息：全球加速方案专用，供业务人员审批评估 -->
+                        <!-- 业务申请信息：全球加速/全球组网方案专用，供业务人员审批评估 -->
                         <div class="special-form-section" id="solutionAccelBizSection" hidden>
                             <div class="section-title">业务申请信息</div>
 
@@ -3541,8 +3541,8 @@
                                 <div class="solution-field solution-field-full"><label><span class="solution-required">*</span>客户需求</label><textarea class="solution-input" data-solution-accel-param="customerNeed"></textarea></div>
                                 <div class="solution-field solution-field-full"><label><span class="solution-required">*</span>项目规模</label><textarea class="solution-input" data-solution-accel-param="projectScale"></textarea></div>
                                 <div class="solution-field solution-field-full"><label><span class="solution-required">*</span>竞争对手</label><textarea class="solution-input" data-solution-accel-param="competitor"></textarea></div>
-                                <div class="solution-field"><label><span class="solution-required">*</span>客户所在省份/国家</label><input class="solution-input" data-solution-accel-param="region"></div>
-                                <div class="solution-field solution-field-full"><label>备注</label><textarea class="solution-input" data-solution-accel-param="remark"></textarea></div>
+                                <div class="solution-field" data-solution-accel-only="true"><label><span class="solution-required">*</span>客户所在省份/国家</label><input class="solution-input" data-solution-accel-param="region"></div>
+                                <div class="solution-field solution-field-full" data-solution-accel-only="true"><label>备注</label><textarea class="solution-input" data-solution-accel-param="remark"></textarea></div>
                                 <!-- 延期申请理由：申请时不显示，仅延期申请时展示，届时上方其他内容自动显示 -->
                             </div>
                         </div>
@@ -10804,7 +10804,7 @@
             'BOR-202608-004': { number: 'BOR-202608-004', approvalStatus: '审批通过', returned: false, revoked: true },
             'BOR-202608-ERR': { number: 'BOR-202608-ERR', error: true }
         };
-        var application = { source: 'borrow', solution: null, lines: [], params: {}, biz: {}, accelBiz: {}, applicant: '', customer: '', cloud: null, borrow: null, authDays: 0, authEndDate: '', activeLine: '', status: 'draft', recordId: '' };
+        var application = { source: 'borrow', solution: null, lines: [], params: {}, biz: {}, accelBiz: {}, networkBiz: {}, applicant: '', customer: '', cloud: null, borrow: null, authDays: 0, authEndDate: '', activeLine: '', status: 'draft', recordId: '' };
         var editingConfigCode = '';
         function getCurrentApplicant() {
             var userNameEl = document.querySelector('.header-user .user-name');
@@ -10844,6 +10844,12 @@
             competitor: '传统国际专线方案',
             region: '新加坡',
             remark: ''
+        };
+        // 全球组网方案业务申请字段默认值（Mock 预填）
+        var solutionNetworkBizDefaults = {
+            customerNeed: '验证海外办公与国内核心业务访问质量',
+            projectScale: '覆盖 3 个海外区域，约 800 名办公用户',
+            competitor: '传统国际专线方案'
         };
 
         function id(name) { return document.getElementById(name); }
@@ -10944,6 +10950,7 @@
             application.recordId = '';
             application.biz = {};
             application.accelBiz = {};
+            application.networkBiz = {};
             setStatus('draft');
             id('solutionLockedScope').hidden = true;
             id('solutionBizSection').hidden = true;
@@ -10956,6 +10963,8 @@
         function isDsocSolution() { return !!application.solution && application.solution.code === 'SOL-DSOC-008'; }
         // 全球加速方案（本地版/SaaS版）：业务字段统一放业务申请信息模块，产品面板不再展示
         function isAccelSolution() { return !!application.solution && (application.solution.code === 'SOL-ACCEL-006' || application.solution.code === 'SOL-ACCEL-007'); }
+        // 全球组网方案：业务字段统一放业务申请信息模块，产品面板不再展示
+        function isGlobalNetworkSolution() { return !!application.solution && application.solution.code === 'SOL-GLOBAL-005'; }
         function createParams(line, deviceId, endDate, versionOption) {
             var defaults = productDefaults[line] || { version: '', modules: [], spec: '' };
             var params = {
@@ -11289,6 +11298,7 @@
             application.lines.forEach(function(line) { if (isOptionalSolutionLine(line)) application.lineSwitches[line] = false; });
             application.biz = isDsocSolution() ? JSON.parse(JSON.stringify(solutionBizDefaults)) : {};
             application.accelBiz = isAccelSolution() ? JSON.parse(JSON.stringify(solutionAccelBizDefaults)) : {};
+            application.networkBiz = isGlobalNetworkSolution() ? JSON.parse(JSON.stringify(solutionNetworkBizDefaults)) : {};
             refreshSolutionCustomerCloudSummary();
             setStatus('draft');
             renderLockedScope();
@@ -11317,10 +11327,13 @@
         // 全球加速方案业务申请信息
         function renderAccelBizSection() {
             var accel = isAccelSolution();
-            id('solutionAccelBizSection').hidden = !accel;
-            if (!accel) return;
-            var biz = application.accelBiz;
+            var network = isGlobalNetworkSolution();
+            id('solutionAccelBizSection').hidden = !(accel || network);
+            if (!accel && !network) return;
+            var biz = accel ? application.accelBiz : application.networkBiz;
             id('solutionAccelBizGrid').querySelectorAll('[data-solution-accel-param]').forEach(function(node) {
+                var onlyAccel = node.closest('[data-solution-accel-only="true"]');
+                if (onlyAccel) onlyAccel.hidden = network;
                 node.value = biz[node.dataset.solutionAccelParam] || '';
             });
         }
@@ -11532,13 +11545,17 @@
                 var accelBiz = application.accelBiz || {};
                 if (!accelBiz.customerNeed || !accelBiz.projectScale || !accelBiz.competitor || !accelBiz.region) return '请补全业务申请信息（全球加速）。';
             }
+            if (isGlobalNetworkSolution()) {
+                var networkBiz = application.networkBiz || {};
+                if (!networkBiz.customerNeed || !networkBiz.projectScale || !networkBiz.competitor) return '请补全业务申请信息（全球组网）。';
+            }
             var active = activeLines();
             if (active.some(isXaasLine) && (!application.cloud || !application.cloud.tenantId)) return 'XaaS 产品线需选择已关联云图账号和云图ID的客户。';
             for (var i = 0; i < active.length; i++) {
                 var line = active[i];
                 var value = application.params[line];
                 if (line === 'SASE-GA') {
-                    if (isAccelSolution()) {
+                    if (isAccelSolution() || isGlobalNetworkSolution()) {
                         if (!value.endDate || !value.bandwidth) return 'SASE-GA 的授权参数未填写完整。';
                         continue;
                     }
@@ -11546,7 +11563,7 @@
                     continue;
                 }
                 if (line === 'SASE-SWG') {
-                    if (!value.version || !value.endDate || !value.customerNeed || !value.projectScale || !value.competitor) return 'SASE-SWG 的授权参数未填写完整。';
+                    if (!value.version || !value.endDate || (isGlobalNetworkSolution() ? false : (!value.customerNeed || !value.projectScale || !value.competitor))) return 'SASE-SWG 的授权参数未填写完整。';
                     continue;
                 }
                 if (line === 'SASE-ZTNA') {
@@ -11598,8 +11615,9 @@
             box.innerHTML = '';
         }
         function getSolutionLineSummary(line, item) {
-            if (line === 'SASE-GA') return '云图ID ' + (application.cloud ? application.cloud.tenantId : '-') + ' | 带宽 ' + item.bandwidth + 'M | ' + (isAccelSolution() ? application.accelBiz.customerNeed : item.customerNeed);
-            if (line === 'SASE-SWG') return '云图ID ' + (application.cloud ? application.cloud.tenantId : '-') + ' | ' + item.customerNeed;
+            var business = isAccelSolution() ? application.accelBiz : (isGlobalNetworkSolution() ? application.networkBiz : null);
+            if (line === 'SASE-GA') return '云图ID ' + (application.cloud ? application.cloud.tenantId : '-') + ' | 带宽 ' + item.bandwidth + 'M | ' + (business ? business.customerNeed : item.customerNeed);
+            if (line === 'SASE-SWG') return '云图ID ' + (application.cloud ? application.cloud.tenantId : '-') + ' | ' + (business ? business.customerNeed : item.customerNeed);
             if (line === 'AF') return item.deviceId + ' | 网关' + (item.af_gw_users || '') + '用户/' + (item.af_gw_lines || '') + '线路 · SSL VPN ' + (item.af_sslvpn_users || '') + '用户 · 已启用 ' + (item.modules || []).length + ' 项授权功能';
             if (line === 'SaaS-XDR' || line === 'XDR') return '云图ID ' + (application.cloud ? application.cloud.tenantId : '-') + ' | 日志量 ' + item.logAmount + ' 万条 | ' + item.coreNeed;
             if (line === 'HCI') return item.deviceId + ' | ' + (item.modules || []).join('、') + ' | 集群 ' + item.clusterId + ' | ' + item.spec;
@@ -11752,7 +11770,8 @@
                 var target = event.target;
                 var field = target.closest ? target.closest('[data-solution-accel-param]') : null;
                 if (!field) return;
-                application.accelBiz[field.dataset.solutionAccelParam] = target.value;
+                var biz = isGlobalNetworkSolution() ? application.networkBiz : application.accelBiz;
+                biz[field.dataset.solutionAccelParam] = target.value;
             }
             id('solutionAccelBizGrid').addEventListener('input', collectAccelBizParam);
             id('solutionAccelBizGrid').addEventListener('change', collectAccelBizParam);
