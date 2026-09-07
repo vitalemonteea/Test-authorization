@@ -50,6 +50,21 @@ test('全球组网方案：借测单入口锁定 AF+SASE-GA+SASE-SWG 并可整�
     assert.deepEqual(chips, ['AF', 'SASE-GA', 'SASE-SWG']);
     assert.match(document.getElementById('solutionLockedAuthEndDate').value, /（30天）/);
 
+    // 全球组网业务申请信息：客户需求、项目规模、竞争对手集中展示
+    const networkBiz = document.getElementById('solutionAccelBizSection');
+    assert.equal(networkBiz.hidden, false, '全球组网方案应展示业务申请信息模块');
+    const networkBizGrid = document.getElementById('solutionAccelBizGrid');
+    assert.match(networkBizGrid.textContent, /客户需求/);
+    assert.match(networkBizGrid.textContent, /项目规模/);
+    assert.match(networkBizGrid.textContent, /竞争对手/);
+    ['customerNeed', 'projectScale', 'competitor'].forEach((field) => {
+      const control = networkBizGrid.querySelector(`[data-solution-accel-param="${field}"]`);
+      assert.ok(control, `全球组网业务信息应包含 ${field}`);
+      assert.ok(control.value, `${field} 应有 Mock 默认值`);
+    });
+    assert.equal(networkBizGrid.querySelector('[data-solution-accel-param="region"]').closest('.solution-field').hidden, true, '全球组网不应显示区域字段');
+    assert.equal(networkBizGrid.querySelector('[data-solution-accel-param="remark"]').closest('.solution-field').hidden, true, '全球组网不应显示备注字段');
+
     // AF 硬件线工作台：设备ID 已从借测单带入，模块卡按生产环境 AF 授权表单展示
     const afPanel = document.getElementById('solutionProductPanel');
     assert.match(afPanel.textContent, /设备 ID/);
@@ -72,6 +87,7 @@ test('全球组网方案：借测单入口锁定 AF+SASE-GA+SASE-SWG 并可整�
     assert.equal(gaPanel.querySelector('[data-solution-param="bandwidth"]').tagName, 'SELECT', 'SASE-GA 带宽应为档位下拉');
     assert.deepEqual([...gaPanel.querySelectorAll('[data-solution-param="bandwidth"] option')].map((option) => option.textContent), ['5M', '10M', '20M', '30M', '50M']);
     assert.equal(gaPanel.querySelector('[data-solution-param="version"]'), null, 'SASE-GA 无版本区分，不应渲染版本字段');
+    assert.doesNotMatch(gaPanel.textContent, /客户需求|项目规模|竞争对手/, '全球组网业务字段不应在 SASE-GA 面板重复展示');
 
     // SASE-SWG 面板：默认关闭态，显示按需提示而非表单
     document.querySelector('[data-solution-line="SASE-SWG"]').click();
@@ -86,9 +102,7 @@ test('全球组网方案：借测单入口锁定 AF+SASE-GA+SASE-SWG 并可整�
     assert.equal(document.getElementById('solutionProductNav').textContent.includes('2/2'), true, '生效线计数应为 2/2');
     swgSwitch.click();
     const swgPanelOn = document.getElementById('solutionProductPanel');
-    assert.match(swgPanelOn.textContent, /客户需求/);
-    assert.match(swgPanelOn.textContent, /项目规模/);
-    assert.match(swgPanelOn.textContent, /竞争对手/);
+    assert.doesNotMatch(swgPanelOn.textContent, /客户需求|项目规模|竞争对手/, '全球组网业务字段不应在 SASE-SWG 面板重复展示');
     assert.doesNotMatch(swgPanelOn.textContent, /带宽（M）|设备 ID|授权模块/);
 
     // 再关闭 → 面板自动跳回第一条生效线（AF），SASE-SWG 显示关闭态
