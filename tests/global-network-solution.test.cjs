@@ -133,7 +133,7 @@ test('全球组网方案：借测单入口锁定 AF+SASE-GA+SASE-SWG 并可整�
     click(document, window, 'solutionBorrowLookup');
     document.querySelector('[data-solution-line-switch="SASE-SWG"]').click();
     document.querySelector('[data-solution-line="SASE-SWG"]').click();
-    assert.match(document.getElementById('solutionProductPanel').textContent, /客户需求/, '开关打开后 SASE-SWG 渲染表单');
+    assert.doesNotMatch(document.getElementById('solutionProductPanel').textContent, /客户需求|项目规模|竞争对手/, '开关打开后 SASE-SWG 不应重复渲染业务申请信息字段');
     click(document, window, 'solutionSubmitWhole');
     assert.match(document.getElementById('solutionApplicationStatus').textContent, /已授权/);
     const detail2 = document.querySelector('#content-records .solution-parent[data-solution-generated="true"]').nextElementSibling;

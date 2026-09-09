@@ -11364,9 +11364,9 @@
             var baseFields = '<div class="solution-field"><label><span class="solution-required">*</span>授权有效期<span class="solution-readonly-note"><span class="material-symbols-outlined">lock</span>统一取方案授权时间</span></label><input class="solution-input" type="date" data-solution-param="endDate" value="' + escapeHtml(values.endDate || '') + '" readonly data-solution-readonly></div>';
             var versionFields = '<div class="solution-field"><label><span class="solution-required">*</span>版本</label><input class="solution-input" data-solution-param="version" value="' + escapeHtml(values.version || '') + '"></div>';
             if (line === 'SASE-GA') {
-                // SASE-GA 无版本区分，只填带宽档位；全球加速方案的业务字段统一放业务申请信息模块
+                // 全球加速和全球组网方案均在业务申请信息中统一填写业务字段。
                 var gaBandwidthOptions = ['5', '10', '20', '30', '50'];
-                var gaBizFields = isAccelSolution() ? '' :
+                var gaBizFields = (isAccelSolution() || isGlobalNetworkSolution()) ? '' :
                     '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>客户需求</label><textarea class="solution-input" data-solution-param="customerNeed">' + escapeHtml(values.customerNeed || '') + '</textarea></div>' +
                     '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>项目规模</label><textarea class="solution-input" data-solution-param="projectScale">' + escapeHtml(values.projectScale || '') + '</textarea></div>' +
                     '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>竞争对手</label><textarea class="solution-input" data-solution-param="competitor">' + escapeHtml(values.competitor || '') + '</textarea></div>';
@@ -11375,6 +11375,7 @@
                     gaBizFields;
             }
             if (line === 'SASE-SWG') {
+                if (isGlobalNetworkSolution()) return baseFields + versionFields;
                 return baseFields +
                     '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>客户需求</label><textarea class="solution-input" data-solution-param="customerNeed">' + escapeHtml(values.customerNeed || '') + '</textarea></div>' +
                     '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>项目规模</label><textarea class="solution-input" data-solution-param="projectScale">' + escapeHtml(values.projectScale || '') + '</textarea></div>' +
