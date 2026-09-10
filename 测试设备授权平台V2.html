@@ -10512,7 +10512,7 @@
             'SASE-GA': { version: '', modules: [], spec: '带宽 10M' },
             'SASE-SWG': { version: 'SASE-SWG 标准版', modules: [], spec: '用户版 50 用户' },
             'SaaS-XDR': { version: 'SaaS-XDR 标准版', modules: [], spec: '日志量 20,000 万条' },
-            'SASE-ZTNA': { version: 'SASE-ZTNA 标准版', modules: [], spec: '用户版 200 用户' },
+            'SASE-ZTNA': { version: 'SASE-ZTNA 标准版', modules: [], spec: '用户版 50 用户', userCount: '50' },
             aTrust: { version: 'aTrust-3.0.28', modules: [], spec: '标准规格' },
             STA: { version: 'STA3.0.25', modules: ['网关序列号', '软件升级', 'Web应用防护'], spec: '标准规格' }
         };
@@ -10997,6 +10997,7 @@
                 return {
                     version: defaults.version,
                     endDate: endDate || '2026-08-23',
+                    userCount: defaults.userCount || '50',
                     customerNeed: '验证海外与移动办公人员零信任安全接入体验',
                     projectScale: '覆盖 4 个海外办公点，约 200 名移动办公用户',
                     competitor: 'Zscaler 私有接入'
@@ -11382,9 +11383,11 @@
                     '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>竞争对手</label><textarea class="solution-input" data-solution-param="competitor">' + escapeHtml(values.competitor || '') + '</textarea></div>';
             }
             if (line === 'SASE-ZTNA') {
+                var ztnaUserField = '<div class="solution-field"><label><span class="solution-required">*</span>授权用户数</label><input class="solution-input" type="number" min="1" data-solution-param="userCount" value="' + escapeHtml(values.userCount || '50') + '"></div>';
                 // 全球加速方案：业务字段（客户需求/项目规模/竞争对手）统一放业务申请信息模块
-                if (isAccelSolution()) return baseFields;
+                if (isAccelSolution()) return baseFields + ztnaUserField;
                 return baseFields +
+                    ztnaUserField +
                     '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>客户需求</label><textarea class="solution-input" data-solution-param="customerNeed">' + escapeHtml(values.customerNeed || '') + '</textarea></div>' +
                     '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>项目规模</label><textarea class="solution-input" data-solution-param="projectScale">' + escapeHtml(values.projectScale || '') + '</textarea></div>' +
                     '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>竞争对手</label><textarea class="solution-input" data-solution-param="competitor">' + escapeHtml(values.competitor || '') + '</textarea></div>';
@@ -11569,10 +11572,10 @@
                 }
                 if (line === 'SASE-ZTNA') {
                     if (isAccelSolution()) {
-                        if (!value.endDate) return 'SASE-ZTNA 的授权参数未填写完整。';
+                        if (!value.endDate || !value.userCount || parseInt(value.userCount, 10) < 1) return 'SASE-ZTNA 的授权参数未填写完整。';
                         continue;
                     }
-                    if (!value.version || !value.endDate || !value.customerNeed || !value.projectScale || !value.competitor) return 'SASE-ZTNA 的授权参数未填写完整。';
+                    if (!value.version || !value.endDate || !value.userCount || parseInt(value.userCount, 10) < 1 || !value.customerNeed || !value.projectScale || !value.competitor) return 'SASE-ZTNA 的授权参数未填写完整。';
                     continue;
                 }
                 if (line === 'XDR' && isDsocSolution()) {
@@ -11619,6 +11622,7 @@
             var business = isAccelSolution() ? application.accelBiz : (isGlobalNetworkSolution() ? application.networkBiz : null);
             if (line === 'SASE-GA') return '云图ID ' + (application.cloud ? application.cloud.tenantId : '-') + ' | 带宽 ' + item.bandwidth + 'M | ' + (business ? business.customerNeed : item.customerNeed);
             if (line === 'SASE-SWG') return '云图ID ' + (application.cloud ? application.cloud.tenantId : '-') + ' | ' + (business ? business.customerNeed : item.customerNeed);
+            if (line === 'SASE-ZTNA') return '云图ID ' + (application.cloud ? application.cloud.tenantId : '-') + ' | 授权用户数 ' + (item.userCount || 50) + ' | ' + (business ? business.customerNeed : item.customerNeed);
             if (line === 'AF') return item.deviceId + ' | 网关' + (item.af_gw_users || '') + '用户/' + (item.af_gw_lines || '') + '线路 · SSL VPN ' + (item.af_sslvpn_users || '') + '用户 · 已启用 ' + (item.modules || []).length + ' 项授权功能';
             if (line === 'SaaS-XDR' || line === 'XDR') return '云图ID ' + (application.cloud ? application.cloud.tenantId : '-') + ' | 日志量 ' + item.logAmount + ' 万条 | ' + item.coreNeed;
             if (line === 'HCI') return item.deviceId + ' | ' + (item.modules || []).join('、') + ' | 集群 ' + item.clusterId + ' | ' + item.spec;

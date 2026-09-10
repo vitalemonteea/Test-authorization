@@ -117,13 +117,19 @@ test('全球加速方案-SaaS版：借测单入口锁定 SASE-ZTNA+SASE-GA 并�
     });
     assert.equal(document.getElementById('accelTestTimeHint'), null, '测试时间和规格字段及其提示应一并移除');
 
-    // SASE-ZTNA 面板：业务字段已移至业务申请信息模块，仅剩授权有效期，无设备ID
+    // SASE-ZTNA 面板：业务字段已移至业务申请信息模块，展示授权有效期与授权用户数（支持调整），无设备ID
     document.querySelector('[data-solution-line="SASE-ZTNA"]').click();
     const ztnaPanel = document.getElementById('solutionProductPanel');
     assert.doesNotMatch(ztnaPanel.textContent, /客户需求/);
     assert.doesNotMatch(ztnaPanel.textContent, /项目规模/);
     assert.doesNotMatch(ztnaPanel.textContent, /竞争对手/);
     assert.equal(ztnaPanel.querySelector('[data-solution-param="deviceId"]'), null, 'SASE-ZTNA 为 XaaS 线不应渲染设备ID');
+    const ztnaUsersInput = ztnaPanel.querySelector('[data-solution-param="userCount"]');
+    assert.ok(ztnaUsersInput, 'SASE-ZTNA 应展示授权用户数字段');
+    assert.equal(ztnaUsersInput.value, '50', '授权用户数默认值为 50');
+    // 允许调整授权用户数
+    typeParam(document, window, 'userCount', '1000');
+    assert.equal(ztnaUsersInput.value, '1000', '授权用户数应支持调整为 1000');
 
     // SASE-GA 保留带宽五档下拉，业务字段同样移出
     document.querySelector('[data-solution-line="SASE-GA"]').click();
