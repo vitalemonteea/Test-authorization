@@ -864,14 +864,26 @@
         }
 
         /* ===== 设备ID Chip 输入 ===== */
-        .chip-input-container { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; min-height: 40px; padding: 6px 10px; background: #fff; border: 1px solid #e5eeff; border-radius: 8px; cursor: text; transition: border-color 0.15s; max-width: 480px; box-sizing: border-box; }
+        .chip-input-container { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; min-height: 40px; padding: 6px 10px; background: #fff; border: 1px solid #e5eeff; border-radius: 8px; cursor: text; transition: border-color 0.15s; max-width: 480px; box-sizing: border-box; position: relative; }
         .chip-input-container:focus-within { border-color: #0050cb; box-shadow: 0 0 0 3px rgba(0,80,203,.08); }
         .chip-input-container.is-fixed { background: #f5f7fa; border-color: #d8e0ec; cursor: default; }
         .chip-item { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; background: #e5eeff; color: #0050cb; border-radius: 6px; font-size: 13px; font-weight: 500; line-height: 24px; white-space: nowrap; }
         .chip-item .chip-close { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 50%; cursor: pointer; font-size: 12px; color: #0050cb; transition: all 0.15s; }
         .chip-item .chip-close:hover { background: #0050cb; color: #fff; }
-        .chip-input-field { flex: 1; min-width: 120px; height: 28px; border: none; outline: none; font-size: 14px; background: transparent; padding: 0; }
+        .chip-input-field { flex: 1; min-width: 130px; height: 28px; border: none; outline: none; font-size: 13px; background: transparent; padding: 0; }
         .chip-input-field:disabled { background: transparent; cursor: default; }
+        .chip-add-btn { display: inline-flex; align-items: center; gap: 2px; height: 26px; padding: 0 8px; border: 1px solid #c8d8f8; border-radius: 6px; background: #f0f5ff; color: #0050cb; font-size: 12px; font-weight: 500; cursor: pointer; white-space: nowrap; transition: all 0.15s ease; user-select: none; margin-left: auto; }
+        .chip-add-btn:hover { background: #0050cb; border-color: #0050cb; color: #fff; }
+        .chip-add-btn .material-symbols-outlined { font-size: 15px; line-height: 1; }
+        .chip-input-container.is-fixed .chip-add-btn { display: none !important; }
+        .chip-helper-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 6px; font-size: 12px; color: #717d96; flex-wrap: wrap; }
+        .chip-count-badge { display: inline-flex; align-items: center; gap: 3px; padding: 2px 7px; background: #f1f4f9; border-radius: 4px; color: #424656; font-size: 11.5px; font-weight: 500; }
+        .chip-count-badge strong { color: #0050cb; font-weight: 600; }
+        .chip-clear-link { color: #dc2626; cursor: pointer; margin-left: 6px; text-decoration: underline; font-size: 11.5px; background: none; border: none; padding: 0; }
+        .chip-clear-link:hover { color: #b91c1c; }
+        .chip-helper-tip { display: inline-flex; align-items: center; gap: 4px; color: #8892a4; font-size: 11.5px; }
+        .chip-helper-tip .material-symbols-outlined { font-size: 14px; color: #0050cb; }
+        .chip-input-container.is-fixed + .chip-helper-bar { display: none !important; }
         .chip-fixed-hint { font-size: 12px; color: #8b92a5; margin-top: 4px; }
         #hwInfoSection { grid-column: 1 / -1; }
 
@@ -1759,8 +1771,14 @@
                         <label class="layui-form-label" id="deviceIdentifierLabel">设备ID</label>
                         <div class="layui-input-block">
                             <div class="chip-input-container" id="chipContainer">
-                                <input type="text" id="chipInput" class="chip-input-field" placeholder="输入设备ID并回车添加..." autocomplete="off" onkeydown="if(event.keyCode===13){event.preventDefault();window.addChip(this.value);this.value='';return false}">
+                                <input type="text" id="chipInput" class="chip-input-field" placeholder="输入设备ID（回车/逗号确认，支持直接粘贴）..." autocomplete="off">
+                                <button type="button" class="chip-add-btn" id="chipAddBtn" title="添加此设备ID"><span class="material-symbols-outlined">add</span>添加</button>
                                 <input type="hidden" id="devIdNew" name="devIdNew" value="">
+                            </div>
+                            <div class="chip-helper-bar">
+                                <span class="chip-count-badge">已录入 <strong id="chipCountNum">0</strong> 台设备</span>
+                                <button type="button" class="chip-clear-link" id="chipClearBtn" hidden>全部清空</button>
+                                <span class="chip-helper-tip" style="margin-left:auto;"><span class="material-symbols-outlined">info</span>支持回车/逗号分隔，支持 Excel 复制批量粘贴</span>
                             </div>
                             <div id="deviceLookupBlocking" class="device-lookup-blocking" role="alert" hidden>
                                 <span id="deviceLookupBlockingText"></span>
@@ -1781,8 +1799,14 @@
                         <label class="layui-form-label">设备SN<span class="required-mark">*</span></label>
                         <div class="layui-input-block">
                             <div class="chip-input-container" id="snChipContainer">
-                                <input type="text" id="snChipInput" class="chip-input-field" placeholder="输入设备SN并回车添加..." autocomplete="off" onkeydown="if(event.keyCode===13){event.preventDefault();window.addSnChip(this.value);this.value='';return false}">
+                                <input type="text" id="snChipInput" class="chip-input-field" placeholder="输入设备SN（回车/逗号确认，支持直接粘贴）..." autocomplete="off">
+                                <button type="button" class="chip-add-btn" id="snChipAddBtn" title="添加此设备SN"><span class="material-symbols-outlined">add</span>添加</button>
                                 <input type="hidden" id="devSnNew" name="devSnNew" value="">
+                            </div>
+                            <div class="chip-helper-bar">
+                                <span class="chip-count-badge">已录入 <strong id="snChipCountNum">0</strong> 台设备SN</span>
+                                <button type="button" class="chip-clear-link" id="snChipClearBtn" hidden>全部清空</button>
+                                <span class="chip-helper-tip" style="margin-left:auto;"><span class="material-symbols-outlined">info</span>支持回车/逗号分隔，支持 Excel 复制批量粘贴</span>
                             </div>
                         </div>
                     </div>
@@ -6728,12 +6752,38 @@
                 input.placeholder = defaultPlaceholder;
                 container.classList.remove('is-fixed');
             }
+            // 回车 / 逗号 / 分号 自动确认添加
+            input.addEventListener('keydown', function (e) {
+                if (e.keyCode === 13 || e.key === ',' || e.key === '，' || e.key === ';' || e.key === '；') {
+                    e.preventDefault();
+                    var raw = this.value;
+                    // 按多种分隔符拆分（支持一次性输入多个）
+                    var tokens = raw.split(/[\r\n,，;；\s]+/);
+                    tokens.forEach(function (t) { add(t); });
+                    this.value = '';
+                    return false;
+                }
+            });
+            // 粘贴：自动按换行/逗号/分号/空格拆分，批量添加
+            input.addEventListener('paste', function (e) {
+                var clip = (e.clipboardData || window.clipboardData || {}).getData('text') || '';
+                if (!clip) return;
+                e.preventDefault();
+                var tokens = clip.split(/[\r\n,，;；\t]+/).map(function (t) { return t.trim(); }).filter(Boolean);
+                if (tokens.length > 1) {
+                    tokens.forEach(function (t) { add(t); });
+                    this.value = '';
+                } else if (tokens.length === 1) {
+                    // 单个值：正常粘贴到输入框（不自动添加，让用户确认后回车）
+                    this.value = tokens[0];
+                }
+            });
             input.addEventListener('blur', function () {
                 var v = this.value.trim();
                 if (v) add(v);
             });
             container.addEventListener('click', function (e) {
-                if (!e.target.closest('.chip-item') && !input.disabled) input.focus();
+                if (!e.target.closest('.chip-item') && !e.target.closest('.chip-add-btn') && !input.disabled) input.focus();
             });
             return {
                 get: function () { return values.slice(); },
@@ -7586,11 +7636,16 @@
             return null;
         }
 
-        var deviceIdChips = createChipControl(chipContainer, chipInput, '输入设备ID并回车添加...', function (val) {
+        var deviceIdChips = createChipControl(chipContainer, chipInput, '输入设备ID（回车/逗号确认，支持直接粘贴）...', function (val) {
             syncBorrowInfoByDevice(val, 'id');
         }, function (vals) {
             syncHiddenMirror('devIdNew', vals);
             refreshRecognizedDeviceFacts(vals);
+            // 更新计数徽章 & 清空按钮
+            var countEl = document.getElementById('chipCountNum');
+            var clearBtn = document.getElementById('chipClearBtn');
+            if (countEl) countEl.textContent = vals.length;
+            if (clearBtn) clearBtn.hidden = vals.length === 0;
         }, function(id) {
             if (pairRemovalInProgress) return;
             var fact = mockDeviceFactsById[id];
@@ -7600,9 +7655,16 @@
             pairRemovalInProgress = false;
         });
 
-        var deviceSnChips = createChipControl(snChipContainer, snChipInput, '输入设备SN并回车添加...', function (val) {
+        var deviceSnChips = createChipControl(snChipContainer, snChipInput, '输入设备SN（回车/逗号确认，支持直接粘贴）...', function (val) {
             syncBorrowInfoByDevice(val, 'sn');
-        }, function (vals) { syncHiddenMirror('devSnNew', vals); }, function(sn) {
+        }, function (vals) {
+            syncHiddenMirror('devSnNew', vals);
+            // 更新SN计数徽章 & 清空按钮
+            var countEl = document.getElementById('snChipCountNum');
+            var clearBtn = document.getElementById('snChipClearBtn');
+            if (countEl) countEl.textContent = vals.length;
+            if (clearBtn) clearBtn.hidden = vals.length === 0;
+        }, function(sn) {
             if (pairRemovalInProgress) return;
             var fact = findDeviceFactsBySn(sn);
             if (!fact) return;
@@ -7632,6 +7694,24 @@
             return buildDeviceApplications(facts || window.getTrustedDeviceFacts());
         };
 
+        // ===== 设备ID / SN 添加按钮 & 清空按钮 绑定 =====
+        document.getElementById('chipAddBtn').addEventListener('click', function () {
+            var v = chipInput.value.trim();
+            if (v) { deviceIdChips.add(v); chipInput.value = ''; }
+            chipInput.focus();
+        });
+        document.getElementById('snChipAddBtn').addEventListener('click', function () {
+            var v = snChipInput.value.trim();
+            if (v) { deviceSnChips.add(v); snChipInput.value = ''; }
+            snChipInput.focus();
+        });
+        document.getElementById('chipClearBtn').addEventListener('click', function () {
+            deviceIdChips.clear();
+        });
+        document.getElementById('snChipClearBtn').addEventListener('click', function () {
+            deviceSnChips.clear();
+        });
+
         function updateHardwareFields() {
             var val = planDevTypeSelect.value;
             var deviceIdentifierLabel = document.getElementById('deviceIdentifierLabel');
@@ -7639,7 +7719,7 @@
             borrowTestFields.style.display = 'none';
             if (val === '1') {
                 deviceIdentifierLabel.textContent = '设备ID';
-                chipInput.placeholder = '输入设备ID并回车添加...';
+                chipInput.placeholder = '输入设备ID（回车/逗号确认，支持直接粘贴）...';
                 devSnFormItem.style.display = 'flex';
                 borrowTestFields.style.display = 'grid';
                 resetBorrowTestFields();
@@ -7647,13 +7727,13 @@
                 toggleHwInfoSection(plnameSelect.value);
             } else if (val === '2') {
                 deviceIdentifierLabel.textContent = '设备ID / SN';
-                chipInput.placeholder = '输入设备ID或SN并回车添加...';
+                chipInput.placeholder = '输入设备ID或SN（回车/逗号确认，支持直接粘贴）...';
                 toggleHwInfoSection(plnameSelect.value);
                 resetBorrowTestFields();
                 resetRenewalState();
             } else {
                 deviceIdentifierLabel.textContent = '设备ID';
-                chipInput.placeholder = '输入设备ID并回车添加...';
+                chipInput.placeholder = '输入设备ID（回车/逗号确认，支持直接粘贴）...';
                 toggleHwInfoSection(plnameSelect.value);
                 resetBorrowTestFields();
                 resetRenewalState();
