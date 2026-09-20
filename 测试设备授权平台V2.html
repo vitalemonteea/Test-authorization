@@ -3469,6 +3469,25 @@
                             </div>
                             <div class="solution-card-body" id="solutionBorrowSource">
                                 <div class="solution-form-grid solution-borrow-query-grid">
+                                    <div class="solution-form-row solution-form-row-full" id="solutionBorrowIndustryRow" style="display:flex;align-items:center;gap:12px;">
+                                        <label class="solution-form-label" for="solutionBorrowIndustry" style="min-width:60px;"><span class="solution-required">*</span>所属行业</label>
+                                        <div class="solution-form-control" style="flex:1;">
+                                            <select class="solution-select" id="solutionBorrowIndustry" style="max-width:320px;">
+                                                <option value="">请选择客户所属行业</option>
+                                                <option value="政府">政府</option>
+                                                <option value="金融">金融</option>
+                                                <option value="能源">能源</option>
+                                                <option value="大企业" selected>大企业</option>
+                                                <option value="交通">交通</option>
+                                                <option value="数字政府">数字政府</option>
+                                                <option value="部委">部委</option>
+                                                <option value="教育">教育</option>
+                                                <option value="医疗">医疗</option>
+                                                <option value="军工">军工</option>
+                                                <option value="其他">其他</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                     <div class="solution-form-row solution-form-row-full" id="solutionBorrowCustomerField">
                                         <label class="solution-form-label" for="solutionBorrowCustomerSearch"><span class="solution-required">*</span>客户</label>
                                         <div class="solution-form-control">
@@ -3483,6 +3502,7 @@
                                                         <span class="customer-summary-name" id="solutionBorrowCustomerName">-</span>
                                                         <span class="sales-person-badge" id="solutionBorrowCustomerSales" style="display:none;"></span>
                                                         <span class="customer-type-badge" id="solutionBorrowCustomerType" style="display:none;"></span>
+                                                        <span class="customer-global-cloud-badge" id="solutionBorrowGlobalCloud" style="display:none;margin-left:6px;"></span>
                                                         <span class="solution-customer-cloud" id="solutionBorrowCustomerCloud"></span>
                                                     </div>
                                                 </div>
@@ -3507,6 +3527,25 @@
                                 <div class="solution-form-grid">
                                     <div class="solution-form-row"><label class="solution-form-label" for="solutionLocalConfig"><span class="solution-required">*</span>解决方案</label><div class="solution-form-control"><select class="solution-select" id="solutionLocalConfig"><option value="">请选择启用方案</option></select></div></div>
                                     <div class="solution-form-row"><label class="solution-form-label" for="solutionEmail">接收邮箱</label><div class="solution-form-control"><input class="solution-input" id="solutionEmail" placeholder="请输入接收邮箱，建议优先填写客户邮箱" title="用于接收授权结果及相关文件"></div></div>
+                                    <div class="solution-form-row" id="solutionLocalIndustryRow">
+                                        <label class="solution-form-label" for="solutionLocalIndustry"><span class="solution-required">*</span>所属行业</label>
+                                        <div class="solution-form-control">
+                                            <select class="solution-select" id="solutionLocalIndustry">
+                                                <option value="">请选择客户所属行业</option>
+                                                <option value="政府">政府</option>
+                                                <option value="金融">金融</option>
+                                                <option value="能源">能源</option>
+                                                <option value="大企业" selected>大企业</option>
+                                                <option value="交通">交通</option>
+                                                <option value="数字政府">数字政府</option>
+                                                <option value="部委">部委</option>
+                                                <option value="教育">教育</option>
+                                                <option value="医疗">医疗</option>
+                                                <option value="军工">军工</option>
+                                                <option value="其他">其他</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                     <div class="solution-form-row solution-form-row-full" id="solutionLocalCustomerField">
                                         <label class="solution-form-label" for="solutionLocalCustomerSearch"><span class="solution-required">*</span>客户</label>
                                         <div class="solution-form-control">
@@ -3521,6 +3560,7 @@
                                                         <span class="customer-summary-name" id="solutionLocalCustomerName">-</span>
                                                         <span class="sales-person-badge" id="solutionLocalCustomerSales" style="display:none;"></span>
                                                         <span class="customer-type-badge" id="solutionLocalCustomerType" style="display:none;"></span>
+                                                        <span class="customer-global-cloud-badge" id="solutionLocalGlobalCloud" style="display:none;margin-left:6px;"></span>
                                                         <span class="solution-customer-cloud" id="solutionLocalCustomerCloud"></span>
                                                     </div>
                                                 </div>
@@ -3602,13 +3642,13 @@
                                 <button type="button" class="solution-btn plain" id="solutionConfigReset">重置</button>
                                 <button type="button" class="solution-btn solution-config-new" id="solutionConfigNew"><span class="material-symbols-outlined">add</span>新增方案</button>
                             </div>
-                            <div class="solution-table-wrap"><table class="solution-table"><thead><tr><th>方案编码</th><th>方案名称</th><th>关联产品线</th><th>授权时间</th><th>状态</th><th>更新时间</th><th>操作</th></tr></thead><tbody id="solutionConfigRows"></tbody></table></div>
+                            <div class="solution-table-wrap"><table class="solution-table"><thead><tr><th>方案编码</th><th>方案名称</th><th>关联产品线</th><th>业务申请信息</th><th>授权时间</th><th>状态</th><th>更新时间</th><th>操作</th></tr></thead><tbody id="solutionConfigRows"></tbody></table></div>
                             <div class="solution-asset-read"><span id="solutionAssetReadSummary"></span><button type="button" class="solution-btn secondary" id="solutionAssetRead"><span class="material-symbols-outlined">data_object</span>模拟资产系统读取</button></div>
                             <pre class="solution-asset-preview" id="solutionAssetPreview" hidden></pre>
                         </div>
                     </aside>
                 </div>
-                <div class="solution-modal-layer" id="solutionConfigModal" hidden aria-hidden="true"><div class="solution-modal" role="dialog" aria-modal="true" aria-labelledby="solutionConfigModalTitle"><div class="solution-modal-head"><h2 id="solutionConfigModalTitle">新增解决方案</h2><button type="button" class="solution-table-action" data-solution-config-close>关闭</button></div><div class="solution-modal-body"><div class="solution-grid two"><div class="solution-field"><label for="solutionConfigCode"><span class="solution-required">*</span>方案编码</label><input class="solution-input" id="solutionConfigCode"></div><div class="solution-field"><label for="solutionConfigName"><span class="solution-required">*</span>方案名称</label><input class="solution-input" id="solutionConfigName"></div><div class="solution-field"><label for="solutionConfigAuthDays"><span class="solution-required">*</span>授权时间（天）</label><input class="solution-input" type="number" min="1" id="solutionConfigAuthDays" placeholder="如 90" title="方案下所有产品线统一使用该授权天数，申请时按当天日期 + 天数计算授权到期时间"></div><div class="solution-field" style="grid-column:1/-1"><label><span class="solution-required">*</span>关联产品线</label><div class="solution-check-grid" id="solutionConfigChecks"></div></div></div><p class="solution-form-error" id="solutionConfigError"></p></div><div class="solution-modal-foot"><button type="button" class="solution-btn plain" data-solution-config-close>取消</button><button type="button" class="solution-btn" id="solutionConfigSave">保存</button></div></div></div>
+                <div class="solution-modal-layer" id="solutionConfigModal" hidden aria-hidden="true"><div class="solution-modal" role="dialog" aria-modal="true" aria-labelledby="solutionConfigModalTitle"><div class="solution-modal-head"><h2 id="solutionConfigModalTitle">新增解决方案</h2><button type="button" class="solution-table-action" data-solution-config-close>关闭</button></div><div class="solution-modal-body"><div class="solution-grid two"><div class="solution-field"><label for="solutionConfigCode"><span class="solution-required">*</span>方案编码</label><input class="solution-input" id="solutionConfigCode"></div><div class="solution-field"><label for="solutionConfigName"><span class="solution-required">*</span>方案名称</label><input class="solution-input" id="solutionConfigName"></div><div class="solution-field"><label for="solutionConfigAuthDays"><span class="solution-required">*</span>授权时间（天）</label><input class="solution-input" type="number" min="1" id="solutionConfigAuthDays" placeholder="如 90" title="方案下所有产品线统一使用该授权天数，申请时按当天日期 + 天数计算授权到期时间"></div><div class="solution-field"><label for="solutionConfigBizTemplate"><span class="solution-required">*</span>业务申请信息模板</label><select class="solution-select" id="solutionConfigBizTemplate"><option value="none">无业务信息（标准通用）</option><option value="dsoc">分布式安全运营模板（DSOC）</option><option value="accel">全球加速模板（ACCEL）</option><option value="network">全球组网模板（NETWORK）</option><option value="mss">安全托管服务模板（MSS）</option><option value="dsp">数据安全方案模板（DSP）</option><option value="custom">自定义动态字段配置</option></select></div><div class="solution-field" style="grid-column:1/-1"><label><span class="solution-required">*</span>关联产品线</label><div class="solution-check-grid" id="solutionConfigChecks"></div></div><div class="solution-field" id="solutionConfigBizFieldsWrap" style="grid-column:1/-1"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><label style="margin-bottom:0;font-weight:600;"><span class="solution-required">*</span>业务申请信息字段（自由配置）</label><button type="button" class="solution-btn plain" id="solutionConfigAddFieldBtn" style="padding:2px 10px;font-size:12px;height:28px;">+ 添加业务字段</button></div><div id="solutionConfigBizFieldsList" style="display:flex;flex-direction:column;gap:8px;max-height:220px;overflow-y:auto;padding:8px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;"></div></div></div><p class="solution-form-error" id="solutionConfigError"></p></div><div class="solution-modal-foot"><button type="button" class="solution-btn plain" data-solution-config-close>取消</button><button type="button" class="solution-btn" id="solutionConfigSave">保存</button></div></div></div>
 
                 <div id="content-records" style="display:none;">
 
@@ -10863,15 +10903,55 @@
                 { name: 'Web应用防护', params: [{ label: 'Web应用防护', key: 'sta_web_protection', type: 'text', value: '2026-10-02' }] }
             ]
         };
+        var defaultBizTemplateFields = {
+            none: [],
+            dsoc: [
+                { name: '测试主打场景', type: 'select', options: ['原有NDR升级场景（我司SIP/友商NDR）', '新建安全运营场景', 'SOC替换场景（含SOC共存）', '多分支统一管理场景'], required: true },
+                { name: '测试驱动力', type: 'checkbox', options: ['各类安全设备告警量大且误报多，威胁运营效率低', '现有威胁运营平台不达预期，想替换', '重大安全问题，需要加强安全建设', '被监管单位通报，需要加强安全建设', '护网重保缺少统一值守平台，值守难度较大', '客户有创新及体现政绩的诉求'], required: true },
+                { name: '客户预期效果', type: 'checkbox', options: ['全流量检测:深信服自有产品及三方产品统一接入', '聚合降噪:海量告警基于GPT聚合成少量精准事件', '告警研判:安全GPT全量研判告警及事件', '智能对抗:外联或外部攻击实现自动化对抗', '威胁运营成果展示:报表/大屏直观展示成果'], required: true },
+                { name: '组件接入说明', type: 'textarea', options: [], required: true },
+                { name: '测试需求调研文档', type: 'file', options: [], required: true },
+                { name: '转销计划说明', type: 'textarea', options: [], required: true }
+            ],
+            accel: [
+                { name: '客户需求', type: 'textarea', options: [], required: true },
+                { name: '项目规模', type: 'textarea', options: [], required: true },
+                { name: '竞争对手', type: 'textarea', options: [], required: true },
+                { name: '客户所在省份/国家', type: 'text', options: [], required: true },
+                { name: '备注', type: 'textarea', options: [], required: false }
+            ],
+            network: [
+                { name: '客户需求', type: 'textarea', options: [], required: true },
+                { name: '项目规模', type: 'textarea', options: [], required: true },
+                { name: '竞争对手', type: 'textarea', options: [], required: true }
+            ],
+            mss: [
+                { name: '所属行业', type: 'text', options: [], required: true },
+                { name: '客户联系人', type: 'text', options: [], required: true },
+                { name: '客户组件情况', type: 'textarea', options: [], required: true },
+                { name: '本次测试PK范围', type: 'textarea', options: [], required: true }
+            ],
+            dsp: [
+                { name: '关注价值', type: 'checkbox', options: ['数据风险发现', '静态分类分级', '应用/API资产', '对接第三方组件-分级管控', '数据流转可视'], required: true },
+                { name: '风险场景', type: 'checkbox', options: ['员工访问互联网应用', '第三方共享', '内部应用到应用', '数据运维开发场景', '其他场景'], required: true },
+                { name: 'PK友商', type: 'select', options: ['奇安信', '安恒', '绿盟', '安华金和', '原点安全', '美创', '暂无友商竞争', '其他友商'], required: true },
+                { name: '能否远程', type: 'select', options: ['能-长期远程', '能-临时远程', '不能'], required: true },
+                { name: '预算', type: 'text', options: [], required: false },
+                { name: '客户交流纪要', type: 'file', options: [], required: true }
+            ],
+            custom: [
+                { name: '业务测试场景', type: 'textarea', options: [], required: true }
+            ]
+        };
         var configs = [
-            { code: 'SOL-CLOUD-001', name: '企业云一体化方案', productLines: ['HCI', 'AC', 'NGAF', 'AD', 'WOC', 'SaaS-XDR'], status: 'enabled', authDays: 90, updatedAt: '2026-08-06 09:30' },
-            { code: 'SOL-SEC-002', name: '安全态势感知方案', productLines: ['XDR', 'NGAF', 'WAF'], status: 'enabled', authDays: 60, updatedAt: '2026-08-05 16:20' },
-            { code: 'SOL-XAAS-004', name: '云网安全运营方案', productLines: ['SASE-GA', 'SaaS-XDR'], status: 'enabled', authDays: 30, updatedAt: '2026-08-06 10:30' },
-            { code: 'SOL-GLOBAL-005', name: '全球组网方案', productLines: ['AF', 'SASE-GA', 'SASE-SWG'], status: 'enabled', authDays: 30, updatedAt: '2026-08-26 14:30' },
-            { code: 'SOL-ACCEL-006', name: '全球加速方案-SaaS版', productLines: ['SASE-ZTNA', 'SASE-GA'], status: 'enabled', authDays: 30, updatedAt: '2026-09-02 10:00' },
-            { code: 'SOL-ACCEL-007', name: '全球加速方案-本地版', productLines: ['aTrust', 'SASE-GA'], status: 'enabled', authDays: 30, updatedAt: '2026-09-02 10:10' },
-            { code: 'SOL-DSOC-008', name: '分布式安全运营方案', productLines: ['XDR', 'STA', 'AF', 'aES'], status: 'enabled', authDays: 30, updatedAt: '2026-09-02 11:00' },
-            { code: 'SOL-LEGACY-003', name: '旧版云安全方案', productLines: ['HCI', 'WAF'], status: 'disabled', authDays: 15, updatedAt: '2026-07-28 10:12' }
+            { code: 'SOL-CLOUD-001', name: '企业云一体化方案', productLines: ['HCI', 'AC', 'NGAF', 'AD', 'WOC', 'SaaS-XDR'], status: 'enabled', authDays: 90, bizTemplate: 'none', bizFields: [], updatedAt: '2026-08-06 09:30' },
+            { code: 'SOL-SEC-002', name: '安全态势感知方案', productLines: ['XDR', 'NGAF', 'WAF'], status: 'enabled', authDays: 60, bizTemplate: 'none', bizFields: [], updatedAt: '2026-08-05 16:20' },
+            { code: 'SOL-XAAS-004', name: '云网安全运营方案', productLines: ['SASE-GA', 'SaaS-XDR'], status: 'enabled', authDays: 30, bizTemplate: 'none', bizFields: [], updatedAt: '2026-08-06 10:30' },
+            { code: 'SOL-GLOBAL-005', name: '全球组网方案', productLines: ['AF', 'SASE-GA', 'SASE-SWG'], status: 'enabled', authDays: 30, bizTemplate: 'network', bizFields: (defaultBizTemplateFields.network || []), updatedAt: '2026-08-26 14:30' },
+            { code: 'SOL-ACCEL-006', name: '全球加速方案-SaaS版', productLines: ['SASE-ZTNA', 'SASE-GA'], status: 'enabled', authDays: 30, bizTemplate: 'accel', bizFields: (defaultBizTemplateFields.accel || []), updatedAt: '2026-09-02 10:00' },
+            { code: 'SOL-ACCEL-007', name: '全球加速方案-本地版', productLines: ['aTrust', 'SASE-GA'], status: 'enabled', authDays: 30, bizTemplate: 'accel', bizFields: (defaultBizTemplateFields.accel || []), updatedAt: '2026-09-02 10:10' },
+            { code: 'SOL-DSOC-008', name: '分布式安全运营方案', productLines: ['XDR', 'STA', 'AF', 'aES'], status: 'enabled', authDays: 30, bizTemplate: 'dsoc', bizFields: (defaultBizTemplateFields.dsoc || []), updatedAt: '2026-09-02 11:00' },
+            { code: 'SOL-LEGACY-003', name: '旧版云安全方案', productLines: ['HCI', 'WAF'], status: 'disabled', authDays: 15, bizTemplate: 'none', bizFields: [], updatedAt: '2026-07-28 10:12' }
         ];
         var borrowOrders = {
             'BOR-202608-001': { number: 'BOR-202608-001', approvalStatus: '审批通过', returned: false, revoked: false, applicant: '李晓', customer: '华东智造集团有限公司', solutionCode: 'SOL-CLOUD-001', solution: '企业云一体化方案', productLines: ['HCI', 'AC', 'NGAF', 'AD', 'WOC', 'SaaS-XDR'], devices: { HCI: 'GW-HCI-208', AC: 'GW-AC-512', NGAF: 'GW-NGAF-318', AD: 'GW-AD-209', WOC: 'GW-WOC-115' }, startDate: '2026-08-06', endDate: '2026-11-04', approvalInfo: '资产系统审批通过（Mock）', cloud: { account: 'huadong-admin', tenantId: 'YT-10010101' } },
@@ -10960,6 +11040,16 @@
             drawer.setAttribute('aria-hidden', 'true');
         }
 
+        var tplLabels = {
+            none: '无业务信息',
+            dsoc: '分布式安全运营',
+            accel: '全球加速',
+            network: '全球组网',
+            mss: '安全托管服务',
+            dsp: '数据安全方案',
+            custom: '自定义动态配置'
+        };
+
         function renderConfigs() {
             var keyword = id('solutionConfigSearch').value.trim().toLowerCase();
             var filter = id('solutionConfigStatus').value;
@@ -10967,12 +11057,82 @@
                 return (!keyword || item.code.toLowerCase().indexOf(keyword) !== -1 || item.name.toLowerCase().indexOf(keyword) !== -1) && (filter === 'all' || item.status === filter);
             });
             id('solutionConfigRows').innerHTML = rows.length ? rows.map(function(item) {
-                return '<tr data-solution-config-code="' + item.code + '"><td><strong>' + item.code + '</strong></td><td>' + escapeHtml(item.name) + '</td><td><div class="solution-chip-list">' + item.productLines.map(function(line) { return '<span class="solution-chip">' + line + '</span>'; }).join('') + '</div></td><td>' + (item.authDays ? escapeHtml(String(item.authDays)) + '天' : '—') + '</td><td><span class="solution-status ' + (item.status === 'enabled' ? 'success' : 'failed') + '">' + (item.status === 'enabled' ? '启用' : '停用') + '</span></td><td>' + item.updatedAt + '</td><td><button type="button" class="solution-table-action" data-solution-config-action="edit">编辑</button><button type="button" class="solution-table-action" data-solution-config-action="toggle">' + (item.status === 'enabled' ? '停用' : '启用') + '</button></td></tr>';
-            }).join('') : '<tr><td colspan="7" style="text-align:center;color:#778194">没有符合条件的配置</td></tr>';
+                var tplName = tplLabels[item.bizTemplate] || (item.bizTemplate ? item.bizTemplate : '无业务信息');
+                var count = (item.bizFields && item.bizFields.length) ? item.bizFields.length : ((defaultBizTemplateFields[item.bizTemplate] || []).length);
+                var countStr = count > 0 ? (' (' + count + '项)') : '';
+                var bizBadge = '<td><span class="solution-biz-badge" style="display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;background:#f1f5f9;color:#334155;border:1px solid #e2e8f0;">' + escapeHtml(tplName + countStr) + '</span></td>';
+                return '<tr data-solution-config-code="' + item.code + '">' +
+                    '<td><strong>' + item.code + '</strong></td>' +
+                    '<td>' + escapeHtml(item.name) + '</td>' +
+                    '<td><div class="solution-chip-list">' + item.productLines.map(function(line) { return '<span class="solution-chip">' + line + '</span>'; }).join('') + '</div></td>' +
+                    bizBadge +
+                    '<td>' + (item.authDays ? escapeHtml(String(item.authDays)) + '天' : '—') + '</td>' +
+                    '<td><span class="solution-status ' + (item.status === 'enabled' ? 'success' : 'failed') + '">' + (item.status === 'enabled' ? '启用' : '停用') + '</span></td>' +
+                    '<td>' + item.updatedAt + '</td>' +
+                    '<td><button type="button" class="solution-table-action" data-solution-config-action="edit">编辑</button><button type="button" class="solution-table-action" data-solution-config-action="toggle">' + (item.status === 'enabled' ? '停用' : '启用') + '</button></td>' +
+                    '</tr>';
+            }).join('') : '<tr><td colspan="8" style="text-align:center;color:#778194">没有符合条件的配置</td></tr>';
             var active = enabledConfigs();
             id('solutionAssetReadSummary').textContent = '资产系统可读取 ' + active.length + ' 个启用配置';
             id('solutionLocalConfig').innerHTML = '<option value="">请选择启用方案</option>' + active.map(function(item) { return '<option value="' + item.code + '">' + item.code + ' | ' + escapeHtml(item.name) + '</option>'; }).join('');
         }
+
+        function renderModalBizFields(fields) {
+            var container = id('solutionConfigBizFieldsList');
+            if (!container) return;
+            if (!fields || !fields.length) {
+                container.innerHTML = '<div style="font-size:12px;color:#94a3b8;text-align:center;padding:12px;">该模板无需业务申请信息，或可点击上方“+ 添加业务字段”自由新增。</div>';
+                return;
+            }
+            var typeOptions = [
+                { value: 'text', label: '单行文本' },
+                { value: 'textarea', label: '多行文本' },
+                { value: 'select', label: '单选下拉' },
+                { value: 'checkbox', label: '多选复选框' },
+                { value: 'file', label: '附件上传' },
+                { value: 'number', label: '数字' }
+            ];
+            container.innerHTML = fields.map(function(f, idx) {
+                var isChoice = f.type === 'select' || f.type === 'checkbox';
+                var optVal = Array.isArray(f.options) ? f.options.join(',') : (f.options || '');
+                var typeSelectHtml = '<select class="solution-select solution-biz-field-type" style="width:105px;height:28px;font-size:12px;padding:2px 6px;">' +
+                    typeOptions.map(function(t) { return '<option value="' + t.value + '"' + (f.type === t.value ? ' selected' : '') + '>' + t.label + '</option>'; }).join('') +
+                    '</select>';
+                return '<div class="solution-biz-field-row" style="display:flex;align-items:center;gap:6px;background:#fff;padding:6px;border:1px solid #e2e8f0;border-radius:4px;" data-biz-field-idx="' + idx + '">' +
+                    '<input class="solution-input solution-biz-field-name" style="flex:1.2;height:28px;font-size:12px;padding:2px 8px;" placeholder="字段名称，如：PK友商" value="' + escapeHtml(f.name || '') + '">' +
+                    typeSelectHtml +
+                    '<input class="solution-input solution-biz-field-options" style="flex:1.5;height:28px;font-size:12px;padding:2px 8px;' + (isChoice ? '' : 'display:none;') + '" placeholder="选项用逗号隔开，如：友商A,友商B" value="' + escapeHtml(optVal) + '">' +
+                    '<label style="display:flex;align-items:center;gap:3px;font-size:11px;color:#475569;margin-bottom:0;cursor:pointer;white-space:nowrap;"><input type="checkbox" class="solution-biz-field-req"' + (f.required ? ' checked' : '') + '>必填</label>' +
+                    '<button type="button" class="solution-table-action solution-biz-field-del" style="color:#ef4444;height:24px;line-height:22px;padding:0 6px;font-size:11px;">删除</button>' +
+                    '</div>';
+            }).join('');
+        }
+
+        function readModalBizFields() {
+            var container = id('solutionConfigBizFieldsList');
+            if (!container) return [];
+            var rows = container.querySelectorAll('.solution-biz-field-row');
+            var list = [];
+            rows.forEach(function(row) {
+                var nameInput = row.querySelector('.solution-biz-field-name');
+                var typeSelect = row.querySelector('.solution-biz-field-type');
+                var optInput = row.querySelector('.solution-biz-field-options');
+                var reqCheck = row.querySelector('.solution-biz-field-req');
+                var name = nameInput ? nameInput.value.trim() : '';
+                var type = typeSelect ? typeSelect.value : 'text';
+                var optStr = optInput ? optInput.value.trim() : '';
+                var req = reqCheck ? reqCheck.checked : false;
+                var options = [];
+                if (type === 'select' || type === 'checkbox') {
+                    options = optStr ? optStr.split(',').map(function(s) { return s.trim(); }).filter(Boolean) : [];
+                }
+                if (name) {
+                    list.push({ name: name, type: type, options: options, required: req });
+                }
+            });
+            return list;
+        }
+
         function openConfigModal(code) {
             editingConfigCode = code || '';
             var item = code ? findConfig(code) : null;
@@ -10981,6 +11141,10 @@
             id('solutionConfigCode').readOnly = !!item;
             id('solutionConfigName').value = item ? item.name : '';
             id('solutionConfigAuthDays').value = item ? (item.authDays || '') : '';
+            var tpl = (item && item.bizTemplate) ? item.bizTemplate : 'none';
+            if (id('solutionConfigBizTemplate')) id('solutionConfigBizTemplate').value = tpl;
+            var currentFields = (item && item.bizFields && item.bizFields.length) ? item.bizFields : (defaultBizTemplateFields[tpl] || []);
+            renderModalBizFields(JSON.parse(JSON.stringify(currentFields)));
             id('solutionConfigChecks').innerHTML = productCatalog.map(function(line) { return '<label><input type="checkbox" value="' + line + '"' + (item && item.productLines.indexOf(line) !== -1 ? ' checked' : '') + '><span>' + line + '</span></label>'; }).join('');
             id('solutionConfigError').textContent = '';
             id('solutionConfigModal').hidden = false;
@@ -10992,6 +11156,8 @@
             var name = id('solutionConfigName').value.trim();
             var authDays = Number(id('solutionConfigAuthDays').value);
             var lines = Array.prototype.slice.call(id('solutionConfigChecks').querySelectorAll('input:checked')).map(function(input) { return input.value; });
+            var bizTemplate = id('solutionConfigBizTemplate') ? id('solutionConfigBizTemplate').value : 'none';
+            var bizFields = readModalBizFields();
             var error = '';
             if (!code) error = '请填写方案编码。';
             else if (!name) error = '请填写方案名称。';
@@ -11005,9 +11171,11 @@
                 existing.name = name;
                 existing.authDays = authDays;
                 existing.productLines = lines;
+                existing.bizTemplate = bizTemplate;
+                existing.bizFields = bizFields;
                 existing.updatedAt = '2026-08-06 10:00';
             } else {
-                configs.unshift({ code: code, name: name, productLines: lines, status: 'enabled', authDays: authDays, updatedAt: '2026-08-06 10:00' });
+                configs.unshift({ code: code, name: name, productLines: lines, status: 'enabled', authDays: authDays, bizTemplate: bizTemplate, bizFields: bizFields, updatedAt: '2026-08-06 10:00' });
             }
             closeConfigModal();
             renderConfigs();
@@ -11312,6 +11480,19 @@
             type.textContent = isKa ? 'KA客户' : '普通客户';
             type.className = 'customer-type-badge ' + (isKa ? 'ka' : 'normal');
             type.style.display = 'inline-block';
+
+            // 客户全局云图身份标签
+            var globalCloudId = prefix === 'solutionBorrowCustomer' ? 'solutionBorrowGlobalCloud' : 'solutionLocalGlobalCloud';
+            var globalCloudEl = id(globalCloudId);
+            if (globalCloudEl) {
+                if (customer.cloud && customer.cloud.tenantId) {
+                    globalCloudEl.innerHTML = '<span style="display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500;background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;"><span class="material-symbols-outlined" style="font-size:13px;">cloud_done</span>云图ID: ' + escapeHtml(customer.cloud.tenantId) + '</span>';
+                    globalCloudEl.style.display = 'inline-block';
+                } else {
+                    globalCloudEl.innerHTML = '<span style="display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500;background:#fef2f2;color:#991b1b;border:1px solid #fecaca;"><span class="material-symbols-outlined" style="font-size:13px;">cloud_off</span>未关联云图账号</span>';
+                    globalCloudEl.style.display = 'inline-block';
+                }
+            }
             refreshSolutionCustomerCloudSummary();
         }
         function clearSolutionCustomerSummary(prefix) {
@@ -11322,6 +11503,12 @@
             id(prefix + 'Type').style.display = 'none';
             id(prefix + 'Cloud').textContent = '';
             id(prefix + 'Cloud').hidden = true;
+            var globalCloudId = prefix === 'solutionBorrowCustomer' ? 'solutionBorrowGlobalCloud' : 'solutionLocalGlobalCloud';
+            var globalCloudEl = id(globalCloudId);
+            if (globalCloudEl) {
+                globalCloudEl.innerHTML = '';
+                globalCloudEl.style.display = 'none';
+            }
         }
         function selectSolutionBorrowCustomer(customer) {
             solutionBorrowCustomer = customer;
@@ -11445,7 +11632,6 @@
             var baseFields = '<div class="solution-field"><label><span class="solution-required">*</span>授权有效期<span class="solution-readonly-note"><span class="material-symbols-outlined">lock</span>统一取方案授权时间</span></label><input class="solution-input" type="date" data-solution-param="endDate" value="' + escapeHtml(values.endDate || '') + '" readonly data-solution-readonly></div>';
             var versionFields = '<div class="solution-field"><label><span class="solution-required">*</span>版本</label><input class="solution-input" data-solution-param="version" value="' + escapeHtml(values.version || '') + '"></div>';
             if (line === 'SASE-GA') {
-                // 全球加速和全球组网方案均在业务申请信息中统一填写业务字段。
                 var gaBandwidthOptions = ['5', '10', '20', '30', '50'];
                 var gaBizFields = (isAccelSolution() || isGlobalNetworkSolution()) ? '' :
                     '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>客户需求</label><textarea class="solution-input" data-solution-param="customerNeed">' + escapeHtml(values.customerNeed || '') + '</textarea></div>' +
@@ -11464,7 +11650,6 @@
             }
             if (line === 'SASE-ZTNA') {
                 var ztnaUserField = '<div class="solution-field"><label><span class="solution-required">*</span>授权用户数</label><input class="solution-input" type="number" min="1" data-solution-param="userCount" value="' + escapeHtml(values.userCount || '50') + '"></div>';
-                // 全球加速方案：业务字段（客户需求/项目规模/竞争对手）统一放业务申请信息模块
                 if (isAccelSolution()) return baseFields + ztnaUserField;
                 return baseFields +
                     ztnaUserField +
@@ -11535,7 +11720,6 @@
         function renderSolutionModuleCards(line, values) {
             var cards = solutionModuleCards[line];
             if (!cards) {
-                // 其它产品授权产品线：用 productDefaults.modules 名单生成简约卡（每张卡一个 spec 输入）
                 var names = (values.modules && values.modules.length ? values.modules : (productDefaults[line] || {}).modules || []);
                 cards = names.map(function(m) {
                     return { name: m, params: [{ label: '规格参数', key: 'spec_' + m, type: 'text', value: values.spec || '' }] };
@@ -11620,6 +11804,10 @@
                 application.cloud = solutionLocalCustomer && solutionLocalCustomer.cloud;
             }
             if (!application.applicant || !application.customer) return '请补全申请人和客户。';
+            // 所属行业校验
+            var industry = application.source === 'borrow' ? (id('solutionBorrowIndustry') ? id('solutionBorrowIndustry').value : '') : (id('solutionLocalIndustry') ? id('solutionLocalIndustry').value : '');
+            if (!industry) return '请选择客户所属行业。';
+
             if (isDsocSolution()) {
                 var biz = application.biz || {};
                 if (!biz.mainScenario || !biz.componentNotes || !biz.resalePlan || !biz.researchDoc) return '请补全业务申请信息（分布式安全运营）。';
@@ -11634,7 +11822,7 @@
                 if (!networkBiz.customerNeed || !networkBiz.projectScale || !networkBiz.competitor) return '请补全业务申请信息（全球组网）。';
             }
             var active = activeLines();
-            if (active.some(isXaasLine) && (!application.cloud || !application.cloud.tenantId)) return 'XaaS 产品线需选择已关联云图账号和云图ID的客户。';
+            if (active.some(isXaasLine) && (!application.cloud || !application.cloud.tenantId)) return '【阻断】方案包含 XaaS 产品线，客户需已关联云图账号和云图ID（未开户客户不可申请）。';
             for (var i = 0; i < active.length; i++) {
                 var line = active[i];
                 var value = application.params[line];
@@ -11739,6 +11927,14 @@
             if (typeof window.initRecordsPagination === 'function') window.initRecordsPagination();
         }
 
+        // 成对组件互斥守底规则：至少选一个（如 STA/AF，AF/aES）
+        var atLeastOnePairs = [
+            ['STA', 'AF'],
+            ['AF', 'STA'],
+            ['AF', 'aES'],
+            ['aES', 'AF']
+        ];
+
         function bindEvents() {
             document.querySelectorAll('[data-solution-drawer-close]').forEach(function(el) { el.addEventListener('click', closeSolutionConfigDrawer); });
             id('solutionSourceSelect').addEventListener('change', function() {
@@ -11786,7 +11982,21 @@
                 var toggle = event.target.closest('[data-solution-line-switch]');
                 if (toggle) {
                     var switchLine = toggle.dataset.solutionLineSwitch;
-                    application.lineSwitches[switchLine] = !isLineEnabled(switchLine);
+                    var willBeEnabled = !isLineEnabled(switchLine);
+                    application.lineSwitches[switchLine] = willBeEnabled;
+
+                    // 至少选一个交互守底逻辑：一个关闭，另一个必须开启
+                    if (!willBeEnabled) {
+                        atLeastOnePairs.forEach(function(pair) {
+                            if (pair[0] === switchLine && application.lines.indexOf(pair[1]) !== -1) {
+                                var other = pair[1];
+                                if (!isLineEnabled(other)) {
+                                    application.lineSwitches[other] = true;
+                                }
+                            }
+                        });
+                    }
+
                     if (!isLineEnabled(application.activeLine)) application.activeLine = activeLines()[0] || application.activeLine;
                     renderProductWorkspace();
                     return;
@@ -11821,7 +12031,6 @@
                 if (inputEl) {
                     application.params[application.activeLine][inputEl.dataset.solutionParam] = inputEl.value;
                     if (inputEl.dataset.solutionParam === 'isPk') renderProductWorkspace();
-                    // 分布式安全运营 XDR：切换版本后按版本重建授权模块卡
                     if (isDsocSolution() && application.activeLine === 'XDR' && inputEl.dataset.solutionParam === 'version') {
                         application.params.XDR = createParams('XDR', '', application.authEndDate, inputEl.value);
                         renderProductWorkspace();
@@ -11860,7 +12069,6 @@
             }
             id('solutionAccelBizGrid').addEventListener('input', collectAccelBizParam);
             id('solutionAccelBizGrid').addEventListener('change', collectAccelBizParam);
-            // 方案型模块卡片：toggle 开关 + 卡头展开/收起
             id('solutionProductPanel').addEventListener('click', function(event) {
                 var toggle = event.target.closest('[data-solution-module-toggle]');
                 if (toggle) {
@@ -11904,6 +12112,49 @@
             id('solutionConfigReset').addEventListener('click', function() { id('solutionConfigSearch').value = ''; id('solutionConfigStatus').value = 'all'; renderConfigs(); });
             id('solutionConfigRows').addEventListener('click', function(event) { var action = event.target.closest('[data-solution-config-action]'); if (!action) return; var code = action.closest('[data-solution-config-code]').dataset.solutionConfigCode; if (action.dataset.solutionConfigAction === 'edit') openConfigModal(code); else toggleConfig(code); });
             id('solutionAssetRead').addEventListener('click', function() { var payload = enabledConfigs().map(function(item) { return { solutionCode: item.code, solutionName: item.name, status: 'enabled', productLines: item.productLines, authDays: Number(item.authDays) || 0 }; }); id('solutionAssetPreview').textContent = JSON.stringify(payload, null, 2); id('solutionAssetPreview').hidden = false; });
+
+            // 业务信息模板切换与自由配置字段事件绑定
+            if (id('solutionConfigBizTemplate')) {
+                id('solutionConfigBizTemplate').addEventListener('change', function() {
+                    var tpl = this.value;
+                    var fields = defaultBizTemplateFields[tpl] || [];
+                    renderModalBizFields(JSON.parse(JSON.stringify(fields)));
+                });
+            }
+            if (id('solutionConfigAddFieldBtn')) {
+                id('solutionConfigAddFieldBtn').addEventListener('click', function() {
+                    var current = readModalBizFields();
+                    current.push({ name: '', type: 'text', options: [], required: true });
+                    renderModalBizFields(current);
+                    var container = id('solutionConfigBizFieldsList');
+                    var rows = container.querySelectorAll('.solution-biz-field-row');
+                    if (rows.length) {
+                        var last = rows[rows.length - 1];
+                        var nameInp = last.querySelector('.solution-biz-field-name');
+                        if (nameInp) nameInp.focus();
+                    }
+                });
+            }
+            if (id('solutionConfigBizFieldsList')) {
+                id('solutionConfigBizFieldsList').addEventListener('change', function(event) {
+                    var target = event.target;
+                    if (target.classList.contains('solution-biz-field-type')) {
+                        var row = target.closest('.solution-biz-field-row');
+                        var optInp = row ? row.querySelector('.solution-biz-field-options') : null;
+                        if (optInp) {
+                            var isChoice = target.value === 'select' || target.value === 'checkbox';
+                            optInp.style.display = isChoice ? 'block' : 'none';
+                        }
+                    }
+                });
+                id('solutionConfigBizFieldsList').addEventListener('click', function(event) {
+                    var delBtn = event.target.closest('.solution-biz-field-del');
+                    if (delBtn) {
+                        var row = delBtn.closest('.solution-biz-field-row');
+                        if (row) row.remove();
+                    }
+                });
+            }
         }
         function toggleSettingsDropdown() {
             var menu = document.getElementById('settingsDropdownMenu');
