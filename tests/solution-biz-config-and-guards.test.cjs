@@ -67,23 +67,44 @@ test('业务申请信息自由配置引擎：配置抽屉支持选择模板、�
   } finally { dom.window.close(); }
 });
 
-test('客户信息与所属行业及全局云图身份展示', () => {
+test('客户信息与所属行业（对齐XaaS二级联动与备注）及全局云图身份展示', () => {
   const { dom, document, window, errors } = loadV2Dom();
   try {
     openSolutionTab(document);
 
-    // 检查所属行业下拉
-    const industrySelect = document.getElementById('solutionBorrowIndustry');
-    assert.ok(industrySelect, '应存在借测模式所属行业下拉');
-    assert.equal(industrySelect.value, '大企业', '默认选中大企业');
-    assert.match(industrySelect.textContent, /政府/);
-    assert.match(industrySelect.textContent, /金融/);
+    // 检查行业标签及备注 Tooltip（1:1 对齐 XaaS）
+    const industryRow = document.getElementById('solutionBorrowIndustryRow');
+    assert.ok(industryRow, '应存在借测模式行业行');
+    assert.match(industryRow.textContent, /行业/);
+    assert.match(industryRow.textContent, /行业 备注/);
+    assert.match(industryRow.textContent, /一级行业选择后，二级行业根据一级分类联动展示/);
 
-    // 搜索并选择有云图账号的客户
+    // 检查一级与二级行业下拉
+    const l1Select = document.getElementById('solution-borrow-industry-l1');
+    const l2Select = document.getElementById('solution-borrow-industry-l2');
+    assert.ok(l1Select, '应存在一级行业下拉');
+    assert.ok(l2Select, '应存在二级行业下拉');
+    assert.equal(l1Select.value, '', '初始一级行业为空');
+    assert.equal(l2Select.disabled, true, '初始二级行业未选一级前处于禁用态');
+    assert.match(l1Select.textContent, /政府/);
+    assert.match(l1Select.textContent, /制造业/);
+
+    // 手动切换一级行业为政府，检查二级行业联动
+    l1Select.value = '政府';
+    l1Select.dispatchEvent(new window.Event('change', { bubbles: true }));
+    assert.equal(l2Select.disabled, false, '选择一级行业后二级行业应解除禁用');
+    assert.match(l2Select.textContent, /中央部委/);
+    assert.match(l2Select.textContent, /省市级政府/);
+
+    // 搜索并选择有云图账号与行业的客户（华东智造，CRM带入行业）
     const input = document.getElementById('solutionBorrowCustomerSearch');
     input.value = 'C100101';
     input.dispatchEvent(new window.Event('input', { bubbles: true }));
     document.querySelector('[data-solution-borrow-customer="C100101"]').click();
+
+    // 检查 CRM 自动回填一级与二级行业
+    assert.equal(l1Select.value, '制造业', '客户选择后应自动带入一级行业制造业');
+    assert.equal(l2Select.value, '机械制造', '客户选择后应自动带入二级行业机械制造');
 
     // 检查全局云图身份标签
     const globalCloud = document.getElementById('solutionBorrowGlobalCloud');

@@ -3469,23 +3469,66 @@
                             </div>
                             <div class="solution-card-body" id="solutionBorrowSource">
                                 <div class="solution-form-grid solution-borrow-query-grid">
-                                    <div class="solution-form-row solution-form-row-full" id="solutionBorrowIndustryRow" style="display:flex;align-items:center;gap:12px;">
-                                        <label class="solution-form-label" for="solutionBorrowIndustry" style="min-width:60px;"><span class="solution-required">*</span>所属行业</label>
-                                        <div class="solution-form-control" style="flex:1;">
-                                            <select class="solution-select" id="solutionBorrowIndustry" style="max-width:320px;">
-                                                <option value="">请选择客户所属行业</option>
-                                                <option value="政府">政府</option>
-                                                <option value="金融">金融</option>
-                                                <option value="能源">能源</option>
-                                                <option value="大企业" selected>大企业</option>
-                                                <option value="交通">交通</option>
-                                                <option value="数字政府">数字政府</option>
-                                                <option value="部委">部委</option>
-                                                <option value="教育">教育</option>
-                                                <option value="医疗">医疗</option>
-                                                <option value="军工">军工</option>
-                                                <option value="其他">其他</option>
-                                            </select>
+                                    <div class="solution-form-row solution-form-row-full" id="solutionBorrowIndustryRow">
+                                        <label class="solution-form-label">行业<span class="required-star">*</span>
+                                            <span class="field-tooltip"><span class="tooltip-icon">ⓘ</span>
+                                                <div class="tooltip-popup">
+                                                    <button class="tooltip-copy" onclick="copyTooltip(this)">复制</button>
+                                                    <div class="tooltip-title">行业 备注</div>
+                                                    <div class="tooltip-section"><span class="tooltip-label">用户故事：</span>选择客户所属行业分类，用于客户分层管理和行业化运营分析。</div>
+                                                    <div class="tooltip-section"><span class="tooltip-label">交互规则：</span>一级行业选择后，二级行业根据一级分类联动展示，提交时两级均必填。</div>
+                                                </div>
+                                            </span>
+                                        </label>
+                                        <div class="solution-form-control">
+                                            <div class="xaas-industry-row">
+                                                <div class="custom-select" data-select-id="solution-borrow-industry-l1">
+                                                    <select class="layui-select" id="solution-borrow-industry-l1" style="display:none;">
+                                                        <option value="">请选择一级行业</option>
+                                                        <option value="政府">政府</option>
+                                                        <option value="金融">金融</option>
+                                                        <option value="教育">教育</option>
+                                                        <option value="医疗">医疗</option>
+                                                        <option value="互联网">互联网</option>
+                                                        <option value="制造业">制造业</option>
+                                                        <option value="能源">能源</option>
+                                                        <option value="交通">交通</option>
+                                                        <option value="运营商">运营商</option>
+                                                    </select>
+                                                    <button type="button" class="custom-select-trigger">
+                                                        <span class="custom-select-value">请选择一级行业</span>
+                                                        <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                                    </button>
+                                                    <div class="custom-select-dropdown">
+                                                        <ul class="custom-select-list">
+                                                            <li class="custom-select-option" data-value="">请选择一级行业</li>
+                                                            <li class="custom-select-option" data-value="政府">政府</li>
+                                                            <li class="custom-select-option" data-value="金融">金融</li>
+                                                            <li class="custom-select-option" data-value="教育">教育</li>
+                                                            <li class="custom-select-option" data-value="医疗">医疗</li>
+                                                            <li class="custom-select-option" data-value="互联网">互联网</li>
+                                                            <li class="custom-select-option" data-value="制造业">制造业</li>
+                                                            <li class="custom-select-option" data-value="能源">能源</li>
+                                                            <li class="custom-select-option" data-value="交通">交通</li>
+                                                            <li class="custom-select-option" data-value="运营商">运营商</li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div class="custom-select" data-select-id="solution-borrow-industry-l2">
+                                                    <select class="layui-select" id="solution-borrow-industry-l2" style="display:none;" disabled>
+                                                        <option value="">请选择二级行业</option>
+                                                    </select>
+                                                    <button type="button" class="custom-select-trigger" disabled style="opacity:0.65;cursor:not-allowed;">
+                                                        <span class="custom-select-value">请选择二级行业</span>
+                                                        <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                                    </button>
+                                                    <div class="custom-select-dropdown">
+                                                        <ul class="custom-select-list">
+                                                            <li class="custom-select-option" data-value="">请选择二级行业</li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="solution-form-row solution-form-row-full" id="solutionBorrowCustomerField">
@@ -3527,23 +3570,66 @@
                                 <div class="solution-form-grid">
                                     <div class="solution-form-row"><label class="solution-form-label" for="solutionLocalConfig"><span class="solution-required">*</span>解决方案</label><div class="solution-form-control"><select class="solution-select" id="solutionLocalConfig"><option value="">请选择启用方案</option></select></div></div>
                                     <div class="solution-form-row"><label class="solution-form-label" for="solutionEmail">接收邮箱</label><div class="solution-form-control"><input class="solution-input" id="solutionEmail" placeholder="请输入接收邮箱，建议优先填写客户邮箱" title="用于接收授权结果及相关文件"></div></div>
-                                    <div class="solution-form-row" id="solutionLocalIndustryRow">
-                                        <label class="solution-form-label" for="solutionLocalIndustry"><span class="solution-required">*</span>所属行业</label>
+                                    <div class="solution-form-row solution-form-row-full" id="solutionLocalIndustryRow">
+                                        <label class="solution-form-label">行业<span class="required-star">*</span>
+                                            <span class="field-tooltip"><span class="tooltip-icon">ⓘ</span>
+                                                <div class="tooltip-popup">
+                                                    <button class="tooltip-copy" onclick="copyTooltip(this)">复制</button>
+                                                    <div class="tooltip-title">行业 备注</div>
+                                                    <div class="tooltip-section"><span class="tooltip-label">用户故事：</span>选择客户所属行业分类，用于客户分层管理和行业化运营分析。</div>
+                                                    <div class="tooltip-section"><span class="tooltip-label">交互规则：</span>一级行业选择后，二级行业根据一级分类联动展示，提交时两级均必填。</div>
+                                                </div>
+                                            </span>
+                                        </label>
                                         <div class="solution-form-control">
-                                            <select class="solution-select" id="solutionLocalIndustry">
-                                                <option value="">请选择客户所属行业</option>
-                                                <option value="政府">政府</option>
-                                                <option value="金融">金融</option>
-                                                <option value="能源">能源</option>
-                                                <option value="大企业" selected>大企业</option>
-                                                <option value="交通">交通</option>
-                                                <option value="数字政府">数字政府</option>
-                                                <option value="部委">部委</option>
-                                                <option value="教育">教育</option>
-                                                <option value="医疗">医疗</option>
-                                                <option value="军工">军工</option>
-                                                <option value="其他">其他</option>
-                                            </select>
+                                            <div class="xaas-industry-row">
+                                                <div class="custom-select" data-select-id="solution-local-industry-l1">
+                                                    <select class="layui-select" id="solution-local-industry-l1" style="display:none;">
+                                                        <option value="">请选择一级行业</option>
+                                                        <option value="政府">政府</option>
+                                                        <option value="金融">金融</option>
+                                                        <option value="教育">教育</option>
+                                                        <option value="医疗">医疗</option>
+                                                        <option value="互联网">互联网</option>
+                                                        <option value="制造业">制造业</option>
+                                                        <option value="能源">能源</option>
+                                                        <option value="交通">交通</option>
+                                                        <option value="运营商">运营商</option>
+                                                    </select>
+                                                    <button type="button" class="custom-select-trigger">
+                                                        <span class="custom-select-value">请选择一级行业</span>
+                                                        <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                                    </button>
+                                                    <div class="custom-select-dropdown">
+                                                        <ul class="custom-select-list">
+                                                            <li class="custom-select-option" data-value="">请选择一级行业</li>
+                                                            <li class="custom-select-option" data-value="政府">政府</li>
+                                                            <li class="custom-select-option" data-value="金融">金融</li>
+                                                            <li class="custom-select-option" data-value="教育">教育</li>
+                                                            <li class="custom-select-option" data-value="医疗">医疗</li>
+                                                            <li class="custom-select-option" data-value="互联网">互联网</li>
+                                                            <li class="custom-select-option" data-value="制造业">制造业</li>
+                                                            <li class="custom-select-option" data-value="能源">能源</li>
+                                                            <li class="custom-select-option" data-value="交通">交通</li>
+                                                            <li class="custom-select-option" data-value="运营商">运营商</li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div class="custom-select" data-select-id="solution-local-industry-l2">
+                                                    <select class="layui-select" id="solution-local-industry-l2" style="display:none;" disabled>
+                                                        <option value="">请选择二级行业</option>
+                                                    </select>
+                                                    <button type="button" class="custom-select-trigger" disabled style="opacity:0.65;cursor:not-allowed;">
+                                                        <span class="custom-select-value">请选择二级行业</span>
+                                                        <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                                    </button>
+                                                    <div class="custom-select-dropdown">
+                                                        <ul class="custom-select-list">
+                                                            <li class="custom-select-option" data-value="">请选择二级行业</li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="solution-form-row solution-form-row-full" id="solutionLocalCustomerField">
@@ -5428,6 +5514,7 @@
             '交通': ['航空', '铁路', '公路', '港口航运'],
             '运营商': ['中国移动', '中国电信', '中国联通', '中国广电']
         };
+        window.xaasIndustryMap = xaasIndustryMap;
         function updateXaasIndustryL2() {
             var l1 = document.getElementById('xaas-industry-l1');
             var l2 = document.getElementById('xaas-industry-l2');
@@ -10978,15 +11065,15 @@
         var solutionBorrowCustomer = null;
         var solutionLocalCustomer = null;
         var solutionBorrowCustomers = [
-            { id: 'C100101', name: '华东智造集团有限公司', type: 'KA', sales: '周青', orders: ['BOR-202608-001'], cloud: { account: 'huadong-admin', tenantId: 'YT-10010101' } },
-            { id: 'C100102', name: '北辰智慧能源有限公司', type: 'normal', sales: '赵凯', orders: ['BOR-202608-002'] },
-            { id: 'C100103', name: '苏州新零售集团有限公司', type: 'KA', sales: '林舟', orders: ['BOR-202608-003'] },
-            { id: 'C100104', name: '西南智慧物流有限公司', type: 'normal', sales: '陈颖', orders: ['BOR-202608-004'] },
-            { id: 'C100105', name: '星澜数字服务有限公司', type: 'normal', sales: '沈思', orders: ['BOR-202608-ERR'] },
-            { id: 'C100106', name: '星海智联科技有限公司', type: 'KA', sales: '许岚', orders: ['BOR-202608-005'], cloud: { account: 'xinghai-admin', tenantId: 'YT-10010688' } },
-            { id: 'C100107', name: '环球致远贸易有限公司', type: 'KA', sales: '宋雨', orders: ['BOR-202608-006'], cloud: { account: 'global-admin', tenantId: 'YT-10010777' } },
-            { id: 'C100108', name: '环宇速联科技有限公司', type: 'KA', sales: '宋雨', orders: ['BOR-202608-007'], cloud: { account: 'oceanlink-admin', tenantId: 'YT-10010888' } },
-            { id: 'C100109', name: '明澈水务集团有限公司', type: 'KA', sales: '许岚', orders: ['BOR-202608-008'], cloud: { account: 'mingche-admin', tenantId: 'YT-10010999' } }
+            { id: 'C100101', name: '华东智造集团有限公司', type: 'KA', sales: '周青', orders: ['BOR-202608-001'], cloud: { account: 'huadong-admin', tenantId: 'YT-10010101' }, industryL1: '制造业', industryL2: '机械制造' },
+            { id: 'C100102', name: '北辰智慧能源有限公司', type: 'normal', sales: '赵凯', orders: ['BOR-202608-002'], industryL1: '能源', industryL2: '电力' },
+            { id: 'C100103', name: '苏州新零售集团有限公司', type: 'KA', sales: '林舟', orders: ['BOR-202608-003'], industryL1: '互联网', industryL2: '电商' },
+            { id: 'C100104', name: '西南智慧物流有限公司', type: 'normal', sales: '陈颖', orders: ['BOR-202608-004'], industryL1: '交通', industryL2: '公路' },
+            { id: 'C100105', name: '星澜数字服务有限公司', type: 'normal', sales: '沈思', orders: ['BOR-202608-ERR'], industryL1: '互联网', industryL2: 'SaaS企业' },
+            { id: 'C100106', name: '星海智联科技有限公司', type: 'KA', sales: '许岚', orders: ['BOR-202608-005'], cloud: { account: 'xinghai-admin', tenantId: 'YT-10010688' }, industryL1: '互联网', industryL2: '平台型企业' },
+            { id: 'C100107', name: '环球致远贸易有限公司', type: 'KA', sales: '宋雨', orders: ['BOR-202608-006'], cloud: { account: 'global-admin', tenantId: 'YT-10010777' }, industryL1: '互联网', industryL2: '电商' },
+            { id: 'C100108', name: '环宇速联科技有限公司', type: 'KA', sales: '宋雨', orders: ['BOR-202608-007'], cloud: { account: 'oceanlink-admin', tenantId: 'YT-10010888' }, industryL1: '互联网', industryL2: '平台型企业' },
+            { id: 'C100109', name: '明澈水务集团有限公司', type: 'KA', sales: '许岚', orders: ['BOR-202608-008'], cloud: { account: 'mingche-admin', tenantId: 'YT-10010999' }, industryL1: '政府', industryL2: '省市级政府' }
         ];
         // 分布式安全运营方案专用业务申请字段默认值（Mock 预填）
         var solutionBizDefaults = {
@@ -11510,6 +11597,69 @@
                 globalCloudEl.style.display = 'none';
             }
         }
+        function updateSolutionIndustryCascade(l1Id, l2Id) {
+            var l1 = document.getElementById(l1Id);
+            var l2 = document.getElementById(l2Id);
+            if (!l1 || !l2) return;
+            var map = (typeof window !== 'undefined' && window.xaasIndustryMap) ? window.xaasIndustryMap : {};
+            var list = map[l1.value] || [];
+            var l2Container = document.querySelector('[data-select-id="' + l2Id + '"]');
+            var items = [{ value: '', label: '请选择二级行业' }].concat(list.map(function(name) {
+                return { value: name, label: name };
+            }));
+            if (l2Container && l2Container._replaceOptions) {
+                l2Container._replaceOptions(items);
+            } else {
+                l2.innerHTML = items.map(function(item) {
+                    return '<option value="' + escapeHtml(item.value) + '">' + escapeHtml(item.label) + '</option>';
+                }).join('');
+                if (l2Container) {
+                    var l2List = l2Container.querySelector('.custom-select-list');
+                    if (l2List) {
+                        l2List.innerHTML = items.map(function(item, idx) {
+                            return '<li class="custom-select-option' + (idx === 0 ? ' selected' : '') + '" data-value="' + escapeHtml(item.value) + '">' + escapeHtml(item.label) + '</li>';
+                        }).join('');
+                    }
+                    if (l2Container._resetToDefault) l2Container._resetToDefault();
+                }
+            }
+            l2.disabled = list.length === 0;
+            var trigger = l2Container ? l2Container.querySelector('.custom-select-trigger') : null;
+            if (trigger) {
+                trigger.disabled = list.length === 0;
+                trigger.style.opacity = list.length === 0 ? '0.65' : '1';
+                trigger.style.cursor = list.length === 0 ? 'not-allowed' : 'pointer';
+            }
+        }
+        function updateSolutionBorrowIndustryL2() {
+            updateSolutionIndustryCascade('solution-borrow-industry-l1', 'solution-borrow-industry-l2');
+        }
+        function updateSolutionLocalIndustryL2() {
+            updateSolutionIndustryCascade('solution-local-industry-l1', 'solution-local-industry-l2');
+        }
+        function setSolutionIndustry(source, l1Val, l2Val) {
+            var prefix = source === 'borrow' ? 'solution-borrow-industry' : 'solution-local-industry';
+            var l1Id = prefix + '-l1';
+            var l2Id = prefix + '-l2';
+            var l1 = document.getElementById(l1Id);
+            var l2 = document.getElementById(l2Id);
+            var l1Container = document.querySelector('[data-select-id="' + l1Id + '"]');
+            var l2Container = document.querySelector('[data-select-id="' + l2Id + '"]');
+
+            if (l1Val) {
+                if (l1) l1.value = l1Val;
+                if (l1Container && l1Container._setValue) l1Container._setValue(l1Val);
+                updateSolutionIndustryCascade(l1Id, l2Id);
+                if (l2Val) {
+                    if (l2) l2.value = l2Val;
+                    if (l2Container && l2Container._setValue) l2Container._setValue(l2Val);
+                }
+            } else {
+                if (l1) l1.value = '';
+                if (l1Container && l1Container._resetToDefault) l1Container._resetToDefault();
+                updateSolutionIndustryCascade(l1Id, l2Id);
+            }
+        }
         function selectSolutionBorrowCustomer(customer) {
             solutionBorrowCustomer = customer;
             id('solutionBorrowCustomerSearch').value = customer.name;
@@ -11517,6 +11667,9 @@
             id('solutionBorrowCustomerInfoDisplay').classList.add('show');
             id('solutionBorrowCustomerField').classList.add('has-selection');
             id('solutionBorrowCustomerDropdown').classList.remove('show');
+            if (customer && customer.industryL1) {
+                setSolutionIndustry('borrow', customer.industryL1, customer.industryL2);
+            }
             renderSolutionBorrowOrders();
             resetSolutionBorrowLookup();
         }
@@ -11524,6 +11677,7 @@
             solutionBorrowCustomer = null;
             id('solutionBorrowCustomerSearch').value = '';
             clearSolutionCustomerSummary('solutionBorrowCustomer');
+            setSolutionIndustry('borrow', '', '');
             id('solutionBorrowCustomerInfoDisplay').classList.remove('show');
             id('solutionBorrowCustomerField').classList.remove('has-selection');
             id('solutionBorrowCustomerDropdown').classList.remove('show');
@@ -11537,12 +11691,16 @@
             id('solutionLocalCustomerInfoDisplay').classList.add('show');
             id('solutionLocalCustomerField').classList.add('has-selection');
             id('solutionLocalCustomerDropdown').classList.remove('show');
+            if (customer && customer.industryL1) {
+                setSolutionIndustry('local', customer.industryL1, customer.industryL2);
+            }
             if (id('solutionLocalConfig').value) selectLocalSolution();
         }
         function clearSolutionLocalCustomer(shouldReset) {
             solutionLocalCustomer = null;
             id('solutionLocalCustomerSearch').value = '';
             clearSolutionCustomerSummary('solutionLocalCustomer');
+            setSolutionIndustry('local', '', '');
             id('solutionLocalCustomerInfoDisplay').classList.remove('show');
             id('solutionLocalCustomerField').classList.remove('has-selection');
             id('solutionLocalCustomerDropdown').classList.remove('show');
@@ -11804,9 +11962,16 @@
                 application.cloud = solutionLocalCustomer && solutionLocalCustomer.cloud;
             }
             if (!application.applicant || !application.customer) return '请补全申请人和客户。';
-            // 所属行业校验
-            var industry = application.source === 'borrow' ? (id('solutionBorrowIndustry') ? id('solutionBorrowIndustry').value : '') : (id('solutionLocalIndustry') ? id('solutionLocalIndustry').value : '');
-            if (!industry) return '请选择客户所属行业。';
+            // 行业校验（一级与二级联动，两级均必填）
+            var l1Id = application.source === 'borrow' ? 'solution-borrow-industry-l1' : 'solution-local-industry-l1';
+            var l2Id = application.source === 'borrow' ? 'solution-borrow-industry-l2' : 'solution-local-industry-l2';
+            var l1Val = id(l1Id) ? id(l1Id).value : '';
+            var l2Val = id(l2Id) ? id(l2Id).value : '';
+            if (!l1Val) return '请选择一级行业。';
+            if (!l2Val) return '请选择二级行业。';
+            application.industryL1 = l1Val;
+            application.industryL2 = l2Val;
+            application.industry = l1Val + ' / ' + l2Val;
 
             if (isDsocSolution()) {
                 var biz = application.biz || {};
@@ -11978,6 +12143,10 @@
             });
             id('solutionBorrowLookup').addEventListener('click', lookupBorrowOrder);
             id('solutionLocalConfig').addEventListener('change', selectLocalSolution);
+            var sbL1 = id('solution-borrow-industry-l1');
+            if (sbL1) sbL1.addEventListener('change', updateSolutionBorrowIndustryL2);
+            var slL1 = id('solution-local-industry-l1');
+            if (slL1) slL1.addEventListener('change', updateSolutionLocalIndustryL2);
             id('solutionProductNav').addEventListener('click', function(event) {
                 var toggle = event.target.closest('[data-solution-line-switch]');
                 if (toggle) {
