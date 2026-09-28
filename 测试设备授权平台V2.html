@@ -1191,7 +1191,8 @@
         .solution-btn.danger { color: #ba1a1a; border-color: #ebc7c3; background: #fff5f4; }
         .solution-lookup-state { margin-top: 12px; padding: 10px 12px; border: 1px solid #efd89b; border-radius: 8px; color: #754f08; background: #fff8e7; font-size: 13px; line-height: 20px; }
         .solution-lookup-state.error { color: #9d3028; border-color: #efc9c5; background: #fff5f4; }
-        .solution-info-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; max-width: 860px; margin: 14px auto 0; }
+        .solution-info-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; max-width: 860px; margin: 14px auto 18px; }
+        #solutionEmailRow { margin: 0 auto; }
         .solution-info-item { padding: 10px 12px; border: 1px solid #e6ecf7; border-radius: 8px; background: #fff; font-size: 13px; }
         .solution-info-item small { display: block; margin-bottom: 4px; color: #778194; font-size: 12px; }
         .solution-chip-list { display: flex; flex-wrap: wrap; gap: 6px; min-height: 38px; align-items: center; }
@@ -3470,7 +3471,7 @@
                             <div class="solution-card-body" id="solutionBorrowSource">
                                 <div class="solution-form-grid solution-borrow-query-grid">
                                     <div class="solution-form-row solution-form-row-full" id="solutionBorrowIndustryRow">
-                                        <label class="solution-form-label">行业<span class="required-star">*</span>
+                                        <label class="solution-form-label"><span class="solution-required">*</span>行业
                                             <span class="field-tooltip"><span class="tooltip-icon">ⓘ</span>
                                                 <div class="tooltip-popup">
                                                     <button class="tooltip-copy" onclick="copyTooltip(this)">复制</button>
@@ -3568,10 +3569,9 @@
                             </div>
                             <div class="solution-card-body" id="solutionLocalSource" hidden>
                                 <div class="solution-form-grid">
-                                    <div class="solution-form-row"><label class="solution-form-label" for="solutionLocalConfig"><span class="solution-required">*</span>解决方案</label><div class="solution-form-control"><select class="solution-select" id="solutionLocalConfig"><option value="">请选择启用方案</option></select></div></div>
-                                    <div class="solution-form-row"><label class="solution-form-label" for="solutionEmail">接收邮箱</label><div class="solution-form-control"><input class="solution-input" id="solutionEmail" placeholder="请输入接收邮箱，建议优先填写客户邮箱" title="用于接收授权结果及相关文件"></div></div>
+                                    <div class="solution-form-row solution-form-row-full"><label class="solution-form-label" for="solutionLocalConfig"><span class="solution-required">*</span>解决方案</label><div class="solution-form-control"><select class="solution-select" id="solutionLocalConfig"><option value="">请选择启用方案</option></select></div></div>
                                     <div class="solution-form-row solution-form-row-full" id="solutionLocalIndustryRow">
-                                        <label class="solution-form-label">行业<span class="required-star">*</span>
+                                        <label class="solution-form-label"><span class="solution-required">*</span>行业
                                             <span class="field-tooltip"><span class="tooltip-icon">ⓘ</span>
                                                 <div class="tooltip-popup">
                                                     <button class="tooltip-copy" onclick="copyTooltip(this)">复制</button>
@@ -3653,6 +3653,41 @@
                                                 <button type="button" class="customer-change-button" id="solutionLocalCustomerChange" title="重新选择客户"><span class="material-symbols-outlined" aria-hidden="true">edit</span><span>更换</span></button>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 联系人手机号与接收邮箱：公共字段，关联借测单与纯软件本地申请均展示 -->
+                            <div class="solution-form-grid" id="solutionEmailRow">
+                                <div class="solution-form-row">
+                                    <label class="solution-form-label" for="solutionContactPhone">
+                                        <span class="solution-required" id="solutionContactPhoneRequired" style="display:none;">*</span>联系人手机号
+                                        <span class="field-tooltip"><span class="tooltip-icon">ⓘ</span>
+                                            <div class="tooltip-popup">
+                                                <button class="tooltip-copy" onclick="copyTooltip(this)">复制</button>
+                                                <div class="tooltip-title">联系人手机号 备注</div>
+                                                <div class="tooltip-section"><span class="tooltip-label">业务规则：</span>深信服云图账号以手机号为核心匹配标识。方案涉及 XaaS 开通时，联系人手机号为必填，用于匹配云图租户账号。</div>
+                                                <div class="tooltip-section"><span class="tooltip-label">交互规则：</span>输入11位手机号后自动匹配云图账号与租户；纯硬件方案选填，涉及 XaaS 时必填。</div>
+                                            </div>
+                                        </span>
+                                    </label>
+                                    <div class="solution-form-control">
+                                        <input type="tel" class="solution-input" id="solutionContactPhone" maxlength="11" placeholder="请输入11位客户联系人手机号" autocomplete="off">
+                                        <p class="solution-field-hint" id="solutionContactPhoneHint" style="font-size:12px;color:#757782;margin:4px 0 0 0;">输入11位手机号自动匹配云图账号；涉及 XaaS 开通时必填。</p>
+                                    </div>
+                                </div>
+                                <div class="solution-form-row">
+                                    <label class="solution-form-label" for="solutionEmail">接收邮箱
+                                        <span class="field-tooltip"><span class="tooltip-icon">ⓘ</span>
+                                            <div class="tooltip-popup">
+                                                <button class="tooltip-copy" onclick="copyTooltip(this)">复制</button>
+                                                <div class="tooltip-title">接收邮箱 备注</div>
+                                                <div class="tooltip-section"><span class="tooltip-label">用户故事：</span>用于接收授权审批结果通知及 License 凭证文件。</div>
+                                                <div class="tooltip-section"><span class="tooltip-label">交互规则：</span>非必填；优先自动带入客户联系邮箱，支持手动修改；输入时校验邮箱格式。</div>
+                                            </div>
+                                        </span>
+                                    </label>
+                                    <div class="solution-form-control">
+                                        <input class="solution-input" id="solutionEmail" placeholder="请输入接收邮箱，建议优先填写客户邮箱" title="用于接收授权结果及相关文件">
                                     </div>
                                 </div>
                             </div>
@@ -9561,6 +9596,7 @@
             appendRecordDetailItems(document.getElementById('recordProductDeliveryGrid'), productDetail.delivery);
         } else {
             var hasAuthorization = data.status === '已授权' || data.status === '已过期';
+            var solutionEmail = row.getAttribute('data-solution-email') || ((typeof application !== 'undefined' && application.email) ? application.email : 'license-recipient@sangfor.com.cn');
             appendRecordDetailItems(document.getElementById('recordAuthorizationGrid'), [
                 { label: '产品线/方案', value: data.product },
                 { label: '版本号', value: data.version },
@@ -9568,7 +9604,8 @@
                 { label: '授权有效期', value: data.validity },
                 { label: '授权内容', value: getRecordModules(data.product) },
                 { label: '授权码', value: hasAuthorization ? 'LIC-' + data.applicationNo.replace(/[^A-Z0-9]/gi, '').slice(-12) : '待生成', code: true },
-                { label: '授权文件', value: hasAuthorization ? '授权信息-' + data.applicationNo : '待生成' }
+                { label: '授权文件', value: hasAuthorization ? '授权信息-' + data.applicationNo : '待生成' },
+                { label: '接收邮箱', value: solutionEmail, full: true }
             ]);
         }
         appendRecordDetailItems(document.getElementById('recordApprovalGrid'), [
@@ -11051,7 +11088,7 @@
             'BOR-202608-004': { number: 'BOR-202608-004', approvalStatus: '审批通过', returned: false, revoked: true },
             'BOR-202608-ERR': { number: 'BOR-202608-ERR', error: true }
         };
-        var application = { source: 'borrow', solution: null, lines: [], params: {}, biz: {}, accelBiz: {}, networkBiz: {}, applicant: '', customer: '', cloud: null, borrow: null, authDays: 0, authEndDate: '', activeLine: '', status: 'draft', recordId: '' };
+        var application = { source: 'borrow', solution: null, lines: [], params: {}, biz: {}, accelBiz: {}, networkBiz: {}, applicant: '', customer: '', email: '', contactPhone: '', cloud: null, borrow: null, authDays: 0, authEndDate: '', activeLine: '', status: 'draft', recordId: '' };
         var editingConfigCode = '';
         function getCurrentApplicant() {
             var userNameEl = document.querySelector('.header-user .user-name');
@@ -11065,15 +11102,15 @@
         var solutionBorrowCustomer = null;
         var solutionLocalCustomer = null;
         var solutionBorrowCustomers = [
-            { id: 'C100101', name: '华东智造集团有限公司', type: 'KA', sales: '周青', orders: ['BOR-202608-001'], cloud: { account: 'huadong-admin', tenantId: 'YT-10010101' }, industryL1: '制造业', industryL2: '机械制造' },
-            { id: 'C100102', name: '北辰智慧能源有限公司', type: 'normal', sales: '赵凯', orders: ['BOR-202608-002'], industryL1: '能源', industryL2: '电力' },
-            { id: 'C100103', name: '苏州新零售集团有限公司', type: 'KA', sales: '林舟', orders: ['BOR-202608-003'], industryL1: '互联网', industryL2: '电商' },
-            { id: 'C100104', name: '西南智慧物流有限公司', type: 'normal', sales: '陈颖', orders: ['BOR-202608-004'], industryL1: '交通', industryL2: '公路' },
-            { id: 'C100105', name: '星澜数字服务有限公司', type: 'normal', sales: '沈思', orders: ['BOR-202608-ERR'], industryL1: '互联网', industryL2: 'SaaS企业' },
-            { id: 'C100106', name: '星海智联科技有限公司', type: 'KA', sales: '许岚', orders: ['BOR-202608-005'], cloud: { account: 'xinghai-admin', tenantId: 'YT-10010688' }, industryL1: '互联网', industryL2: '平台型企业' },
-            { id: 'C100107', name: '环球致远贸易有限公司', type: 'KA', sales: '宋雨', orders: ['BOR-202608-006'], cloud: { account: 'global-admin', tenantId: 'YT-10010777' }, industryL1: '互联网', industryL2: '电商' },
-            { id: 'C100108', name: '环宇速联科技有限公司', type: 'KA', sales: '宋雨', orders: ['BOR-202608-007'], cloud: { account: 'oceanlink-admin', tenantId: 'YT-10010888' }, industryL1: '互联网', industryL2: '平台型企业' },
-            { id: 'C100109', name: '明澈水务集团有限公司', type: 'KA', sales: '许岚', orders: ['BOR-202608-008'], cloud: { account: 'mingche-admin', tenantId: 'YT-10010999' }, industryL1: '政府', industryL2: '省市级政府' }
+            { id: 'C100101', name: '华东智造集团有限公司', type: 'KA', sales: '周青', orders: ['BOR-202608-001'], cloud: { account: 'huadong-admin', tenantId: 'YT-10010101' }, industryL1: '制造业', industryL2: '机械制造', email: 'license@huadong-group.com', phone: '13800138000' },
+            { id: 'C100102', name: '北辰智慧能源有限公司', type: 'normal', sales: '赵凯', orders: ['BOR-202608-002'], industryL1: '能源', industryL2: '电力', email: 'contact@beichen-energy.com', phone: '13700137000' },
+            { id: 'C100103', name: '苏州新零售集团有限公司', type: 'KA', sales: '林舟', orders: ['BOR-202608-003'], industryL1: '互联网', industryL2: '电商', email: 'admin@sz-retail.com', phone: '13500000000' },
+            { id: 'C100104', name: '西南智慧物流有限公司', type: 'normal', sales: '陈颖', orders: ['BOR-202608-004'], industryL1: '交通', industryL2: '公路', email: 'ops@xn-logistics.com', phone: '13300000000' },
+            { id: 'C100105', name: '星澜数字服务有限公司', type: 'normal', sales: '沈思', orders: ['BOR-202608-ERR'], industryL1: '互联网', industryL2: 'SaaS企业', email: 'devops@xinglan-cloud.com', phone: '13100000000' },
+            { id: 'C100106', name: '星海智联科技有限公司', type: 'KA', sales: '许岚', orders: ['BOR-202608-005'], cloud: { account: 'xinghai-admin', tenantId: 'YT-10010688' }, industryL1: '互联网', industryL2: '平台型企业', email: 'service@xinghai-iot.com', phone: '13612345678' },
+            { id: 'C100107', name: '环球致远贸易有限公司', type: 'KA', sales: '宋雨', orders: ['BOR-202608-006'], cloud: { account: 'global-admin', tenantId: 'YT-10010777' }, industryL1: '互联网', industryL2: '电商', email: 'it@global-trade.com', phone: '13912345678' },
+            { id: 'C100108', name: '环宇速联科技有限公司', type: 'KA', sales: '宋雨', orders: ['BOR-202608-007'], cloud: { account: 'oceanlink-admin', tenantId: 'YT-10010888' }, industryL1: '互联网', industryL2: '平台型企业', email: 'netops@oceanlink.com', phone: '13900139000' },
+            { id: 'C100109', name: '明澈水务集团有限公司', type: 'KA', sales: '许岚', orders: ['BOR-202608-008'], cloud: { account: 'mingche-admin', tenantId: 'YT-10010999' }, industryL1: '政府', industryL2: '省市级政府', email: 'sec@mingche-water.gov.cn', phone: '13200001111' }
         ];
         // 分布式安全运营方案专用业务申请字段默认值（Mock 预填）
         var solutionBizDefaults = {
@@ -11283,6 +11320,8 @@
             application.authEndDate = '';
             application.activeLine = '';
             application.recordId = '';
+            application.email = '';
+            application.contactPhone = '';
             application.biz = {};
             application.accelBiz = {};
             application.networkBiz = {};
@@ -11291,6 +11330,7 @@
             id('solutionBizSection').hidden = true;
             id('solutionAccelBizSection').hidden = true;
             id('solutionProductWorkspace').hidden = true;
+            updateSolutionPhoneRequirement();
             renderWorkflow();
         }
         function isXaasLine(line) { return line === 'XDR' || line === 'SASE-GA' || line === 'SASE-SWG' || line === 'SaaS-XDR' || line === 'SASE-ZTNA'; }
@@ -11300,11 +11340,71 @@
         function isAccelSolution() { return !!application.solution && (application.solution.code === 'SOL-ACCEL-006' || application.solution.code === 'SOL-ACCEL-007'); }
         // 全球组网方案：业务字段统一放业务申请信息模块，产品面板不再展示
         function isGlobalNetworkSolution() { return !!application.solution && application.solution.code === 'SOL-GLOBAL-005'; }
+
+        function updateSolutionPhoneRequirement() {
+            var hasXaas = activeLines().some(isXaasLine);
+            var reqStar = id('solutionContactPhoneRequired');
+            var input = id('solutionContactPhone');
+            if (reqStar) reqStar.style.display = hasXaas ? 'inline' : 'none';
+            if (input) {
+                input.placeholder = hasXaas ? '请输入11位客户联系人手机号（包含 XaaS，必填）' : '请输入11位客户联系人手机号（涉及 XaaS 开通必填）';
+            }
+        }
+        function updateCustomerGlobalCloudBadge(prefix, cloud) {
+            var globalCloudId = prefix === 'solutionBorrowCustomer' ? 'solutionBorrowGlobalCloud' : 'solutionLocalGlobalCloud';
+            var globalCloudEl = id(globalCloudId);
+            if (globalCloudEl) {
+                if (cloud && cloud.tenantId) {
+                    globalCloudEl.innerHTML = '<span style="display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500;background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;"><span class="material-symbols-outlined" style="font-size:13px;">cloud_done</span>云图ID: ' + escapeHtml(cloud.tenantId) + '</span>';
+                    globalCloudEl.style.display = 'inline-block';
+                } else {
+                    globalCloudEl.innerHTML = '<span style="display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500;background:#fef2f2;color:#991b1b;border:1px solid #fecaca;"><span class="material-symbols-outlined" style="font-size:13px;">cloud_off</span>未关联云图账号</span>';
+                    globalCloudEl.style.display = 'inline-block';
+                }
+            }
+        }
+        function handleSolutionPhoneMatch(phone) {
+            var hint = id('solutionContactPhoneHint');
+            if (!phone) {
+                if (hint) hint.textContent = '输入11位手机号自动匹配云图账号；涉及 XaaS 开通时必填。';
+                return;
+            }
+            if (phone.length === 11 && /^1\d{10}$/.test(phone)) {
+                var matched = null;
+                var cust = solutionBorrowCustomers.find(function(c) { return c.phone === phone; });
+                if (cust && cust.cloud) matched = cust.cloud;
+                if (!matched && typeof mockCloudAccounts !== 'undefined') {
+                    for (var cid in mockCloudAccounts) {
+                        var accs = mockCloudAccounts[cid] || [];
+                        for (var i = 0; i < accs.length; i++) {
+                            if (accs[i].phone === phone) {
+                                matched = { account: accs[i].masterAccount || accs[i].realName, tenantId: accs[i].tenantId };
+                                break;
+                            }
+                        }
+                        if (matched) break;
+                    }
+                }
+                if (matched) {
+                    if (hint) hint.innerHTML = '<span style="color:#006636;font-weight:600;">✓ 已根据手机号匹配云图账号：' + escapeHtml(matched.account) + '（租户ID：' + escapeHtml(matched.tenantId) + '）</span>';
+                    if (application) {
+                        application.cloud = matched;
+                        updateCustomerGlobalCloudBadge(application.source === 'borrow' ? 'solutionBorrowCustomer' : 'solutionLocalCustomer', matched);
+                    }
+                } else {
+                    if (hint) hint.innerHTML = '<span style="color:#c97a00;">ℹ 该手机号暂未匹配到云图租户，提交后将以此手机号申请开通云图租户。</span>';
+                }
+            } else {
+                if (hint) hint.textContent = '请输入完整的11位手机号码。';
+            }
+        }
+
         function createParams(line, deviceId, endDate, versionOption) {
             var defaults = productDefaults[line] || { version: '', modules: [], spec: '' };
             var params = {
                 version: defaults.version,
                 deviceId: deviceId || '',
+                extraDevices: [],
                 modules: (defaults.modules || []).slice(),
                 spec: defaults.spec,
                 endDate: endDate || '2026-11-04'
@@ -11670,10 +11770,25 @@
             if (customer && customer.industryL1) {
                 setSolutionIndustry('borrow', customer.industryL1, customer.industryL2);
             }
+            if (customer && customer.email && id('solutionEmail') && !id('solutionEmail').value) {
+                id('solutionEmail').value = customer.email;
+            }
+            if (customer && customer.phone && id('solutionContactPhone') && !id('solutionContactPhone').value) {
+                id('solutionContactPhone').value = customer.phone;
+                handleSolutionPhoneMatch(customer.phone);
+            }
             renderSolutionBorrowOrders();
             resetSolutionBorrowLookup();
         }
         function clearSolutionBorrowCustomer(shouldReset) {
+            if (solutionBorrowCustomer && id('solutionEmail') && id('solutionEmail').value === solutionBorrowCustomer.email) {
+                id('solutionEmail').value = '';
+            }
+            if (solutionBorrowCustomer && id('solutionContactPhone') && id('solutionContactPhone').value === solutionBorrowCustomer.phone) {
+                id('solutionContactPhone').value = '';
+                var phoneHint = id('solutionContactPhoneHint');
+                if (phoneHint) phoneHint.textContent = '输入11位手机号自动匹配云图账号；涉及 XaaS 开通时必填。';
+            }
             solutionBorrowCustomer = null;
             id('solutionBorrowCustomerSearch').value = '';
             clearSolutionCustomerSummary('solutionBorrowCustomer');
@@ -11694,9 +11809,24 @@
             if (customer && customer.industryL1) {
                 setSolutionIndustry('local', customer.industryL1, customer.industryL2);
             }
+            if (customer && customer.email && id('solutionEmail') && !id('solutionEmail').value) {
+                id('solutionEmail').value = customer.email;
+            }
+            if (customer && customer.phone && id('solutionContactPhone') && !id('solutionContactPhone').value) {
+                id('solutionContactPhone').value = customer.phone;
+                handleSolutionPhoneMatch(customer.phone);
+            }
             if (id('solutionLocalConfig').value) selectLocalSolution();
         }
         function clearSolutionLocalCustomer(shouldReset) {
+            if (solutionLocalCustomer && id('solutionEmail') && id('solutionEmail').value === solutionLocalCustomer.email) {
+                id('solutionEmail').value = '';
+            }
+            if (solutionLocalCustomer && id('solutionContactPhone') && id('solutionContactPhone').value === solutionLocalCustomer.phone) {
+                id('solutionContactPhone').value = '';
+                var phoneHintLocal = id('solutionContactPhoneHint');
+                if (phoneHintLocal) phoneHintLocal.textContent = '输入11位手机号自动匹配云图账号；涉及 XaaS 开通时必填。';
+            }
             solutionLocalCustomer = null;
             id('solutionLocalCustomerSearch').value = '';
             clearSolutionCustomerSummary('solutionLocalCustomer');
@@ -11726,6 +11856,7 @@
             application.accelBiz = isAccelSolution() ? JSON.parse(JSON.stringify(solutionAccelBizDefaults)) : {};
             application.networkBiz = isGlobalNetworkSolution() ? JSON.parse(JSON.stringify(solutionNetworkBizDefaults)) : {};
             refreshSolutionCustomerCloudSummary();
+            updateSolutionPhoneRequirement();
             setStatus('draft');
             renderLockedScope();
             renderBizSection();
@@ -11838,6 +11969,7 @@
         }
         function renderProductWorkspace() {
             id('solutionProductWorkspace').hidden = false;
+            updateSolutionPhoneRequirement();
             id('solutionProductNav').innerHTML = application.lines.map(function(line, index) {
                 var optional = isOptionalSolutionLine(line);
                 var enabled = isLineEnabled(line);
@@ -11868,7 +12000,37 @@
                     fields += '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>硬件信息文件</label><div class="solution-file-input"><label class="solution-file-btn"><span class="material-symbols-outlined">upload_file</span>上传硬件信息文件<input type="file" data-solution-param="infoFile"></label><span class="solution-file-name' + infoEmpty + '">' + infoName + '</span></div></div>';
                     fields += '<div class="solution-field"><label><span class="solution-required">*</span>集群标识</label><input class="solution-input" data-solution-param="clusterId" value="' + escapeHtml(values.clusterId) + '"></div>';
                 }
-                fields += '<div class="solution-field"><label><span class="solution-required">*</span>设备 ID</label><input class="solution-input" data-solution-param="deviceId" value="' + escapeHtml(values.deviceId) + '"></div>';
+                var isFromBorrow = Boolean(application.borrow && application.borrow.devices && application.borrow.devices[line]);
+                var devVal = values.deviceId || (isFromBorrow ? application.borrow.devices[line] : '');
+                values.deviceId = devVal;
+                if (!Array.isArray(values.extraDevices)) values.extraDevices = [];
+
+                var extraListHtml = '';
+                if (values.extraDevices.length > 0) {
+                    extraListHtml = '<div class="solution-extra-devices-list" style="margin-top:8px;display:flex;flex-direction:column;gap:6px;">' +
+                        values.extraDevices.map(function(devId, idx) {
+                            return '<div class="solution-extra-device-row" style="display:flex;gap:8px;align-items:center;">' +
+                                '<input class="solution-input" style="flex:1;" placeholder="请输入追加设备 ID" data-solution-extra-device="' + line + '" data-extra-index="' + idx + '" value="' + escapeHtml(devId) + '">' +
+                                '<button type="button" class="solution-btn danger" style="min-height:32px;padding:0 10px;font-size:12px;" data-solution-remove-device="' + line + '" data-extra-index="' + idx + '" title="删除此追加设备"><span class="material-symbols-outlined" style="font-size:16px;">close</span>删除</button>' +
+                            '</div>';
+                        }).join('') +
+                    '</div>';
+                }
+
+                var addDeviceBtn = '<button type="button" class="solution-btn plain" data-solution-add-device="' + line + '" style="min-height:36px;padding:0 12px;font-size:12px;" title="追加更多测试设备">' +
+                    '<span class="material-symbols-outlined" style="font-size:16px;">add</span>添加设备' +
+                '</button>';
+
+                var deviceLabelNote = isFromBorrow ? '<span class="solution-readonly-note"><span class="material-symbols-outlined">lock</span>来自借测单，已锁定不可修改</span>' : '';
+
+                fields += '<div class="solution-field solution-field-full">' +
+                    '<label><span class="solution-required">*</span>设备 ID' + deviceLabelNote + '</label>' +
+                    '<div style="display:flex;gap:8px;align-items:center;">' +
+                        '<input class="solution-input" style="flex:1;' + (isFromBorrow ? 'background-color:#f1f3f9;color:#44474e;cursor:not-allowed;' : '') + '" data-solution-param="deviceId" value="' + escapeHtml(values.deviceId) + '"' + (isFromBorrow ? ' readonly data-solution-readonly title="借测单已关联实物设备，锁定防止篡改"' : ' placeholder="请输入设备 ID"') + '>' +
+                        addDeviceBtn +
+                    '</div>' +
+                    extraListHtml +
+                '</div>';
                 fields += renderSolutionModuleCards(line, values);
             }
             var active = activeLines();
@@ -11973,6 +12135,24 @@
             application.industryL2 = l2Val;
             application.industry = l1Val + ' / ' + l2Val;
 
+            // 接收邮箱校验（非必填，若填写则校验邮箱格式）
+            var emailVal = id('solutionEmail') ? id('solutionEmail').value.trim() : '';
+            if (emailVal && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
+                return '请输入正确的接收邮箱地址。';
+            }
+            application.email = emailVal;
+
+            // 联系人手机号校验：若激活产品线包含 XaaS，则手机号为必填且必须为11位；若非 XaaS 则选填（填写时校验格式）
+            var phoneVal = id('solutionContactPhone') ? id('solutionContactPhone').value.trim() : '';
+            var active = activeLines();
+            if (active.some(isXaasLine)) {
+                if (!phoneVal) return '方案包含 XaaS 产品线，必须填写客户联系人手机号以匹配云图账号。';
+                if (!/^1\d{10}$/.test(phoneVal)) return '请填写正确的11位客户联系人手机号。';
+            } else if (phoneVal && !/^1\d{10}$/.test(phoneVal)) {
+                return '请填写正确的11位客户联系人手机号。';
+            }
+            application.contactPhone = phoneVal;
+
             if (isDsocSolution()) {
                 var biz = application.biz || {};
                 if (!biz.mainScenario || !biz.componentNotes || !biz.resalePlan || !biz.researchDoc) return '请补全业务申请信息（分布式安全运营）。';
@@ -11986,11 +12166,17 @@
                 var networkBiz = application.networkBiz || {};
                 if (!networkBiz.customerNeed || !networkBiz.projectScale || !networkBiz.competitor) return '请补全业务申请信息（全球组网）。';
             }
-            var active = activeLines();
             if (active.some(isXaasLine) && (!application.cloud || !application.cloud.tenantId)) return '【阻断】方案包含 XaaS 产品线，客户需已关联云图账号和云图ID（未开户客户不可申请）。';
             for (var i = 0; i < active.length; i++) {
                 var line = active[i];
                 var value = application.params[line];
+                if (value.extraDevices && value.extraDevices.length) {
+                    for (var ed = 0; ed < value.extraDevices.length; ed++) {
+                        if (!value.extraDevices[ed] || !value.extraDevices[ed].trim()) {
+                            return line + ' 追加的设备 ID 不能为空，请填写或删除空白追加项。';
+                        }
+                    }
+                }
                 if (line === 'SASE-GA') {
                     if (isAccelSolution() || isGlobalNetworkSolution()) {
                         if (!value.endDate || !value.bandwidth) return 'SASE-GA 的授权参数未填写完整。';
@@ -12053,14 +12239,15 @@
         }
         function getSolutionLineSummary(line, item) {
             var business = isAccelSolution() ? application.accelBiz : (isGlobalNetworkSolution() ? application.networkBiz : null);
+            var extraNote = (item.extraDevices && item.extraDevices.length) ? ' (+追加' + item.extraDevices.length + '台)' : '';
             if (line === 'SASE-GA') return '云图ID ' + (application.cloud ? application.cloud.tenantId : '-') + ' | 带宽 ' + item.bandwidth + 'M | ' + (business ? business.customerNeed : item.customerNeed);
             if (line === 'SASE-SWG') return '云图ID ' + (application.cloud ? application.cloud.tenantId : '-') + ' | ' + (business ? business.customerNeed : item.customerNeed);
             if (line === 'SASE-ZTNA') return '云图ID ' + (application.cloud ? application.cloud.tenantId : '-') + ' | 授权用户数 ' + (item.userCount || 50) + ' | ' + (business ? business.customerNeed : item.customerNeed);
-            if (line === 'AF') return item.deviceId + ' | 网关' + (item.af_gw_users || '') + '用户/' + (item.af_gw_lines || '') + '线路 · SSL VPN ' + (item.af_sslvpn_users || '') + '用户 · 已启用 ' + (item.modules || []).length + ' 项授权功能';
+            if (line === 'AF') return item.deviceId + extraNote + ' | 网关' + (item.af_gw_users || '') + '用户/' + (item.af_gw_lines || '') + '线路 · SSL VPN ' + (item.af_sslvpn_users || '') + '用户 · 已启用 ' + (item.modules || []).length + ' 项授权功能';
             if (line === 'SaaS-XDR' || line === 'XDR') return '云图ID ' + (application.cloud ? application.cloud.tenantId : '-') + ' | 日志量 ' + item.logAmount + ' 万条 | ' + item.coreNeed;
-            if (line === 'HCI') return item.deviceId + ' | ' + (item.modules || []).join('、') + ' | 集群 ' + item.clusterId + ' | ' + item.spec;
-            if (line === 'AC') return item.deviceId + ' | 网关：线路' + item.gatewayLines + '/分支' + item.gatewayBranch + '/移动' + item.gatewayMobile + ' | 多功能：' + (item.multiFeatures || []).join('、') + ' | 终端' + item.terminalCount;
-            return item.deviceId + ' | ' + (item.modules || []).join('、') + ' | ' + item.spec;
+            if (line === 'HCI') return item.deviceId + extraNote + ' | ' + (item.modules || []).join('、') + ' | 集群 ' + item.clusterId + ' | ' + item.spec;
+            if (line === 'AC') return item.deviceId + extraNote + ' | 网关：线路' + item.gatewayLines + '/分支' + item.gatewayBranch + '/移动' + item.gatewayMobile + ' | 多功能：' + (item.multiFeatures || []).join('、') + ' | 终端' + item.terminalCount;
+            return item.deviceId + extraNote + ' | ' + (item.modules || []).join('、') + ' | ' + item.spec;
         }
         function submitWholeApplication() {
             var error = validateApplication();
@@ -12080,13 +12267,16 @@
             var rows = activeLines().map(function(line, index) {
                 var value = application.params[line];
                 var xaas = isXaasLine(line);
-                return { line: line, version: value.version, deviceId: xaas ? '云图ID: ' + (application.cloud ? application.cloud.tenantId : '-') : value.deviceId, sn: xaas ? '—' : 'SN-' + line + '-' + String(index + 1).padStart(3, '0'), endDate: value.endDate, license: 'LIC-' + line + '-806' };
+                var devDisplay = xaas ? '云图ID: ' + (application.cloud ? application.cloud.tenantId : '-') : (value.deviceId + (value.extraDevices && value.extraDevices.length ? (' / 追加: ' + value.extraDevices.join(', ')) : ''));
+                return { line: line, version: value.version, deviceId: devDisplay, sn: xaas ? '—' : 'SN-' + line + '-' + String(index + 1).padStart(3, '0'), endDate: value.endDate, license: 'LIC-' + line + '-806' };
             });
             var deviceIds = rows.map(function(row) { return row.deviceId; }).join('&#10;');
             var sns = rows.map(function(row) { return row.sn; }).join('&#10;');
             var tbody = document.querySelector('#content-records .table-scroll-wrap > table > tbody');
             var sourceLabel = application.source === 'borrow' ? '关联借测单' : '本地申请';
-            var record = '<tr class="hover:bg-[#eef3ff]/40 transition-colors solution-parent" data-solution-generated="true"><td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-1"><button class="text-[#424656] hover:text-primary border-0 bg-transparent p-0 leading-none" onclick="toggleSolution(this)" aria-label="展开方案明细"><span class="material-symbols-outlined text-[16px] expand-icon">chevron_right</span></button><a class="text-primary hover:underline font-medium" href="javascript:;">' + application.recordId + '</a></div></td><td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-50 text-amber-700 border border-amber-200">解决方案</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td><td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">' + escapeHtml(application.solution.name) + '</td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td><td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="' + escapeHtml(application.customer) + '">' + escapeHtml(application.customer) + '</span></div></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]"><span class="device-summary" data-full="' + deviceIds + '">' + rows.length + '个设备</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]"><span class="device-summary" data-full="' + sns + '">' + rows.length + '个设备</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">' + sourceLabel + '</td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-08-06 ~ ' + rows[0].endDate + '</td><td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">' + escapeHtml(application.applicant) + '</td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-08-06 10:10</td><td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已授权</span><div class="flex items-center gap-0.5 ml-auto"></div></div></td></tr>';
+            var emailAttr = application.email ? (' data-solution-email="' + escapeHtml(application.email) + '"') : '';
+            var phoneAttr = application.contactPhone ? (' data-solution-phone="' + escapeHtml(application.contactPhone) + '"') : '';
+            var record = '<tr class="hover:bg-[#eef3ff]/40 transition-colors solution-parent" data-solution-generated="true"' + emailAttr + phoneAttr + '><td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-1"><button class="text-[#424656] hover:text-primary border-0 bg-transparent p-0 leading-none" onclick="toggleSolution(this)" aria-label="展开方案明细"><span class="material-symbols-outlined text-[16px] expand-icon">chevron_right</span></button><a class="text-primary hover:underline font-medium" href="javascript:;">' + application.recordId + '</a></div></td><td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-50 text-amber-700 border border-amber-200">解决方案</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td><td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">' + escapeHtml(application.solution.name) + '</td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td><td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="' + escapeHtml(application.customer) + '">' + escapeHtml(application.customer) + '</span></div></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]"><span class="device-summary" data-full="' + deviceIds + '">' + rows.length + '个设备</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]"><span class="device-summary" data-full="' + sns + '">' + rows.length + '个设备</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">' + sourceLabel + '</td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-08-06 ~ ' + rows[0].endDate + '</td><td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">' + escapeHtml(application.applicant) + '</td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-08-06 10:10</td><td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已授权</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px] record-action-control" data-record-action="view" role="button" tabindex="0" aria-haspopup="dialog">查看</span></div></div></td></tr>';
             var detail = '<tr class="solution-detail-row" style="display:none;" data-solution-generated-detail="true"><td colspan="14" class="p-0 bg-[#f8f9ff]" style="border-top:2px solid #e5eeff;"><div style="padding:6px 12px 10px;"><div class="solution-expand-wrap"><div class="bg-white rounded border border-[#c2c6d8]/20 overflow-hidden" style="font-size:11.5px;"><table class="w-full"><thead><tr class="border-b border-[#c2c6d8]/30 bg-[#e8eeff]"><th class="py-2 px-3">产品线</th><th class="py-2 px-3">版本号</th><th class="py-2 px-3">设备ID/云图ID</th><th class="py-2 px-3">设备SN</th><th class="py-2 px-3">授权有效期</th><th class="py-2 px-3">授权码</th></tr></thead><tbody>' + rows.map(function(row) { return '<tr><td class="py-2 px-3">' + row.line + '</td><td class="py-2 px-3">' + escapeHtml(row.version) + '</td><td class="py-2 px-3">' + escapeHtml(row.deviceId) + '</td><td class="py-2 px-3">' + row.sn + '</td><td class="py-2 px-3">至 ' + row.endDate + '</td><td class="py-2 px-3">' + row.license + '</td></tr>'; }).join('') + '</tbody></table></div></div></div></td></tr>';
             tbody.insertAdjacentHTML('afterbegin', record + detail);
             if (typeof window.initRecordsPagination === 'function') window.initRecordsPagination();
@@ -12107,6 +12297,10 @@
                 id('solutionBorrowSource').hidden = application.source !== 'borrow';
                 id('solutionLocalSource').hidden = application.source !== 'local';
                 id('solutionLocalConfig').value = '';
+                if (id('solutionEmail')) id('solutionEmail').value = '';
+                if (id('solutionContactPhone')) id('solutionContactPhone').value = '';
+                var phoneHint = id('solutionContactPhoneHint');
+                if (phoneHint) phoneHint.textContent = '输入11位手机号自动匹配云图账号；涉及 XaaS 开通时必填。';
                 clearSolutionBorrowCustomer(false);
                 clearSolutionLocalCustomer(false);
                 id('solutionBorrowState').hidden = true;
@@ -12147,6 +12341,12 @@
             if (sbL1) sbL1.addEventListener('change', updateSolutionBorrowIndustryL2);
             var slL1 = id('solution-local-industry-l1');
             if (slL1) slL1.addEventListener('change', updateSolutionLocalIndustryL2);
+            var scp = id('solutionContactPhone');
+            if (scp) {
+                scp.addEventListener('input', function() {
+                    handleSolutionPhoneMatch(this.value.trim());
+                });
+            }
             id('solutionProductNav').addEventListener('click', function(event) {
                 var toggle = event.target.closest('[data-solution-line-switch]');
                 if (toggle) {
@@ -12167,6 +12367,7 @@
                     }
 
                     if (!isLineEnabled(application.activeLine)) application.activeLine = activeLines()[0] || application.activeLine;
+                    updateSolutionPhoneRequirement();
                     renderProductWorkspace();
                     return;
                 }
@@ -12177,6 +12378,14 @@
             });
             function collectSolutionParam(event) {
                 var target = event.target;
+                if (target.dataset && target.dataset.solutionExtraDevice) {
+                    var extraLine = target.dataset.solutionExtraDevice;
+                    var extraIdx = parseInt(target.dataset.extraIndex, 10);
+                    if (application.params[extraLine] && Array.isArray(application.params[extraLine].extraDevices)) {
+                        application.params[extraLine].extraDevices[extraIdx] = target.value;
+                    }
+                    return;
+                }
                 if (target.type === 'checkbox') {
                     var group = target.closest('[data-solution-param]');
                     if (group) {
@@ -12239,6 +12448,30 @@
             id('solutionAccelBizGrid').addEventListener('input', collectAccelBizParam);
             id('solutionAccelBizGrid').addEventListener('change', collectAccelBizParam);
             id('solutionProductPanel').addEventListener('click', function(event) {
+                var addDeviceBtn = event.target.closest('[data-solution-add-device]');
+                if (addDeviceBtn) {
+                    var line = addDeviceBtn.dataset.solutionAddDevice;
+                    var params = application.params[line];
+                    if (params) {
+                        if (!Array.isArray(params.extraDevices)) params.extraDevices = [];
+                        params.extraDevices.push('');
+                        renderProductWorkspace();
+                        var extraInputs = id('solutionProductPanel').querySelectorAll('[data-solution-extra-device="' + line + '"]');
+                        if (extraInputs.length) extraInputs[extraInputs.length - 1].focus();
+                    }
+                    return;
+                }
+                var removeDeviceBtn = event.target.closest('[data-solution-remove-device]');
+                if (removeDeviceBtn) {
+                    var rLine = removeDeviceBtn.dataset.solutionRemoveDevice;
+                    var rIdx = parseInt(removeDeviceBtn.dataset.extraIndex, 10);
+                    var rParams = application.params[rLine];
+                    if (rParams && Array.isArray(rParams.extraDevices)) {
+                        rParams.extraDevices.splice(rIdx, 1);
+                        renderProductWorkspace();
+                    }
+                    return;
+                }
                 var toggle = event.target.closest('[data-solution-module-toggle]');
                 if (toggle) {
                     var moduleName = toggle.dataset.solutionModuleToggle;

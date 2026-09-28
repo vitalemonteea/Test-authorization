@@ -380,3 +380,52 @@ test('XaaS 方案整单成功后复用 SOL 主行和展开明细展示云图ID�
     assert.match(detail.textContent, /LIC-SaaS-XDR-806/);
   } finally { dom.window.close(); }
 });
+
+test('关联借测单与纯软件本地申请均展示接收邮箱，支持自动带入、修改、格式校验并记录回显', () => {
+  const { dom, document, window } = loadV2Dom();
+  try {
+    openSolutionTab(document);
+    // 1. 关联借测单模式下，接收邮箱存在且可见
+    const emailInput = document.getElementById('solutionEmail');
+    assert.ok(emailInput, '应存在接收邮箱输入框');
+
+    // 选择借测单客户后自动带入该客户的邮箱
+    selectBorrowCustomer(document, window, 'C100101');
+    assert.equal(emailInput.value, 'license@huadong-group.com', '应自动带入华东智造的接收邮箱');
+
+    // 关联借测单
+    document.getElementById('solutionBorrowOrder').value = 'BOR-202608-001';
+    click(document, window, 'solutionBorrowLookup');
+
+    // 2. 邮箱格式校验阻断
+    emailInput.value = 'invalid-email-format';
+    emailInput.dispatchEvent(new window.Event('input', { bubbles: true }));
+    click(document, window, 'solutionSubmitWhole');
+    assert.equal(document.getElementById('solutionSubmitError').hidden, false);
+    assert.match(document.getElementById('solutionSubmitError').textContent, /请输入正确的接收邮箱地址/);
+
+    // 3. 修正邮箱后正常通过并生成记录
+    emailInput.value = 'custom-receiver@company.com';
+    emailInput.dispatchEvent(new window.Event('input', { bubbles: true }));
+    click(document, window, 'solutionSubmitWhole');
+    assert.match(document.getElementById('solutionApplicationStatus').textContent, /已授权/);
+
+    const generatedRow = document.querySelector('#content-records .solution-parent[data-solution-generated="true"]');
+    assert.ok(generatedRow, '应生成方案授权主行');
+    assert.equal(generatedRow.getAttribute('data-solution-email'), 'custom-receiver@company.com');
+
+    // 4. 打开记录详情抽屉，验证接收邮箱正确回显
+    window.initRecordDetailDrawer();
+    const viewBtn = generatedRow.querySelector('[data-record-action="view"]');
+    assert.ok(viewBtn, '应存在详情触发项');
+    viewBtn.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    assert.match(document.getElementById('recordAuthorizationGrid').textContent, /接收邮箱/);
+    assert.match(document.getElementById('recordAuthorizationGrid').textContent, /custom-receiver@company\.com/);
+
+    // 5. 切换到纯软件本地申请模式下，接收邮箱依然存在且可用
+    chooseSolutionSource(document, window, 'local');
+    assert.ok(document.getElementById('solutionEmail'), '纯软模式下仍应存在接收邮箱');
+    selectLocalCustomer(document, window, 'C100102');
+    assert.equal(document.getElementById('solutionEmail').value, 'contact@beichen-energy.com', '纯软模式选择客户后应带入北辰能源邮箱');
+  } finally { dom.window.close(); }
+});
