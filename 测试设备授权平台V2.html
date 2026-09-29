@@ -280,23 +280,27 @@
         /* 所属云图账号 */
         #content-xaas .cloud-account-item { display: none; margin-top: 8px; }
         #content-xaas .cloud-account-item.show { display: flex; }
-        .cloud-account-select { max-width: 480px; }
-        [data-select-id="xaas-cloud-account"] { max-width: 480px; }
-        [data-select-id="xaas-cloud-account"] .custom-select-dropdown { min-width: 460px; width: auto; max-width: 560px; }
-        /* 云图账号选项卡片式布局 */
-        .cloud-account-option { padding: 12px 16px !important; cursor: pointer; transition: all 0.15s; border-bottom: 1px solid #f0f2f5; position: relative; }
+        .cloud-account-select { max-width: 480px; width: 100%; }
+        [data-select-id="xaas-cloud-account"],
+        [data-select-id="solution-cloud-account"] { max-width: 480px; width: 100%; }
+        [data-select-id="xaas-cloud-account"] .custom-select-dropdown,
+        [data-select-id="solution-cloud-account"] .custom-select-dropdown { min-width: 480px; width: 100%; max-width: 580px; }
+        /* 云图账号选项卡片式布局（1:1 对齐生产环境） */
+        .cloud-account-option { padding: 12px 16px !important; cursor: pointer; transition: all 0.15s; border-bottom: 1px solid #edf1f7; position: relative; }
         .cloud-account-option:last-child { border-bottom: none; }
         .cloud-account-option:hover { background: #f5f9ff; }
         .cloud-account-option.selected { background: linear-gradient(90deg, #eef4ff 0%, #e5eeff 100%); border-left: 3px solid #0050cb; padding-left: 13px !important; }
         .cloud-account-option.selected::after { content: '✓'; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #0050cb; font-size: 16px; font-weight: 700; }
-        .cloud-account-option-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; font-size: 12px; color: #8b92a5; line-height: 1.5; padding-right: 24px; }
+        .cloud-account-option.selected .meta-value { color: #0b1c30; font-weight: 700; }
+        .cloud-account-option-meta { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 8px 16px; font-size: 12px; color: #8b92a5; line-height: 1.5; padding-right: 24px; }
         .cloud-account-option-meta .meta-item { display: inline-flex; align-items: center; gap: 5px; min-width: 0; }
-        .cloud-account-option-meta .meta-label { color: #b8bfcc; flex-shrink: 0; }
-        .cloud-account-option-meta .meta-value { color: #424656; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .meta-icon { font-size: 13px; color: #b8bfcc; flex-shrink: 0; }
-        .cloud-account-trigger-main { font-size: 14px; color: #1a1a2e; font-weight: 500; }
+        .cloud-account-option-meta .meta-label { color: #8c93a0; flex-shrink: 0; }
+        .cloud-account-option-meta .meta-value { color: #242938; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .meta-icon { font-size: 15px; color: #a0aec0; flex-shrink: 0; }
+        .cloud-account-trigger-main { font-size: 14px; color: #1a1a2e; font-weight: 600; }
         .cloud-account-trigger-sub { font-size: 13px; color: #8b92a5; }
-        [data-select-id="xaas-cloud-account"] .custom-select-value { display: inline-flex; align-items: center; gap: 6px; line-height: 1.4; }
+        [data-select-id="xaas-cloud-account"] .custom-select-value,
+        [data-select-id="solution-cloud-account"] .custom-select-value { display: inline-flex; align-items: center; gap: 6px; line-height: 1.4; }
         [data-select-id="xaas-region"] { max-width: 480px; }
 
         /* 统一授权日期栏 */
@@ -2964,7 +2968,7 @@
                         </div>
 
                         <div class="layui-form-item cloud-account-item" id="xaasCloudAccountItem">
-                            <label class="layui-form-label">所属云图账号</label>
+                            <label class="layui-form-label">所属云图账号<span class="required-star">*</span></label>
                             <div class="layui-input-block">
                                 <div class="custom-select cloud-account-select" data-select-id="xaas-cloud-account">
                                     <select class="layui-select" id="xaas-cloud-account" style="display:none;">
@@ -3068,6 +3072,53 @@
                                                 <li class="custom-select-option" data-value="">请选择二级行业</li>
                                             </ul>
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="layui-form-item" id="xaasRegionItem">
+                            <label class="layui-form-label">区域<span class="required-star">*</span>
+                                <span class="field-tooltip"><span class="tooltip-icon">ⓘ</span>
+                                    <div class="tooltip-popup">
+                                        <button class="tooltip-copy" onclick="copyTooltip(this)">复制</button>
+                                        <div class="tooltip-title">区域 备注</div>
+                                        <div class="tooltip-section"><span class="tooltip-label">业务规则：</span>客户所属区域/省份，用于跨区域服务资源调配与审批核算，整单提交必填。</div>
+                                        <div class="tooltip-section"><span class="tooltip-label">交互规则：</span>优先从客户主数据或云图企业档案自动带入，支持手动调整。</div>
+                                    </div>
+                                </span>
+                            </label>
+                            <div class="layui-input-block">
+                                <div class="custom-select" data-select-id="xaas-region">
+                                    <select class="layui-select" id="xaas-region" style="display:none;">
+                                        <option value="">请选择区域</option>
+                                        <option value="广东省">广东省</option>
+                                        <option value="上海市">上海市</option>
+                                        <option value="北京市">北京市</option>
+                                        <option value="浙江省">浙江省</option>
+                                        <option value="江苏省">江苏省</option>
+                                        <option value="四川省">四川省</option>
+                                        <option value="山东省">山东省</option>
+                                        <option value="湖北省">湖北省</option>
+                                        <option value="海外">海外</option>
+                                    </select>
+                                    <button type="button" class="custom-select-trigger" aria-haspopup="listbox" aria-expanded="false">
+                                        <span class="custom-select-value">请选择区域</span>
+                                        <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                    </button>
+                                    <div class="custom-select-dropdown">
+                                        <ul class="custom-select-list">
+                                            <li class="custom-select-option" data-value="">请选择区域</li>
+                                            <li class="custom-select-option" data-value="广东省">广东省</li>
+                                            <li class="custom-select-option" data-value="上海市">上海市</li>
+                                            <li class="custom-select-option" data-value="北京市">北京市</li>
+                                            <li class="custom-select-option" data-value="浙江省">浙江省</li>
+                                            <li class="custom-select-option" data-value="江苏省">江苏省</li>
+                                            <li class="custom-select-option" data-value="四川省">四川省</li>
+                                            <li class="custom-select-option" data-value="山东省">山东省</li>
+                                            <li class="custom-select-option" data-value="湖北省">湖北省</li>
+                                            <li class="custom-select-option" data-value="海外">海外</li>
+                                        </ul>
                                     </div>
                                 </div>
                             </div>
@@ -3532,6 +3583,32 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="solution-form-row solution-form-row-full" id="solutionBorrowRegionRow">
+                                        <label class="solution-form-label" for="solutionBorrowRegion"><span class="solution-required">*</span>区域
+                                            <span class="field-tooltip"><span class="tooltip-icon">ⓘ</span>
+                                                <div class="tooltip-popup">
+                                                    <button class="tooltip-copy" onclick="copyTooltip(this)">复制</button>
+                                                    <div class="tooltip-title">区域 备注</div>
+                                                    <div class="tooltip-section"><span class="tooltip-label">业务规则：</span>客户所属区域/省份，用于跨区域服务资源调配与审批核算，整单提交必填。</div>
+                                                    <div class="tooltip-section"><span class="tooltip-label">交互规则：</span>优先从 CRM/客户主数据自动带入，支持下拉选择并修改。</div>
+                                                </div>
+                                            </span>
+                                        </label>
+                                        <div class="solution-form-control">
+                                            <select class="solution-select" id="solutionBorrowRegion" aria-label="借测客户所属区域">
+                                                <option value="">请选择区域</option>
+                                                <option value="广东省">广东省</option>
+                                                <option value="上海市">上海市</option>
+                                                <option value="北京市">北京市</option>
+                                                <option value="浙江省">浙江省</option>
+                                                <option value="江苏省">江苏省</option>
+                                                <option value="四川省">四川省</option>
+                                                <option value="山东省">山东省</option>
+                                                <option value="湖北省">湖北省</option>
+                                                <option value="海外">海外</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                     <div class="solution-form-row solution-form-row-full" id="solutionBorrowCustomerField">
                                         <label class="solution-form-label" for="solutionBorrowCustomerSearch"><span class="solution-required">*</span>客户</label>
                                         <div class="solution-form-control">
@@ -3632,6 +3709,32 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="solution-form-row solution-form-row-full" id="solutionLocalRegionRow">
+                                        <label class="solution-form-label" for="solutionLocalRegion"><span class="solution-required">*</span>区域
+                                            <span class="field-tooltip"><span class="tooltip-icon">ⓘ</span>
+                                                <div class="tooltip-popup">
+                                                    <button class="tooltip-copy" onclick="copyTooltip(this)">复制</button>
+                                                    <div class="tooltip-title">区域 备注</div>
+                                                    <div class="tooltip-section"><span class="tooltip-label">业务规则：</span>客户所属区域/省份，用于跨区域服务资源调配与审批核算，整单提交必填。</div>
+                                                    <div class="tooltip-section"><span class="tooltip-label">交互规则：</span>优先从 CRM/客户主数据自动带入，支持下拉选择并修改。</div>
+                                                </div>
+                                            </span>
+                                        </label>
+                                        <div class="solution-form-control">
+                                            <select class="solution-select" id="solutionLocalRegion" aria-label="本地客户所属区域">
+                                                <option value="">请选择区域</option>
+                                                <option value="广东省">广东省</option>
+                                                <option value="上海市">上海市</option>
+                                                <option value="北京市">北京市</option>
+                                                <option value="浙江省">浙江省</option>
+                                                <option value="江苏省">江苏省</option>
+                                                <option value="四川省">四川省</option>
+                                                <option value="山东省">山东省</option>
+                                                <option value="湖北省">湖北省</option>
+                                                <option value="海外">海外</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                     <div class="solution-form-row solution-form-row-full" id="solutionLocalCustomerField">
                                         <label class="solution-form-label" for="solutionLocalCustomerSearch"><span class="solution-required">*</span>客户</label>
                                         <div class="solution-form-control">
@@ -3688,6 +3791,37 @@
                                     </label>
                                     <div class="solution-form-control">
                                         <input class="solution-input" id="solutionEmail" placeholder="请输入接收邮箱，建议优先填写客户邮箱" title="用于接收授权结果及相关文件">
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 所属云图账号：当手机号匹配到多个云图租户账号时展开选择（1:1 对齐生产环境卡片选择器） -->
+                            <div class="solution-form-grid" id="solutionCloudAccountGrid" style="display:none;margin-top:12px;">
+                                <div class="solution-form-row solution-form-row-full" id="solutionCloudAccountRow">
+                                    <label class="solution-form-label" for="solution-cloud-account">
+                                        <span class="solution-required">*</span>所属云图账号
+                                        <span class="field-tooltip"><span class="tooltip-icon">ⓘ</span>
+                                            <div class="tooltip-popup">
+                                                <button class="tooltip-copy" onclick="copyTooltip(this)">复制</button>
+                                                <div class="tooltip-title">所属云图账号 备注</div>
+                                                <div class="tooltip-section"><span class="tooltip-label">业务规则：</span>当客户手机号在云图注册有多个企业租户时，需明确选择本次授权开通的目标云图账号。</div>
+                                                <div class="tooltip-section"><span class="tooltip-label">交互规则：</span>卡片展示各账号的云图ID、企业名称、主账号及主账号联系人，选中后自动绑定租户身份并联动区域和行业。</div>
+                                            </div>
+                                        </span>
+                                    </label>
+                                    <div class="solution-form-control">
+                                        <div class="custom-select cloud-account-select" data-select-id="solution-cloud-account">
+                                            <select class="layui-select" id="solution-cloud-account" style="display:none;">
+                                                <option value="">请选择云图账号</option>
+                                            </select>
+                                            <button type="button" class="custom-select-trigger" aria-haspopup="listbox" aria-expanded="false">
+                                                <span class="custom-select-value"><span class="cloud-account-trigger-main">请选择云图账号</span></span>
+                                                <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                            </button>
+                                            <div class="custom-select-dropdown">
+                                                <ul class="custom-select-list"></ul>
+                                            </div>
+                                        </div>
+                                        <p class="solution-field-hint" id="solutionCloudAccountHint" style="font-size:12px;color:#757782;margin:4px 0 0 0;">已匹配到多个云图账号，请选择对应的开通租户。</p>
                                     </div>
                                 </div>
                             </div>
@@ -5586,12 +5720,15 @@
         var mockXaasPhoneToAccounts = {
             '1717717': { accounts: [], contactName: '马化腾' },
             '17177170000': { accounts: [], contactName: '马化腾' },
-            '13800138000': { accounts: ['C100001', 'C100002'] },
+            '13800138000': { accounts: ['C100020', 'C100021', 'C100022', 'C100023'], contactName: '彭某某' },
             '13900139000': { accounts: ['C100004'] },
             '13700137000': { accounts: [] },
             '13600000000': { accounts: ['C100001', 'C100010'] },
             '13500000000': { accounts: [] }
         };
+        if (typeof window !== 'undefined') {
+            window.mockXaasPhoneToAccounts = mockXaasPhoneToAccounts;
+        }
         function findCustomerIdByPhone(phone) {
             for (var cid in mockCloudAccounts) {
                 var accounts = mockCloudAccounts[cid];
@@ -5609,7 +5746,7 @@
                 mock.accounts.forEach(function(cid) {
                     var accounts = mockCloudAccounts[cid] || [];
                     accounts.forEach(function(acc) {
-                        if (!allAccounts.some(function(a) { return a.phone === acc.phone; })) {
+                        if (!allAccounts.some(function(a) { return a.tenantId === acc.tenantId; })) {
                             allAccounts.push(Object.assign({}, acc, { cid: cid }));
                         }
                     });
@@ -5651,6 +5788,7 @@
             if (!require('xaas-customer-name', '请选择客户名称')) return false;
             if (!require('xaas-industry-l1', '请选择一级行业')) return false;
             if (!require('xaas-industry-l2', '请选择二级行业')) return false;
+            if (!require('xaas-region', '请选择区域')) return false;
             return true;
         }
         var xaasSubmitBtn = document.getElementById('xaas-submit-btn');
@@ -8038,13 +8176,29 @@
             { name: '广州市政府信息中心', id: 'C100012', type: 'normal', sales: '马超56789' },
             { name: '南方电网有限责任公司', id: 'C100013', type: 'normal', sales: '黄蓉12340' },
             { name: '中兴通讯股份有限公司', id: 'C100014', type: 'normal', sales: '林杰67890' },
-            { name: '浙江大学信息技术中心', id: 'C100015', type: 'normal', sales: '何琳43210' }
+            { name: '浙江大学信息技术中心', id: 'C100015', type: 'normal', sales: '何琳43210' },
+            { name: '广东省工商行政管理局', id: 'C100020', type: 'KA', sales: '张敏31201', region: '广东省', industryL1: '政府', industryL2: '省市级政府' },
+            { name: '广东行政学院', id: 'C100021', type: 'normal', sales: '李雷42105', region: '广东省', industryL1: '教育', industryL2: '高教' },
+            { name: '广东省行政学院', id: 'C100022', type: 'normal', sales: '王华53109', region: '广东省', industryL1: '教育', industryL2: '高教' },
+            { name: '广东行政学院', id: 'C100023', type: 'normal', sales: '李雷42105', region: '广东省', industryL1: '教育', industryL2: '高教' }
         ];
 
         // 云图账号模拟数据
         var mockCloudAccounts = {
+            'C100020': [
+                { phone: '13800138000', realName: '彭某某', tenantId: '12713254', masterAccount: '120@163.com', enterpriseName: '广东省工商行政管理局', masterContact: '彭某某', region: '广东省', industryL1: '政府', industryL2: '省市级政府' }
+            ],
+            'C100021': [
+                { phone: '13800138000', realName: '彭某某', tenantId: '17964872', masterAccount: '110@163.com', enterpriseName: '广东行政学院', masterContact: '彭某某', region: '广东省', industryL1: '教育', industryL2: '高教' }
+            ],
+            'C100022': [
+                { phone: '13800138000', realName: '彭某某', tenantId: '62414810', masterAccount: '119@163.com', enterpriseName: '广东省行政学院', masterContact: '彭某某', region: '广东省', industryL1: '教育', industryL2: '高教' }
+            ],
+            'C100023': [
+                { phone: '13800138000', realName: '彭某某', tenantId: '73672631', masterAccount: '110-1@163.com', enterpriseName: '广东行政学院', masterContact: '彭某某', region: '广东省', industryL1: '教育', industryL2: '高教' }
+            ],
             'C100001': [
-                { phone: '13800138000', realName: '马化腾', tenantId: '10010010', masterAccount: 'user123', enterpriseName: '腾讯科技', masterContact: '马化腾' }
+                { phone: '13800000001', realName: '马化腾', tenantId: '10010010', masterAccount: 'user123', enterpriseName: '腾讯科技', masterContact: '马化腾' }
             ],
             'C100002': [
                 { phone: '13912345678', realName: '张勇', tenantId: '20020019', masterAccount: 'test@example.com', enterpriseName: '阿里巴巴', masterContact: '张勇' }
@@ -8053,7 +8207,7 @@
                 { phone: '13900139000', realName: '李四', tenantId: '60060060', masterAccount: 'user789', enterpriseName: '百度科技', masterContact: '李四' }
             ],
             'C100010': [
-                { phone: '13612345678', realName: '王磊', tenantId: '30032121', masterAccount: '13800138000', enterpriseName: '字节跳动', masterContact: '王磊' },
+                { phone: '13600000000', realName: '王磊', tenantId: '30032121', masterAccount: '13800138000', enterpriseName: '字节跳动', masterContact: '王磊' },
                 { phone: '13798765432', realName: '陈静', tenantId: '40040040', masterAccount: 'user456', enterpriseName: '字节跳动-飞书', masterContact: '陈静' },
                 { phone: '13511112222', realName: '赵岩', tenantId: '50050055', masterAccount: 'admin@bytedance.com', enterpriseName: '字节跳动-TikTok', masterContact: '赵岩' }
             ],
@@ -8061,6 +8215,9 @@
                 { phone: '13200001111', realName: '任正非', tenantId: '70070077', masterAccount: '13900139000', enterpriseName: '华为技术', masterContact: '任正非' }
             ]
         };
+        if (typeof window !== 'undefined') {
+            window.mockCloudAccounts = mockCloudAccounts;
+        }
 
         // 客户产品试用状态映射（模拟数据）
         var customerProductStates = {
@@ -11102,15 +11259,18 @@
         var solutionBorrowCustomer = null;
         var solutionLocalCustomer = null;
         var solutionBorrowCustomers = [
-            { id: 'C100101', name: '华东智造集团有限公司', type: 'KA', sales: '周青', orders: ['BOR-202608-001'], cloud: { account: 'huadong-admin', tenantId: 'YT-10010101' }, industryL1: '制造业', industryL2: '机械制造', email: 'license@huadong-group.com', phone: '13800138000' },
-            { id: 'C100102', name: '北辰智慧能源有限公司', type: 'normal', sales: '赵凯', orders: ['BOR-202608-002'], industryL1: '能源', industryL2: '电力', email: 'contact@beichen-energy.com', phone: '13700137000' },
-            { id: 'C100103', name: '苏州新零售集团有限公司', type: 'KA', sales: '林舟', orders: ['BOR-202608-003'], industryL1: '互联网', industryL2: '电商', email: 'admin@sz-retail.com', phone: '13500000000' },
-            { id: 'C100104', name: '西南智慧物流有限公司', type: 'normal', sales: '陈颖', orders: ['BOR-202608-004'], industryL1: '交通', industryL2: '公路', email: 'ops@xn-logistics.com', phone: '13300000000' },
-            { id: 'C100105', name: '星澜数字服务有限公司', type: 'normal', sales: '沈思', orders: ['BOR-202608-ERR'], industryL1: '互联网', industryL2: 'SaaS企业', email: 'devops@xinglan-cloud.com', phone: '13100000000' },
-            { id: 'C100106', name: '星海智联科技有限公司', type: 'KA', sales: '许岚', orders: ['BOR-202608-005'], cloud: { account: 'xinghai-admin', tenantId: 'YT-10010688' }, industryL1: '互联网', industryL2: '平台型企业', email: 'service@xinghai-iot.com', phone: '13612345678' },
-            { id: 'C100107', name: '环球致远贸易有限公司', type: 'KA', sales: '宋雨', orders: ['BOR-202608-006'], cloud: { account: 'global-admin', tenantId: 'YT-10010777' }, industryL1: '互联网', industryL2: '电商', email: 'it@global-trade.com', phone: '13912345678' },
-            { id: 'C100108', name: '环宇速联科技有限公司', type: 'KA', sales: '宋雨', orders: ['BOR-202608-007'], cloud: { account: 'oceanlink-admin', tenantId: 'YT-10010888' }, industryL1: '互联网', industryL2: '平台型企业', email: 'netops@oceanlink.com', phone: '13900139000' },
-            { id: 'C100109', name: '明澈水务集团有限公司', type: 'KA', sales: '许岚', orders: ['BOR-202608-008'], cloud: { account: 'mingche-admin', tenantId: 'YT-10010999' }, industryL1: '政府', industryL2: '省市级政府', email: 'sec@mingche-water.gov.cn', phone: '13200001111' }
+            { id: 'C100101', name: '华东智造集团有限公司', type: 'KA', sales: '周青', orders: ['BOR-202608-001'], cloud: { account: 'huadong-admin', tenantId: 'YT-10010101' }, industryL1: '制造业', industryL2: '机械制造', region: '上海市', email: 'license@huadong-group.com', phone: '13800138000' },
+            { id: 'C100102', name: '北辰智慧能源有限公司', type: 'normal', sales: '赵凯', orders: ['BOR-202608-002'], industryL1: '能源', industryL2: '电力', region: '北京市', email: 'contact@beichen-energy.com', phone: '13700137000' },
+            { id: 'C100103', name: '苏州新零售集团有限公司', type: 'KA', sales: '林舟', orders: ['BOR-202608-003'], industryL1: '互联网', industryL2: '电商', region: '江苏省', email: 'admin@sz-retail.com', phone: '13500000000' },
+            { id: 'C100104', name: '西南智慧物流有限公司', type: 'normal', sales: '陈颖', orders: ['BOR-202608-004'], industryL1: '交通', industryL2: '公路', region: '四川省', email: 'ops@xn-logistics.com', phone: '13300000000' },
+            { id: 'C100105', name: '星澜数字服务有限公司', type: 'normal', sales: '沈思', orders: ['BOR-202608-ERR'], industryL1: '互联网', industryL2: 'SaaS企业', region: '浙江省', email: 'devops@xinglan-cloud.com', phone: '13100000000' },
+            { id: 'C100106', name: '星海智联科技有限公司', type: 'KA', sales: '许岚', orders: ['BOR-202608-005'], cloud: { account: 'xinghai-admin', tenantId: 'YT-10010688' }, industryL1: '互联网', industryL2: '平台型企业', region: '上海市', email: 'service@xinghai-iot.com', phone: '13612345678' },
+            { id: 'C100107', name: '环球致远贸易有限公司', type: 'KA', sales: '宋雨', orders: ['BOR-202608-006'], cloud: { account: 'global-admin', tenantId: 'YT-10010777' }, industryL1: '互联网', industryL2: '电商', region: '广东省', email: 'it@global-trade.com', phone: '13912345678' },
+            { id: 'C100108', name: '环宇速联科技有限公司', type: 'KA', sales: '宋雨', orders: ['BOR-202608-007'], cloud: { account: 'oceanlink-admin', tenantId: 'YT-10010888' }, industryL1: '互联网', industryL2: '平台型企业', region: '广东省', email: 'netops@oceanlink.com', phone: '13900139000' },
+            { id: 'C100109', name: '明澈水务集团有限公司', type: 'KA', sales: '许岚', orders: ['BOR-202608-008'], cloud: { account: 'mingche-admin', tenantId: 'YT-10010999' }, industryL1: '政府', industryL2: '省市级政府', region: '广东省', email: 'sec@mingche-water.gov.cn', phone: '13200001111' },
+            { id: 'C100120', name: '广东省工商行政管理局', type: 'KA', sales: '张敏', orders: [], cloud: { account: 'gzxz02@163.com', tenantId: '12713254' }, industryL1: '政府', industryL2: '省市级政府', region: '广东省', email: 'gzxz02@163.com', phone: '13800138000' },
+            { id: 'C100121', name: '广东行政学院', type: 'normal', sales: '李雷', orders: [], cloud: { account: '110@163.com', tenantId: '17964872' }, industryL1: '教育', industryL2: '高教', region: '广东省', email: '110@163.com', phone: '13800138000' },
+            { id: 'C100122', name: '广东省行政学院', type: 'normal', sales: '王华', orders: [], cloud: { account: '120@163.com', tenantId: '73672631' }, industryL1: '教育', industryL2: '高教', region: '广东省', email: '120@163.com', phone: '13800138000' }
         ];
         // 分布式安全运营方案专用业务申请字段默认值（Mock 预填）
         var solutionBizDefaults = {
@@ -11363,38 +11523,191 @@
                 }
             }
         }
-        function handleSolutionPhoneMatch(phone) {
+
+        function getCloudAccountsForPhone(phone) {
+            var list = [];
+            if (!phone) return list;
+            var phoneMap = (typeof mockXaasPhoneToAccounts !== 'undefined' ? mockXaasPhoneToAccounts : (typeof window !== 'undefined' ? window.mockXaasPhoneToAccounts : null));
+            var cloudMap = (typeof mockCloudAccounts !== 'undefined' ? mockCloudAccounts : (typeof window !== 'undefined' ? window.mockCloudAccounts : null));
+            if (phoneMap && phoneMap[phone]) {
+                var cids = phoneMap[phone].accounts || [];
+                cids.forEach(function(cid) {
+                    var accs = (cloudMap && cloudMap[cid]) || [];
+                    accs.forEach(function(a) {
+                        if (!list.some(function(item) { return item.tenantId === a.tenantId; })) {
+                            list.push(Object.assign({}, a, { cid: cid }));
+                        }
+                    });
+                });
+            }
+            if (cloudMap) {
+                for (var cid in cloudMap) {
+                    var accs = cloudMap[cid] || [];
+                    for (var i = 0; i < accs.length; i++) {
+                        if (accs[i].phone === phone && !list.some(function(item) { return item.tenantId === accs[i].tenantId; })) {
+                            list.push(Object.assign({}, accs[i], { cid: cid }));
+                        }
+                    }
+                }
+            }
+            if (list.length === 0 && typeof solutionBorrowCustomers !== 'undefined') {
+                solutionBorrowCustomers.forEach(function(c) {
+                    if (c.phone === phone && c.cloud && !list.some(function(item) { return item.tenantId === c.cloud.tenantId; })) {
+                        list.push({
+                            phone: phone,
+                            tenantId: c.cloud.tenantId,
+                            masterAccount: c.cloud.account,
+                            enterpriseName: c.name,
+                            masterContact: phone,
+                            realName: c.name,
+                            region: c.region || '广东省',
+                            industryL1: c.industryL1 || '',
+                            industryL2: c.industryL2 || '',
+                            cid: c.id
+                        });
+                    }
+                });
+            }
+            return list;
+        }
+
+        function getSolutionRegion() {
+            var src = application && application.source ? application.source : 'borrow';
+            var el = id(src === 'borrow' ? 'solutionBorrowRegion' : 'solutionLocalRegion');
+            return el ? el.value.trim() : '';
+        }
+
+        function setSolutionRegion(source, regionVal) {
+            var elId = source === 'borrow' ? 'solutionBorrowRegion' : 'solutionLocalRegion';
+            var el = id(elId);
+            if (el && regionVal) {
+                el.value = regionVal;
+                el.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        }
+
+        function loadSolutionCloudAccounts(accounts, preferredTenantId) {
+            var grid = id('solutionCloudAccountGrid');
+            var nativeSelect = id('solution-cloud-account');
+            if (!grid || !nativeSelect) return;
+            var prevValue = nativeSelect.value;
+            var optsHtml = '<option value="">请选择云图账号</option>';
+            accounts.forEach(function(a) {
+                optsHtml += '<option value="' + escapeHtml(a.tenantId) + '" data-tenant-id="' + escapeHtml(a.tenantId) + '" data-master-account="' + escapeHtml(a.masterAccount || '') + '" data-enterprise-name="' + escapeHtml(a.enterpriseName || '') + '" data-master-contact="' + escapeHtml(a.masterContact || '') + '" data-region="' + escapeHtml(a.region || '') + '">' + escapeHtml(a.tenantId) + ' · ' + escapeHtml(a.masterAccount || '') + '</option>';
+            });
+            nativeSelect.innerHTML = optsHtml;
+
+            var container = grid.querySelector('.custom-select');
+            var valueSpan = container ? container.querySelector('.custom-select-trigger .custom-select-value') : null;
+            var list = container ? container.querySelector('.custom-select-list') : null;
+
+            if (list) {
+                var lisHtml = '';
+                accounts.forEach(function(a) {
+                    lisHtml += '<li class="custom-select-option cloud-account-option" data-value="' + escapeHtml(a.tenantId) + '" data-tenant-id="' + escapeHtml(a.tenantId) + '" data-master-account="' + escapeHtml(a.masterAccount || '') + '" data-enterprise-name="' + escapeHtml(a.enterpriseName || '') + '" data-master-contact="' + escapeHtml(a.masterContact || '') + '" data-region="' + escapeHtml(a.region || '') + '">'
+                        + '<div class="cloud-account-option-meta">'
+                        + '<span class="meta-item"><span class="material-symbols-outlined meta-icon">domain</span><span class="meta-label">云图ID</span><span class="meta-value">' + escapeHtml(a.tenantId) + '</span></span>'
+                        + '<span class="meta-item"><span class="material-symbols-outlined meta-icon">apartment</span><span class="meta-label">云图企业名称</span><span class="meta-value">' + escapeHtml(a.enterpriseName || '-') + '</span></span>'
+                        + '<span class="meta-item"><span class="material-symbols-outlined meta-icon">account_circle</span><span class="meta-label">主账号</span><span class="meta-value">' + escapeHtml(a.masterAccount || '-') + '</span></span>'
+                        + '<span class="meta-item"><span class="material-symbols-outlined meta-icon">contact_page</span><span class="meta-label">主账号联系人</span><span class="meta-value">' + escapeHtml(a.masterContact || '-') + '</span></span>'
+                        + '</div>'
+                        + '</li>';
+                });
+                list.innerHTML = lisHtml;
+            }
+
+            function selectAccountOption(targetOpt, isManualClick) {
+                if (!targetOpt) return;
+                var allOpts = list ? list.querySelectorAll('.custom-select-option') : [];
+                allOpts.forEach(function(opt) { opt.classList.remove('selected'); });
+                targetOpt.classList.add('selected');
+                var tid = targetOpt.dataset.tenantId || '';
+                var mAcc = targetOpt.dataset.masterAccount || '';
+                var ent = targetOpt.dataset.enterpriseName || '';
+                var reg = targetOpt.dataset.region || '';
+                if (valueSpan) {
+                    valueSpan.innerHTML = '<span class="cloud-account-trigger-main">' + escapeHtml(tid) + '</span><span class="cloud-account-trigger-sub"> · ' + escapeHtml(mAcc) + '</span>';
+                    valueSpan.classList.add('has-value');
+                }
+                nativeSelect.value = tid;
+                var matched = { account: mAcc, tenantId: tid, enterpriseName: ent };
+                if (application) {
+                    application.cloud = matched;
+                    updateCustomerGlobalCloudBadge(application.source === 'borrow' ? 'solutionBorrowCustomer' : 'solutionLocalCustomer', matched);
+                }
+                if (reg && (isManualClick || !getSolutionRegion())) setSolutionRegion(application ? application.source : 'borrow', reg);
+                var hint = id('solutionCloudAccountHint');
+                if (hint) {
+                    hint.innerHTML = '<span style="color:#006636;font-weight:500;">已选择云图账号：' + escapeHtml(tid) + ' · ' + escapeHtml(mAcc) + '（' + escapeHtml(ent) + '）</span>';
+                }
+            }
+
+            if (container && list) {
+                var options = list.querySelectorAll('.custom-select-option');
+                options.forEach(function(option) {
+                    option.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        selectAccountOption(this, true);
+                        container.classList.remove('open');
+                    });
+                });
+            }
+
+            grid.style.display = 'grid';
+
+            var targetOption = null;
+            if (list) {
+                var allOpts = list.querySelectorAll('.custom-select-option');
+                if (preferredTenantId) {
+                    allOpts.forEach(function(opt) { if (opt.dataset.tenantId === preferredTenantId) targetOption = opt; });
+                    if (!targetOption) {
+                        return;
+                    }
+                }
+                if (!targetOption && prevValue) {
+                    allOpts.forEach(function(opt) { if (opt.dataset.tenantId === prevValue) targetOption = opt; });
+                }
+                if (!targetOption && allOpts.length > 1) {
+                    // 若存在 17964872（1:1 对齐生产截图默认选中），优先选中该项
+                    allOpts.forEach(function(opt) { if (opt.dataset.tenantId === '17964872') targetOption = opt; });
+                }
+                if (!targetOption && allOpts.length > 0) {
+                    targetOption = allOpts[0];
+                }
+            }
+            if (targetOption) {
+                selectAccountOption(targetOption);
+            }
+        }
+
+        function handleSolutionPhoneMatch(phone, explicitPreferredTenantId) {
             var hint = id('solutionContactPhoneHint');
+            var grid = id('solutionCloudAccountGrid');
             if (!phone) {
                 if (hint) hint.textContent = '输入11位手机号自动匹配云图账号；涉及 XaaS 开通时必填。';
+                if (grid) grid.style.display = 'none';
                 return;
             }
             if (phone.length === 11 && /^1\d{10}$/.test(phone)) {
-                var matched = null;
-                var cust = solutionBorrowCustomers.find(function(c) { return c.phone === phone; });
-                if (cust && cust.cloud) matched = cust.cloud;
-                if (!matched && typeof mockCloudAccounts !== 'undefined') {
-                    for (var cid in mockCloudAccounts) {
-                        var accs = mockCloudAccounts[cid] || [];
-                        for (var i = 0; i < accs.length; i++) {
-                            if (accs[i].phone === phone) {
-                                matched = { account: accs[i].masterAccount || accs[i].realName, tenantId: accs[i].tenantId };
-                                break;
-                            }
-                        }
-                        if (matched) break;
-                    }
-                }
-                if (matched) {
+                var accounts = getCloudAccountsForPhone(phone);
+                if (accounts.length > 1) {
+                    loadSolutionCloudAccounts(accounts, explicitPreferredTenantId);
+                    if (hint) hint.innerHTML = '<span style="color:#006636;font-weight:600;">已匹配到 ' + accounts.length + ' 个云图账号，请在下方选择所属账号。</span>';
+                } else if (accounts.length === 1) {
+                    if (grid) grid.style.display = 'none';
+                    var matched = { account: accounts[0].masterAccount, tenantId: accounts[0].tenantId, enterpriseName: accounts[0].enterpriseName };
                     if (hint) hint.innerHTML = '<span style="color:#006636;font-weight:600;">✓ 已根据手机号匹配云图账号：' + escapeHtml(matched.account) + '（租户ID：' + escapeHtml(matched.tenantId) + '）</span>';
                     if (application) {
                         application.cloud = matched;
                         updateCustomerGlobalCloudBadge(application.source === 'borrow' ? 'solutionBorrowCustomer' : 'solutionLocalCustomer', matched);
                     }
+                    if (accounts[0].region) setSolutionRegion(application ? application.source : 'borrow', accounts[0].region);
                 } else {
+                    if (grid) grid.style.display = 'none';
                     if (hint) hint.innerHTML = '<span style="color:#c97a00;">ℹ 该手机号暂未匹配到云图租户，提交后将以此手机号申请开通云图租户。</span>';
                 }
             } else {
+                if (grid) grid.style.display = 'none';
                 if (hint) hint.textContent = '请输入完整的11位手机号码。';
             }
         }
@@ -11770,12 +12083,13 @@
             if (customer && customer.industryL1) {
                 setSolutionIndustry('borrow', customer.industryL1, customer.industryL2);
             }
+            setSolutionRegion('borrow', (customer && customer.region) || '广东省');
             if (customer && customer.email && id('solutionEmail') && !id('solutionEmail').value) {
                 id('solutionEmail').value = customer.email;
             }
             if (customer && customer.phone && id('solutionContactPhone') && !id('solutionContactPhone').value) {
                 id('solutionContactPhone').value = customer.phone;
-                handleSolutionPhoneMatch(customer.phone);
+                handleSolutionPhoneMatch(customer.phone, customer.cloud ? customer.cloud.tenantId : null);
             }
             renderSolutionBorrowOrders();
             resetSolutionBorrowLookup();
@@ -11789,6 +12103,10 @@
                 var phoneHint = id('solutionContactPhoneHint');
                 if (phoneHint) phoneHint.textContent = '输入11位手机号自动匹配云图账号；涉及 XaaS 开通时必填。';
             }
+            var borrowRegion = id('solutionBorrowRegion');
+            if (borrowRegion) borrowRegion.value = '';
+            var cloudGrid = id('solutionCloudAccountGrid');
+            if (cloudGrid) cloudGrid.style.display = 'none';
             solutionBorrowCustomer = null;
             id('solutionBorrowCustomerSearch').value = '';
             clearSolutionCustomerSummary('solutionBorrowCustomer');
@@ -11809,12 +12127,13 @@
             if (customer && customer.industryL1) {
                 setSolutionIndustry('local', customer.industryL1, customer.industryL2);
             }
+            setSolutionRegion('local', (customer && customer.region) || '广东省');
             if (customer && customer.email && id('solutionEmail') && !id('solutionEmail').value) {
                 id('solutionEmail').value = customer.email;
             }
             if (customer && customer.phone && id('solutionContactPhone') && !id('solutionContactPhone').value) {
                 id('solutionContactPhone').value = customer.phone;
-                handleSolutionPhoneMatch(customer.phone);
+                handleSolutionPhoneMatch(customer.phone, customer.cloud ? customer.cloud.tenantId : null);
             }
             if (id('solutionLocalConfig').value) selectLocalSolution();
         }
@@ -11827,6 +12146,10 @@
                 var phoneHintLocal = id('solutionContactPhoneHint');
                 if (phoneHintLocal) phoneHintLocal.textContent = '输入11位手机号自动匹配云图账号；涉及 XaaS 开通时必填。';
             }
+            var localRegion = id('solutionLocalRegion');
+            if (localRegion) localRegion.value = '';
+            var cloudGridLocal = id('solutionCloudAccountGrid');
+            if (cloudGridLocal) cloudGridLocal.style.display = 'none';
             solutionLocalCustomer = null;
             id('solutionLocalCustomerSearch').value = '';
             clearSolutionCustomerSummary('solutionLocalCustomer');
@@ -12135,6 +12458,11 @@
             application.industryL2 = l2Val;
             application.industry = l1Val + ' / ' + l2Val;
 
+            // 区域校验（必填）
+            var regionVal = getSolutionRegion();
+            if (!regionVal) return '请选择区域。';
+            application.region = regionVal;
+
             // 接收邮箱校验（非必填，若填写则校验邮箱格式）
             var emailVal = id('solutionEmail') ? id('solutionEmail').value.trim() : '';
             if (emailVal && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
@@ -12276,7 +12604,8 @@
             var sourceLabel = application.source === 'borrow' ? '关联借测单' : '本地申请';
             var emailAttr = application.email ? (' data-solution-email="' + escapeHtml(application.email) + '"') : '';
             var phoneAttr = application.contactPhone ? (' data-solution-phone="' + escapeHtml(application.contactPhone) + '"') : '';
-            var record = '<tr class="hover:bg-[#eef3ff]/40 transition-colors solution-parent" data-solution-generated="true"' + emailAttr + phoneAttr + '><td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-1"><button class="text-[#424656] hover:text-primary border-0 bg-transparent p-0 leading-none" onclick="toggleSolution(this)" aria-label="展开方案明细"><span class="material-symbols-outlined text-[16px] expand-icon">chevron_right</span></button><a class="text-primary hover:underline font-medium" href="javascript:;">' + application.recordId + '</a></div></td><td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-50 text-amber-700 border border-amber-200">解决方案</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td><td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">' + escapeHtml(application.solution.name) + '</td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td><td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="' + escapeHtml(application.customer) + '">' + escapeHtml(application.customer) + '</span></div></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]"><span class="device-summary" data-full="' + deviceIds + '">' + rows.length + '个设备</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]"><span class="device-summary" data-full="' + sns + '">' + rows.length + '个设备</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">' + sourceLabel + '</td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-08-06 ~ ' + rows[0].endDate + '</td><td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">' + escapeHtml(application.applicant) + '</td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-08-06 10:10</td><td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已授权</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px] record-action-control" data-record-action="view" role="button" tabindex="0" aria-haspopup="dialog">查看</span></div></div></td></tr>';
+            var regionAttr = application.region ? (' data-solution-region="' + escapeHtml(application.region) + '"') : '';
+            var record = '<tr class="hover:bg-[#eef3ff]/40 transition-colors solution-parent" data-solution-generated="true"' + emailAttr + phoneAttr + regionAttr + '><td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-1"><button class="text-[#424656] hover:text-primary border-0 bg-transparent p-0 leading-none" onclick="toggleSolution(this)" aria-label="展开方案明细"><span class="material-symbols-outlined text-[16px] expand-icon">chevron_right</span></button><a class="text-primary hover:underline font-medium" href="javascript:;">' + application.recordId + '</a></div></td><td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-50 text-amber-700 border border-amber-200">解决方案</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td><td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">' + escapeHtml(application.solution.name) + '</td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td><td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="' + escapeHtml(application.customer) + '">' + escapeHtml(application.customer) + '</span></div></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]"><span class="device-summary" data-full="' + deviceIds + '">' + rows.length + '个设备</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]"><span class="device-summary" data-full="' + sns + '">' + rows.length + '个设备</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">' + sourceLabel + '</td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-08-06 ~ ' + rows[0].endDate + '</td><td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">' + escapeHtml(application.applicant) + '</td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-08-06 10:10</td><td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已授权</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px] record-action-control" data-record-action="view" role="button" tabindex="0" aria-haspopup="dialog">查看</span></div></div></td></tr>';
             var detail = '<tr class="solution-detail-row" style="display:none;" data-solution-generated-detail="true"><td colspan="14" class="p-0 bg-[#f8f9ff]" style="border-top:2px solid #e5eeff;"><div style="padding:6px 12px 10px;"><div class="solution-expand-wrap"><div class="bg-white rounded border border-[#c2c6d8]/20 overflow-hidden" style="font-size:11.5px;"><table class="w-full"><thead><tr class="border-b border-[#c2c6d8]/30 bg-[#e8eeff]"><th class="py-2 px-3">产品线</th><th class="py-2 px-3">版本号</th><th class="py-2 px-3">设备ID/云图ID</th><th class="py-2 px-3">设备SN</th><th class="py-2 px-3">授权有效期</th><th class="py-2 px-3">授权码</th></tr></thead><tbody>' + rows.map(function(row) { return '<tr><td class="py-2 px-3">' + row.line + '</td><td class="py-2 px-3">' + escapeHtml(row.version) + '</td><td class="py-2 px-3">' + escapeHtml(row.deviceId) + '</td><td class="py-2 px-3">' + row.sn + '</td><td class="py-2 px-3">至 ' + row.endDate + '</td><td class="py-2 px-3">' + row.license + '</td></tr>'; }).join('') + '</tbody></table></div></div></div></td></tr>';
             tbody.insertAdjacentHTML('afterbegin', record + detail);
             if (typeof window.initRecordsPagination === 'function') window.initRecordsPagination();
@@ -12299,6 +12628,10 @@
                 id('solutionLocalConfig').value = '';
                 if (id('solutionEmail')) id('solutionEmail').value = '';
                 if (id('solutionContactPhone')) id('solutionContactPhone').value = '';
+                if (id('solutionBorrowRegion')) id('solutionBorrowRegion').value = '';
+                if (id('solutionLocalRegion')) id('solutionLocalRegion').value = '';
+                var cloudGrid = id('solutionCloudAccountGrid');
+                if (cloudGrid) cloudGrid.style.display = 'none';
                 var phoneHint = id('solutionContactPhoneHint');
                 if (phoneHint) phoneHint.textContent = '输入11位手机号自动匹配云图账号；涉及 XaaS 开通时必填。';
                 clearSolutionBorrowCustomer(false);

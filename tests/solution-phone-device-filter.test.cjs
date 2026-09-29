@@ -237,3 +237,164 @@ test('借测单客户级联筛选与多维条件联动', () => {
     assert.deepEqual(errors, []);
   } finally { dom.window.close(); }
 });
+
+test('多云图账号选择器卡片（1:1 还原生产环境）：手机号匹配多租户展开卡片下拉、2x2网格回显与切换联动', () => {
+  const { dom, document, window, errors } = loadV2Dom();
+  try {
+    openSolutionTab(document);
+
+    const phoneInput = document.getElementById('solutionContactPhone');
+    const cloudAccountGrid = document.getElementById('solutionCloudAccountGrid');
+    assert.ok(cloudAccountGrid, '应存在多云图账号选择网格区块');
+    assert.equal(cloudAccountGrid.style.display, 'none', '初始状态下云图账号选择区块应隐藏');
+
+    // 1. 输入匹配多租户的手机号 13800138000
+    phoneInput.value = '13800138000';
+    phoneInput.dispatchEvent(new window.Event('input', { bubbles: true }));
+
+    // 验证多云图账号选择区块展示
+    assert.equal(cloudAccountGrid.style.display, 'grid', '手机号匹配多个云图账号时应展开选择网格');
+    const hint = document.getElementById('solutionContactPhoneHint');
+    assert.match(hint.textContent, /已匹配到 4 个云图账号/);
+
+    // 验证自定义下拉卡片列表选项
+    const customSelect = cloudAccountGrid.querySelector('[data-select-id="solution-cloud-account"]');
+    assert.ok(customSelect, '应存在自定义云图账号下拉组件');
+    const list = customSelect.querySelector('.custom-select-list');
+    const options = list.querySelectorAll('.cloud-account-option');
+    assert.equal(options.length, 4, '应渲染 4 个租户卡片选项');
+
+    // 验证卡片 2×2 网格字段完整性（包含云图ID、企业名称、主账号、主账号联系人）
+    const opt0 = options[0];
+    assert.equal(opt0.getAttribute('data-tenant-id'), '12713254');
+    assert.equal(opt0.getAttribute('data-master-account'), '120@163.com');
+    assert.equal(opt0.getAttribute('data-enterprise-name'), '广东省工商行政管理局');
+    assert.equal(opt0.getAttribute('data-master-contact'), '彭某某');
+    assert.match(opt0.textContent, /云图ID/);
+    assert.match(opt0.textContent, /12713254/);
+    assert.match(opt0.textContent, /广东省工商行政管理局/);
+    assert.match(opt0.textContent, /120@163\.com/);
+    assert.match(opt0.textContent, /彭某某/);
+
+    // 验证 1:1 对齐生产环境默认选中 17964872
+    const opt1 = options[1];
+    assert.equal(opt1.getAttribute('data-tenant-id'), '17964872');
+    assert.ok(opt1.classList.contains('selected'), '生产环境截图默认选中 17964872 广东行政学院');
+
+    const triggerValue = customSelect.querySelector('.custom-select-value');
+    assert.match(triggerValue.textContent, /17964872/);
+    assert.match(triggerValue.textContent, /110@163\.com/);
+
+    const nativeSelect = document.getElementById('solution-cloud-account');
+    assert.equal(nativeSelect.value, '17964872');
+
+    // 验证全局云图身份 Badge 同步显示 17964872
+    const globalCloud = document.getElementById('solutionBorrowGlobalCloud');
+    assert.equal(globalCloud.style.display, 'inline-block');
+    assert.match(globalCloud.textContent, /17964872/);
+
+    // 2. 点击触发器展开下拉列表，并切换为第一个租户 12713254
+    const trigger = customSelect.querySelector('.custom-select-trigger');
+    trigger.click();
+    assert.ok(customSelect.classList.contains('open'), '点击触发器应展开下拉菜单');
+
+    opt0.click();
+    assert.ok(!customSelect.classList.contains('open'), '选择后下拉菜单应收起');
+    assert.ok(opt0.classList.contains('selected'), '选项 12713254 应高亮选中');
+    assert.ok(!opt1.classList.contains('selected'), '之前选中的项应取消高亮');
+
+    // 验证触发器回显与全局云图身份更新
+    assert.match(triggerValue.textContent, /12713254/);
+    assert.match(triggerValue.textContent, /120@163\.com/);
+    assert.equal(nativeSelect.value, '12713254');
+    assert.match(globalCloud.textContent, /12713254/);
+
+    const cloudHint = document.getElementById('solutionCloudAccountHint');
+    assert.match(cloudHint.textContent, /12713254 · 120@163\.com（广东省工商行政管理局）/);
+
+    // 3. 手机号改为单租户手机号（13612345678），多云图卡片选择器应隐藏
+    phoneInput.value = '13612345678';
+    phoneInput.dispatchEvent(new window.Event('input', { bubbles: true }));
+    assert.equal(cloudAccountGrid.style.display, 'none', '单租户手机号应隐藏多云图选择器网格');
+    assert.match(globalCloud.textContent, /YT-10010688/);
+
+    assert.deepEqual(errors, []);
+  } finally { dom.window.close(); }
+});
+
+test('区域字段规范：借测单/本地申请自动带入、下拉选择修改、整单必填强校验与记录回显', () => {
+  const { dom, document, window, errors } = loadV2Dom();
+  try {
+    openSolutionTab(document);
+
+    // 1. 借测单来源下的区域自动带入与校验
+    selectBorrowCustomer(document, window, 'C100101'); // 华东智造，自带区域 上海市
+    const borrowRegion = document.getElementById('solutionBorrowRegion');
+    assert.ok(borrowRegion, '应存在借测单来源区域下拉框');
+    assert.equal(borrowRegion.value, '上海市', '选择客户应自动带入客户所属区域');
+
+    // 关联借测单
+    const orderSelect = document.getElementById('solutionBorrowOrder');
+    orderSelect.value = 'BOR-202608-001';
+    click(document, window, 'solutionBorrowLookup');
+
+    // 清空区域尝试提交，验证整单必填阻断
+    borrowRegion.value = '';
+    borrowRegion.dispatchEvent(new window.Event('change', { bubbles: true }));
+    click(document, window, 'solutionSubmitWhole');
+
+    const submitError = document.getElementById('solutionSubmitError');
+    assert.equal(submitError.hidden, false, '清空区域应阻断整单提交');
+    assert.match(submitError.textContent, /请选择区域。/);
+
+    // 选择新区域（如 广东省）并重新提交
+    borrowRegion.value = '广东省';
+    borrowRegion.dispatchEvent(new window.Event('change', { bubbles: true }));
+    click(document, window, 'solutionSubmitWhole');
+    assert.equal(submitError.hidden, true, '填写真确区域后提交成功');
+
+    // 验证生成的授权记录行中记录了区域属性
+    const recordRow = document.querySelector('#content-records .solution-parent[data-solution-generated="true"]');
+    assert.ok(recordRow, '应生成方案授权主行');
+    assert.equal(recordRow.getAttribute('data-solution-region'), '广东省', '主行应回显填写的区域数据');
+
+    // 2. 本地申请来源下的区域自动带入与校验
+    chooseSolutionSource(document, window, 'local');
+    const localConfig = document.getElementById('solutionLocalConfig');
+    localConfig.value = 'SOL-ACCEL-006';
+    localConfig.dispatchEvent(new window.Event('change', { bubbles: true }));
+
+    selectLocalCustomer(document, window, 'C100108'); // 环宇速联，自带区域 广东省
+    const localRegion = document.getElementById('solutionLocalRegion');
+    assert.ok(localRegion, '应存在本地申请来源区域下拉框');
+    assert.equal(localRegion.value, '广东省', '本地客户应自动带入区域');
+
+    // 清空本地申请区域尝试提交
+    localRegion.value = '';
+    localRegion.dispatchEvent(new window.Event('change', { bubbles: true }));
+    click(document, window, 'solutionSubmitWhole');
+    const localSubmitError = document.getElementById('solutionSubmitError');
+    assert.equal(localSubmitError.hidden, false);
+    assert.match(localSubmitError.textContent, /请选择区域。/);
+
+    // 修改为北京市
+    localRegion.value = '北京市';
+    localRegion.dispatchEvent(new window.Event('change', { bubbles: true }));
+    // 补齐必填联系人手机号
+    const phoneInput = document.getElementById('solutionContactPhone');
+    phoneInput.value = '13900139000';
+    phoneInput.dispatchEvent(new window.Event('input', { bubbles: true }));
+    click(document, window, 'solutionSubmitWhole');
+    if (!localSubmitError.hidden) {
+      assert.doesNotMatch(localSubmitError.textContent, /区域/);
+    }
+
+    // 3. 单产品 XaaS 表单区域必填校验
+    document.querySelector('#navBar li[data-tab="xaas"]').click();
+    const xaasRegion = document.getElementById('xaas-region');
+    assert.ok(xaasRegion, '单产品 XaaS 表单中应存在区域字段');
+
+    assert.deepEqual(errors, []);
+  } finally { dom.window.close(); }
+});
+
