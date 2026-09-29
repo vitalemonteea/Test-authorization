@@ -327,11 +327,27 @@ test('区域字段规范：借测单/本地申请自动带入、下拉选择修�
   try {
     openSolutionTab(document);
 
-    // 1. 借测单来源下的区域自动带入与校验
-    selectBorrowCustomer(document, window, 'C100101'); // 华东智造，自带区域 上海市
+    // 1. 借测单来源下的两列区域选择器（一级大区 + 二级办事处）
     const borrowRegion = document.getElementById('solutionBorrowRegion');
-    assert.ok(borrowRegion, '应存在借测单来源区域下拉框');
-    assert.equal(borrowRegion.value, '上海市', '选择客户应自动带入客户所属区域');
+    const borrowRegionL2 = document.getElementById('solutionBorrowRegionL2');
+    assert.ok(borrowRegion, '应存在借测单来源大区下拉框');
+    assert.ok(borrowRegionL2, '应存在借测单来源办事处下拉框');
+
+    // 1:1 还原生产环境截图：选择东北区，二级默认显示并选中 "-"
+    borrowRegion.value = '东北区';
+    borrowRegion.dispatchEvent(new window.Event('change', { bubbles: true }));
+    assert.equal(borrowRegionL2.value, '-', '一级大区选择东北区时，二级办事处默认选中 "-"');
+
+    // 测试两级联动：选择云贵区，二级应包含 云南、贵州
+    borrowRegion.value = '云贵区';
+    borrowRegion.dispatchEvent(new window.Event('change', { bubbles: true }));
+    const l2Options = Array.from(borrowRegionL2.options).map(opt => opt.value);
+    assert.ok(l2Options.includes('-') && l2Options.includes('云南') && l2Options.includes('贵州'), '云贵区应正确联动二级办事处（-、云南、贵州）');
+
+    // 选择客户华东智造，自带区域 上海市（自动映射并联动）
+    selectBorrowCustomer(document, window, 'C100101');
+    assert.ok(['上海区', '上海市'].includes(borrowRegion.value), '选择客户应自动带入大区');
+    assert.equal(borrowRegionL2.value, '-', '二级办事处应保持 "-"');
 
     // 关联借测单
     const orderSelect = document.getElementById('solutionBorrowOrder');
@@ -347,7 +363,7 @@ test('区域字段规范：借测单/本地申请自动带入、下拉选择修�
     assert.equal(submitError.hidden, false, '清空区域应阻断整单提交');
     assert.match(submitError.textContent, /请选择区域。/);
 
-    // 选择新区域（如 广东省）并重新提交
+    // 选择新区域（如 广东省/广东区）并重新提交
     borrowRegion.value = '广东省';
     borrowRegion.dispatchEvent(new window.Event('change', { bubbles: true }));
     click(document, window, 'solutionSubmitWhole');
@@ -356,9 +372,9 @@ test('区域字段规范：借测单/本地申请自动带入、下拉选择修�
     // 验证生成的授权记录行中记录了区域属性
     const recordRow = document.querySelector('#content-records .solution-parent[data-solution-generated="true"]');
     assert.ok(recordRow, '应生成方案授权主行');
-    assert.equal(recordRow.getAttribute('data-solution-region'), '广东省', '主行应回显填写的区域数据');
+    assert.ok(['广东省', '广东区'].includes(recordRow.getAttribute('data-solution-region')), '主行应回显填写的区域数据');
 
-    // 2. 本地申请来源下的区域自动带入与校验
+    // 2. 本地申请来源下的两列区域联动与自动带入
     chooseSolutionSource(document, window, 'local');
     const localConfig = document.getElementById('solutionLocalConfig');
     localConfig.value = 'SOL-ACCEL-006';
@@ -366,8 +382,9 @@ test('区域字段规范：借测单/本地申请自动带入、下拉选择修�
 
     selectLocalCustomer(document, window, 'C100108'); // 环宇速联，自带区域 广东省
     const localRegion = document.getElementById('solutionLocalRegion');
-    assert.ok(localRegion, '应存在本地申请来源区域下拉框');
-    assert.equal(localRegion.value, '广东省', '本地客户应自动带入区域');
+    const localRegionL2 = document.getElementById('solutionLocalRegionL2');
+    assert.ok(localRegion && localRegionL2, '应存在本地申请来源两列区域下拉框');
+    assert.ok(['广东省', '广东区'].includes(localRegion.value), '本地客户应自动带入区域');
 
     // 清空本地申请区域尝试提交
     localRegion.value = '';
@@ -389,10 +406,18 @@ test('区域字段规范：借测单/本地申请自动带入、下拉选择修�
       assert.doesNotMatch(localSubmitError.textContent, /区域/);
     }
 
-    // 3. 单产品 XaaS 表单区域必填校验
+    // 3. 单产品 XaaS 表单区域两列联动校验
     document.querySelector('#navBar li[data-tab="xaas"]').click();
     const xaasRegion = document.getElementById('xaas-region');
-    assert.ok(xaasRegion, '单产品 XaaS 表单中应存在区域字段');
+    const xaasRegionL2 = document.getElementById('xaas-region-l2');
+    assert.ok(xaasRegion, '单产品 XaaS 表单中应存在一级大区字段');
+    assert.ok(xaasRegionL2, '单产品 XaaS 表单中应存在二级办事处字段');
+
+    // 测试 XaaS 区域两列联动
+    xaasRegion.value = '华北区';
+    xaasRegion.dispatchEvent(new window.Event('change', { bubbles: true }));
+    const xaasL2Opts = Array.from(xaasRegionL2.options).map(opt => opt.value);
+    assert.ok(xaasL2Opts.includes('内蒙') && xaasL2Opts.includes('山西'), 'XaaS 华北区应正确联动二级办事处（内蒙、山西）');
 
     assert.deepEqual(errors, []);
   } finally { dom.window.close(); }

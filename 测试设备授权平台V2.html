@@ -605,9 +605,9 @@
         .rules-badge-gray { background: #f3f4f6; color: #6b7280; }
         .rules-badge-green { background: #f0fdf4; color: #16a34a; }
         .rules-arrow { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; color: #d1d5db; margin: 0 4px; font-size: 12px; }
-        .xaas-industry-row { display: flex; gap: 12px; max-width: 480px; }
-        .xaas-industry-row select { flex: 1; min-width: 0; }
-        .xaas-industry-row .custom-select { flex: 1; min-width: 0; max-width: none; }
+        .xaas-industry-row, .solution-region-row { display: flex; gap: 12px; max-width: 480px; width: 100%; }
+        .xaas-industry-row select, .solution-region-row select { flex: 1; min-width: 0; }
+        .xaas-industry-row .custom-select, .solution-region-row .custom-select { flex: 1; min-width: 0; max-width: none; }
         .xaas-family-list { border: 1px solid #d1d5db; border-radius: 8px; width: 100%; background: #fff; overflow: visible; }
         .xaas-family { border-bottom: 1px solid #e5e7eb; }
         .xaas-family:last-child { border-bottom: none; }
@@ -825,9 +825,9 @@
             .xaas-product-right { flex: 0 0 auto; width: 100%; justify-content: space-between; gap: 6px; }
             #content-xaas .xaas-version-picker { flex: 1; max-width: none; min-width: 0; }
             #content-xaas .xaas-version-picker .custom-select-trigger { width: 100%; }
-            .xaas-industry-row { flex-direction: row; flex-wrap: nowrap; gap: 8px; max-width: none; }
-            .xaas-industry-row .custom-select { flex: 1 1 0; width: 0; min-width: 0; }
-            .xaas-industry-row .custom-select .custom-select-trigger { width: 100%; box-sizing: border-box; }
+            .xaas-industry-row, .solution-region-row { flex-direction: row; flex-wrap: nowrap; gap: 8px; max-width: none; }
+            .xaas-industry-row .custom-select, .solution-region-row .custom-select { flex: 1 1 0; width: 0; min-width: 0; }
+            .xaas-industry-row .custom-select .custom-select-trigger, .solution-region-row .custom-select .custom-select-trigger { width: 100%; box-sizing: border-box; }
             .xaas-family-head { padding: 8px 10px; font-size: 13px; }
             .xaas-inline-spec-area { margin: 6px 0 0 0; padding: 8px; }
             .xaas-inline-spec-area .spec-field-row { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 4px; }
@@ -3083,42 +3083,100 @@
                                     <div class="tooltip-popup">
                                         <button class="tooltip-copy" onclick="copyTooltip(this)">复制</button>
                                         <div class="tooltip-title">区域 备注</div>
-                                        <div class="tooltip-section"><span class="tooltip-label">业务规则：</span>客户所属区域/省份，用于跨区域服务资源调配与审批核算，整单提交必填。</div>
-                                        <div class="tooltip-section"><span class="tooltip-label">交互规则：</span>优先从客户主数据或云图企业档案自动带入，支持手动调整。</div>
+                                        <div class="tooltip-section"><span class="tooltip-label">业务规则：</span>客户所属大区及办事处，用于跨区域服务资源调配与审批核算，整单提交必填。</div>
+                                        <div class="tooltip-section"><span class="tooltip-label">交互规则：</span>两列并列联动展示（一级大区+二级办事处），优先从客户主数据或云图自动带入，支持下拉选择并修改。</div>
                                     </div>
                                 </span>
                             </label>
                             <div class="layui-input-block">
-                                <div class="custom-select" data-select-id="xaas-region">
-                                    <select class="layui-select" id="xaas-region" style="display:none;">
-                                        <option value="">请选择区域</option>
-                                        <option value="广东省">广东省</option>
-                                        <option value="上海市">上海市</option>
-                                        <option value="北京市">北京市</option>
-                                        <option value="浙江省">浙江省</option>
-                                        <option value="江苏省">江苏省</option>
-                                        <option value="四川省">四川省</option>
-                                        <option value="山东省">山东省</option>
-                                        <option value="湖北省">湖北省</option>
-                                        <option value="海外">海外</option>
-                                    </select>
-                                    <button type="button" class="custom-select-trigger" aria-haspopup="listbox" aria-expanded="false">
-                                        <span class="custom-select-value">请选择区域</span>
-                                        <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
-                                    </button>
-                                    <div class="custom-select-dropdown">
-                                        <ul class="custom-select-list">
-                                            <li class="custom-select-option" data-value="">请选择区域</li>
-                                            <li class="custom-select-option" data-value="广东省">广东省</li>
-                                            <li class="custom-select-option" data-value="上海市">上海市</li>
-                                            <li class="custom-select-option" data-value="北京市">北京市</li>
-                                            <li class="custom-select-option" data-value="浙江省">浙江省</li>
-                                            <li class="custom-select-option" data-value="江苏省">江苏省</li>
-                                            <li class="custom-select-option" data-value="四川省">四川省</li>
-                                            <li class="custom-select-option" data-value="山东省">山东省</li>
-                                            <li class="custom-select-option" data-value="湖北省">湖北省</li>
-                                            <li class="custom-select-option" data-value="海外">海外</li>
-                                        </ul>
+                                <div class="xaas-industry-row">
+                                    <div class="custom-select" data-select-id="xaas-region">
+                                        <select class="layui-select" id="xaas-region" style="display:none;" aria-label="大区">
+                                            <option value="">请选择区域</option>
+                                            <option value="东北区">东北区</option>
+                                            <option value="华北区">华北区</option>
+                                            <option value="北京区">北京区</option>
+                                            <option value="天津区">天津区</option>
+                                            <option value="河北区">河北区</option>
+                                            <option value="山东区">山东区</option>
+                                            <option value="上海区">上海区</option>
+                                            <option value="江苏区">江苏区</option>
+                                            <option value="浙江区">浙江区</option>
+                                            <option value="安徽区">安徽区</option>
+                                            <option value="华南区">华南区</option>
+                                            <option value="广东区">广东区</option>
+                                            <option value="深圳区">深圳区</option>
+                                            <option value="福建区">福建区</option>
+                                            <option value="湖北区">湖北区</option>
+                                            <option value="湖南区">湖南区</option>
+                                            <option value="河南区">河南区</option>
+                                            <option value="江西区">江西区</option>
+                                            <option value="四川区">四川区</option>
+                                            <option value="重庆区">重庆区</option>
+                                            <option value="云贵区">云贵区</option>
+                                            <option value="陕西区">陕西区</option>
+                                            <option value="西北区">西北区</option>
+                                            <option value="新疆区">新疆区</option>
+                                            <option value="行业总部">行业总部</option>
+                                            <option value="海外">海外</option>
+                                            <option value="广东省" style="display:none;">广东省</option>
+                                            <option value="上海市" style="display:none;">上海市</option>
+                                            <option value="北京市" style="display:none;">北京市</option>
+                                            <option value="浙江省" style="display:none;">浙江省</option>
+                                            <option value="江苏省" style="display:none;">江苏省</option>
+                                            <option value="四川省" style="display:none;">四川省</option>
+                                            <option value="山东省" style="display:none;">山东省</option>
+                                            <option value="湖北省" style="display:none;">湖北省</option>
+                                        </select>
+                                        <button type="button" class="custom-select-trigger" aria-haspopup="listbox" aria-expanded="false">
+                                            <span class="custom-select-value">请选择区域</span>
+                                            <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                        </button>
+                                        <div class="custom-select-dropdown">
+                                            <ul class="custom-select-list">
+                                                <li class="custom-select-option" data-value="">请选择区域</li>
+                                                <li class="custom-select-option" data-value="东北区">东北区</li>
+                                                <li class="custom-select-option" data-value="华北区">华北区</li>
+                                                <li class="custom-select-option" data-value="北京区">北京区</li>
+                                                <li class="custom-select-option" data-value="天津区">天津区</li>
+                                                <li class="custom-select-option" data-value="河北区">河北区</li>
+                                                <li class="custom-select-option" data-value="山东区">山东区</li>
+                                                <li class="custom-select-option" data-value="上海区">上海区</li>
+                                                <li class="custom-select-option" data-value="江苏区">江苏区</li>
+                                                <li class="custom-select-option" data-value="浙江区">浙江区</li>
+                                                <li class="custom-select-option" data-value="安徽区">安徽区</li>
+                                                <li class="custom-select-option" data-value="华南区">华南区</li>
+                                                <li class="custom-select-option" data-value="广东区">广东区</li>
+                                                <li class="custom-select-option" data-value="深圳区">深圳区</li>
+                                                <li class="custom-select-option" data-value="福建区">福建区</li>
+                                                <li class="custom-select-option" data-value="湖北区">湖北区</li>
+                                                <li class="custom-select-option" data-value="湖南区">湖南区</li>
+                                                <li class="custom-select-option" data-value="河南区">河南区</li>
+                                                <li class="custom-select-option" data-value="江西区">江西区</li>
+                                                <li class="custom-select-option" data-value="四川区">四川区</li>
+                                                <li class="custom-select-option" data-value="重庆区">重庆区</li>
+                                                <li class="custom-select-option" data-value="云贵区">云贵区</li>
+                                                <li class="custom-select-option" data-value="陕西区">陕西区</li>
+                                                <li class="custom-select-option" data-value="西北区">西北区</li>
+                                                <li class="custom-select-option" data-value="新疆区">新疆区</li>
+                                                <li class="custom-select-option" data-value="行业总部">行业总部</li>
+                                                <li class="custom-select-option" data-value="海外">海外</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="custom-select" data-select-id="xaas-region-l2">
+                                        <select class="layui-select" id="xaas-region-l2" style="display:none;" aria-label="办事处">
+                                            <option value="-">-</option>
+                                        </select>
+                                        <button type="button" class="custom-select-trigger" aria-haspopup="listbox" aria-expanded="false">
+                                            <span class="custom-select-value">-</span>
+                                            <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                        </button>
+                                        <div class="custom-select-dropdown">
+                                            <ul class="custom-select-list">
+                                                <li class="custom-select-option selected" data-value="-">-</li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -3589,24 +3647,102 @@
                                                 <div class="tooltip-popup">
                                                     <button class="tooltip-copy" onclick="copyTooltip(this)">复制</button>
                                                     <div class="tooltip-title">区域 备注</div>
-                                                    <div class="tooltip-section"><span class="tooltip-label">业务规则：</span>客户所属区域/省份，用于跨区域服务资源调配与审批核算，整单提交必填。</div>
-                                                    <div class="tooltip-section"><span class="tooltip-label">交互规则：</span>优先从 CRM/客户主数据自动带入，支持下拉选择并修改。</div>
+                                                    <div class="tooltip-section"><span class="tooltip-label">业务规则：</span>客户所属大区及办事处，用于跨区域服务资源调配与审批核算，整单提交必填。</div>
+                                                    <div class="tooltip-section"><span class="tooltip-label">交互规则：</span>两列并列联动展示（一级大区+二级办事处），优先从客户主数据或云图自动带入，支持下拉选择并修改。</div>
                                                 </div>
                                             </span>
                                         </label>
                                         <div class="solution-form-control">
-                                            <select class="solution-select" id="solutionBorrowRegion" aria-label="借测客户所属区域">
-                                                <option value="">请选择区域</option>
-                                                <option value="广东省">广东省</option>
-                                                <option value="上海市">上海市</option>
-                                                <option value="北京市">北京市</option>
-                                                <option value="浙江省">浙江省</option>
-                                                <option value="江苏省">江苏省</option>
-                                                <option value="四川省">四川省</option>
-                                                <option value="山东省">山东省</option>
-                                                <option value="湖北省">湖北省</option>
-                                                <option value="海外">海外</option>
-                                            </select>
+                                            <div class="xaas-industry-row solution-region-row">
+                                                <div class="custom-select" data-select-id="solutionBorrowRegion">
+                                                    <select class="layui-select" id="solutionBorrowRegion" style="display:none;" aria-label="大区">
+                                                        <option value="">请选择区域</option>
+                                                        <option value="东北区">东北区</option>
+                                                        <option value="华北区">华北区</option>
+                                                        <option value="北京区">北京区</option>
+                                                        <option value="天津区">天津区</option>
+                                                        <option value="河北区">河北区</option>
+                                                        <option value="山东区">山东区</option>
+                                                        <option value="上海区">上海区</option>
+                                                        <option value="江苏区">江苏区</option>
+                                                        <option value="浙江区">浙江区</option>
+                                                        <option value="安徽区">安徽区</option>
+                                                        <option value="华南区">华南区</option>
+                                                        <option value="广东区">广东区</option>
+                                                        <option value="深圳区">深圳区</option>
+                                                        <option value="福建区">福建区</option>
+                                                        <option value="湖北区">湖北区</option>
+                                                        <option value="湖南区">湖南区</option>
+                                                        <option value="河南区">河南区</option>
+                                                        <option value="江西区">江西区</option>
+                                                        <option value="四川区">四川区</option>
+                                                        <option value="重庆区">重庆区</option>
+                                                        <option value="云贵区">云贵区</option>
+                                                        <option value="陕西区">陕西区</option>
+                                                        <option value="西北区">西北区</option>
+                                                        <option value="新疆区">新疆区</option>
+                                                        <option value="行业总部">行业总部</option>
+                                                        <option value="海外">海外</option>
+                                                        <option value="广东省" style="display:none;">广东省</option>
+                                                        <option value="上海市" style="display:none;">上海市</option>
+                                                        <option value="北京市" style="display:none;">北京市</option>
+                                                        <option value="浙江省" style="display:none;">浙江省</option>
+                                                        <option value="江苏省" style="display:none;">江苏省</option>
+                                                        <option value="四川省" style="display:none;">四川省</option>
+                                                        <option value="山东省" style="display:none;">山东省</option>
+                                                        <option value="湖北省" style="display:none;">湖北省</option>
+                                                    </select>
+                                                    <button type="button" class="custom-select-trigger" aria-haspopup="listbox" aria-expanded="false">
+                                                        <span class="custom-select-value">请选择区域</span>
+                                                        <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                                    </button>
+                                                    <div class="custom-select-dropdown">
+                                                        <ul class="custom-select-list">
+                                                            <li class="custom-select-option" data-value="">请选择区域</li>
+                                                            <li class="custom-select-option" data-value="东北区">东北区</li>
+                                                            <li class="custom-select-option" data-value="华北区">华北区</li>
+                                                            <li class="custom-select-option" data-value="北京区">北京区</li>
+                                                            <li class="custom-select-option" data-value="天津区">天津区</li>
+                                                            <li class="custom-select-option" data-value="河北区">河北区</li>
+                                                            <li class="custom-select-option" data-value="山东区">山东区</li>
+                                                            <li class="custom-select-option" data-value="上海区">上海区</li>
+                                                            <li class="custom-select-option" data-value="江苏区">江苏区</li>
+                                                            <li class="custom-select-option" data-value="浙江区">浙江区</li>
+                                                            <li class="custom-select-option" data-value="安徽区">安徽区</li>
+                                                            <li class="custom-select-option" data-value="华南区">华南区</li>
+                                                            <li class="custom-select-option" data-value="广东区">广东区</li>
+                                                            <li class="custom-select-option" data-value="深圳区">深圳区</li>
+                                                            <li class="custom-select-option" data-value="福建区">福建区</li>
+                                                            <li class="custom-select-option" data-value="湖北区">湖北区</li>
+                                                            <li class="custom-select-option" data-value="湖南区">湖南区</li>
+                                                            <li class="custom-select-option" data-value="河南区">河南区</li>
+                                                            <li class="custom-select-option" data-value="江西区">江西区</li>
+                                                            <li class="custom-select-option" data-value="四川区">四川区</li>
+                                                            <li class="custom-select-option" data-value="重庆区">重庆区</li>
+                                                            <li class="custom-select-option" data-value="云贵区">云贵区</li>
+                                                            <li class="custom-select-option" data-value="陕西区">陕西区</li>
+                                                            <li class="custom-select-option" data-value="西北区">西北区</li>
+                                                            <li class="custom-select-option" data-value="新疆区">新疆区</li>
+                                                            <li class="custom-select-option" data-value="行业总部">行业总部</li>
+                                                            <li class="custom-select-option" data-value="海外">海外</li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div class="custom-select" data-select-id="solutionBorrowRegionL2">
+                                                    <select class="layui-select" id="solutionBorrowRegionL2" style="display:none;" aria-label="办事处">
+                                                        <option value="-">-</option>
+                                                    </select>
+                                                    <button type="button" class="custom-select-trigger" aria-haspopup="listbox" aria-expanded="false">
+                                                        <span class="custom-select-value">-</span>
+                                                        <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                                    </button>
+                                                    <div class="custom-select-dropdown">
+                                                        <ul class="custom-select-list">
+                                                            <li class="custom-select-option selected" data-value="-">-</li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="solution-form-row solution-form-row-full" id="solutionBorrowCustomerField">
@@ -3715,24 +3851,102 @@
                                                 <div class="tooltip-popup">
                                                     <button class="tooltip-copy" onclick="copyTooltip(this)">复制</button>
                                                     <div class="tooltip-title">区域 备注</div>
-                                                    <div class="tooltip-section"><span class="tooltip-label">业务规则：</span>客户所属区域/省份，用于跨区域服务资源调配与审批核算，整单提交必填。</div>
-                                                    <div class="tooltip-section"><span class="tooltip-label">交互规则：</span>优先从 CRM/客户主数据自动带入，支持下拉选择并修改。</div>
+                                                    <div class="tooltip-section"><span class="tooltip-label">业务规则：</span>客户所属大区及办事处，用于跨区域服务资源调配与审批核算，整单提交必填。</div>
+                                                    <div class="tooltip-section"><span class="tooltip-label">交互规则：</span>两列并列联动展示（一级大区+二级办事处），优先从 CRM/客户主数据自动带入，支持下拉选择并修改。</div>
                                                 </div>
                                             </span>
                                         </label>
                                         <div class="solution-form-control">
-                                            <select class="solution-select" id="solutionLocalRegion" aria-label="本地客户所属区域">
-                                                <option value="">请选择区域</option>
-                                                <option value="广东省">广东省</option>
-                                                <option value="上海市">上海市</option>
-                                                <option value="北京市">北京市</option>
-                                                <option value="浙江省">浙江省</option>
-                                                <option value="江苏省">江苏省</option>
-                                                <option value="四川省">四川省</option>
-                                                <option value="山东省">山东省</option>
-                                                <option value="湖北省">湖北省</option>
-                                                <option value="海外">海外</option>
-                                            </select>
+                                            <div class="xaas-industry-row solution-region-row">
+                                                <div class="custom-select" data-select-id="solutionLocalRegion">
+                                                    <select class="layui-select" id="solutionLocalRegion" style="display:none;" aria-label="大区">
+                                                        <option value="">请选择区域</option>
+                                                        <option value="东北区">东北区</option>
+                                                        <option value="华北区">华北区</option>
+                                                        <option value="北京区">北京区</option>
+                                                        <option value="天津区">天津区</option>
+                                                        <option value="河北区">河北区</option>
+                                                        <option value="山东区">山东区</option>
+                                                        <option value="上海区">上海区</option>
+                                                        <option value="江苏区">江苏区</option>
+                                                        <option value="浙江区">浙江区</option>
+                                                        <option value="安徽区">安徽区</option>
+                                                        <option value="华南区">华南区</option>
+                                                        <option value="广东区">广东区</option>
+                                                        <option value="深圳区">深圳区</option>
+                                                        <option value="福建区">福建区</option>
+                                                        <option value="湖北区">湖北区</option>
+                                                        <option value="湖南区">湖南区</option>
+                                                        <option value="河南区">河南区</option>
+                                                        <option value="江西区">江西区</option>
+                                                        <option value="四川区">四川区</option>
+                                                        <option value="重庆区">重庆区</option>
+                                                        <option value="云贵区">云贵区</option>
+                                                        <option value="陕西区">陕西区</option>
+                                                        <option value="西北区">西北区</option>
+                                                        <option value="新疆区">新疆区</option>
+                                                        <option value="行业总部">行业总部</option>
+                                                        <option value="海外">海外</option>
+                                                        <option value="广东省" style="display:none;">广东省</option>
+                                                        <option value="上海市" style="display:none;">上海市</option>
+                                                        <option value="北京市" style="display:none;">北京市</option>
+                                                        <option value="浙江省" style="display:none;">浙江省</option>
+                                                        <option value="江苏省" style="display:none;">江苏省</option>
+                                                        <option value="四川省" style="display:none;">四川省</option>
+                                                        <option value="山东省" style="display:none;">山东省</option>
+                                                        <option value="湖北省" style="display:none;">湖北省</option>
+                                                    </select>
+                                                    <button type="button" class="custom-select-trigger" aria-haspopup="listbox" aria-expanded="false">
+                                                        <span class="custom-select-value">请选择区域</span>
+                                                        <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                                    </button>
+                                                    <div class="custom-select-dropdown">
+                                                        <ul class="custom-select-list">
+                                                            <li class="custom-select-option" data-value="">请选择区域</li>
+                                                            <li class="custom-select-option" data-value="东北区">东北区</li>
+                                                            <li class="custom-select-option" data-value="华北区">华北区</li>
+                                                            <li class="custom-select-option" data-value="北京区">北京区</li>
+                                                            <li class="custom-select-option" data-value="天津区">天津区</li>
+                                                            <li class="custom-select-option" data-value="河北区">河北区</li>
+                                                            <li class="custom-select-option" data-value="山东区">山东区</li>
+                                                            <li class="custom-select-option" data-value="上海区">上海区</li>
+                                                            <li class="custom-select-option" data-value="江苏区">江苏区</li>
+                                                            <li class="custom-select-option" data-value="浙江区">浙江区</li>
+                                                            <li class="custom-select-option" data-value="安徽区">安徽区</li>
+                                                            <li class="custom-select-option" data-value="华南区">华南区</li>
+                                                            <li class="custom-select-option" data-value="广东区">广东区</li>
+                                                            <li class="custom-select-option" data-value="深圳区">深圳区</li>
+                                                            <li class="custom-select-option" data-value="福建区">福建区</li>
+                                                            <li class="custom-select-option" data-value="湖北区">湖北区</li>
+                                                            <li class="custom-select-option" data-value="湖南区">湖南区</li>
+                                                            <li class="custom-select-option" data-value="河南区">河南区</li>
+                                                            <li class="custom-select-option" data-value="江西区">江西区</li>
+                                                            <li class="custom-select-option" data-value="四川区">四川区</li>
+                                                            <li class="custom-select-option" data-value="重庆区">重庆区</li>
+                                                            <li class="custom-select-option" data-value="云贵区">云贵区</li>
+                                                            <li class="custom-select-option" data-value="陕西区">陕西区</li>
+                                                            <li class="custom-select-option" data-value="西北区">西北区</li>
+                                                            <li class="custom-select-option" data-value="新疆区">新疆区</li>
+                                                            <li class="custom-select-option" data-value="行业总部">行业总部</li>
+                                                            <li class="custom-select-option" data-value="海外">海外</li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div class="custom-select" data-select-id="solutionLocalRegionL2">
+                                                    <select class="layui-select" id="solutionLocalRegionL2" style="display:none;" aria-label="办事处">
+                                                        <option value="-">-</option>
+                                                    </select>
+                                                    <button type="button" class="custom-select-trigger" aria-haspopup="listbox" aria-expanded="false">
+                                                        <span class="custom-select-value">-</span>
+                                                        <span class="material-symbols-outlined custom-select-arrow">arrow_drop_down</span>
+                                                    </button>
+                                                    <div class="custom-select-dropdown">
+                                                        <ul class="custom-select-list">
+                                                            <li class="custom-select-option selected" data-value="-">-</li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="solution-form-row solution-form-row-full" id="solutionLocalCustomerField">
@@ -5716,6 +5930,122 @@
         var xaasIndustryL1 = document.getElementById('xaas-industry-l1');
         if (xaasIndustryL1) xaasIndustryL1.addEventListener('change', updateXaasIndustryL2);
 
+        // ===== 区域二级联动（一级大区 + 二级办事处） =====
+        var mockRegionMap = {
+            '东北区': ['-', '辽宁', '吉林', '黑龙江'],
+            '华北区': ['-', '内蒙', '山西'],
+            '北京区': ['-'],
+            '天津区': ['-'],
+            '河北区': ['-'],
+            '山东区': ['-'],
+            '上海区': ['-'],
+            '江苏区': ['-'],
+            '浙江区': ['-'],
+            '安徽区': ['-'],
+            '华南区': ['-', '广东', '广西', '海南'],
+            '广东区': ['-', '广州', '粤东', '粤西', '佛山', '东莞'],
+            '深圳区': ['-'],
+            '福建区': ['-'],
+            '湖北区': ['-', '湖北'],
+            '湖南区': ['-'],
+            '河南区': ['-'],
+            '江西区': ['-', '江西'],
+            '四川区': ['-'],
+            '重庆区': ['-'],
+            '云贵区': ['-', '云南', '贵州'],
+            '陕西区': ['-'],
+            '西北区': ['-', '陕西', '甘肃', '青海', '宁夏', '新疆'],
+            '新疆区': ['-'],
+            '行业总部': ['-'],
+            '海外': ['-']
+        };
+        var provinceToRegionMap = {
+            '广东省': '广东区',
+            '深圳市': '深圳区',
+            '上海市': '上海区',
+            '北京市': '北京区',
+            '浙江省': '浙江区',
+            '江苏省': '江苏区',
+            '四川省': '四川区',
+            '山东省': '山东区',
+            '湖北省': '湖北区',
+            '江西省': '江西区',
+            '河北省': '河北区',
+            '福建省': '福建区',
+            '河南省': '河南区',
+            '重庆市': '重庆区',
+            '湖南省': '湖南区',
+            '天津市': '天津区',
+            '安徽省': '安徽区',
+            '陕西省': '陕西区',
+            '新疆': '新疆区',
+            '云南省': '云贵区',
+            '贵州省': '云贵区',
+            '内蒙古': '华北区',
+            '山西省': '华北区',
+            '辽宁省': '东北区',
+            '吉林省': '东北区',
+            '黑龙江省': '东北区',
+            '新加坡': '海外'
+        };
+        if (typeof window !== 'undefined') {
+            window.mockRegionMap = mockRegionMap;
+            window.provinceToRegionMap = provinceToRegionMap;
+        }
+
+        function updateSolutionRegionCascade(l1Id, l2Id) {
+            var l1 = document.getElementById(l1Id);
+            var l2 = document.getElementById(l2Id);
+            if (!l1 || !l2) return;
+            var val = (l1.value || '').trim();
+            var effectiveKey = provinceToRegionMap[val] || val;
+            var list = effectiveKey ? (mockRegionMap[effectiveKey] || ['-']) : ['-'];
+            var l2Container = document.querySelector('[data-select-id="' + l2Id + '"]');
+            var items = list.map(function(name) {
+                return { value: name, label: name };
+            });
+
+            function safeEsc(s) {
+                return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            }
+
+            if (l2Container && l2Container._replaceOptions) {
+                l2Container._replaceOptions(items);
+            } else {
+                l2.innerHTML = items.map(function(item) {
+                    return '<option value="' + safeEsc(item.value) + '">' + safeEsc(item.label) + '</option>';
+                }).join('');
+                if (l2Container) {
+                    var l2List = l2Container.querySelector('.custom-select-list');
+                    if (l2List) {
+                        l2List.innerHTML = items.map(function(item, idx) {
+                            return '<li class="custom-select-option' + (idx === 0 ? ' selected' : '') + '" data-value="' + safeEsc(item.value) + '">' + safeEsc(item.label) + '</li>';
+                        }).join('');
+                    }
+                    if (l2Container._resetToDefault) l2Container._resetToDefault();
+                }
+            }
+            l2.value = items[0] ? items[0].value : '-';
+            l2.disabled = !val;
+            var trigger = l2Container ? l2Container.querySelector('.custom-select-trigger') : null;
+            if (trigger) {
+                trigger.disabled = !val;
+                trigger.style.opacity = !val ? '0.65' : '1';
+                trigger.style.cursor = !val ? 'not-allowed' : 'pointer';
+                var valSpan = trigger.querySelector('.custom-select-value');
+                if (valSpan) valSpan.textContent = l2.value || '-';
+            }
+        }
+        if (typeof window !== 'undefined') {
+            window.updateSolutionRegionCascade = updateSolutionRegionCascade;
+        }
+
+        function updateXaasRegionL2() {
+            updateSolutionRegionCascade('xaas-region', 'xaas-region-l2');
+        }
+        var xaasRegionL1 = document.getElementById('xaas-region');
+        if (xaasRegionL1) xaasRegionL1.addEventListener('change', updateXaasRegionL2);
+
         // ===== 手机号匹配 + 客户自动填充 =====
         var mockXaasPhoneToAccounts = {
             '1717717': { accounts: [], contactName: '马化腾' },
@@ -6657,7 +6987,13 @@
                 cloudVersion: '版本',
                 planDevType: '申请类型',
                 area: '区域',
-                office: '办事处'
+                office: '办事处',
+                'xaas-region': '大区',
+                'xaas-region-l2': '办事处',
+                solutionBorrowRegion: '大区',
+                solutionBorrowRegionL2: '办事处',
+                solutionLocalRegion: '大区',
+                solutionLocalRegionL2: '办事处'
             };
             if (selectAriaLabels[container.dataset.selectId]) {
                 trigger.setAttribute('aria-label', selectAriaLabels[container.dataset.selectId]);
@@ -11571,19 +11907,88 @@
             return list;
         }
 
-        function getSolutionRegion() {
-            var src = application && application.source ? application.source : 'borrow';
-            var el = id(src === 'borrow' ? 'solutionBorrowRegion' : 'solutionLocalRegion');
-            return el ? el.value.trim() : '';
+        function updateSolutionRegionCascade(l1Id, l2Id) {
+            if (typeof window !== 'undefined' && typeof window.updateSolutionRegionCascade === 'function') {
+                return window.updateSolutionRegionCascade(l1Id, l2Id);
+            }
         }
 
-        function setSolutionRegion(source, regionVal) {
-            var elId = source === 'borrow' ? 'solutionBorrowRegion' : 'solutionLocalRegion';
-            var el = id(elId);
-            if (el && regionVal) {
-                el.value = regionVal;
-                el.dispatchEvent(new Event('change', { bubbles: true }));
+        function getSolutionRegion() {
+            var src = application && application.source ? application.source : 'borrow';
+            var l1Id = src === 'borrow' ? 'solutionBorrowRegion' : 'solutionLocalRegion';
+            var l2Id = src === 'borrow' ? 'solutionBorrowRegionL2' : 'solutionLocalRegionL2';
+            var l1 = id(l1Id);
+            var l2 = id(l2Id);
+            var l1Val = l1 ? l1.value.trim() : '';
+            var l2Val = l2 ? l2.value.trim() : '';
+            if (!l1Val) return '';
+            if (!l2Val || l2Val === '-') return l1Val;
+            return l1Val + ' / ' + l2Val;
+        }
+
+        function setSolutionRegion(source, l1Val, l2Val) {
+            var src = source || (application && application.source ? application.source : 'borrow');
+            var l1Id = src === 'borrow' ? 'solutionBorrowRegion' : 'solutionLocalRegion';
+            var l2Id = src === 'borrow' ? 'solutionBorrowRegionL2' : 'solutionLocalRegionL2';
+            var l1 = id(l1Id);
+            var l2 = id(l2Id);
+            var l1Container = document.querySelector('[data-select-id="' + l1Id + '"]');
+            var l2Container = document.querySelector('[data-select-id="' + l2Id + '"]');
+
+            if (!l1Val) {
+                if (l1) {
+                    l1.value = '';
+                    l1.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+                if (l1Container && l1Container._resetToDefault) l1Container._resetToDefault();
+                updateSolutionRegionCascade(l1Id, l2Id);
+                return;
             }
+
+            // 支持传入 "云贵区 / 云南" 或 "广东区" 或 legacy "广东省"
+            if (typeof l1Val === 'string' && (!l2Val || l2Val === '-')) {
+                var parts = l1Val.split(/\s*[\/\-]\s*/);
+                if (parts.length > 1) {
+                    l1Val = parts[0].trim();
+                    l2Val = parts[1].trim();
+                }
+            }
+
+            var targetL1 = l1Val;
+            if (l1) {
+                l1.value = l1Val;
+                if (!l1.value && typeof provinceToRegionMap !== 'undefined' && provinceToRegionMap[l1Val]) {
+                    targetL1 = provinceToRegionMap[l1Val];
+                    l1.value = targetL1;
+                }
+                l1.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+            if (l1Container && l1Container._setValue) {
+                l1Container._setValue(targetL1);
+            }
+            updateSolutionRegionCascade(l1Id, l2Id);
+
+            var targetL2 = l2Val || '-';
+            if (l2) {
+                l2.value = targetL2;
+                l2.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+            if (l2Container && l2Container._setValue) {
+                l2Container._setValue(targetL2);
+            }
+        }
+
+        var borrowRegionSelect = document.getElementById('solutionBorrowRegion');
+        if (borrowRegionSelect) {
+            borrowRegionSelect.addEventListener('change', function() {
+                updateSolutionRegionCascade('solutionBorrowRegion', 'solutionBorrowRegionL2');
+            });
+        }
+        var localRegionSelect = document.getElementById('solutionLocalRegion');
+        if (localRegionSelect) {
+            localRegionSelect.addEventListener('change', function() {
+                updateSolutionRegionCascade('solutionLocalRegion', 'solutionLocalRegionL2');
+            });
         }
 
         function loadSolutionCloudAccounts(accounts, preferredTenantId) {
@@ -12103,8 +12508,7 @@
                 var phoneHint = id('solutionContactPhoneHint');
                 if (phoneHint) phoneHint.textContent = '输入11位手机号自动匹配云图账号；涉及 XaaS 开通时必填。';
             }
-            var borrowRegion = id('solutionBorrowRegion');
-            if (borrowRegion) borrowRegion.value = '';
+            setSolutionRegion('borrow', '');
             var cloudGrid = id('solutionCloudAccountGrid');
             if (cloudGrid) cloudGrid.style.display = 'none';
             solutionBorrowCustomer = null;
@@ -12146,8 +12550,7 @@
                 var phoneHintLocal = id('solutionContactPhoneHint');
                 if (phoneHintLocal) phoneHintLocal.textContent = '输入11位手机号自动匹配云图账号；涉及 XaaS 开通时必填。';
             }
-            var localRegion = id('solutionLocalRegion');
-            if (localRegion) localRegion.value = '';
+            setSolutionRegion('local', '');
             var cloudGridLocal = id('solutionCloudAccountGrid');
             if (cloudGridLocal) cloudGridLocal.style.display = 'none';
             solutionLocalCustomer = null;
@@ -12628,8 +13031,8 @@
                 id('solutionLocalConfig').value = '';
                 if (id('solutionEmail')) id('solutionEmail').value = '';
                 if (id('solutionContactPhone')) id('solutionContactPhone').value = '';
-                if (id('solutionBorrowRegion')) id('solutionBorrowRegion').value = '';
-                if (id('solutionLocalRegion')) id('solutionLocalRegion').value = '';
+                setSolutionRegion('borrow', '');
+                setSolutionRegion('local', '');
                 var cloudGrid = id('solutionCloudAccountGrid');
                 if (cloudGrid) cloudGrid.style.display = 'none';
                 var phoneHint = id('solutionContactPhoneHint');
