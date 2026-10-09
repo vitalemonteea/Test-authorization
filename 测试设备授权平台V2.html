@@ -478,6 +478,11 @@
         .grid-field .gf-val input:hover { border-color: #c2c6d8; }
         .grid-field .gf-val input:focus { border-color: #0050cb; background: #fff; box-shadow: 0 0 0 3px rgba(0,80,203,.08); }
         .grid-field .gf-hint { font-size: 12px; color: #ba1a1a; flex-shrink: 0; }
+        .grid-field.has-approval-hint { flex-wrap: wrap; min-width: 0; }
+        .grid-field.has-approval-hint .gf-label { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 12px; width: 100%; }
+        .grid-field.has-approval-hint .gf-val { width: 100%; min-width: 0; }
+        .grid-field.has-approval-hint .gf-val input { max-width: none; }
+        .approval-threshold-note { color: #966019; font-size: 12px; font-weight: 400; line-height: 18px; }
 
         /* 功能开关 pill */
         .module-features { padding: 8px 0; margin-top: 4px; border-top: 1px solid #eff4ff; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
@@ -2607,9 +2612,9 @@
                             </div>
                             <div class="module-body hidden">
                                 <div class="module-grid">
-                                    <div class="grid-field"><span class="gf-label">线路数</span><div class="gf-val"><input type="text" name="AC_gateway_lines" value="10"></div></div>
-                                    <div class="grid-field"><span class="gf-label">分支数</span><div class="gf-val"><input type="text" name="AC_gateway_branch" value="10"></div></div>
-                                    <div class="grid-field"><span class="gf-label">移动数</span><div class="gf-val"><input type="text" name="AC_gateway_mobile" value="10"></div></div>
+                                    <div class="grid-field has-approval-hint"><span class="gf-label">线路数<span class="approval-threshold-note" id="ac-lines-approval-hint">超过 10 需审批</span></span><div class="gf-val"><input type="text" name="AC_gateway_lines" value="10" aria-describedby="ac-lines-approval-hint"></div></div>
+                                    <div class="grid-field has-approval-hint"><span class="gf-label">分支数<span class="approval-threshold-note" id="ac-branch-approval-hint">超过 10 需审批</span></span><div class="gf-val"><input type="text" name="AC_gateway_branch" value="10" aria-describedby="ac-branch-approval-hint"></div></div>
+                                    <div class="grid-field has-approval-hint"><span class="gf-label">移动数<span class="approval-threshold-note" id="ac-mobile-approval-hint">超过 10 需审批</span></span><div class="gf-val"><input type="text" name="AC_gateway_mobile" value="10" aria-describedby="ac-mobile-approval-hint"></div></div>
                                 </div>
                             </div>
                         </div>
@@ -11267,9 +11272,9 @@
         var solutionModuleCards = {
             AC: [
                 { name: '网关序列号', params: [
-                    { label: '线路数', key: 'gatewayLines', type: 'text', value: '10' },
-                    { label: '分支数', key: 'gatewayBranch', type: 'text', value: '10' },
-                    { label: '移动数', key: 'gatewayMobile', type: 'text', value: '10' }
+                    { label: '线路数', key: 'gatewayLines', type: 'text', value: '10', approvalHint: '超过 10 需审批' },
+                    { label: '分支数', key: 'gatewayBranch', type: 'text', value: '10', approvalHint: '超过 10 需审批' },
+                    { label: '移动数', key: 'gatewayMobile', type: 'text', value: '10', approvalHint: '超过 10 需审批' }
                 ] },
                 { name: '多功能序列号', switches: { key: 'multiFeatures', options: ['SSL内容识别','日志中心DKey查询','应用审计','个人通信内容审计','内容审计','行为审计','VPN配置'] } },
                 { name: '上网安全授权序列号', params: [
@@ -12796,7 +12801,8 @@
                         var field = p.type === 'select'
                             ? '<select class="layui-select gf-select" data-solution-param="' + escapeHtml(p.key) + '">' + (p.options || []).map(function(o) { return '<option' + (o === p.value ? ' selected' : '') + '>' + escapeHtml(o) + '</option>'; }).join('') + '</select>'
                             : '<input type="text" data-solution-param="' + escapeHtml(p.key) + '" value="' + escapeHtml(p.value) + '">';
-                        return '<div class="grid-field"><span class="gf-label">' + escapeHtml(p.label) + '</span><div class="gf-val">' + field + '</div>' + (p.hint ? '<span class="gf-hint">' + escapeHtml(p.hint) + '</span>' : '') + '</div>';
+                        var approvalHint = p.approvalHint ? '<span class="approval-threshold-note">' + escapeHtml(p.approvalHint) + '</span>' : '';
+                        return '<div class="grid-field' + (p.approvalHint ? ' has-approval-hint' : '') + '"><span class="gf-label">' + escapeHtml(p.label) + approvalHint + '</span><div class="gf-val">' + field + '</div>' + (p.hint ? '<span class="gf-hint">' + escapeHtml(p.hint) + '</span>' : '') + '</div>';
                     }).join('');
                     bodyHtml = '<div class="module-grid">' + gridFields + '</div>';
                     paramCount = (card.params || []).length;

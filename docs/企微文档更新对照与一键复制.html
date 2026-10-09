@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>解决方案型测试授权需求方案 - 企微文档同步与红字标注</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+            margin: 0;
+            padding: 24px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1080px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 40px;
+        }
+        .action-bar {
+            position: sticky;
+            top: 12px;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            padding: 14px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #e5e7eb;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        .btn-primary {
+            background-color: #2563eb;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+        }
+        .btn-red {
+            background-color: #dc2626;
+            color: white;
+        }
+        .btn-red:hover {
+            background-color: #b91c1c;
+        }
+        .badge-red {
+            display: inline-block;
+            background-color: #fee2e2;
+            color: #dc2626;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-left: 8px;
+            border: 1px solid #fca5a5;
+        }
+        .red-highlight {
+            color: #dc2626 !important;
+            font-weight: bold !important;
+            background-color: #fef2f2;
+            padding: 1px 4px;
+            border-radius: 3px;
+        }
+        .card-change {
+            background-color: #fffaf0;
+            border-left: 4px solid #f59e0b;
+            padding: 16px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 13.5px;
+        }
+        th, td {
+            border: 1px solid #d1d5db;
+            padding: 10px 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f0f7ff;
+            color: #1e3a8a;
+            font-weight: bold;
+        }
+        h1 { font-size: 24px; color: #111827; border-bottom: 2px solid #e5e7eb; padding-bottom: 12px; }
+        h2 { font-size: 18px; color: #1f2937; margin-top: 28px; border-left: 4px solid #2563eb; padding-left: 10px; }
+        h3 { font-size: 16px; color: #374151; margin-top: 20px; }
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #10b981;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: none;
+            z-index: 1000;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="action-bar">
+            <div>
+                <strong>解决方案型测试授权需求方案（终稿）</strong>
+                <span class="badge-red">已完成红字标注，可直接复制</span>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-red" onclick="copyModifiedSections()">📋 仅复制本次改动章节 (红字)</button>
+                <button class="btn btn-primary" onclick="copyFullDocument()">📄 复制整篇文档 (含格式与红字)</button>
+            </div>
+        </div>
+
+        <div class="card-change">
+            <h3 style="margin-top:0; color: #b45309;">💡 企微文档同步指南</h3>
+            <p style="margin: 4px 0 8px 0; font-size: 14px;">
+                1. 点击右上角 <strong>「📄 复制整篇文档」</strong> 或 <strong>「📋 仅复制本次改动章节」</strong>；<br>
+                2. 打开您的企业微信文档（或腾讯文档），在对应章节直接粘贴（Ctrl+V / Command+V）；<br>
+                3. 富文本样式、表格、深红色加粗高亮 (<span class="red-highlight">如图所示</span>) 将完整保留，一目了然！
+            </p>
+        </div>
+
+        <div id="fullDocContent">
+            <h1>解决方案型测试授权需求方案（终稿）</h1>
+            <p><strong>版本</strong>：V2.2 终稿（生产环境规范对齐版） | <strong>编制人</strong>：钱金城</p>
+
+            <h2>版本变更记录</h2>
+            <table>
+                <thead>
+                    <tr><th>时间</th><th>变更人</th><th>变更原因</th><th>变更内容</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>2026 年 8 月 6 日</td><td>钱金城</td><td>创建需求文档初稿</td><td>梳理解决方案型测试授权申请概要方案、系统边界及整单审批原则。</td></tr>
+                    <tr><td>2026 年 8 月 19 日</td><td>钱金城</td><td>补充设备与 XaaS 并存规则及云图身份校验</td><td>支持设备产品线与 SaaS-XDR 混排并存，补充客户云图账号/ID强制校验。</td></tr>
+                    <tr><td>2026 年 8 月 26 日</td><td>钱金城</td><td>落地统一授权天数模型与抽屉遮挡修复</td><td>引入 authDays 动态计算到期日，解决配置抽屉与模块导航浮层遮挡。</td></tr>
+                    <tr><td>2026 年 9 月 15 日</td><td>钱金城</td><td>编写字段填写与审批操作说明</td><td>明确借测单关联、各产品线参数卡片、审批结论与授权记录展示口径。</td></tr>
+                    <tr><td>2026 年 9 月 20 日</td><td>钱金城</td><td>完善五段式规范与业务方灵活配置建议落地</td><td>对齐标准五段式结构；落地业务方关于业务申请信息与产品组合免代码灵活配置机制。</td></tr>
+                    <tr><td>2026 年 9 月 20 日</td><td>钱金城</td><td>精简 4.2/4.3 章节层级并强化 XaaS 云图 ID 规范</td><td>消除冗余微观子节；业务信息直接对齐《安全方案测试申请规则.xlsx》动态渲染；重点强化 XaaS 产品线云图 ID 强阻断校验。</td></tr>
+                    <tr><td>2026 年 9 月 20 日</td><td>钱金城</td><td>强化业务信息自由配置引擎与四大核心对齐点</td><td>1. 业务申请信息支持字段名与类型（单选/多选/单行/多行/文件/数字）及选项自由配置；2. 云图 ID 升格为客户全局顶级身份与前置强校验；3. 新增所属行业对齐 XaaS；4. 成对协同组件至少选一个互斥守底交互。</td></tr>
+                    <tr>
+                        <td>2026 年 9 月 28 日</td><td>钱金城</td><td>完善借测设备防篡改锁定、多设备追加、云图手机号及全链路筛选规范</td>
+                        <td><span class="red-highlight">1. 客户联系人手机号与云图账号自动匹配，XaaS 场景强校验必填阻断；2. 借测单设备 ID 继承只读锁定防篡改，并支持‘+ 添加设备’动态追加与删除；3. 明确借测单客户级联筛选、配置中心检索及授权记录列表多维穿透筛选规格说明。</span></td>
+                    </tr>
+                    <tr style="background-color: #fef2f2;">
+                        <td><span class="red-highlight">2026 年 9 月 29 日</span></td>
+                        <td><span class="red-highlight">钱金城</span></td>
+                        <td><span class="red-highlight">对齐生产环境两列并列区域架构与多云图账号选择器卡片</span></td>
+                        <td><span class="red-highlight">1. 严格按照生产环境架构将区域升级为两列并列级联选择（一级大区+二级办事处，无二级默认'-'占位），并增加全单必填强校验与持久化存储回显；2. 新增多云图账号 2×2 卡片选择器（云图ID、企业名、主账号、联系人），支持联系人手机号多租户智能识别与默认项选中联动。</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>2.4 审批与处理口径（新增两项生产环境口径）</h2>
+            <table>
+                <thead>
+                    <tr><th>事项</th><th>口径</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>审批单粒度</td><td>整套解决方案作为一张申请单统一审批，不按产品线拆分审批单。</td></tr>
+                    <tr><td>客户全局云图身份口径</td><td>云图ID升格为客户全局顶层身份；含 XaaS 产品线的方案，已选客户缺失有效云图身份直接全单强阻断提交。</td></tr>
+                    <tr><td>联系人手机号匹配口径</td><td>客户联系人手机号作为云图账号匹配凭证，输入11位手机号自动联动云图身份；涉及 XaaS 开通时强制必填阻断。</td></tr>
+                    <tr><td>借测设备继承防篡改口径</td><td>借测单自带设备 ID 强制只读锁定防篡改，展示带锁提示；提供‘+ 添加设备’支持追加测试设备并强校验非空。</td></tr>
+                    <tr style="background-color: #fef2f2;">
+                        <td><span class="red-highlight">区域两列并列联动口径</span></td>
+                        <td><span class="red-highlight">严格对齐生产环境，区域拆分为并排两列（一级大区 + 二级办事处），全单强阻断必填；无二级分支大区默认选中'-'占位；选定客户或匹配云图后自动带入，并随单据与授权记录持久化存储。</span></td>
+                    </tr>
+                    <tr style="background-color: #fef2f2;">
+                        <td><span class="red-highlight">多云图账号卡片选择口径</span></td>
+                        <td><span class="red-highlight">联系人手机号关联多租户时展开 2×2 结构化卡片（云图ID、企业名、主账号、联系人），默认选中 17964872 · 110@163.com，即时联动全局云图 Badge、企业名称与区域。</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>4.2.1 基础信息表格（修改项标红）</h2>
+            <table>
+                <thead>
+                    <tr><th>字段</th><th>数据来源</th><th>可编辑</th><th>必填</th><th>说明</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>行业（一级+二级）</td><td>级联下拉选择</td><td>是</td><td>两级均必填</td><td>对齐 XaaS 二级联动字典与备注 Tooltip，支持 CRM 带入与手动微调</td></tr>
+                    <tr style="background-color: #fef2f2;">
+                        <td><span class="red-highlight">区域（两列并列联动）</span></td><td>自动带入 / 下拉选择</td><td>是</td><td><span class="red-highlight">是 (强阻断)</span></td>
+                        <td><span class="red-highlight">严格对齐生产环境两列并列（一级大区+二级办事处），无二级大区默认'-'占位；选择客户自动带入所属区域，支持下拉修改并全单必填强校验</span></td>
+                    </tr>
+                    <tr>
+                        <td>客户联系人手机号</td><td>CRM自动带入 / 申请人输入</td><td>是</td><td><span class="red-highlight">涉及 XaaS 必填；纯设备选填</span></td>
+                        <td><span class="red-highlight">输入 11 位手机号自动匹配云图账号与租户ID；涉及 XaaS 开通时为强阻断必填项，未填或非11位强阻断提交；多租户时自动激活卡片选择器</span></td>
+                    </tr>
+                    <tr style="background-color: #fef2f2;">
+                        <td><span class="red-highlight">所属云图账号</span></td><td>自定义卡片下拉选择器</td><td>是</td><td><span class="red-highlight">多租户时必选</span></td>
+                        <td><span class="red-highlight">当手机号关联多个云图租户时展开 2×2 卡片列表（云图ID、企业名、主账号、联系人），1:1 对齐生产环境，默认选中 17964872 · 110@163.com</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2>6. 异常与一致性处理矩阵（新增与校验项标红）</h2>
+            <table>
+                <thead>
+                    <tr><th>异常场景</th><th>触发时机</th><th>系统判定与处理机制</th><th>申请人提示文案与引导</th></tr>
+                </thead>
+                <tbody>
+                    <tr style="background-color: #fef2f2;">
+                        <td><span class="red-highlight">未选择区域</span></td>
+                        <td><span class="red-highlight">提交整单审批</span></td>
+                        <td><span class="red-highlight">区域字段值为空</span></td>
+                        <td><span class="red-highlight">提交栏报错：请选择区域。精准定位至区域下拉框。</span></td>
+                    </tr>
+                    <tr style="background-color: #fef2f2;">
+                        <td><span class="red-highlight">方案含 XaaS 手机号缺失或非法</span></td>
+                        <td><span class="red-highlight">提交整单审批</span></td>
+                        <td><span class="red-highlight">涉及 XaaS 且联系人手机号为空或非 11 位</span></td>
+                        <td><span class="red-highlight">提交栏报错：方案包含 XaaS 产品线，必须填写客户联系人手机号以匹配云图账号。/ 请填写正确的11位客户联系人手机号。</span></td>
+                    </tr>
+                    <tr style="background-color: #fef2f2;">
+                        <td><span class="red-highlight">追加设备 ID 为空</span></td>
+                        <td><span class="red-highlight">提交整单审批</span></td>
+                        <td><span class="red-highlight">追加了额外设备行但未填设备 ID</span></td>
+                        <td><span class="red-highlight">提交栏报错：[产品线名称] 追加的设备 ID 不能为空，请填写或删除空白追加项。</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div id="section76" style="border: 2px dashed #dc2626; padding: 20px; border-radius: 8px; margin: 24px 0; background: #fffdfd;">
+                <h2 style="color: #dc2626; border-left-color: #dc2626; margin-top:0;">7.6 多云图账号卡片选择器联动与两列并列区域联动规范（1:1 还原生产环境）<span class="badge-red">全新增核心章节</span></h2>
+                <p><span class="red-highlight"><strong>1. 多云图账号卡片选择器规格（1:1 还原生产环境截图）：</strong></span></p>
+                <ul>
+                    <li><span class="red-highlight"><strong>智能识别与显隐联动</strong>：当录入的客户联系人手机号在云图注册关联多个企业租户（如手机号 13800138000 关联 4 个租户）时，系统在基本信息区自动展开「* 所属云图账号」卡片选择器；若手机号仅关联单租户或无租户，该卡片选择器自动收起隐藏；</span></li>
+                    <li><span class="red-highlight"><strong>2×2 网格卡片高保真渲染</strong>：下拉选项采用 2×2 结构化网格卡片布局，清晰呈现「云图ID」、「云图企业名称」、「主账号」、「主账号联系人」四项核心元数据，视觉层次与信息密度 1:1 对齐生产环境；</span></li>
+                    <li><span class="red-highlight"><strong>选中与回显联动</strong>：支持点击卡片项即时切换，选中项高亮加粗边框；触发器回显格式为“[云图ID] · [主账号]”；选中后即时联动客户全局云图身份 Badge、企业名称与所属区域；默认项策略支持精准预选（如真实生产环境默认选中 17964872 · 110@163.com）；</span></li>
+                </ul>
+                <p><span class="red-highlight"><strong>2. 区域字段两列并列联动规范与整单强校验（1:1 还原生产环境截图）：</strong></span></p>
+                <ul>
+                    <li><span class="red-highlight"><strong>两列并列与字典联动架构</strong>：严格按照生产环境架构，区域拆分为并排两列自定义下拉组件（一级大区 + 二级办事处），全覆盖关联借测单来源（#solutionBorrowRegion / #solutionBorrowRegionL2）、纯软件本地申请来源（#solutionLocalRegion / #solutionLocalRegionL2）及单产品 XaaS 表单（#xaas-region / #xaas-region-l2）；</span></li>
+                    <li><span class="red-highlight"><strong>生产环境一级大区字典</strong>：涵盖东北区、华北区、北京区、天津区、河北区、山东区、上海区、江苏区、浙江区、安徽区、华南区、广东区、深圳区、福建区、湖北区、湖南区、河南区、江西区、四川区、重庆区、云贵区、陕西区、西北区、新疆区、行业总部、海外等真实大区体系；</span></li>
+                    <li><span class="red-highlight"><strong>二级办事处级联与占位规范</strong>：一级选定大区后，二级动态联动对应办事处（如云贵区联动云南/贵州，华北区联动内蒙/山西，广东区联动广州/粤东/粤西/佛山/东莞等）；当选择无进一步二级分支的大区（如东北区、北京区、上海区等）时，二级下拉框默认显示并选中占位符 '-'（1:1 完美契合生产环境截图样式）；</span></li>
+                    <li><span class="red-highlight"><strong>自动带入、平滑转换与自主修改</strong>：选定客户或匹配云图账号后，系统自动反查客户归属大区与办事处并级联带入；申请人可按实际业务发生地自主调整两级下拉；</span></li>
+                    <li><span class="red-highlight"><strong>整单强阻断与记录持久化回显</strong>：整单提交时执行区域一级与二级的有效性强校验，未选择区域全单坚决阻断并高亮提示“请选择区域。”；授权成功后，生成的方案授权主行与展开明细行均持久化绑定并回显实际归属区域属性（data-solution-region），支持详情抽屉完整查阅。</span></li>
+                </ul>
+            </div>
+
+            <h2>8. 待开发确认项</h2>
+            <ol>
+                <li>确认 W3 整单审批的正式节点数量、审批人角色映射及超时自动审批规则。</li>
+                <li>确认新资产系统与 W3 配置同步接口的认证鉴权方式、心跳刷新频率与超时熔断策略。</li>
+                <li>确认新资产系统借测单撤销或设备归还后，W3 对已下发有效授权的自动作废与联动清理机制。</li>
+                <li>确认下游许可证平台针对各产品线批量撤销/作废接口的事务一致性与幂等性保障能力。</li>
+                <li><span class="red-highlight"><strong>5. 【已确认并落地】生产环境两列并列区域联动选择器（一级大区+二级办事处，默认'-'占位）与多云图账号选择器卡片（1:1 还原生产环境截图），支持全单强校验与记录持久化回显。</strong></span></li>
+                <li>确认业务申请信息自由配置字段的持久化存储 Schema 与数据版本管理规范。</li>
+            </ol>
+        </div>
+    </div>
+
+    <div id="toast" class="toast">复制成功！可直接在企微文档中 Ctrl+V 粘贴</div>
+
+    <script>
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 2500);
+        }
+
+        function copyFullDocument() {
+            const range = document.createRange();
+            range.selectNode(document.getElementById('fullDocContent'));
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+            document.execCommand('copy');
+            window.getSelection().removeAllRanges();
+            showToast('整篇文档已复制（保留格式与红色标注）！请前往企微文档粘贴');
+        }
+
+        function copyModifiedSections() {
+            const range = document.createRange();
+            range.selectNode(document.getElementById('section76'));
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+            document.execCommand('copy');
+            window.getSelection().removeAllRanges();
+            showToast('本次核心改动（第7.6节）已复制！请前往企微文档粘贴');
+        }
+    </script>
+</body>
+</html>
