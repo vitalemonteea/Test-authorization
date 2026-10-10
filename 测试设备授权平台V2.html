@@ -304,16 +304,82 @@
         [data-select-id="xaas-region"] { max-width: 480px; }
 
         /* 统一授权日期栏 */
-        .unified-date-bar { display: flex; align-items: center; gap: 12px; background: #eff4ff; border: none; border-radius: 10px; padding: 14px 18px; margin-bottom: 15px; margin-left: 15px; margin-right: 20px; max-width: 900px; margin-left: auto; margin-right: auto; }
+        .unified-date-bar { display: flex; align-items: flex-start; gap: 12px; background: #eff4ff; border: none; border-radius: 10px; padding: 14px 18px; margin-bottom: 15px; margin-left: 15px; margin-right: 20px; max-width: 900px; margin-left: auto; margin-right: auto; }
+        .unified-date-bar-col { display: flex; flex-direction: column; width: 100%; gap: 10px; }
+        .unified-date-bar-main { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; width: 100%; }
         .unified-date-bar .bar-label { font-weight: 600; font-size: 14px; color: #333; white-space: nowrap; }
-        .unified-date-bar .layui-input { width: 180px; flex: none; }
+        
+        /* 日期选择器容器与触发器 */
+        .unified-date-picker-wrap { position: relative; display: inline-flex; align-items: center; }
+        .unified-date-picker-wrap .layui-input { width: 190px; padding-right: 36px; cursor: pointer; background: #fff; border: 1px solid #c2c6d8; border-radius: 6px; height: 34px; font-size: 13px; transition: all 0.2s; }
+        .unified-date-picker-wrap .layui-input:hover { border-color: #0050cb; }
+        .unified-date-picker-wrap .layui-input.has-approval-warning { border-color: #d97706 !important; background-color: #fffdfa !important; color: #b45309 !important; font-weight: 600; box-shadow: 0 0 0 2px rgba(217, 119, 6, 0.15) !important; }
+        .unified-date-picker-wrap .date-calendar-icon-btn { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #0050cb; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 4px; border-radius: 4px; }
+        .unified-date-picker-wrap .date-calendar-icon-btn:hover { background: #e5eeff; }
+        
         .unified-date-bar .apply-date-btn { height: 34px; line-height: 34px; padding: 0 18px; background-color: #0050cb; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500; white-space: nowrap; transition: opacity 0.2s; }
         .unified-date-bar .apply-date-btn:hover { opacity: 0.85; }
         .unified-date-bar .apply-date-btn:disabled { background: #aaa; cursor: not-allowed; }
-        .unified-date-bar .bar-hint { font-size: 12px; color: #999; flex: 1; }
+        .unified-date-bar .bar-hint { font-size: 12px; color: #727687; flex: 1; min-width: 200px; }
         .sync-toast { position: fixed; top: 60px; right: 20px; background: #4CAF50; color: #fff; padding: 10px 20px; border-radius: 4px; font-size: 14px; z-index: 99999; display: none; box-shadow: 0 2px 8px rgba(0,0,0,.2); }
-        .unified-date-bar .date-limit-hint { font-size: 12px; color: #0050cb; background: #dce8ff; padding: 2px 10px; border-radius: 12px; white-space: nowrap; font-weight: 500; flex-shrink: 0; }
+        .unified-date-bar .date-limit-hint { font-size: 12px; color: #0050cb; background: #dce8ff; padding: 3px 10px; border-radius: 12px; white-space: nowrap; font-weight: 500; flex-shrink: 0; }
         .unified-date-bar .date-limit-hint.ka { color: #e65100; background: #fff3e0; }
+        .unified-date-bar .date-limit-hint.overlimit { color: #b45309; background: #fef3c7; border: 1px solid #fde68a; font-weight: 600; }
+        .unified-date-bar .date-approval-badge { display: inline-flex; align-items: center; gap: 4px; color: #966019; font-size: 12px; font-weight: 500; background: #fffbe8; border: 1px solid #f9e2ae; padding: 2px 8px; border-radius: 4px; }
+
+        /* 选择了之后的提示横幅 */
+        .unified-date-warning-banner { display: none; align-items: center; gap: 8px; padding: 8px 14px; background: #fffbeb; border: 1px solid #fde68a; border-left: 4px solid #d97706; border-radius: 6px; font-size: 12.5px; color: #92400e; line-height: 1.5; box-shadow: 0 1px 3px rgba(217, 119, 6, 0.08); }
+        .unified-date-warning-banner.show { display: flex; }
+        .unified-date-warning-banner .material-symbols-outlined { font-size: 18px; color: #d97706; flex-shrink: 0; }
+        .unified-date-safe-banner { display: none; align-items: center; gap: 8px; padding: 6px 12px; background: #f0fdf4; border: 1px solid #bbf7d0; border-left: 3px solid #16a34a; border-radius: 6px; font-size: 12px; color: #166534; }
+        .unified-date-safe-banner.show { display: flex; }
+
+        /* 选择时间的窗口 (Custom Datepicker Popover) */
+        .custom-datepicker-popover { position: absolute; top: calc(100% + 8px); left: 0; z-index: 5000; width: 340px; background: #ffffff; border: 1px solid #d8deea; border-radius: 12px; box-shadow: 0 10px 32px rgba(0, 0, 0, 0.16); padding: 14px; display: none; flex-direction: column; gap: 10px; font-family: inherit; }
+        .custom-datepicker-popover.show { display: flex; }
+        .datepicker-header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 4px; }
+        .datepicker-title { font-weight: 700; font-size: 14px; color: #0b1c30; }
+        .datepicker-nav-btn { background: #f1f5f9; border: none; border-radius: 6px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #475569; font-size: 14px; transition: background 0.15s; }
+        .datepicker-nav-btn:hover { background: #e2e8f0; color: #0f172a; }
+
+        /* 颜色区分图例栏 (Legend Bar) */
+        .datepicker-legend-bar { display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; background: #f8fafc; border-radius: 6px; border: 1px solid #e2e8f0; font-size: 11px; }
+        .datepicker-legend-item { display: inline-flex; align-items: center; gap: 5px; font-weight: 500; }
+        .datepicker-legend-item.safe { color: #166534; }
+        .datepicker-legend-item.warning { color: #b45309; }
+        .legend-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+        .legend-dot.safe { background-color: #10b981; }
+        .legend-dot.warning { background-color: #f59e0b; }
+
+        /* 快捷预设按钮 */
+        .datepicker-presets { display: flex; flex-wrap: wrap; gap: 6px; }
+        .preset-chip-btn { padding: 4px 8px; font-size: 11px; font-weight: 500; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff; cursor: pointer; transition: all 0.15s; }
+        .preset-chip-btn.safe { color: #0369a1; border-color: #bae6fd; background: #f0f9ff; }
+        .preset-chip-btn.safe:hover { background: #e0f2fe; border-color: #7dd3fc; }
+        .preset-chip-btn.warning { color: #b45309; border-color: #fde68a; background: #fffbeb; }
+        .preset-chip-btn.warning:hover { background: #fef3c7; border-color: #fcd34d; }
+
+        /* 日历网格 */
+        .datepicker-calendar-grid { width: 100%; border-collapse: separate; border-spacing: 3px; }
+        .datepicker-calendar-grid th { text-align: center; font-size: 11px; font-weight: 600; color: #64748b; padding: 3px 0; }
+        .datepicker-day-cell { text-align: center; vertical-align: middle; height: 30px; font-size: 12px; border-radius: 6px; cursor: pointer; position: relative; user-select: none; transition: all 0.1s; }
+        .datepicker-day-cell.other-month { color: #cbd5e1; cursor: not-allowed; }
+        .datepicker-day-cell.past-day { color: #cbd5e1; background: #f8fafc; cursor: not-allowed; }
+        /* 颜色区分：免审区间 */
+        .datepicker-day-cell.safe-range { color: #0f172a; background: #f0fdf4; border: 1px solid #dcfce7; }
+        .datepicker-day-cell.safe-range:hover { background: #bbf7d0; border-color: #86efac; color: #14532d; font-weight: bold; }
+        /* 颜色区分：需审核区间 */
+        .datepicker-day-cell.warning-range { color: #92400e; background: #fffbeb; border: 1px solid #fde68a; font-weight: 500; }
+        .datepicker-day-cell.warning-range::after { content: ''; position: absolute; top: 3px; right: 3px; width: 5px; height: 5px; background-color: #f59e0b; border-radius: 50%; }
+        .datepicker-day-cell.warning-range:hover { background: #fef3c7; border-color: #f59e0b; color: #78350f; font-weight: bold; }
+        /* 当前选中项 */
+        .datepicker-day-cell.selected { background: #0050cb !important; color: #ffffff !important; font-weight: 700; border-color: #003f9e !important; }
+        .datepicker-day-cell.selected::after { background-color: #ffffff !important; }
+
+        /* 底部状态提示条 */
+        .datepicker-footer-hint { font-size: 11.5px; padding: 6px 10px; border-radius: 6px; background: #f1f5f9; color: #475569; line-height: 1.4; min-height: 20px; }
+        .datepicker-footer-hint.warning { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; font-weight: 500; }
+        .datepicker-footer-hint.safe { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; font-weight: 500; }
 
         .unified-date-header { display: contents; }
         .unified-date-body { display: contents; }
@@ -2204,11 +2270,60 @@
                     <div id="content">
                         <!-- 统一授权日期栏 -->
                         <div class="unified-date-bar">
-                            <span class="bar-label">统一授权日期</span>
-                            <input type="date" id="unifiedDate" class="layui-input" value="">
-                            <button type="button" class="apply-date-btn" id="applyDateBtn" disabled>应用到所有模块</button>
-                            <span class="date-limit-hint" id="dateLimitHint">最长 90 天</span>
-                            <span class="bar-hint">选择日期后点击右侧按钮，将日期统一设置到所有授权模块的日期字段中</span>
+                            <div class="unified-date-bar-col">
+                                <div class="unified-date-bar-main">
+                                    <span class="bar-label">统一授权日期</span>
+                                    <div class="unified-date-picker-wrap" id="unifiedDatePickerWrap">
+                                        <input type="text" id="unifiedDate" class="layui-input" placeholder="请选择授权到期日期" readonly autocomplete="off">
+                                        <button type="button" class="date-calendar-icon-btn" id="unifiedDateCalendarBtn" title="打开选择时间的窗口（查看免审与审核区间）">
+                                            <span class="material-symbols-outlined" style="font-size:20px;">calendar_month</span>
+                                        </button>
+                                        <!-- 选择时间的窗口 (带颜色区分的日历窗口) -->
+                                        <div class="custom-datepicker-popover" id="unifiedDatePickerWindow" role="dialog" aria-label="选择授权到期时间">
+                                            <div class="datepicker-header">
+                                                <button type="button" class="datepicker-nav-btn" id="dpPrevMonth" title="上个月">&lt;</button>
+                                                <span class="datepicker-title" id="dpMonthTitle">2026年 10月</span>
+                                                <button type="button" class="datepicker-nav-btn" id="dpNextMonth" title="下个月">&gt;</button>
+                                            </div>
+                                            <!-- 颜色区分图例栏 -->
+                                            <div class="datepicker-legend-bar">
+                                                <span class="datepicker-legend-item safe"><span class="legend-dot safe"></span>免审区间 (≤90天)</span>
+                                                <span class="datepicker-legend-item warning"><span class="legend-dot warning"></span>需审核区间 (&gt;90天)</span>
+                                            </div>
+                                            <!-- 快捷天数预设 -->
+                                            <div class="datepicker-presets">
+                                                <button type="button" class="preset-chip-btn safe" data-days="30">30天 (免审)</button>
+                                                <button type="button" class="preset-chip-btn safe" data-days="60">60天 (免审)</button>
+                                                <button type="button" class="preset-chip-btn safe" data-days="90">90天 (免审上限)</button>
+                                                <button type="button" class="preset-chip-btn warning" data-days="120">120天 (需审核)</button>
+                                                <button type="button" class="preset-chip-btn warning" data-days="180">180天 (需审核)</button>
+                                            </div>
+                                            <!-- 日历表格 -->
+                                            <table class="datepicker-calendar-grid">
+                                                <thead>
+                                                    <tr><th>日</th><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th><th>六</th></tr>
+                                                </thead>
+                                                <tbody id="dpGridBody"></tbody>
+                                            </table>
+                                            <!-- 底部提示条 -->
+                                            <div class="datepicker-footer-hint" id="dpFooterHint">点击日期进行选择，超过 90 天将转入人工审批流</div>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="apply-date-btn" id="applyDateBtn" disabled>应用到所有模块</button>
+                                    <span class="date-limit-hint" id="dateLimitHint">最长 90 天</span>
+                                    <span class="approval-threshold-note date-approval-badge" id="unifiedDateApprovalHint" style="display:none;">超过 90 天需审批</span>
+                                    <span class="bar-hint">选择日期后点击右侧按钮，将日期统一设置到所有授权模块的日期字段中</span>
+                                </div>
+                                <!-- 选择了之后的提示横幅 -->
+                                <div class="unified-date-warning-banner" id="unifiedDateWarningBanner">
+                                    <span class="material-symbols-outlined">warning</span>
+                                    <span id="unifiedDateWarningText">您选择的授权时间已超过 90 天免审限制，提交后将转入【人工审批】流程（大区及总部营销审核）。</span>
+                                </div>
+                                <div class="unified-date-safe-banner" id="unifiedDateSafeBanner">
+                                    <span class="material-symbols-outlined" style="font-size:16px;">check_circle</span>
+                                    <span id="unifiedDateSafeText">所选授权到期日在免审限制内，符合自助审批条件。</span>
+                                </div>
+                            </div>
                         </div>
                         <!-- 全局操作栏 -->
                         <div class="module-toolbar">
@@ -8799,40 +8914,261 @@
             }
         });
 
-        // ===== 统一授权日期功能 =====
+        // ===== 统一授权日期功能（时间限制与审批提示优化） =====
         // 日期限制：默认90天，KA客户180天
         var currentMaxDays = 90;
         var dateLimitHint = document.getElementById('dateLimitHint');
+        var unifiedDateInput = document.getElementById('unifiedDate');
+        var applyDateBtn = document.getElementById('applyDateBtn');
+        var unifiedDatePickerWrap = document.getElementById('unifiedDatePickerWrap');
+        var unifiedDatePickerWindow = document.getElementById('unifiedDatePickerWindow');
+        var unifiedDateCalendarBtn = document.getElementById('unifiedDateCalendarBtn');
+        var dpMonthTitle = document.getElementById('dpMonthTitle');
+        var dpPrevMonth = document.getElementById('dpPrevMonth');
+        var dpNextMonth = document.getElementById('dpNextMonth');
+        var dpGridBody = document.getElementById('dpGridBody');
+        var dpFooterHint = document.getElementById('dpFooterHint');
+        var unifiedDateApprovalHint = document.getElementById('unifiedDateApprovalHint');
+        var unifiedDateWarningBanner = document.getElementById('unifiedDateWarningBanner');
+        var unifiedDateWarningText = document.getElementById('unifiedDateWarningText');
+        var unifiedDateSafeBanner = document.getElementById('unifiedDateSafeBanner');
+        var unifiedDateSafeText = document.getElementById('unifiedDateSafeText');
+
+        var dpCurrentYear = new Date().getFullYear();
+        var dpCurrentMonth = new Date().getMonth(); // 0-11
 
         function getMaxDate(maxDays) {
             var d = new Date();
             d.setDate(d.getDate() + maxDays);
-            return d.toISOString().split('T')[0];
+            return formatDateString(d);
         }
+
+        function formatDateString(d) {
+            var year = d.getFullYear();
+            var month = String(d.getMonth() + 1).padStart(2, '0');
+            var day = String(d.getDate()).padStart(2, '0');
+            return year + '-' + month + '-' + day;
+        }
+
+        // 渲染选择时间的窗口（日历网格与颜色区分）
+        function renderDatePickerCalendar(year, month) {
+            dpCurrentYear = year;
+            dpCurrentMonth = month;
+            if (dpMonthTitle) {
+                dpMonthTitle.textContent = year + '年 ' + (month + 1) + '月';
+            }
+            if (!dpGridBody) return;
+            dpGridBody.innerHTML = '';
+
+            var today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            var selectedDateStr = unifiedDateInput ? unifiedDateInput.value.trim() : '';
+
+            // 获取当月第一天与最后一天
+            var firstDay = new Date(year, month, 1);
+            var startingDay = firstDay.getDay(); // 0(周日)-6(周六)
+            var daysInMonth = new Date(year, month + 1, 0).getDate();
+            var prevMonthDays = new Date(year, month, 0).getDate();
+
+            var dateCount = 1;
+            var nextMonthCount = 1;
+
+            for (var row = 0; row < 6; row++) {
+                var tr = document.createElement('tr');
+                var hasCurrentMonthDay = false;
+
+                for (var col = 0; col < 7; col++) {
+                    var td = document.createElement('td');
+                    td.className = 'datepicker-day-cell';
+
+                    var cellDate;
+                    if (row === 0 && col < startingDay) {
+                        // 上月末尾
+                        var prevDay = prevMonthDays - startingDay + col + 1;
+                        cellDate = new Date(year, month - 1, prevDay);
+                        td.textContent = String(prevDay);
+                        td.classList.add('other-month');
+                    } else if (dateCount > daysInMonth) {
+                        // 下月开头
+                        cellDate = new Date(year, month + 1, nextMonthCount);
+                        td.textContent = String(nextMonthCount);
+                        td.classList.add('other-month');
+                        nextMonthCount++;
+                    } else {
+                        // 当月有效日期
+                        hasCurrentMonthDay = true;
+                        cellDate = new Date(year, month, dateCount);
+                        td.textContent = String(dateCount);
+                        cellDate.setHours(0, 0, 0, 0);
+
+                        var dateStr = formatDateString(cellDate);
+                        var diffDays = Math.ceil((cellDate.getTime() - today.getTime()) / 86400000);
+
+                        if (diffDays < 0) {
+                            // 过去日期不可选
+                            td.classList.add('past-day');
+                            td.title = '不可选择过去日期';
+                        } else {
+                            td.dataset.date = dateStr;
+                            td.dataset.diffDays = String(diffDays);
+
+                            // 颜色区分：免审区间 vs 需审核区间
+                            if (diffDays <= currentMaxDays) {
+                                td.classList.add('safe-range');
+                                td.title = '授权 ' + diffDays + ' 天（免审区间，自动审批通过）';
+                            } else {
+                                td.classList.add('warning-range');
+                                td.title = '授权 ' + diffDays + ' 天（超过 ' + currentMaxDays + ' 天限制，需人工审核）';
+                            }
+
+                            if (dateStr === selectedDateStr) {
+                                td.classList.add('selected');
+                            }
+
+                            // 点击选择日期
+                            td.addEventListener('click', function(e) {
+                                var chosenDate = this.dataset.date;
+                                if (!chosenDate) return;
+                                selectUnifiedDate(chosenDate);
+                                hideDatePickerWindow();
+                            });
+
+                            // 鼠标悬停实时展示状态
+                            td.addEventListener('mouseenter', function() {
+                                var dDays = Number(this.dataset.diffDays || 0);
+                                if (!dpFooterHint) return;
+                                if (dDays <= currentMaxDays) {
+                                    dpFooterHint.className = 'datepicker-footer-hint safe';
+                                    dpFooterHint.textContent = '🟢 选定 ' + this.dataset.date + '：授权 ' + dDays + ' 天（免审区间，符合自助审批条件）';
+                                } else {
+                                    dpFooterHint.className = 'datepicker-footer-hint warning';
+                                    dpFooterHint.textContent = '🟠 选定 ' + this.dataset.date + '：授权 ' + dDays + ' 天（超过 ' + currentMaxDays + ' 天限制，需人工审核）';
+                                }
+                            });
+                        }
+                        dateCount++;
+                    }
+                    tr.appendChild(td);
+                }
+
+                if (hasCurrentMonthDay || row === 0) {
+                    dpGridBody.appendChild(tr);
+                }
+            }
+        }
+
+        function showDatePickerWindow() {
+            if (!unifiedDatePickerWindow) return;
+            var currentVal = unifiedDateInput ? unifiedDateInput.value.trim() : '';
+            var targetDate = currentVal ? new Date(currentVal + 'T00:00:00') : new Date();
+            if (isNaN(targetDate.getTime())) targetDate = new Date();
+            renderDatePickerCalendar(targetDate.getFullYear(), targetDate.getMonth());
+            unifiedDatePickerWindow.classList.add('show');
+            if (dpFooterHint) {
+                dpFooterHint.className = 'datepicker-footer-hint';
+                dpFooterHint.textContent = '绿色为免审区间(≤' + currentMaxDays + '天)，橙色为超期需审核区间(>' + currentMaxDays + '天)';
+            }
+        }
+
+        function hideDatePickerWindow() {
+            if (unifiedDatePickerWindow) {
+                unifiedDatePickerWindow.classList.remove('show');
+            }
+        }
+
+        function selectUnifiedDate(dateStr) {
+            if (!unifiedDateInput) return;
+            unifiedDateInput.value = dateStr;
+            unifiedDateInput.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+
+        // 绑定日历弹窗控制
+        if (unifiedDateInput) {
+            unifiedDateInput.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (unifiedDatePickerWindow && unifiedDatePickerWindow.classList.contains('show')) {
+                    hideDatePickerWindow();
+                } else {
+                    showDatePickerWindow();
+                }
+            });
+        }
+        if (unifiedDateCalendarBtn) {
+            unifiedDateCalendarBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (unifiedDatePickerWindow && unifiedDatePickerWindow.classList.contains('show')) {
+                    hideDatePickerWindow();
+                } else {
+                    showDatePickerWindow();
+                }
+            });
+        }
+        if (dpPrevMonth) {
+            dpPrevMonth.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var newMonth = dpCurrentMonth - 1;
+                var newYear = dpCurrentYear;
+                if (newMonth < 0) { newMonth = 11; newYear--; }
+                renderDatePickerCalendar(newYear, newMonth);
+            });
+        }
+        if (dpNextMonth) {
+            dpNextMonth.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var newMonth = dpCurrentMonth + 1;
+                var newYear = dpCurrentYear;
+                if (newMonth > 11) { newMonth = 0; newYear++; }
+                renderDatePickerCalendar(newYear, newMonth);
+            });
+        }
+
+        // 快捷选项点击
+        document.querySelectorAll('.preset-chip-btn').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var days = Number(this.dataset.days || 30);
+                var d = new Date();
+                d.setDate(d.getDate() + days);
+                selectUnifiedDate(formatDateString(d));
+                hideDatePickerWindow();
+            });
+        });
+
+        // 点击页面空白处收起日历弹窗
+        document.addEventListener('click', function(e) {
+            if (!unifiedDatePickerWrap) return;
+            if (!unifiedDatePickerWrap.contains(e.target)) {
+                hideDatePickerWindow();
+            }
+        });
 
         function updateDateLimit(customerType) {
             var newMax = typeof authorizationRules.getDurationLimitDays === 'function' ?
                 authorizationRules.getDurationLimitDays(customerType, plnameSelect.value) :
                 ((customerType === 'KA') ? 180 : 90);
             currentMaxDays = newMax;
-            // 更新日期输入框的 max 属性
-            var maxDate = getMaxDate(newMax);
-            unifiedDateInput.setAttribute('max', maxDate);
+            
             // 更新提示标签
-            dateLimitHint.textContent = '最长 ' + newMax + ' 天';
-            if (newMax === 180) {
-                dateLimitHint.className = 'date-limit-hint ka';
-            } else {
-                dateLimitHint.className = 'date-limit-hint';
+            if (dateLimitHint) {
+                dateLimitHint.textContent = '免审上限 ' + newMax + ' 天';
+                if (newMax === 180) {
+                    dateLimitHint.className = 'date-limit-hint ka';
+                } else {
+                    dateLimitHint.className = 'date-limit-hint';
+                }
             }
-            // 如果已选日期超出新限制，清除并提示
-            if (unifiedDateInput.value && unifiedDateInput.value > maxDate) {
-                unifiedDateInput.value = '';
-                applyDateBtn.disabled = true;
+
+            // 更新图例标签说明
+            var legendSafe = document.querySelector('.datepicker-legend-item.safe');
+            var legendWarn = document.querySelector('.datepicker-legend-item.warning');
+            if (legendSafe) legendSafe.innerHTML = '<span class="legend-dot safe"></span>免审区间 (≤' + newMax + '天)';
+            if (legendWarn) legendWarn.innerHTML = '<span class="legend-dot warning"></span>需审核区间 (&gt;' + newMax + '天)';
+
+            // 如果当前已有日期，重新触发一次变更校验与提示
+            if (unifiedDateInput && unifiedDateInput.value.trim()) {
+                handleUnifiedDateChange();
             }
-            // 同步更新所有模块日期输入框的 max 属性
-            var allDates = getAllDateInputs();
-            allDates.forEach(function(d) { d.setAttribute('max', maxDate); });
         }
 
         function isDateInput(input) {
@@ -8843,55 +9179,145 @@
             var allInputs = document.querySelectorAll('#content .gf-val input, #content input.layui-input');
             var dateInputs = [];
             for (var i = 0; i < allInputs.length; i++) {
-                if (isDateInput(allInputs[i])) dateInputs.push(allInputs[i]);
+                if (allInputs[i] !== unifiedDateInput && isDateInput(allInputs[i])) {
+                    dateInputs.push(allInputs[i]);
+                }
             }
             return dateInputs;
         }
-        var unifiedDateInput = document.getElementById('unifiedDate');
-        var applyDateBtn = document.getElementById('applyDateBtn');
-        // 监听日期选择，选择后启用按钮，并校验是否超出最大天数
-        unifiedDateInput.addEventListener('change', function() {
-            var val = this.value.trim();
+
+        // 统一处理日期变更并呈现超限审核提示
+        function handleUnifiedDateChange() {
+            if (!unifiedDateInput) return;
+            var val = unifiedDateInput.value.trim();
             if (!val) {
-                applyDateBtn.disabled = true;
-                requestedMonthsInput.value = '';
+                if (applyDateBtn) applyDateBtn.disabled = true;
+                if (requestedMonthsInput) requestedMonthsInput.value = '';
+                if (unifiedDateApprovalHint) unifiedDateApprovalHint.style.display = 'none';
+                if (unifiedDateWarningBanner) unifiedDateWarningBanner.classList.remove('show');
+                if (unifiedDateSafeBanner) unifiedDateSafeBanner.classList.remove('show');
+                unifiedDateInput.classList.remove('has-approval-warning');
                 recalculateApprovalDecision();
                 return;
             }
-            var maxDate = getMaxDate(currentMaxDays);
-            if (val > maxDate) {
-                this.classList.add('out-of-range');
-                applyDateBtn.disabled = true;
-                var toast = document.getElementById('syncToast');
-                toast.textContent = '\u26a0 授权日期不能超过今天起 ' + currentMaxDays + ' 天（' + maxDate + '）';
-                toast.style.background = '#ff9800';
-                toast.style.display = 'block';
-                setTimeout(function() { toast.style.display = 'none'; toast.style.background = '#4CAF50'; }, 3000);
-            } else {
-                this.classList.remove('out-of-range');
-                applyDateBtn.disabled = false;
-                var today = new Date();
-                today.setHours(0, 0, 0, 0);
-                var selectedDate = new Date(val + 'T00:00:00');
-                var requestedDays = Math.max(0, Math.ceil((selectedDate - today) / 86400000));
+
+            var today = new Date();
+            today.setHours(0, 0, 0, 0);
+            var selectedDate = new Date(val + 'T00:00:00');
+            var requestedDays = Math.max(0, Math.ceil((selectedDate - today) / 86400000));
+            var isOverlimit = requestedDays > currentMaxDays;
+
+            if (requestedMonthsInput) {
                 requestedMonthsInput.value = String(Math.ceil(requestedDays / 30));
-                recalculateApprovalDecision();
             }
-        });
+            if (applyDateBtn) {
+                applyDateBtn.disabled = false;
+            }
+
+            if (isOverlimit) {
+                // 超出限制：添加颜色区分与审批提示
+                unifiedDateInput.classList.add('has-approval-warning');
+                if (dateLimitHint) {
+                    dateLimitHint.className = 'date-limit-hint overlimit';
+                    dateLimitHint.textContent = '超过 ' + currentMaxDays + ' 天（需审核）';
+                }
+                if (unifiedDateApprovalHint) {
+                    unifiedDateApprovalHint.style.display = 'inline-flex';
+                    unifiedDateApprovalHint.textContent = '超过 ' + currentMaxDays + ' 天需审批（已选 ' + requestedDays + ' 天）';
+                }
+                if (unifiedDateWarningBanner && unifiedDateWarningText) {
+                    var overDays = requestedDays - currentMaxDays;
+                    unifiedDateWarningText.innerHTML = '您选择的到期时间为 <strong>' + val + '</strong>（共 <strong>' + requestedDays + '</strong> 天），<strong>已超过 ' + currentMaxDays + ' 天免审限制（超出 ' + overDays + ' 天）</strong>，提交后将转入【人工审批】流程（大区及总部营销审核）。';
+                    unifiedDateWarningBanner.classList.add('show');
+                }
+                if (unifiedDateSafeBanner) {
+                    unifiedDateSafeBanner.classList.remove('show');
+                }
+
+                // 弹出醒目的需审核提示 Toast
+                var toast = document.getElementById('syncToast');
+                if (toast) {
+                    toast.textContent = '⚠️ 授权时长共 ' + requestedDays + ' 天（超过 ' + currentMaxDays + ' 天限制），转入人工审批流';
+                    toast.style.background = '#d97706';
+                    toast.style.display = 'block';
+                    setTimeout(function() { toast.style.display = 'none'; toast.style.background = '#4CAF50'; }, 3000);
+                }
+            } else {
+                // 在限制内：绿色免审安全状态
+                unifiedDateInput.classList.remove('has-approval-warning');
+                if (dateLimitHint) {
+                    dateLimitHint.className = (currentMaxDays === 180 ? 'date-limit-hint ka' : 'date-limit-hint');
+                    dateLimitHint.textContent = '免审上限 ' + currentMaxDays + ' 天';
+                }
+                if (unifiedDateApprovalHint) {
+                    unifiedDateApprovalHint.style.display = 'none';
+                }
+                if (unifiedDateWarningBanner) {
+                    unifiedDateWarningBanner.classList.remove('show');
+                }
+                if (unifiedDateSafeBanner && unifiedDateSafeText) {
+                    unifiedDateSafeText.innerHTML = '所选授权到期日为 <strong>' + val + '</strong>（共 <strong>' + requestedDays + '</strong> 天，符合免审自动通过条件）。';
+                    unifiedDateSafeBanner.classList.add('show');
+                }
+            }
+
+            recalculateApprovalDecision();
+        }
+
+        // 监听日期选择与手动/自动触发
+        unifiedDateInput.addEventListener('change', handleUnifiedDateChange);
+
         // 初始化时检查是否有默认值
-        applyDateBtn.disabled = !unifiedDateInput.value.trim();
+        if (applyDateBtn && unifiedDateInput) {
+            applyDateBtn.disabled = !unifiedDateInput.value.trim();
+        }
         // 初始化日期限制为90天
         updateDateLimit('normal');
-        applyDateBtn.addEventListener('click', function() {
-            var dateVal = unifiedDateInput.value.trim();
-            if (!dateVal) return;
-            var allDates = getAllDateInputs();
-            allDates.forEach(function(d) { d.value = dateVal; });
-            var toast = document.getElementById('syncToast');
-            toast.textContent = '✓ 已将 ' + dateVal + ' 应用到所有模块（共 ' + allDates.length + ' 个日期字段）';
-            toast.style.display = 'block';
-            setTimeout(function() { toast.style.display = 'none'; }, 2500);
-        });
+
+        if (applyDateBtn) {
+            applyDateBtn.addEventListener('click', function() {
+                var dateVal = unifiedDateInput.value.trim();
+                if (!dateVal) return;
+                var allDates = getAllDateInputs();
+                var today = new Date();
+                today.setHours(0, 0, 0, 0);
+                var selD = new Date(dateVal + 'T00:00:00');
+                var reqDays = Math.max(0, Math.ceil((selD - today) / 86400000));
+                var isOver = reqDays > currentMaxDays;
+
+                allDates.forEach(function(d) {
+                    d.value = dateVal;
+                    // 同步在父级 grid-field 附带审批提示
+                    var gridField = d.closest('.grid-field');
+                    if (gridField) {
+                        var existingHint = gridField.querySelector('.date-module-approval-hint');
+                        if (isOver) {
+                            gridField.classList.add('has-approval-hint');
+                            if (!existingHint) {
+                                var hintSpan = document.createElement('span');
+                                hintSpan.className = 'approval-threshold-note date-module-approval-hint';
+                                hintSpan.textContent = '超过 ' + currentMaxDays + ' 天需审批';
+                                var label = gridField.querySelector('.gf-label');
+                                if (label) label.appendChild(hintSpan);
+                            } else {
+                                existingHint.textContent = '超过 ' + currentMaxDays + ' 天需审批';
+                                existingHint.style.display = '';
+                            }
+                        } else {
+                            if (existingHint) existingHint.style.display = 'none';
+                        }
+                    }
+                });
+
+                var toast = document.getElementById('syncToast');
+                if (toast) {
+                    toast.textContent = '✓ 已将 ' + dateVal + ' 应用到所有模块（共 ' + allDates.length + ' 个日期字段）' + (isOver ? ' [已标记超期需审核]' : '');
+                    toast.style.background = isOver ? '#d97706' : '#4CAF50';
+                    toast.style.display = 'block';
+                    setTimeout(function() { toast.style.display = 'none'; toast.style.background = '#4CAF50'; }, 3000);
+                }
+            });
+        }
 
         function setCopiedSelectByLabel(selectId, label, fallbackValue) {
             var select = document.getElementById(selectId);
