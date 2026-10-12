@@ -4,7 +4,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const { loadV2Dom } = require('./helpers/load-v2-dom.cjs');
 
-test('统一授权日期：日历窗口颜色区分（免审区间 vs 需审核区间）与图例动态联动', () => {
+test('统一授权日期：时间选择窗口轻量化（仅保留免审区间图例与单元格高亮，去除多余预设按键与底部提示）', () => {
   const { dom, document, window } = loadV2Dom();
   try {
     const unifiedInput = document.getElementById('unifiedDate');
@@ -15,50 +15,42 @@ test('统一授权日期：日历窗口颜色区分（免审区间 vs 需审核�
     assert.ok(unifiedInput, '应存在统一授权日期输入框');
     assert.ok(calendarBtn, '应存在日历弹窗触发按钮');
     assert.ok(popoverWindow, '应存在选择时间的窗口弹窗');
-    assert.match(dateLimitHint.textContent, /最长\s*90\s*天|免审上限\s*90\s*天/);
+    assert.match(dateLimitHint.textContent, /免审上限\s*90\s*天/);
 
-    // 默认关闭，点击按钮或输入框展开
+    // 默认关闭，点击按钮展开
     assert.equal(popoverWindow.classList.contains('show'), false);
     calendarBtn.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
     assert.equal(popoverWindow.classList.contains('show'), true, '点击日历按钮应展开选择时间窗口');
 
-    // 检查图例栏
+    // 检查图例栏：仅保留免审区间说明
     const safeLegend = popoverWindow.querySelector('.datepicker-legend-item.safe');
     const warnLegend = popoverWindow.querySelector('.datepicker-legend-item.warning');
     assert.ok(safeLegend, '日历窗口应包含免审区间图例');
-    assert.ok(warnLegend, '日历窗口应包含需审核区间图例');
+    assert.equal(warnLegend, null, '日历窗口不应出现冗余的需审核图例，仅保留免审区间说明');
     assert.match(safeLegend.textContent, /免审区间.*90天/);
-    assert.match(warnLegend.textContent, /需审核区间.*90天/);
 
-    // 快捷预设按钮存在免审与审核区分
-    const safePresets = popoverWindow.querySelectorAll('.preset-chip-btn.safe');
-    const warnPresets = popoverWindow.querySelectorAll('.preset-chip-btn.warning');
-    assert.ok(safePresets.length >= 3, '应提供30/60/90天等免审预设');
-    assert.ok(warnPresets.length >= 2, '应提供120/180天等需审核预设');
+    // 检查快捷预设与底部多余提示已完全移除
+    const presetsContainer = popoverWindow.querySelector('.datepicker-presets');
+    const footerHint = document.getElementById('dpFooterHint');
+    assert.equal(presetsContainer, null, '应已去除快捷预设按键区（30/60/90/120/180天），保持窗口简洁');
+    assert.equal(footerHint, null, '应已去除底部多余提示文本条');
 
-    // 日历网格中应渲染免审单元格
+    // 日历网格中仅对免审区间渲染绿色单元格高亮
     const safeCells = popoverWindow.querySelectorAll('.datepicker-day-cell.safe-range');
     assert.ok(safeCells.length > 0, '日历网格中应包含带有 safe-range 绿色的免审日期单元格');
-
-    // 悬停免审单元格检查底部提示
-    const footerHint = document.getElementById('dpFooterHint');
-    assert.ok(footerHint, '应存在日历弹窗底部实时提示条');
-    safeCells[0].dispatchEvent(new window.MouseEvent('mouseenter', { bubbles: true }));
-    assert.match(footerHint.textContent, /免审区间/);
 
     // 切换至 KA 客户（180天限制）联动更新
     if (typeof window.updateDateLimit === 'function') {
       window.updateDateLimit('KA');
       assert.match(dateLimitHint.textContent, /180/);
       assert.match(safeLegend.textContent, /180天/);
-      assert.match(warnLegend.textContent, /180天/);
     }
   } finally {
     dom.window.close();
   }
 });
 
-test('统一授权日期：选择免审日期 vs 超过限制日期的审批提示、告警横幅与审批路线联动', () => {
+test('统一授权日期：去除占位横幅，日期栏提示去重（维持基线免审上限，仅展示单一的“超过 90 天需审批”徽章）', () => {
   const { dom, document, window } = loadV2Dom();
   try {
     const unifiedInput = document.getElementById('unifiedDate');
@@ -67,6 +59,10 @@ test('统一授权日期：选择免审日期 vs 超过限制日期的审批提�
     const safeBanner = document.getElementById('unifiedDateSafeBanner');
     const approvalHint = document.getElementById('unifiedDateApprovalHint');
     const dateLimitHint = document.getElementById('dateLimitHint');
+
+    // 确认已彻底去除多余的横幅提示
+    assert.equal(warningBanner, null, '应彻底去除整行黄色警告横幅（#unifiedDateWarningBanner）');
+    assert.equal(safeBanner, null, '应彻底去除整行绿色安全横幅（#unifiedDateSafeBanner）');
 
     const today = new Date();
     function toDateStr(offsetDays) {
@@ -85,9 +81,8 @@ test('统一授权日期：选择免审日期 vs 超过限制日期的审批提�
 
     assert.equal(applyDateBtn.disabled, false, '选择日期后应用按钮应可用');
     assert.equal(unifiedInput.classList.contains('has-approval-warning'), false, '免审日期输入框不应有超限告警样式');
-    assert.equal(warningBanner.classList.contains('show'), false, '免审日期不应展示超期告警横幅');
-    assert.equal(safeBanner.classList.contains('show'), true, '免审日期应展示符合自助审批横幅');
     assert.equal(approvalHint.style.display, 'none', '免审日期应隐藏需审批提示徽章');
+    assert.equal(dateLimitHint.textContent, '免审上限 90 天', '免审日期保持标准免审上限说明');
 
     // 2. 选择超过限制日期（120天，普通客户限制为90天）
     const overlimitDate = toDateStr(120);
@@ -96,11 +91,12 @@ test('统一授权日期：选择免审日期 vs 超过限制日期的审批提�
 
     assert.equal(applyDateBtn.disabled, false, '超限日期仍允许应用到模块，不应阻断');
     assert.equal(unifiedInput.classList.contains('has-approval-warning'), true, '超限日期输入框应附加 has-approval-warning 样式');
-    assert.equal(warningBanner.classList.contains('show'), true, '超限日期应展开 warningBanner 提示横幅');
-    assert.match(warningBanner.textContent, /超过 90 天免审限制.*人工审批/);
-    assert.equal(approvalHint.style.display, 'inline-flex', '超限日期应展示需审批提示徽章');
-    assert.match(approvalHint.textContent, /超过 90 天需审批/);
-    assert.match(dateLimitHint.textContent, /需审核/);
+    
+    // 关键断言：提示彻底去重，无并排复读
+    assert.equal(approvalHint.style.display, 'inline-flex', '超限日期应展示唯一的需审批提示徽章');
+    assert.equal(approvalHint.textContent, '超过 90 天需审批', '徽章文案应与规模提示对齐统一为“超过 90 天需审批”');
+    assert.equal(dateLimitHint.textContent, '免审上限 90 天', 'dateLimitHint 保持基线属性说明，不得变成“超过 90 天 (需审核)”产生并排重复');
+    assert.equal(dateLimitHint.classList.contains('overlimit'), false, 'dateLimitHint 不应添加 overlimit 告警样式');
 
     // 检查审批流决策是否联动转为人工审核
     const previewType = document.getElementById('previewDecisionType');
