@@ -172,10 +172,10 @@
                         <td><span class="red-highlight">1. 严格按照生产环境架构将区域升级为两列并列级联选择（一级大区+二级办事处，无二级默认'-'占位），并增加全单必填强校验与持久化存储回显；2. 新增多云图账号 2×2 卡片选择器（云图ID、企业名、主账号、联系人），支持联系人手机号多租户智能识别与默认项选中联动。</span></td>
                     </tr>
                     <tr style="background-color: #fef2f2;">
-                        <td><span class="red-highlight">2026 年 10 月 10 日</span></td>
+                        <td><span class="red-highlight">2026 年 10 月 12 日</span></td>
                         <td><span class="red-highlight">钱金城</span></td>
-                        <td><span class="red-highlight">统一授权时间超限审核提示与时间选择窗口颜色区分优化（对齐规模优化）</span></td>
-                        <td><span class="red-highlight">1. 针对授权时长（普通90天，KA180天），在选择时间的窗口（日历 Popover）中增加免审区间（绿色）与需审核区间（浅橙色）颜色区分及顶部色例图例；2. 选择超限时间后输入框高亮告警、展示审批提示徽章（'超过 90 天需审批'）及横幅，允许应用到各模块并同步提示，审批决策流实时重算切换为人工审核（大区及总部营销审核）。</span></td>
+                        <td><span class="red-highlight">统一授权时间超限审核提示与时间选择窗口规范优化（去噪与双色明确区分）</span></td>
+                        <td><span class="red-highlight">1. 针对授权时长（普通90天，KA180天），在选择时间的日历窗口中恢复免审区间（绿底 #f0fdf4）与需审批区间（浅橙底 #fffbeb）双色网格与图例清晰区分，彻底杜绝白色底无法识别的问题；2. 坚决去除多余预设按键、底部动态提示与输入框占位大横幅；3. 选定超限时间后输入框轻度告警，展示单一审批提示徽章（'超过 90 天需审批'，杜绝复读），允许应用到各模块并同步提示，审批决策流实时重算切换为人工审核。</span></td>
                     </tr>
                 </tbody>
             </table>
@@ -200,7 +200,7 @@
                     </tr>
                     <tr style="background-color: #fef2f2;">
                         <td><span class="red-highlight">统一授权时间超限审核与颜色区分口径</span></td>
-                        <td><span class="red-highlight">对齐此前规模（线路数/分支数等）审批提示规范（.approval-threshold-note）；授权时间默认上限 90 天（KA客户 180 天）；选择时间的窗口（日历 Popover）提供免审区间（绿色）与超限需审核（浅橙色）颜色区分及色例图例；选定超限时间后输入框高亮告警、展示需审批提示徽章及横幅、允许应用到各模块并同步提示，审批流自动联动转入人工审核（大区及总部营销审核）。</span></td>
+                        <td><span class="red-highlight">对齐此前规模（线路数/分支数等）审批提示规范（.approval-threshold-note）；授权时间默认上限 90 天（KA客户 180 天）；选择时间的窗口（日历 Popover）提供免审区间（绿底 #f0fdf4）与超限需审批（浅橙底 #fffbeb）双色网格与图例清晰区分，杜绝白色底无法识别；去除多余预设按键与占位大横幅；选定超限时间后输入框轻度告警、右侧展示单一需审批提示徽章（无重复复读）、允许应用到各模块并同步提示，审批流自动联动转入人工审核（大区及总部营销审核）。</span></td>
                     </tr>
                 </tbody>
             </table>
@@ -226,7 +226,7 @@
                     </tr>
                     <tr style="background-color: #fef2f2;">
                         <td><span class="red-highlight">统一授权到期日</span></td><td><span class="red-highlight">日历 Popover 选择器</span></td><td>是</td><td><span class="red-highlight">是</span></td>
-                        <td><span class="red-highlight">提供免审（绿色）与需审核（橙色）颜色区分；超过 90 天（KA 180 天）提示需人工审核，允许应用到所有模块并联动审批流</span></td>
+                        <td><span class="red-highlight">提供免审（绿底）与需审核（浅橙底）双色网格与图例区分；超过 90 天（KA 180 天）展示单一需审批提示徽章，允许应用到所有模块并联动人工审批流</span></td>
                     </tr>
                 </tbody>
             </table>
@@ -259,7 +259,7 @@
                         <td><span class="red-highlight">选择超限授权时间</span></td>
                         <td><span class="red-highlight">选择时间或应用到模块</span></td>
                         <td><span class="red-highlight">选择到期日超过 90 天（或 KA 客户超过 180 天）</span></td>
-                        <td><span class="red-highlight">输入框轻度预警，展示单一轻量化审批提示徽章（'超过 90 天需审批'，对齐规模提示交互）；日历弹窗仅保留免审区间图例与单元格高亮；允许应用到所有模块，提交时整单自动转入人工审批流（大区及总部营销审核）。</span></td>
+                        <td><span class="red-highlight">输入框轻度预警，展示单一轻量化审批提示徽章（'超过 90 天需审批'，对齐规模提示交互）；日历弹窗保留免审绿底与需审批浅橙底双色区分及图例对照，杜绝白色底无法识别；允许应用到所有模块，提交时整单自动转入人工审批流（大区及总部营销审核）。</span></td>
                     </tr>
                 </tbody>
             </table>
@@ -284,12 +284,13 @@
 
             <div id="section77" style="border: 2px dashed #dc2626; padding: 20px; border-radius: 8px; margin: 24px 0; background: #fffdfd;">
                 <h2 style="color: #dc2626; border-left-color: #dc2626; margin-top:0;">7.7 统一授权时间超限审核提示与时间选择窗口颜色区分规范（对齐规模优化交互）<span class="badge-red">全新增优化章节</span></h2>
-                <p><span class="red-highlight"><strong>1. 业务背景与对齐基线：</strong>此前针对规模参数（线路数、分支数、移动用户并发数等）在超出免审门槛时引入了轻量化审批提示徽章（.approval-threshold-note，如“超过 10 需审批”），既消除原有硬阻断对业务造成的卡死，又明确告知转审批的业务影响；本次针对统一授权时间同样对齐该规范，废弃原先超过 90 天直接 setAttribute('max') 禁用选择的生硬体验，改为“超期可选、日历免审分区、轻量审批提示、模块同步、流转人工”。</span></p>
-                <p><span class="red-highlight"><strong>2. 选择时间的窗口（Popover 日历弹窗）颜色分区与色例规范（极简去噪）：</strong></span></p>
+                <p><span class="red-highlight"><strong>1. 业务背景与对齐基线：</strong>此前针对规模参数（线路数、分支数、移动用户并发数等）在超出免审门槛时引入了轻量化审批提示徽章（.approval-threshold-note，如“超过 10 需审批”），既消除原有硬阻断对业务造成的卡死，又明确告知转审批的业务影响；本次针对统一授权时间同样对齐该规范，废弃原先超过 90 天直接 setAttribute('max') 禁用选择的生硬体验，改为“超期可选、日历双色清晰分区、轻量审批提示、模块同步、流转人工”。</span></p>
+                <p><span class="red-highlight"><strong>2. 选择时间的窗口（Popover 日历弹窗）颜色分区与色例规范（双色清晰区分 + 极简去噪）：</strong></span></p>
                 <ul>
-                    <li><span class="red-highlight"><strong>免审区间图例栏（Legend Bar）</strong>：仅配备 🟢 免审区间 (≤90天) 图例（KA 客户自动更新为 180 天），直观清晰告知免审边界，不增加多余视觉负担；</span></li>
+                    <li><span class="red-highlight"><strong>双色图例栏（Legend Bar）</strong>：顶部保留 🟢 免审区间 (≤90天) 与 🟠 需审批区间 (>90天) 两个图例（KA 客户自动更新为 180 天），双色直观对照；</span></li>
                     <li><span class="red-highlight"><strong>移除繁杂预设按键与底部动态提示条</strong>：彻底去除快捷天数预设按键（30/60/90/120/180天）与底部实时长文本提示条，保持选择窗口紧凑纯粹；</span></li>
-                    <li><span class="red-highlight"><strong>免审日期单元格（.safe-range）</strong>：淡绿清新底色（#f0fdf4）、淡绿边框（#dcfce7）、深绿文字（#0f172a），悬停加深；超出免审天数的单元格保持常规可选状态；</span></li>
+                    <li><span class="red-highlight"><strong>免审日期单元格（.safe-range）</strong>：淡绿清新底色（#f0fdf4）、淡绿边框（#dcfce7）、深绿文字（#166534），悬停加深；</span></li>
+                    <li><span class="red-highlight"><strong>需审批日期单元格（.warning-range）</strong>：浅橙清晰底色（#fffbeb）、浅橙边框（#fde68a）、深橙文字（#92400e），杜绝普通白色底无法识别需审批区间的问题，让用户直观知晓需审批日期范围；</span></li>
                 </ul>
                 <p><span class="red-highlight"><strong>3. 选择了之后的提示去重与轻量化徽章规范（坚决杜绝双重并排复读）：</strong></span></p>
                 <ul>
@@ -312,7 +313,7 @@
                 <li>确认下游许可证平台针对各产品线批量撤销/作废接口的事务一致性与幂等性保障能力。</li>
                 <li><span class="red-highlight"><strong>5. 【已确认并落地】生产环境两列并列区域联动选择器（一级大区+二级办事处，默认'-'占位）与多云图账号选择器卡片（1:1 还原生产环境截图），支持全单强校验与记录持久化回显。</strong></span></li>
                 <li>确认业务申请信息自由配置字段的持久化存储 Schema 与数据版本管理规范。</li>
-                <li><span class="red-highlight"><strong>7. 【已确认并落地】统一授权时间超限审核提示与时间选择窗口优化（对齐规模优化交互）：日历 Popover 仅标注免审区间、去除多余预设与占位横幅、日期提示单一无重复（超过 90 天需审批）、全模块同步与审批流实时联动人工审核已全部落地。</strong></span></li>
+                <li><span class="red-highlight"><strong>7. 【已确认并落地】统一授权时间超限审核提示与时间选择窗口优化（对齐规模优化交互）：日历 Popover 清晰展示免审绿底与需审批浅橙底双色区分与图例、去除多余预设按键与占位横幅、日期提示单一无重复（超过 90 天需审批）、全模块同步与审批流实时联动人工审核已全部落地。</strong></span></li>
             </ol>
         </div>
     </div>

@@ -4,7 +4,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const { loadV2Dom } = require('./helpers/load-v2-dom.cjs');
 
-test('统一授权日期：时间选择窗口轻量化（仅保留免审区间图例与单元格高亮，去除多余预设按键与底部提示）', () => {
+test('统一授权日期：时间选择窗口颜色区分（免审区间绿底 vs 需审批区间橙底清晰可见，去除多余预设按键与底部提示）', () => {
   const { dom, document, window } = loadV2Dom();
   try {
     const unifiedInput = document.getElementById('unifiedDate');
@@ -22,12 +22,13 @@ test('统一授权日期：时间选择窗口轻量化（仅保留免审区间�
     calendarBtn.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
     assert.equal(popoverWindow.classList.contains('show'), true, '点击日历按钮应展开选择时间窗口');
 
-    // 检查图例栏：仅保留免审区间说明
+    // 检查图例栏：免审区间与需审批区间颜色说明清晰呈现
     const safeLegend = popoverWindow.querySelector('.datepicker-legend-item.safe');
     const warnLegend = popoverWindow.querySelector('.datepicker-legend-item.warning');
     assert.ok(safeLegend, '日历窗口应包含免审区间图例');
-    assert.equal(warnLegend, null, '日历窗口不应出现冗余的需审核图例，仅保留免审区间说明');
+    assert.ok(warnLegend, '日历窗口应包含需审批区间图例');
     assert.match(safeLegend.textContent, /免审区间.*90天/);
+    assert.match(warnLegend.textContent, /需审批区间.*90天/);
 
     // 检查快捷预设与底部多余提示已完全移除
     const presetsContainer = popoverWindow.querySelector('.datepicker-presets');
@@ -35,15 +36,25 @@ test('统一授权日期：时间选择窗口轻量化（仅保留免审区间�
     assert.equal(presetsContainer, null, '应已去除快捷预设按键区（30/60/90/120/180天），保持窗口简洁');
     assert.equal(footerHint, null, '应已去除底部多余提示文本条');
 
-    // 日历网格中仅对免审区间渲染绿色单元格高亮
+    // 日历网格中：当前月份（距离今天 <= 90天）包含免审区间绿色底色(safe-range)
     const safeCells = popoverWindow.querySelectorAll('.datepicker-day-cell.safe-range');
     assert.ok(safeCells.length > 0, '日历网格中应包含带有 safe-range 绿色的免审日期单元格');
+
+    // 翻页至 4 个月后（>90天），日历网格中需审批区间渲染浅橙底色(warning-range)，杜绝白色底无法识别
+    const dpNextMonth = document.getElementById('dpNextMonth');
+    assert.ok(dpNextMonth, '应存在日历下月切换按钮');
+    for (let i = 0; i < 4; i++) {
+      dpNextMonth.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    }
+    const warnCells = popoverWindow.querySelectorAll('.datepicker-day-cell.warning-range');
+    assert.ok(warnCells.length > 0, '翻至90天以后的月份日历网格中应包含带有 warning-range 浅橙色的需审批日期单元格');
 
     // 切换至 KA 客户（180天限制）联动更新
     if (typeof window.updateDateLimit === 'function') {
       window.updateDateLimit('KA');
       assert.match(dateLimitHint.textContent, /180/);
       assert.match(safeLegend.textContent, /180天/);
+      assert.match(warnLegend.textContent, /180天/);
     }
   } finally {
     dom.window.close();
