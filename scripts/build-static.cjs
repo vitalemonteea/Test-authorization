@@ -12,6 +12,18 @@ const files = [
   ['info-collection.css', 'info-collection.css'],
   ['info-upload.html', 'info-upload.html'],
   ['info-upload.js', 'info-upload.js'],
+  ['operations-dashboard.html', 'operations-dashboard.html'],
+  ['operations-dashboard.css', 'operations-dashboard.css'],
+  ['operations-dashboard.js', 'operations-dashboard.js'],
+  ['operations-dashboard-model.js', 'operations-dashboard-model.js'],
+  ['operations-events.js', 'operations-events.js'],
+  ['operations-dashboard-mock.js', 'operations-dashboard-mock.js'],
+  ['operations-mock-view.js', 'operations-mock-view.js'],
+  ['vendor/vue/vue.global.prod.js', 'vendor/vue/vue.global.prod.js'],
+  ['vendor/vue/LICENSE', 'vendor/vue/LICENSE'],
+  ['vendor/element-plus/index.full.min.js', 'vendor/element-plus/index.full.min.js'],
+  ['vendor/element-plus/index.css', 'vendor/element-plus/index.css'],
+  ['vendor/element-plus/LICENSE', 'vendor/element-plus/LICENSE'],
 ];
 
 fs.rmSync(dist, { recursive: true, force: true });
@@ -22,7 +34,9 @@ for (const [sourceName, targetName] of files) {
   if (!fs.existsSync(source)) {
     throw new Error(`Missing build input: ${sourceName}`);
   }
-  fs.copyFileSync(source, path.join(dist, targetName));
+  const target = path.join(dist, targetName);
+  fs.mkdirSync(path.dirname(target), { recursive: true });
+  fs.copyFileSync(source, target);
 }
 
 console.log(`Static build created at ${dist}`);

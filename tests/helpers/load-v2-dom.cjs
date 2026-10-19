@@ -35,7 +35,8 @@ function loadV2Dom(options = {}) {
     errors.push(args.map(serializeConsoleArgument).join(' '));
   });
 
-  const dom = new JSDOM(fs.readFileSync(htmlPath, 'utf8'), {
+  const html = fs.readFileSync(htmlPath, 'utf8');
+  const dom = new JSDOM(options.transformHtml ? options.transformHtml(html) : html, {
     runScripts: options.runScripts === false ? undefined : 'dangerously',
     url: 'http://localhost/',
     virtualConsole,
