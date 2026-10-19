@@ -7,6 +7,11 @@ const files = [
   ['测试设备授权平台V2.html', 'index.html'],
   ['logo.jpg', 'logo.jpg'],
   ['authorization-application-rules.js', 'authorization-application-rules.js'],
+  ['info-collection-model.js', 'info-collection-model.js'],
+  ['info-collection-ui.js', 'info-collection-ui.js'],
+  ['info-collection.css', 'info-collection.css'],
+  ['info-upload.html', 'info-upload.html'],
+  ['info-upload.js', 'info-upload.js'],
 ];
 
 fs.rmSync(dist, { recursive: true, force: true });

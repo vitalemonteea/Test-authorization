@@ -218,7 +218,7 @@ test('HCI 仅通过 info 文件识别设备事实并成功提交', () => {
   const { dom, document, window, alerts, errors } = loadV2Dom();
   try {
     assert.equal(document.getElementById('plname').value, '45');
-    assert.equal(document.getElementById('deviceIdFormItem').hidden, true);
+    assert.equal(document.getElementById('deviceIdFormItem').hidden, false);
     assert.equal(window.applicationState.deviceFacts.length, 0);
 
     const infoFile = new window.File(['hci-device-info'], 'hci-device.info', { type: 'text/plain' });
@@ -306,13 +306,13 @@ test('表单重置彻底清理旧流程状态并重新应用默认 HCI 模式', 
     assert.equal(document.getElementById('submissionSnapshot').value, '');
     assert.equal(document.getElementById('planDevTypeFormItem').style.display, 'none');
     assert.deepEqual(Array.from(document.querySelectorAll('#chipContainer .chip-item')).map((chip) => chip.textContent.replace('×', '')), []);
-    assert.equal(document.getElementById('deviceIdFormItem').hidden, true);
+    assert.equal(document.getElementById('deviceIdFormItem').hidden, false);
     assert.notEqual(document.getElementById('hwInfoSection').style.display, 'none');
     assert.equal(window.applicationState.deviceFacts.length, 0);
     assert.equal(window.applicationState.deviceFacts.some((fact) => fact.deviceId === 'SALES-ATRUST-001'), false);
 
     window.submitStandardForm();
-    assert.match(alerts.at(-1), /请上传硬件信息文件/);
+    assert.match(alerts.at(-1), /请上传硬件信息文件或输入设备ID/);
     assert.equal(document.getElementById('submissionSnapshot').value, '');
     assert.deepEqual(errors, []);
   } finally {

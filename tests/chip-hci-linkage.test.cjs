@@ -86,7 +86,7 @@ test('调用 addChip 后设备ID chip 渲染并同步隐藏字段', async () => 
   assert.ok(mirror && mirror.value.indexOf('DEV-TEST-001') > -1, '隐藏 #devIdNew 应同步设备ID值');
 });
 
-test('HCI 产品线(默认45)下：申请类型和设备ID隐藏，仅显示硬件信息文件', async () => {
+test('HCI 产品线(默认45)下：申请类型隐藏，设备ID与硬件信息文件同时显示', async () => {
   const { dom, errors } = loadDom();
   const doc = dom.window.document;
   await delay(40);
@@ -102,15 +102,15 @@ test('HCI 产品线(默认45)下：申请类型和设备ID隐藏，仅显示硬�
   const hw = doc.getElementById('hwInfoSection');
   assert.notStrictEqual(hw.style.display, 'none', 'HCI 模式下硬件信息区应显示');
   const deviceItem = doc.getElementById('deviceIdFormItem');
-  assert.equal(deviceItem.hidden, true, 'HCI 模式下设备ID字段应隐藏');
-  assert.equal(dom.window.getComputedStyle(deviceItem).display, 'none', 'HCI 模式下设备ID字段不应占据布局空间');
+  assert.equal(deviceItem.hidden, false, 'HCI 模式下设备ID字段应与硬件信息文件同时显示');
+  assert.notEqual(dom.window.getComputedStyle(deviceItem).display, 'none', 'HCI 模式下设备ID字段应占据布局空间');
   const chips = doc.querySelectorAll('#chipContainer .chip-item');
   assert.equal(chips.length, 0, 'HCI 模式下不应生成默认设备ID');
-  assert.equal(doc.getElementById('devIdNew').value, '', 'HCI 模式下隐藏字段不应保留默认设备ID');
-  assert.equal(doc.getElementById('devIdNew').disabled, true, 'HCI 模式下设备ID隐藏字段不应参与提交');
-  assert.equal(dom.window.addChip('SHOULD-NOT-BE-ADDED'), false, 'HCI 模式下旧设备ID接口不应写入数据');
-  assert.equal(doc.querySelectorAll('#chipContainer .chip-item').length, 0);
-  assert.equal(dom.window.applicationState.deviceFacts.length, 0, '上传文件前不应生成设备事实');
+  assert.equal(doc.getElementById('devIdNew').value, '', '上传前设备ID隐藏字段应为空');
+  assert.equal(doc.getElementById('devIdNew').disabled, false, 'HCI 模式下设备ID隐藏字段应参与提交');
+  assert.equal(dom.window.addChip('SHOULD-BE-ADDED'), true, 'HCI 模式下允许手工输入设备ID');
+  assert.equal(doc.querySelectorAll('#chipContainer .chip-item').length, 1);
+  assert.equal(dom.window.applicationState.deviceFacts.length, 1, '手工输入设备ID应生成设备事实');
   assert.strictEqual(errors.length, 0, '运行期间不应有脚本错误（实际 ' + errors.join('|') + '）');
 });
 
@@ -126,7 +126,7 @@ test('SCP 产品线(19)与 HCI 使用相同的硬件信息文件识别模式', a
   await delay(10);
 
   assert.equal(doc.getElementById('planDevTypeRow').hidden, true);
-  assert.equal(doc.getElementById('deviceIdFormItem').hidden, true);
+  assert.equal(doc.getElementById('deviceIdFormItem').hidden, false);
   assert.notEqual(doc.getElementById('hwInfoSection').style.display, 'none');
   assert.equal(doc.querySelectorAll('#chipContainer .chip-item').length, 0);
   assert.equal(doc.getElementById('devIdNew').value, '');
