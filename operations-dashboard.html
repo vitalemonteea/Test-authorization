@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>运营看板 · 测试设备授权平台</title>
+  <link rel="stylesheet" href="vendor/element-plus/index.css">
+  <link rel="stylesheet" href="operations-dashboard.css">
+  <script src="vendor/vue/vue.global.prod.js" defer></script>
+  <script src="vendor/element-plus/index.full.min.js" defer></script>
+  <script src="operations-dashboard-model.js" defer></script>
+  <script src="operations-dashboard-mock.js" defer></script>
+  <script src="operations-mock-view.js" defer></script>
+  <script src="operations-events.js" defer></script>
+  <script src="operations-dashboard.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#ops-main">跳到看板内容</a>
+  <main id="ops-main" class="ops-shell">
+    <header class="page-head compact-head">
+      <h1>运营看板 <span class="tag" id="mock-badge" hidden>模拟数据</span></h1>
+      <div class="head-actions"><button class="button" id="definitions">指标口径</button><button class="button" id="export-ops">导出当前数据</button></div>
+    </header>
+
+    <div class="filter-bar">
+      <form class="toolbar" id="scope-form">
+        <div class="quick-ranges" role="group" aria-label="快捷选择统计时间">
+          <button type="button" data-range="7" aria-pressed="false">近 7 天</button>
+          <button type="button" data-range="30" aria-pressed="false">近 30 天</button>
+          <button type="button" data-range="90" aria-pressed="false">近 90 天</button>
+          <button type="button" data-range="custom" aria-pressed="true">自定义</button>
+        </div>
+        <div class="date-range"><label class="sr-only" for="ops-start">开始日期</label><input type="date" id="ops-start" value="2026-09-08"><span>至</span><label class="sr-only" for="ops-end">结束日期</label><input type="date" id="ops-end" value="2026-10-11"></div>
+        <button type="submit" class="button primary" id="apply-scope">查询</button><button type="button" class="icon-button" id="refresh-ops" aria-label="重新载入当前本地数据" title="重新载入当前本地数据">↻</button>
+        <span id="scope-hint" class="toolbar-hint"></span>
+      </form>
+      <div class="dimension-bar" id="dimension-bar"></div>
+    </div>
+    <p class="form-error" id="scope-error" role="alert" hidden></p>
+    <div class="source-note" id="source-note" hidden></div>
+
+    <div id="ops-tabs" class="operations-tabs"></div>
+
+    <section id="panel-overview">
+      <div class="section-head"><div><h2>平台申请规模与办理效率</h2><p>观察申请数量、填单体验和授权耗时。</p></div><span class="muted" id="overview-scope"></span></div>
+      <div id="outcome-row" class="outcome-row"></div>
+      <div class="section-head compact"><h2>申请体验与授权质量</h2><span class="muted">点击卡片查看计算口径和已有数据</span></div>
+      <div class="metric-grid four" id="overview-process"></div>
+      <div class="chart-grid">
+        <article class="panel"><div class="panel-head"><div><h3 id="trend-heading">平台申请趋势</h3><p id="trend-caption">按真实业务周表观察变化</p></div></div><div class="trend-controls"><label>观察指标<select id="trend-metric"><option value="count">平台申请量</option><option value="activated">激活成功量</option><option value="activationFailed">激活失败量</option><option value="needsApproval">需审批量</option><option value="rejected">审批拒绝量</option></select></label><div class="quick-ranges" role="group" aria-label="趋势统计粒度"><button type="button" data-grain="day" aria-pressed="false">日</button><button type="button" data-grain="week" aria-pressed="true">周</button><button type="button" data-grain="month" aria-pressed="false">月</button></div></div><div id="ops-trend"></div><p class="footnote" id="trend-note"></p></article>
+        <article class="panel"><div class="panel-head"><div><h3>授权类别分布</h3><p>产品授权与 XaaS 为申请类别，非产品线</p></div></div><div id="ops-categories"></div><div class="panel-subhead"><h3>平台申请产线分布</h3></div><div id="ops-products"></div><div class="panel-subhead"><h3>申请场景分布</h3></div><div id="ops-authscenes"></div></article>
+      </div>
+      <article class="panel business-panel"><div class="panel-head"><div><h3>业务指标</h3><p>产品测试平均时长、异常设备比例；与办理耗时分别观察</p></div></div><div class="metric-grid two" id="business-metrics"></div></article>
+    </section>
+
+    <section id="panel-quality" hidden>
+      <div class="section-head"><div><h2>申请与授权链路</h2><p>从申请、审批到授权与激活的全旅程。</p></div></div>
+      <div class="section-head compact"><h2>一、申请体验与审批</h2></div>
+      <div class="metric-grid four" id="quality-metrics"></div>
+      <div class="chart-grid equal">
+        <article class="panel"><div class="panel-head"><div><h3>提交受阻原因</h3><p id="validation-caption">前端校验失败与后端提交失败，按事件次数统计</p></div></div><div id="ops-validation"></div></article>
+        <article class="panel"><div class="panel-head"><div><h3>审批结果</h3><p>进入审批、通过、驳回与审批中分别统计；驳回原因为自由填写，不做聚合</p></div></div><div id="ops-approvals"></div></article>
+      </div>
+      <div class="section-head compact section-gap"><h2>二、授权与激活</h2></div>
+      <div class="metric-grid four" id="chain-metrics"></div>
+      <div class="chart-grid equal">
+        <article class="panel"><div class="panel-head"><div><h3>全链路耗时</h3><p>P50、P95 与均值分列，避免混用</p></div></div><div id="ops-duration"></div><p class="footnote" id="duration-note"></p></article>
+        <article class="panel"><div class="panel-head"><div><h3>失败原因与处理线索</h3><p>不把失败事件数直接当作失败申请数</p></div></div><div id="ops-failures"></div><p class="footnote" id="failure-note"></p></article>
+      </div>
+    </section>
+
+    <section id="panel-events" hidden>
+      <div class="section-head"><div><h2>埋点事件</h2><p>汇总查看事件发生情况，日志逐条追溯具体过程。</p></div></div>
+      <div id="ops-events"></div>
+    </section>
+  </main>
+  <dialog id="ops-dialog" aria-labelledby="ops-dialog-title"><div class="dialog-head"><h2 id="ops-dialog-title"></h2><button class="icon-button" id="ops-dialog-close" aria-label="关闭详情">×</button></div><div id="ops-dialog-body"></div><div class="dialog-foot"><button class="button primary" id="ops-dialog-done">知道了</button></div></dialog>
+  <div id="ops-toast" role="status" aria-live="polite"></div>
+</body>
+</html>
