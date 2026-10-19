@@ -247,7 +247,7 @@ test('顶部图标和关键自定义下拉应具有可读名称', () => {
   const headerButtons = Array.from(doc.querySelectorAll('.header-menu-btn, .header-icon-btn'));
   assert.deepEqual(
     headerButtons.map((button) => button.getAttribute('aria-label')),
-    ['展开侧边导航', '操作手册', '系统设置']
+    ['展开侧边导航', '操作手册', '系统设置', '通知']
   );
 
   const expectedLabels = {

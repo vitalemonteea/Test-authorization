@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="referrer" content="no-referrer">
+    <title>提供测试授权设备信息 · 深信服</title>
+    <link rel="stylesheet" href="info-collection.css">
+    <style>
+        * { box-sizing:border-box; }
+        body { margin:0; font-family:"Microsoft YaHei","PingFang SC",sans-serif; color:#0b1c30; background:#f8f9ff; font-size:14px; line-height:1.6; }
+        .upload-brand { max-width:1040px; padding:24px 32px; margin:auto; display:flex; align-items:center; gap:12px; }
+        .upload-brand img { width:32px; height:32px; object-fit:contain; }
+        .upload-brand strong { font-size:16px; font-weight:600; }
+        .upload-brand span { padding-left:16px; margin-left:4px; border-left:1px solid #dce3ee; font-size:12px; color:#536176; }
+        main { width:640px; max-width:calc(100% - 32px); margin:28px auto 56px; }
+        .upload-intro { text-align:center; margin:0 0 28px; }
+        .upload-intro .upload-eyebrow { display:inline-block; font-size:12px; color:#0050cb; padding:5px 12px; border:1px solid #d6e2f7; border-radius:20px; background:#eff4ff; }
+        h1 { font-size:28px; font-weight:600; line-height:1.4; margin:16px 0 10px; letter-spacing:-.6px; }
+        .upload-intro p { color:#536176; font-size:14px; margin:0; }
+        .upload-card { background:#fff; border:1px solid #e4eaf3; border-radius:16px; box-shadow:0 6px 32px #162c4910; overflow:hidden; }
+        .upload-steps { display:flex; justify-content:center; gap:28px; padding:20px 24px; background:#fbfcff; border-bottom:1px solid #e9edf3; font-size:12px; color:#68768a; }
+        .upload-steps span { display:flex; align-items:center; gap:7px; }
+        .upload-steps b { width:21px; height:21px; display:inline-flex; align-items:center; justify-content:center; border-radius:50%; background:#edf0f6; font-size:11px; font-weight:500; }
+        .upload-steps .active { color:#0050cb; font-weight:500; }
+        .upload-steps .active b { background:#e5eeff; }
+        .upload-body { padding:28px 32px 32px; }
+        .upload-context { padding:16px 20px; border:1px solid #e4eaf3; border-radius:10px; background:#f8f9ff; margin-bottom:24px; }
+        .upload-context strong { font-size:15px; font-weight:500; }
+        .upload-context dl { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:12px 0 0; }
+        .upload-context dt { color:#68768a; font-size:11px; margin-bottom:3px; }
+        .upload-context dd { font-size:13px; margin:0; overflow-wrap:anywhere; }
+        .upload-label { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px; }
+        .upload-label strong { font-size:14px; font-weight:500; }
+        .upload-label small { font-size:11px; color:#68768a; }
+        .upload-drop { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:26px 16px; gap:10px; border:1.5px dashed #b9cceb; border-radius:10px; background:#fcfdff; cursor:pointer; transition:background .15s,border-color .15s; text-align:center; }
+        .upload-drop:hover,.upload-drop.is-dragging { background:#eff4ff; border-color:#0050cb; }
+        .upload-drop:focus-within { outline:2px solid #0050cb; outline-offset:3px; }
+        .upload-drop input { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); }
+        .upload-icon { display:flex; align-items:center; justify-content:center; width:48px; height:48px; background:#eaf1ff; color:#0050cb; border-radius:12px; }
+        .upload-icon svg { width:24px; height:24px; }
+        .upload-drop strong { font-size:14px; color:#0050cb; font-weight:500; }
+        .upload-drop>span:last-child { font-size:12px; color:#68768a; }
+        .upload-file-list { display:flex; flex-direction:column; gap:8px; margin:14px 0 4px; }
+        .upload-file-row { display:flex; align-items:flex-start; gap:10px; border:1px solid #cde6d8; border-radius:10px; background:#f3fbf6; padding:12px 14px; }
+        .upload-file-row.is-invalid { border-color:#f1cecb; background:#fff3f2; }
+        .upload-file-row .upload-file-icon { flex-shrink:0; width:30px; height:30px; border-radius:8px; background:#e3f2e9; color:#217447; display:flex; align-items:center; justify-content:center; }
+        .upload-file-row.is-invalid .upload-file-icon { background:#fbe4e2; color:#a62721; }
+        .upload-file-row .upload-file-icon svg { width:16px; height:16px; }
+        .upload-file-main { flex:1; min-width:0; }
+        .upload-file-name { font-size:13px; font-weight:500; overflow-wrap:anywhere; }
+        .upload-file-name small { font-weight:400; color:#68768a; margin-left:6px; }
+        .upload-file-summary { display:flex; flex-wrap:wrap; gap:4px 14px; font-size:11px; color:#536176; margin-top:4px; }
+        .upload-file-summary span b { color:#0b1c30; font-weight:500; }
+        .upload-file-error { font-size:11px; color:#a62721; margin-top:4px; }
+        .upload-file-remove { flex-shrink:0; border:0; background:transparent; color:#68768a; font-size:16px; line-height:1; cursor:pointer; padding:4px; border-radius:6px; }
+        .upload-file-remove:hover { color:#a62721; background:#00000008; }
+        .upload-guidance { margin:14px 0 20px; color:#536176; font-size:12px; }
+        .upload-guidance summary { color:#0050cb; cursor:pointer; padding:4px 0; }
+        .upload-guidance ol { padding-left:20px; margin:10px 0; line-height:1.9; }
+        .upload-guidance p { margin:8px 0; }
+        .upload-error { background:#fff3f2; border:1px solid #f1cecb; color:#a62721; font-size:12px; padding:10px 12px; border-radius:8px; margin:14px 0; }
+        .upload-submit { width:100%; min-height:46px; font-size:14px; }
+        .upload-purpose { display:flex; gap:8px; margin:18px 0 0; color:#68768a; font-size:11px; line-height:1.7; }
+        .upload-purpose svg { width:15px; height:15px; flex-shrink:0; margin-top:2px; }
+        .upload-foot { text-align:center; color:#68768a; font-size:11px; margin:20px 0; }
+        .journey { padding:24px 0 8px; }
+        .journey-head { text-align:center; margin-bottom:22px; }
+        .journey-head h2 { font-size:22px; margin:0 0 10px; font-weight:600; }
+        .journey-head p { font-size:13px; color:#536176; margin:0; }
+        .journey-timeline { list-style:none; margin:0 0 22px; padding:0 0 0 4px; }
+        .journey-timeline li { position:relative; padding:0 0 18px 26px; border-left:2px solid #e4eaf3; margin-left:9px; }
+        .journey-timeline li:last-child { border-left-color:transparent; padding-bottom:0; }
+        .journey-timeline li::before { content:''; position:absolute; left:-8px; top:2px; width:14px; height:14px; border-radius:50%; background:#fff; border:2px solid #cdd6e4; }
+        .journey-timeline li.done::before { background:#217447; border-color:#217447; }
+        .journey-timeline li.current::before { background:#0050cb; border-color:#0050cb; box-shadow:0 0 0 4px #0050cb22; }
+        .journey-timeline li strong { display:block; font-size:13.5px; font-weight:500; color:#0b1c30; }
+        .journey-timeline li.todo strong { color:#68768a; font-weight:400; }
+        .journey-timeline li small { display:block; font-size:11.5px; color:#68768a; margin-top:2px; }
+        .journey-files { border:1px solid #e4eaf3; border-radius:10px; padding:12px 14px; margin-bottom:18px; font-size:12.5px; }
+        .journey-files strong { display:block; font-size:12px; color:#536176; font-weight:500; margin-bottom:6px; }
+        .journey-files div { display:flex; align-items:center; gap:6px; padding:3px 0; overflow-wrap:anywhere; }
+        .journey-files svg { width:14px; height:14px; color:#217447; flex-shrink:0; }
+        .license-card { border:1px solid #cde6d8; border-radius:10px; background:#f3fbf6; padding:16px 18px; margin-bottom:18px; }
+        .license-card strong { font-size:13px; color:#217447; font-weight:500; display:block; margin-bottom:10px; }
+        .license-card dl { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:0; font-size:12.5px; }
+        .license-card dt { color:#536176; font-size:11px; margin-bottom:2px; }
+        .license-card dd { margin:0; overflow-wrap:anywhere; font-family:"SFMono-Regular",Consolas,monospace; }
+        .journey-actions { display:flex; flex-direction:column; gap:10px; }
+        .journey-note { font-size:11.5px; color:#68768a; text-align:center; margin:14px 0 0; line-height:1.7; }
+        .ic-button.remind { background:#fff; color:#0050cb; border:1px solid #b9cceb; }
+        .ic-button.remind:hover:not(:disabled) { background:#eff4ff; }
+        .ic-button.remind:disabled { color:#68768a; border-color:#e4eaf3; cursor:default; }
+        [hidden] { display:none!important; }
+        @media(max-width:640px) { .upload-brand { padding:20px; } .upload-brand span { font-size:11px; padding-left:12px; } main { margin-top:20px; } h1 { font-size:23px; } .upload-body { padding:20px; } .upload-steps { gap:20px; padding:16px 12px; } .upload-context { padding:14px; } .upload-intro p { font-size:12px; } .upload-label small { font-size:10px; } .license-card dl { grid-template-columns:1fr; } }
+    </style>
+</head>
+<body>
+    <header class="upload-brand"><img src="logo.jpg" alt="深信服"><strong>测试授权平台</strong><span>设备信息收集</span></header>
+    <main>
+        <div class="upload-intro"><span class="upload-eyebrow">免登录 · 无需填写申请资料</span><h1>提供测试授权设备信息</h1><p>上传设备信息文件，申请人将为你继续办理测试授权。</p></div>
+        <section class="upload-card" aria-label="设备信息上传">
+            <div class="upload-steps" id="uploadSteps"><span class="active"><b>1</b>选择文件</span><span><b>2</b>确认信息</span><span><b>3</b>完成提交</span></div>
+            <div class="upload-body">
+                <div class="upload-context" id="uploadContext" hidden></div>
+                <div id="uploadForm" hidden>
+                    <div class="upload-label"><strong>设备信息文件</strong><small>支持多个 .info 文件，单个不超过 2 MB</small></div>
+                    <label class="upload-drop" id="uploadDrop"><input type="file" id="customerInfoFile" accept=".info" multiple aria-label="选择设备 info 文件"><span class="upload-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 16V4m-4 4 4-4 4 4M4 15v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/></svg></span><strong id="uploadDropTitle">选择 info 文件（可多选）</strong><span>也可以将多个文件一起拖到这里</span></label>
+                    <div class="upload-file-list" id="uploadFileList" aria-live="polite"></div>
+                    <details class="upload-guidance"><summary>不知道如何获取 info 文件？</summary><ol><li>登录本次测试设备的管理控制台。</li><li>找到设备信息或授权信息页面，导出设备信息文件。</li><li>保留导出的 .info 文件格式，回到此页上传。</li></ol><p>多台设备（或多个集群）请分别导出后一起上传。不同产品和版本的导出入口可能不同，找不到时请联系邀请人协助。</p></details>
+                    <div id="uploadError" class="upload-error" hidden role="alert"></div>
+                    <button type="button" id="confirmInfoUpload" class="ic-button upload-submit" disabled>确认提交设备信息</button>
+                    <p class="upload-purpose"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m10 2 6 2v5c0 4-6 8-6 8S4 13 4 9V4l6-2Z"/><path d="m7 9 2 2 4-4"/></svg><span>设备信息用于识别本次授权对象。文件提交后，申请人继续填写资料并发起授权申请；授权生成后你可以回到本页查看进度并下载授权文件（授权文件同步发送至申请邮箱）。</span></p>
+                </div>
+                <div id="uploadJourney" class="journey" hidden aria-live="polite"></div>
+                <div id="uploadResult" class="journey" hidden aria-live="polite"></div>
+            </div>
+        </section>
+        <p class="upload-foot" id="uploadExpiry">深信服 · 测试授权设备信息收集</p>
+    </main>
+    <script src="info-collection-model.js"></script>
+    <script src="info-upload.js"></script>
+</body>
+</html>

@@ -1,9 +1,11 @@
 *.png
+!docs/flowcharts/*.png
 *.jpg
 *.jpeg
 *.gif
 *.zip
 node_modules/
+node_modules
 dist/
 todo.md
 .superpowers/brainstorm/

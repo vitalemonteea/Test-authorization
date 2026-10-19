@@ -6,6 +6,7 @@
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="info-collection.css">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
     <style>
         /* 全局重置 */
@@ -470,6 +471,12 @@
         .hw-file-info .hw-file-clear { display: none; align-items: center; justify-content: center; width: 20px; height: 20px; margin-left: 6px; border: none; background: #e8ecf0; border-radius: 50%; font-size: 13px; line-height: 1; color: #8b92a5; cursor: pointer; flex-shrink: 0; transition: all 0.15s; }
         .hw-file-info .hw-file-clear:hover { background: #dae1ff; color: #0050cb; }
         .hw-file-info.has-file .hw-file-clear { display: inline-flex; }
+        .hw-file-list { display: flex; flex-direction: column; gap: 6px; width: 100%; flex-basis: 100%; }
+        .hw-file-list:empty { display: none; }
+        .hw-file-list .hw-file-info { width: 100%; max-width: 460px; }
+        .hw-file-list .hw-file-info .hw-file-clear { display: inline-flex; }
+        .hw-file-list .hw-file-source { font-size: 10px; color: #217447; background: #e8f5e9; border-radius: 4px; padding: 1px 6px; margin-left: 6px; flex-shrink: 0; white-space: nowrap; }
+        #hwInfoSection .hw-upload-area { flex-wrap: wrap; }
         .hw-upload-btn { display: inline-flex; align-items: center; gap: 6px; height: 40px; padding: 0 18px; background-color: #0050cb; color: #fff; border: none; border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; transition: all 0.2s; flex-shrink: 0; }
         .hw-upload-btn:hover { opacity: 0.9; box-shadow: 0 2px 8px rgba(0,80,203,.25); }
         .xaas-extra-field .hw-upload-btn { display: inline-flex; align-items: center; justify-content: center; color: #fff; }
@@ -1329,6 +1336,21 @@
         .settings-dropdown-menu .settings-item { display: flex; align-items: center; gap: 10px; padding: 10px 16px; color: #333; font-size: 13px; cursor: pointer; transition: background .2s ease; }
         .settings-dropdown-menu .settings-item:hover { background: #f5f5f5; color: #0050cb; }
         .settings-dropdown-menu .settings-item .material-symbols-outlined { font-size: 18px; }
+        .header-todo-badge { position: absolute; top: 4px; right: 4px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 8px; background: #d93025; color: #fff; font-size: 10px; line-height: 16px; text-align: center; font-weight: 600; }
+        .header-todo-menu { width: 360px; max-width: calc(100vw - 32px); padding: 0; }
+        .header-todo-tabs { display: flex; border-bottom: 1px solid #e9edf3; }
+        .header-todo-tabs button { flex: 1; height: 42px; border: 0; background: transparent; color: #68768a; font-size: 13px; cursor: pointer; font-family: inherit; }
+        .header-todo-tabs button.active { color: #0050cb; font-weight: 600; box-shadow: inset 0 -2px 0 #0050cb; }
+        .header-todo-panel { max-height: 380px; overflow-y: auto; padding: 8px 0; }
+        .header-todo-panel[hidden] { display: none !important; }
+        .header-todo-empty { padding: 34px 16px; text-align: center; color: #8b92a5; font-size: 13px; }
+        .header-todo-item { padding: 10px 16px; border-bottom: 1px solid #f1f3f7; }
+        .header-todo-item:last-child { border-bottom: 0; }
+        .header-todo-item strong { display: block; font-size: 13px; color: #0b1c30; font-weight: 500; }
+        .header-todo-item p { margin: 3px 0 0; font-size: 11.5px; color: #68768a; }
+        .header-todo-item .header-todo-actions { display: flex; gap: 8px; margin-top: 8px; }
+        .header-todo-item .header-todo-actions button { border: 0; background: #eff4ff; color: #0050cb; border-radius: 6px; padding: 5px 10px; font-size: 11.5px; cursor: pointer; font-family: inherit; }
+        .header-todo-item .header-todo-actions button.primary { background: #0050cb; color: #fff; }
         .solution-drawer-layer, .solution-drawer-layer *, .solution-modal-layer * { box-sizing: border-box; }
         .solution-drawer-layer { position: fixed; inset: 0; z-index: 5600; }
         .solution-drawer-layer[hidden] { display: none; }
@@ -1356,14 +1378,66 @@
         .solution-asset-preview { margin: 12px 0 0; padding: 12px; overflow: auto; border: 1px solid #dce6f9; border-radius: 8px; color: #355075; background: #f5f8ff; font: 12px/18px Consolas, monospace; white-space: pre-wrap; }
         .solution-modal-layer { position: fixed; inset: 0; z-index: 5700; display: grid; place-items: center; padding: 18px; background: rgba(11,28,48,.42); }
         .solution-modal-layer[hidden] { display: none; }
-        .solution-modal { width: min(680px, 100%); max-height: calc(100vh - 36px); overflow: auto; border-radius: 12px; background: #fff; box-shadow: 0 16px 42px rgba(9,23,45,.24); }
+        .solution-modal { display: flex; flex-direction: column; width: min(680px, 100%); max-height: calc(100vh - 36px); overflow: hidden; border-radius: 12px; background: #fff; box-shadow: 0 16px 42px rgba(9,23,45,.24); }
         .solution-modal-head, .solution-modal-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 14px 20px; border-bottom: 1px solid #eff1f7; }
         .solution-modal-head h2 { margin: 0; color: #1a1a2e; font-size: 16px; }
-        .solution-modal-body { padding: 16px 20px; }
+        .solution-modal-head, .solution-modal-foot { flex-shrink: 0; }
+        .solution-modal-body { min-height: 0; overflow: auto; padding: 16px 20px; }
         .solution-modal-foot { justify-content: flex-end; border-top: 1px solid #eff1f7; border-bottom: 0; background: #fafbff; }
         .solution-check-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px; padding: 12px; border: 1px solid #d8dee9; border-radius: 8px; background: #fff; }
         .solution-check-grid label { display: flex; align-items: center; gap: 6px; min-height: 28px; font-size: 13px; }
         .solution-check-grid input[type="checkbox"] { accent-color: #0050cb; }
+        .solution-product-config { border: 1px solid #d8dee9; border-radius: 8px; background: #fff; }
+        .solution-product-config-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px; border-bottom: 1px solid #edf1f7; }
+        .solution-product-config-note { color: #6b7890; font-size: 12px; line-height: 18px; }
+        .solution-product-picker-trigger { flex-shrink: 0; padding: 5px 9px; color: #0050cb; background: #fff; border: 1px solid #c5d7f5; border-radius: 5px; font-size: 12px; cursor: pointer; }
+        .solution-product-picker-layer { z-index: 5800; }
+        .solution-product-picker-dialog { width: min(860px, 100%); }
+        .solution-product-picker-dialog .solution-modal-head { align-items: flex-start; }
+        .solution-product-picker-subtitle { margin: 6px 0 0; color: #6b7890; font-size: 12px; line-height: 18px; }
+        .solution-product-picker-dialog .solution-modal-body { padding: 18px 24px; }
+        .solution-product-picker-dialog .solution-modal-foot { padding: 14px 24px; }
+        .solution-product-picker-list .solution-product-picker-option[hidden], .solution-product-picker-empty[hidden] { display: none; }
+        .solution-product-picker-search { width: 100%; height: 36px; margin-bottom: 8px; }
+        .solution-product-picker-tools, .solution-product-picker-foot { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; color: #6b7890; font-size: 12px; }
+        .solution-product-picker-tools button { padding: 3px 0; border: 0; color: #0050cb; background: transparent; font: inherit; cursor: pointer; }
+        .solution-product-picker-tools button + button { margin-left: 12px; }
+        .solution-product-picker-list { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-content: start; gap: 4px 8px; height: min(360px, 44vh); overflow-y: auto; margin: 12px 0 0; padding: 8px; border: 1px solid #e0e6f0; border-radius: 6px; background: #fff; }
+        .solution-product-picker-list .solution-product-picker-option { display: flex; align-items: center; gap: 7px; min-width: 0; min-height: 38px; margin: 0; padding: 6px; color: #243750; font-size: 12px; font-weight: 400; cursor: pointer; }
+        .solution-product-picker-option:hover { background: #f2f6ff; }
+        .solution-product-picker-option:has(input:checked):not(:has(input:disabled)) { background: #edf4ff; }
+        .solution-product-picker-option:has(input:disabled) { color: #8793a5; cursor: default; }
+        .solution-product-picker-option span { min-width: 0; overflow-wrap: anywhere; }
+        .solution-product-picker-option small { flex-shrink: 0; margin-left: auto; font-size: 10px; }
+        .solution-product-picker-option input { flex-shrink: 0; accent-color: #0050cb; }
+        .solution-product-picker-empty { grid-column: 1 / -1; margin: 0; padding: 20px; text-align: center; color: #6b7890; font-size: 12px; }
+        .solution-product-picker-foot { justify-content: space-between; }
+        .solution-product-rule-grid { display: grid; grid-template-columns: 90px 112px 120px minmax(90px, 1fr) 32px; align-items: center; gap: 8px; }
+        .solution-product-rule-head { padding: 8px 12px; color: #6b7890; background: #f8faff; font-size: 12px; }
+        .solution-product-rule-row { padding: 9px 12px; border-top: 1px solid #edf1f7; }
+        .solution-product-rule-name { min-width: 0; color: #0b1c30; font-size: 13px; font-weight: 600; overflow-wrap: anywhere; }
+        .solution-product-rule-row .solution-select, .solution-product-rule-row .solution-input { width: 100%; min-width: 0; height: 32px; padding: 0 8px; border-radius: 5px; font-size: 12px; }
+        .solution-product-rule-row select:disabled { color: #8490a3; background: #f5f7fa; cursor: default; }
+        .solution-product-rule-empty { margin: 0; padding: 20px 12px; color: #8090a5; text-align: center; font-size: 12px; }
+        .solution-product-rule-group-placeholder { color: #a6b0bd; font-size: 12px; }
+        .solution-product-rule-remove { width: 32px; height: 32px; padding: 0; color: #7a8597; background: transparent; border: 0; border-radius: 4px; cursor: pointer; font-size: 20px; }
+        .solution-product-rule-remove:hover { color: #b42318; background: #fff1f0; }
+        .solution-product-config-feedback { padding: 8px 12px; color: #63738a; border-top: 1px solid #edf1f7; font-size: 12px; line-height: 18px; }
+        .solution-product-nav .solution-line-required { margin-left: 6px; color: #8793a5; font-size: 11px; font-weight: 400; }
+        .solution-choice-group-title { margin: 12px 6px 5px; color: #66768d; font-size: 11px; line-height: 17px; overflow-wrap: anywhere; }
+        .solution-choice-indicator { flex: 0 0 15px; width: 15px; height: 15px; margin-left: 8px; border: 1px solid #a3b1c7; border-radius: 50%; background: #fff; }
+        [data-solution-line-choice][aria-checked="true"] .solution-choice-indicator { border: 4px solid #0050cb; }
+        @media (max-width: 620px) {
+            .solution-product-picker-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .solution-product-rule-head { display: none; }
+            .solution-product-rule-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 32px; gap: 8px; }
+            .solution-product-rule-name { grid-column: 1 / 3; }
+            .solution-product-rule-remove { grid-row: 1; grid-column: 3; }
+            .solution-product-rule-row [data-config-rule="group"] { grid-column: 1 / 3; }
+            .solution-product-rule-group-placeholder { display: none; }
+            .solution-product-config-toolbar { align-items: flex-start; }
+            .solution-product-nav .solution-choice-group-title { flex: 0 0 86px; align-self: center; margin: 0; }
+        }
         .solution-form-error { min-height: 20px; margin: 9px 0 0; color: #ba1a1a; font-size: 12px; }
         .solution-approval-list { display: grid; gap: 8px; margin: 12px 0 0; padding: 0; list-style: none; }
         .solution-approval-list li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px; border: 1px solid #e2e7ef; border-radius: 8px; font-size: 13px; }
@@ -1407,6 +1481,9 @@
         #content-records{flex-direction:column;height:100%}
         #content-records > main{min-height:0}
         .content-body.records-mode{padding:0;overflow:hidden}
+        .content-body.operations-mode{padding:0;overflow:hidden}
+        #content-operations{height:100%;width:100%;background:#f5f7fb}
+        #content-operations iframe{display:block;width:100%;height:100%;border:0}
         @media (max-width:768px){
         .content-body.records-mode{padding:0}
         /* 标题与状态筛选条纵向堆叠，状态条横向滑动 */
@@ -1505,6 +1582,20 @@
                     </div>
                 </div>
             </div>
+            <div class="header-settings-dropdown" id="todoDropdown">
+                <button type="button" class="header-icon-btn" id="headerTodoBtn" onclick="toggleTodoDropdown()" aria-label="通知" title="通知">
+                    <span class="material-symbols-outlined" aria-hidden="true">notifications</span>
+                    <span class="header-todo-badge" id="headerTodoBadge" hidden>0</span>
+                </button>
+                <div class="settings-dropdown-menu header-todo-menu" id="headerTodoMenu">
+                    <div class="header-todo-tabs" id="headerTodoTabs">
+                        <button type="button" class="active" data-todo-tab="approval">待我审批</button>
+                        <button type="button" data-todo-tab="mine">我的待办</button>
+                    </div>
+                    <div class="header-todo-panel" data-todo-panel="approval"><div class="header-todo-empty">暂无待审订单</div></div>
+                    <div class="header-todo-panel" data-todo-panel="mine" hidden><div id="headerTodoList"></div></div>
+                </div>
+            </div>
                         <div class="header-user-dropdown" id="userDropdown">
                 <button type="button" class="header-user" onclick="toggleUserDropdown()">
                     <span class="user-avatar">钱</span>
@@ -1532,6 +1623,7 @@
                     <li data-tab="xaas"><a href="javascript:;"><span class="material-symbols-outlined">cloud</span><cite>申请XaaS授权</cite></a></li>
                     <li data-tab="solution"><a href="javascript:;"><span class="material-symbols-outlined">account_tree</span><cite>解决方案型授权</cite></a></li>
                     <li data-tab="records"><a href="javascript:;"><span class="material-symbols-outlined">history</span><cite>授权记录</cite></a></li>
+                    <li data-tab="operations"><a href="javascript:;"><span class="material-symbols-outlined">monitoring</span><cite>运营看板</cite></a></li>
                     <li><a href="javascript:;"><span class="material-symbols-outlined">support_agent</span><cite>安全&amp;云计算产品线授权申请接口人</cite></a></li>
                 </ul>
             </div>
@@ -1547,12 +1639,14 @@
                     <li class="layui-this" data-tab="hardware"><cite>申请产品授权</cite><span class="tab-close">&times;</span></li>
                     <li data-tab="xaas"><cite>申请XaaS授权</cite><span class="tab-close">&times;</span></li>
                     <li data-tab="solution"><cite>解决方案型授权</cite><span class="tab-close">&times;</span></li>
+                    <li data-tab="operations"><cite>运营看板</cite></li>
                 </ul>
                 <div class="closeBox">
                     <a href="javascript:;">页面操作 ▾</a>
                 </div>
             </div>
             <div class="content-body" id="contentBody">
+                <div id="content-operations" style="display:none;"><iframe src="operations-dashboard.html" title="测试授权运营看板" loading="lazy"></iframe></div>
                 <!-- 产品授权表单 -->
                 <div id="content-hardware">
                 <form class="layui-form" id="formsn">
@@ -1561,7 +1655,7 @@
                     <input type="hidden" id="renewalType" name="renewalType" value="">
 
                     <div class="special-form-section basic-info-section">
-                        <div class="section-title">基本信息</div>
+                        <div class="ic-section-head"><div class="section-title">基本信息</div><button type="button" class="ic-text-button" data-info-list="hardware">待补充申请 <span data-info-count="hardware">0</span></button></div>
 
                     <div id="section-basic">
                     <div class="basic-two-col-row product-version-row">
@@ -1778,15 +1872,19 @@
                         <label class="layui-form-label">硬件信息文件<span class="required-mark">*</span></label>
                         <div class="layui-input-block">
                             <div class="hw-upload-area">
-                                <input type="file" id="hwFileInput" accept=".info">
+                                <input type="file" id="hwFileInput" accept=".info" multiple>
                                 <div class="hw-file-info" id="hwFileInfo">
-                                    <span class="hw-file-name empty" id="hwFileName">未选择文件（支持 .info 格式）</span>
+                                    <span class="hw-file-name empty" id="hwFileName">未选择文件（支持 .info 格式，可多选）</span>
                                     <span class="hw-file-meta" id="hwFileMeta"></span>
-                                    <span class="hw-file-clear" id="hwFileClear" title="删除文件">&times;</span>
+                                    <span class="hw-file-clear" id="hwFileClear" title="删除全部文件">&times;</span>
                                 </div>
+                                <div class="hw-file-list" id="hwFileList"></div>
                                 <label class="hw-upload-btn" for="hwFileInput"><span class="upload-icon">&#8679;</span> 上传文件</label>
+                                <button type="button" class="ic-button ic-button-secondary" data-info-invite="hardware"><span class="material-symbols-outlined" aria-hidden="true">link</span>邀请客户上传</button>
                                 <div class="hw-upload-result" id="hwUploadResult"></div>
                             </div>
+                            <p class="ic-upload-help">文件在客户手中？发送上传链接，由客户直接提供。</p>
+                            <div data-info-status="hardware" class="ic-inline-status" hidden aria-live="polite"></div>
                         </div>
                     </div>
 
@@ -3639,7 +3737,7 @@
                     <div class="solution-page">
                         <div class="solution-page-head">
                             <div><h1>解决方案型测试授权</h1></div>
-                            <span class="solution-status draft" id="solutionApplicationStatus">草稿</span>
+                            <div class="ic-heading-actions"><button type="button" class="ic-text-button" data-info-list="solution">待补充申请 <span data-info-count="solution">0</span></button><span class="solution-status draft" id="solutionApplicationStatus">草稿</span></div>
                         </div>
                         <!-- 基本信息：复用产品授权的表单栅格 -->
                         <div class="special-form-section">
@@ -5362,8 +5460,11 @@
             // 切换授权记录显示
             var contentRec = document.getElementById('content-records');
             if (contentRec) contentRec.style.display = (tabName === 'records') ? 'flex' : 'none';
+            var contentOps = document.getElementById('content-operations');
+            if (contentOps) contentOps.style.display = (tabName === 'operations') ? 'block' : 'none';
             var cbEl = document.getElementById('contentBody');
             if (cbEl) cbEl.classList.toggle('records-mode', tabName === 'records');
+            if (cbEl) cbEl.classList.toggle('operations-mode', tabName === 'operations');
 
             // 更新左侧导航高亮
             document.querySelectorAll('#navBar ul li').forEach(function(li) {
@@ -5394,6 +5495,8 @@
 
         // 首屏统一走 Tab 状态入口，确保产品授权页的右侧模块导航可见
         switchTab('hardware');
+        var requestedTab = new URLSearchParams(window.location.search).get('tab');
+        if (requestedTab === 'operations' || requestedTab === 'records') switchTab(requestedTab);
 
         // ===== XaaS 授权场景切换 =====
         var xaasScene = document.getElementById('xaas-scene');
@@ -6732,21 +6835,22 @@
             renderOverlimitFiles();
         }
 
-        // ===== 硬件信息文件上传 =====
+        // ===== 硬件信息文件上传（支持多文件 / 客户协作收集） =====
         var hwInfoSection = document.getElementById('hwInfoSection');
         var hwFileInput = document.getElementById('hwFileInput');
         var hwUploadResult = document.getElementById('hwUploadResult');
         var hwFileName = document.getElementById('hwFileName');
         var hwFileInfo = document.getElementById('hwFileInfo');
         var hwFileMeta = document.getElementById('hwFileMeta');
+        var hwFileList = document.getElementById('hwFileList');
 
         var hwFileClear = document.getElementById('hwFileClear');
+        // 已选文件清单：{ name, size, file?, summary?, collectionToken? }
+        // 手动上传带 file 对象；客户协作上传带 summary 与 collectionToken
+        var hwFiles = [];
+        var deviceIdsAutoFilled = false, syncingChips = false;
 
-        hwFileClear.addEventListener('click', function() {
-            hwFileInput.value = '';
-            clearHwFile();
-            clearHardwareInfoRecognition();
-        });
+        function hwFileKeyOf(file) { return file.name + ':' + file.size; }
 
         function formatFileSize(bytes) {
             if (bytes < 1024) return bytes + ' B';
@@ -6754,13 +6858,173 @@
             return (bytes / 1048576).toFixed(1) + ' MB';
         }
 
+        function renderHwFileList() {
+            if (!hwFiles.length) {
+                hwFileName.textContent = '未选择文件（支持 .info 格式，可多选）';
+                hwFileName.className = 'hw-file-name empty';
+                hwFileMeta.textContent = '';
+                hwFileInfo.classList.remove('has-file');
+                hwFileList.innerHTML = '';
+                return;
+            }
+            hwFileName.textContent = '已选择 ' + hwFiles.length + ' 个文件';
+            hwFileName.className = 'hw-file-name';
+            hwFileMeta.textContent = formatFileSize(hwFiles.reduce(function(total, f) { return total + f.size; }, 0));
+            hwFileInfo.classList.add('has-file');
+            hwFileList.innerHTML = hwFiles.map(function(f) {
+                return '<div class="hw-file-info has-file"><span class="hw-file-name">' + escapeHtml(f.name) + (f.collectionToken ? '<span class="hw-file-source">客户提供</span>' : '') + '</span><span class="hw-file-meta">' + formatFileSize(f.size) + '</span><span class="hw-file-clear" data-hw-remove="' + escapeHtml(hwFileKeyOf(f)) + '" title="删除文件">&times;</span></div>';
+            }).join('');
+        }
+
+        function rebuildHwFacts() {
+            if (!hwFiles.length) { clearHardwareInfoRecognition(); return; }
+            var facts = [];
+            hwFiles.forEach(function(f) {
+                var fact = buildHardwareInfoFacts(f)[0];
+                if (f.summary) {
+                    if (f.summary.sn) fact.sn = f.summary.sn;
+                    if (f.summary.clusterId) fact.clusterId = f.summary.clusterId;
+                    if (f.summary.deviceId) fact.deviceId = f.summary.deviceId;
+                }
+                facts.push(fact);
+            });
+            applyRecognizedDeviceFacts(facts);
+        }
+
+        // 上传 info 后把识别出的设备ID回填到设备ID字段；用户也可以直接手工输入
+        function syncDeviceIdChipsFromFacts() {
+            if (!isHardwareInfoFileMode()) return;
+            var ids = (applicationState.deviceFacts || []).map(function(fact) { return fact.deviceId; }).filter(Boolean);
+            if (!ids.length) return;
+            syncingChips = true;
+            try {
+                deviceIdChips.clear();
+                deviceIdChips.addMany(ids, { silent: true });
+            } finally { syncingChips = false; }
+            deviceIdsAutoFilled = true;
+            syncHiddenMirror('devIdNew', deviceIdChips.get());
+            var countEl = document.getElementById('chipCountNum');
+            var clearBtn = document.getElementById('chipClearBtn');
+            if (countEl) countEl.textContent = ids.length;
+            if (clearBtn) clearBtn.hidden = ids.length === 0;
+        }
+
+        function parseInfoFileText(content) {
+            var fields = {};
+            String(content || '').split(/\r?\n/).forEach(function(line) {
+                var match = line.match(/^\s*([a-zA-Z][\w]*)\s*=\s*(.*?)\s*$/);
+                if (match) fields[match[1]] = match[2];
+            });
+            return { productLine: fields.productLine || '', sn: fields.deviceSn || '', clusterId: fields.clusterId || '', deviceId: fields.deviceId || '' };
+        }
+
+        // 手工上传的 info 文件同样解析出设备ID/SN/集群标识
+        function hydrateHwFileSummaries() {
+            var pending = hwFiles.filter(function(entry) { return entry.file && !entry.parsed; });
+            if (!pending.length) return;
+            Promise.all(pending.map(function(entry) {
+                entry.parsed = true;
+                return new Promise(function(resolve) {
+                    try {
+                        var reader = new FileReader();
+                        reader.onload = function() { entry.summary = parseInfoFileText(reader.result); resolve(); };
+                        reader.onerror = function() { resolve(); };
+                        reader.readAsText(entry.file);
+                    } catch (_) { resolve(); }
+                });
+            })).then(function() {
+                try {
+                    rebuildHwFacts();
+                    syncDeviceIdChipsFromFacts();
+                } catch (_) { /* 页面可能已关闭 */ }
+            });
+        }
+
+        function buildManualDeviceFactsForFileMode(deviceIds) {
+            var productLineId = plnameSelect.value;
+            var productName = getSelectedProductName();
+            var fileFacts = (applicationState.deviceFacts || []).slice();
+            return deviceIds.map(function(id) {
+                var match = fileFacts.filter(function(fact) { return fact.deviceId === id; })[0];
+                if (match) return Object.assign({}, match, { deviceId: id });
+                return {
+                    lookupStatus: 'success',
+                    deviceId: id,
+                    sn: '',
+                    productLineId: productLineId,
+                    productName: productName,
+                    deviceSource: 'customer_owned',
+                    borrowOrderId: '',
+                    authorizationStatus: 'none',
+                    currentModules: [],
+                    currentCapacity: 0,
+                    testedMonths: 0,
+                    applicationCount: 0,
+                    materialKeys: ['manual-device-id'],
+                    factVersion: 'manual-' + productLineId + '-' + id,
+                    manualReviewRequired: false
+                };
+            });
+        }
+
         function clearHwFile() {
-            hwFileName.textContent = '未选择文件（支持 .info 格式）';
-            hwFileName.className = 'hw-file-name empty';
-            hwFileMeta.textContent = '';
-            hwFileInfo.classList.remove('has-file');
+            hwFiles = [];
+            renderHwFileList();
+            if (deviceIdsAutoFilled && typeof deviceIdChips !== 'undefined') {
+                syncingChips = true;
+                try { deviceIdChips.clear(); } finally { syncingChips = false; }
+                deviceIdsAutoFilled = false;
+                syncHiddenMirror('devIdNew', []);
+                var countEl = document.getElementById('chipCountNum');
+                var clearBtn = document.getElementById('chipClearBtn');
+                if (countEl) countEl.textContent = '0';
+                if (clearBtn) clearBtn.hidden = true;
+            }
             hwUploadResult.textContent = '';
             hwUploadResult.className = 'hw-upload-result';
+        }
+
+        hwFileClear.addEventListener('click', function() {
+            hwFileInput.value = '';
+            clearHwFile();
+            clearHardwareInfoRecognition();
+        });
+
+        hwFileList.addEventListener('click', function(event) {
+            var btn = event.target.closest('[data-hw-remove]');
+            if (!btn) return;
+            hwFiles = hwFiles.filter(function(f) { return hwFileKeyOf(f) !== btn.dataset.hwRemove; });
+            hwFileInput.value = '';
+            renderHwFileList();
+            rebuildHwFacts();
+            if (!hwFiles.length) { hwUploadResult.textContent = ''; hwUploadResult.className = 'hw-upload-result'; }
+        });
+
+        function addHwFiles(fileList) {
+            var files = Array.prototype.slice.call(fileList || []);
+            if (!files.length) return;
+            var rejected = 0;
+            files.forEach(function(file) {
+                if (!file.name.toLowerCase().endsWith('.info')) { rejected++; return; }
+                var key = hwFileKeyOf(file);
+                hwFiles = hwFiles.filter(function(f) { return hwFileKeyOf(f) !== key; });
+                hwFiles.push({ name: file.name, size: file.size, file: file });
+            });
+            renderHwFileList();
+            if (rejected) {
+                hwUploadResult.textContent = '已跳过 ' + rejected + ' 个非 .info 格式文件';
+                hwUploadResult.className = 'hw-upload-result fail';
+            } else {
+                hwUploadResult.textContent = '';
+                hwUploadResult.className = 'hw-upload-result';
+            }
+            rebuildHwFacts();
+            syncDeviceIdChipsFromFacts();
+            hydrateHwFileSummaries();
+            // 申请人手工上传时，关闭同一申请对象的客户上传链接，避免两条渠道冲突
+            if (window.InfoCollectionUI && window.InfoCollectionApplication) {
+                try { window.InfoCollectionUI.cancelContext('hardware', window.InfoCollectionApplication.getContext().key); } catch (_) {}
+            }
         }
 
         function toggleHwInfoSection(plnameValue) {
@@ -6774,26 +7038,8 @@
         }
 
         hwFileInput.addEventListener('change', function() {
-            var file = this.files[0];
-            if (!file) {
-                clearHwFile();
-                clearHardwareInfoRecognition();
-                return;
-            }
-            hwFileName.textContent = file.name;
-            hwFileName.className = 'hw-file-name';
-            hwFileMeta.textContent = formatFileSize(file.size);
-            hwFileInfo.classList.add('has-file');
-            // 格式校验
-            if (!file.name.toLowerCase().endsWith('.info')) {
-                hwUploadResult.textContent = '仅支持 .info 格式文件';
-                hwUploadResult.className = 'hw-upload-result fail';
-                clearHardwareInfoRecognition();
-                return;
-            }
-            hwUploadResult.textContent = '';
-            hwUploadResult.className = 'hw-upload-result';
-            recognizeHardwareInfoFile(file);
+            addHwFiles(this.files);
+            this.value = '';
         });
 
         // ===== 产品线切换动态刷新模块导航 =====
@@ -7902,8 +8148,8 @@
             var moduleCards = document.querySelectorAll('#content .module-item');
             var isOpening = applicationState.baseScene === 'first_open' || applicationState.baseScene === 'reopen';
             var showDate = isOpening || applicationState.requestContents.indexOf('extend') !== -1;
-            var showModules = isOpening || applicationState.requestContents.indexOf('add_module') !== -1 ||
-                applicationState.requestContents.indexOf('increase_capacity') !== -1;
+            // 授权模块默认全部展示，便于申请人直接查看和配置
+            var showModules = true;
             // 仅勾选扩大容量/规格时，只展示当前已授权模块，未开通模块隐藏
             var onlyAuthorized = !isOpening && applicationState.requestContents.indexOf('increase_capacity') !== -1 &&
                 applicationState.requestContents.indexOf('add_module') === -1;
@@ -8248,6 +8494,14 @@
         }
 
         function refreshRecognizedDeviceFacts(deviceIds) {
+            if (isHardwareInfoFileMode()) {
+                if (!deviceIds.length) {
+                    if (!hwFiles.length) clearHardwareInfoRecognition();
+                    return;
+                }
+                applyRecognizedDeviceFacts(buildManualDeviceFactsForFileMode(deviceIds));
+                return;
+            }
             applyRecognizedDeviceFacts(getTrustedDeviceFactsForIds(deviceIds));
         }
 
@@ -8277,14 +8531,6 @@
                 materialKeys: ['hardware-info-file'],
                 factVersion: 'info-' + productLineId + '-' + file.name + '-' + file.size
             }];
-        }
-
-        function recognizeHardwareInfoFile(file) {
-            if (!isHardwareInfoFileMode() || !file || !file.name.toLowerCase().endsWith('.info')) {
-                clearHardwareInfoRecognition();
-                return;
-            }
-            applyRecognizedDeviceFacts(buildHardwareInfoFacts(file));
         }
 
         function clearHardwareInfoRecognition() {
@@ -8352,8 +8598,11 @@
         }
 
         var deviceIdChips = createChipControl(chipContainer, chipInput, '输入设备ID（回车/逗号确认，支持直接粘贴）...', function (val) {
+            deviceIdsAutoFilled = false;
             syncBorrowInfoByDevice(val, 'id');
         }, function (vals) {
+            if (syncingChips) return;
+            deviceIdsAutoFilled = false;
             syncHiddenMirror('devIdNew', vals);
             refreshRecognizedDeviceFacts(vals);
             // 更新计数徽章 & 清空按钮
@@ -8362,6 +8611,7 @@
             if (countEl) countEl.textContent = vals.length;
             if (clearBtn) clearBtn.hidden = vals.length === 0;
         }, function(id) {
+            deviceIdsAutoFilled = false;
             if (pairRemovalInProgress) return;
             var fact = mockDeviceFactsById[id];
             if (!fact || !fact.sn) return;
@@ -8392,17 +8642,18 @@
         function getSnChips() { return deviceSnChips.get(); }
         function setFixedChips(vals) { deviceIdChips.setFixed(vals); }
         function clearChips() { deviceIdChips.clear(); }
-        window.addChip = function (v) {
-            if (isHardwareInfoFileMode()) return false;
-            return deviceIdChips.add(v);
-        };
+        window.addChip = function (v) { return deviceIdChips.add(v); };
         window.addSnChip = function (v) {
             if (isHardwareInfoFileMode()) return false;
             return deviceSnChips.add(v);
         };
         window.removeDeviceChip = function (v) { return deviceIdChips.remove(v); };
         window.getTrustedDeviceFacts = function() {
-            if (isHardwareInfoFileMode()) return applicationState.deviceFacts.slice();
+            if (isHardwareInfoFileMode()) {
+                var manualIds = deviceIdChips.get();
+                if (manualIds.length) return buildManualDeviceFactsForFileMode(manualIds);
+                return applicationState.deviceFacts.slice();
+            }
             return resolveFactsWithRuleHistory(getTrustedDeviceFactsForIds(deviceIdChips.get()));
         };
         window.buildCurrentDeviceApplications = function(facts) {
@@ -8470,17 +8721,19 @@
             if (isFileMode) {
                 planDevTypeRow.hidden = true;
                 planDevTypeFormItem.style.display = 'none';
-                deviceIdFormItem.hidden = true;
-                deviceIdFormItem.style.display = 'none';
+                // 生产环境同时保留「硬件信息文件」和「设备ID」：可上传 info 识别，也可直接输入
+                deviceIdFormItem.hidden = false;
+                deviceIdFormItem.style.display = 'flex';
                 devSnFormItem.style.display = 'none';
                 borrowTestFields.style.display = 'none';
                 setCustomSelectValue('planDevType', productConfig.forcedPlanDevType);
                 toggleHwInfoSection(plnameSelect.value);
                 deviceIdChips.clear();
                 deviceSnChips.clear();
-                chipInput.disabled = true;
+                chipInput.disabled = false;
+                chipAddBtn.disabled = false;
                 snChipInput.disabled = true;
-                devIdInput.disabled = true;
+                devIdInput.disabled = false;
             } else {
                 planDevTypeRow.hidden = false;
                 planDevTypeFormItem.style.display = '';
@@ -8672,6 +8925,11 @@
         }
 
         function selectHardwareCustomer(name, id, type, sales) {
+                if (applicationState.customerId !== id && hwFiles.length) {
+                hwFileInput.value = '';
+                clearHwFile();
+                clearHardwareInfoRecognition();
+            }
             searchInput.value = name || '';
             nameSpan.textContent = name || '-';
             var salesBadge = document.getElementById('selectedSales');
@@ -8700,6 +8958,93 @@
                 recalculateApprovalDecision();
             }
         }
+
+        function restoreCollectionFields(snapshot) {
+            (snapshot.fields || []).forEach(function(field) {
+                var el = field.id ? document.getElementById(field.id) :
+                    Array.prototype.filter.call(document.getElementsByName(field.name), function(node) { return node.closest('#formsn'); })[field.index || 0];
+                if (!el || el.type === 'file' || el.type === 'hidden') return;
+                el.value = field.value;
+                if (el.type === 'checkbox' || el.type === 'radio') el.checked = field.checked;
+                el.dispatchEvent(new Event('change', { bubbles: true }));
+            });
+            if (snapshot.hasDeviceFacts) {
+                (snapshot.modules || []).forEach(function(module) {
+                    var card = document.getElementById(module.id);
+                    var toggle = card && card.querySelector('.toggle-switch');
+                    if (toggle && toggle.classList.contains('active') !== module.enabled && toggle.getAttribute('aria-disabled') !== 'true') toggle.click();
+                });
+                if (snapshot.baseScene === applicationState.baseScene && snapshot.requestContents) {
+                    requestContentGroup.querySelectorAll('input').forEach(function(input) { input.checked = snapshot.requestContents.indexOf(input.value) !== -1; });
+                    setRequestContents(snapshot.requestContents);
+                }
+            }
+        }
+        window.InfoCollectionApplication = {
+            getContext: function() {
+                return { kind: 'hardware', key: 'hardware:' + plnameSelect.value + ':' + applicationState.customerId,
+                    product: getSelectedProductName(), productId: plnameSelect.value,
+                    customerId: applicationState.customerId, customer: nameSpan.textContent,
+                    applicant: (document.querySelector('.header-user .user-name') || {}).textContent || '申请人' };
+            },
+            capture: function() {
+                var fields = Array.prototype.slice.call(document.querySelectorAll('#formsn input[id], #formsn input[name], #formsn select[id], #formsn select[name], #formsn textarea[id], #formsn textarea[name]')).filter(function(el) {
+                    return el.type !== 'file' && el.type !== 'hidden' && el.id !== 'plname' && el.id !== 'customerSearchInput';
+                }).map(function(el) {
+                    return { id: el.id, name: el.name, index: Array.prototype.filter.call(document.getElementsByName(el.name), function(node) { return node.closest('#formsn'); }).indexOf(el), value: el.value, checked: el.checked };
+                });
+                var modules = Array.prototype.map.call(document.querySelectorAll('#content .module-item'), function(card) {
+                    var toggle = card.querySelector('.toggle-switch'); return { id: card.id, enabled: !!toggle && toggle.classList.contains('active') };
+                });
+                return { productId: plnameSelect.value, customerId: applicationState.customerId, customer: nameSpan.textContent,
+                    customerType: applicationState.customerType, sales: document.getElementById('selectedSales').textContent, fields: fields, modules: modules,
+                    hasDeviceFacts: applicationState.deviceFacts.length > 0, baseScene: applicationState.baseScene, requestContents: applicationState.requestContents.slice() };
+            },
+            restore: function(snapshot) {
+                plnameSelect.value = snapshot.productId;
+                plnameSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                selectHardwareCustomer(snapshot.customer, snapshot.customerId, snapshot.customerType, snapshot.sales);
+                restoreCollectionFields(snapshot);
+                var hardwareTab = document.querySelector('#navBar [data-tab="hardware"]');
+                if (hardwareTab) hardwareTab.click();
+            },
+            receive: function(files, token, snapshot) {
+                if (!Array.isArray(files)) files = files ? [files] : [];
+                if (!files.length) return;
+                if (hwFiles.length && hwFiles[0].collectionToken === token) return;
+                var saved = snapshot || this.capture();
+                hwFileInput.value = '';
+                hwFiles = files.map(function(file) {
+                    return { name: file.name, size: file.size, summary: file.summary || {}, collectionToken: token };
+                });
+                renderHwFileList();
+                hwUploadResult.textContent = '客户已提供 ' + files.length + ' 个文件';
+                hwUploadResult.className = 'hw-upload-result pass';
+                rebuildHwFacts();
+                syncDeviceIdChipsFromFacts();
+                restoreCollectionFields(saved);
+            },
+            getFiles: function() {
+                if (!hwFiles.length) return [];
+                var collected = hwFiles.filter(function(f) { return f.collectionToken; });
+                if (collected.length && window.InfoCollectionUI) {
+                    var task = window.InfoCollectionUI.store.get(collected[0].collectionToken);
+                    if (!task || ['received', 'completed', 'authorized'].indexOf(task.status) === -1 || task.context.key !== this.getContext().key) return [];
+                }
+                return hwFiles.slice();
+            },
+            getFile: function() { return this.getFiles()[0] || null; },
+            getRecipientEmail: function() { return (document.getElementById('userEmail') || {}).value || ''; },
+            canAutoSubmit: function() {
+                return !!(applicationState.customerId && plnameSelect.value &&
+                    (document.getElementById('cloudVersion') || {}).value &&
+                    (document.getElementById('authScene') || {}).value &&
+                    (document.getElementById('planDevType') || {}).value &&
+                    (document.getElementById('unifiedDate') || {}).value &&
+                    (document.getElementById('requestAction') || {}).value);
+            },
+            submit: function() { submitStandardForm(); }
+        };
 
         searchInput.addEventListener('input', function() {
             var keyword = this.value.trim().toLowerCase();
@@ -8838,6 +9183,13 @@
                 card.querySelector('.module-body').classList.add('hidden');
                 card.querySelector('.module-chevron').classList.add('collapsed');
             });
+        });
+        // 默认展开全部授权模块（禁用模块的参数区仍由 disabled 样式隐藏，启用后直接可见）
+        cards.forEach(function(card) {
+            var body = card.querySelector('.module-body');
+            var chevron = card.querySelector('.module-chevron');
+            if (body) body.classList.remove('hidden');
+            if (chevron) chevron.classList.remove('collapsed');
         });
 
         // 锚点导航 - 点击跳转
@@ -9397,14 +9749,15 @@
             rules.isHardwareInfoRequired(productLineId, planDevType);
 
         if (hardwareInfoRequired) {
-            var hwFile = hwFileInput.files[0];
-            if (!hwFile) {
-                hwUploadResult.textContent = '请上传硬件信息文件';
+            var submitHwFiles = window.InfoCollectionApplication ? window.InfoCollectionApplication.getFiles() : Array.prototype.slice.call(hwFileInput.files || []);
+            var manualDeviceIds = typeof deviceIdChips !== 'undefined' ? deviceIdChips.get() : [];
+            if (!submitHwFiles.length && !manualDeviceIds.length) {
+                hwUploadResult.textContent = '请上传硬件信息文件或输入设备ID';
                 hwUploadResult.className = 'hw-upload-result fail';
-                alert('请上传硬件信息文件');
+                alert('请上传硬件信息文件或输入设备ID');
                 return;
             }
-            if (!hwFile.name.toLowerCase().endsWith('.info')) {
+            if (submitHwFiles.some(function(f) { return !f.name.toLowerCase().endsWith('.info'); })) {
                 hwUploadResult.textContent = '仅支持 .info 格式文件';
                 hwUploadResult.className = 'hw-upload-result fail';
                 alert('硬件信息文件仅支持 .info 格式');
@@ -9533,6 +9886,21 @@
         document.getElementById('submissionSnapshot').value = JSON.stringify(snapshot);
 
         var mockId = 'AUTH-' + Date.now().toString().slice(-8);
+        if (window.InfoCollectionApplication) {
+            var submittedFile = (window.InfoCollectionApplication.getFiles() || []).filter(function(f) { return f.collectionToken; })[0];
+            if (submittedFile) {
+                var authEndDate = (document.getElementById('unifiedDate') || {}).value || '';
+                document.dispatchEvent(new CustomEvent('info-application-submitted', { detail: {
+                    token: submittedFile.collectionToken,
+                    applicationNo: mockId,
+                    authorization: {
+                        licenseCode: 'LIC-' + mockId.replace(/[^A-Z0-9]/gi, '').slice(-12),
+                        fileName: '授权信息-' + mockId,
+                        validity: authEndDate ? '至 ' + authEndDate : ''
+                    }
+                } }));
+            }
+        }
         alert('表单已提交，ID: ' + mockId);
     }
 
@@ -11911,6 +12279,144 @@
         };
         var application = { source: 'borrow', solution: null, lines: [], params: {}, biz: {}, accelBiz: {}, networkBiz: {}, applicant: '', customer: '', email: '', contactPhone: '', cloud: null, borrow: null, authDays: 0, authEndDate: '', activeLine: '', status: 'draft', recordId: '' };
         var editingConfigCode = '';
+        var configProductDraft = {};
+        function getConfigProductRules(config, lines) {
+            var result = {};
+            (lines || config.productLines || []).forEach(function(line) {
+                var stored = config.productLineRules && config.productLineRules[line];
+                var legacyOptional = line === 'SASE-SWG' || (config.code === 'SOL-DSOC-008' && (line === 'AF' || line === 'aES'));
+                result[line] = stored ? JSON.parse(JSON.stringify(stored)) : { mode: legacyOptional ? 'optional' : 'required', defaultEnabled: !legacyOptional, group: '' };
+            });
+            return result;
+        }
+        function renderConfigProductEditor(lines) {
+            var root = id('solutionConfigChecks');
+            root.className = 'solution-product-config';
+            var groups = [];
+            lines.forEach(function(line) {
+                var rule = configProductDraft[line];
+                if (!rule) rule = configProductDraft[line] = { mode: 'required', defaultEnabled: true, group: '' };
+                if (rule.mode === 'exclusive' && rule.group && groups.indexOf(rule.group) === -1) groups.push(rule.group);
+            });
+            var groupOptions = groups.concat(['组 1', '组 2']).filter(function(group, index, list) { return list.indexOf(group) === index; });
+            var picker = productCatalog.map(function(line) {
+                var selected = lines.indexOf(line) !== -1;
+                return '<input class="solution-config-product-check" type="checkbox" value="' + escapeHtml(line) + '"' + (selected ? ' checked' : '') + '>';
+            }).join('');
+            var rows = lines.map(function(line) {
+                var rule = configProductDraft[line];
+                var name = escapeHtml(line);
+                var defaultLabels = rule.mode === 'exclusive' ? ['未选中', '默认选中'] : ['默认关闭', '默认开启'];
+                var modeOptions = [{ value: 'required', label: '必选' }, { value: 'optional', label: '可选' }, { value: 'exclusive', label: '同组单选' }];
+                return '<div class="solution-product-rule-grid solution-product-rule-row" data-config-line="' + name + '">' +
+                    '<span class="solution-product-rule-name">' + name + '</span>' +
+                    '<select class="solution-select" data-config-rule="mode" aria-label="' + name + ' 申请时选择方式">' + modeOptions.map(function(option) { return '<option value="' + option.value + '"' + (rule.mode === option.value ? ' selected' : '') + '>' + option.label + '</option>'; }).join('') + '</select>' +
+                    '<select class="solution-select" data-config-rule="defaultEnabled" aria-label="' + name + ' 默认状态"' + (rule.mode === 'required' ? ' disabled' : '') + '>' +
+                    '<option value="true"' + (rule.defaultEnabled ? ' selected' : '') + '>' + (rule.mode === 'required' ? '固定开启' : defaultLabels[1]) + '</option>' +
+                    (rule.mode === 'required' ? '' : '<option value="false"' + (!rule.defaultEnabled ? ' selected' : '') + '>' + defaultLabels[0] + '</option>') + '</select>' +
+                    (rule.mode === 'exclusive' ? '<input class="solution-input" data-config-rule="group" list="solutionConfigGroupNames" aria-label="' + name + ' 单选组" placeholder="输入或选择组名" maxlength="30" value="' + escapeHtml(rule.group) + '">' : '<span class="solution-product-rule-group-placeholder">—</span>') +
+                    '<button type="button" class="solution-product-rule-remove" data-config-remove aria-label="移除 ' + name + '" title="移除 ' + name + '">×</button></div>';
+            }).join('');
+            root.innerHTML = '<div hidden>' + picker + '</div><div class="solution-product-config-toolbar"><span class="solution-product-config-note">已关联 ' + lines.length + ' 个产品线 · 在下方配置申请规则</span><button type="button" class="solution-product-picker-trigger" data-config-picker-open aria-haspopup="dialog">＋ 添加产品线</button></div>' +
+                '<div class="solution-product-rule-grid solution-product-rule-head"><span>产品线</span><span>申请时选择方式</span><span>默认状态</span><span>单选组</span><span></span></div>' +
+                (rows || '<p class="solution-product-rule-empty">暂未关联产品线，请点击右上角添加</p>') +
+                '<datalist id="solutionConfigGroupNames">' + groupOptions.map(function(group) { return '<option value="' + escapeHtml(group) + '"></option>'; }).join('') + '</datalist>' +
+                '<div class="solution-product-config-feedback">' + (groups.length ? groups.map(function(group) { var count = lines.filter(function(line) { return configProductDraft[line].mode === 'exclusive' && configProductDraft[line].group === group; }).length; return escapeHtml(group) + '：' + (count >= 2 ? count + ' 选 1' : '请再添加一个同组产品线'); }).join('；') : '必选项固定开启；可选项可按需开关；同组单选项只能开启一个。') + '</div>';
+        }
+        function readConfigProductLines() {
+            return Array.prototype.slice.call(id('solutionConfigChecks').querySelectorAll('.solution-config-product-check:checked')).map(function(input) { return input.value; });
+        }
+        function openConfigProductPicker() {
+            if (id('solutionProductPickerModal')) return;
+            var panel = document.createElement('div');
+            panel.id = 'solutionProductPickerModal';
+            panel.className = 'solution-modal-layer solution-product-picker-layer';
+            var lines = readConfigProductLines();
+            panel.innerHTML = '<div class="solution-modal solution-product-picker-dialog" role="dialog" aria-modal="true" aria-labelledby="solutionProductPickerTitle"><div class="solution-modal-head"><div><h2 id="solutionProductPickerTitle">选择产品线</h2><p class="solution-product-picker-subtitle">可搜索并批量选择，确认后在配置页设置申请规则。已关联 ' + lines.length + ' 个产品线。</p></div><button type="button" class="solution-drawer-close" data-config-picker-close aria-label="关闭产品线选择">×</button></div><div class="solution-modal-body"><input class="solution-input solution-product-picker-search" type="search" data-config-picker-search aria-label="搜索产品线名称或编码" placeholder="搜索产品线名称或编码">' +
+                '<div class="solution-product-picker-tools"><span data-config-picker-results></span><span><button type="button" data-config-picker-select-visible>勾选当前结果</button><button type="button" data-config-picker-clear>清空待添加</button></span></div>' +
+                '<div class="solution-product-picker-list">' + productCatalog.map(function(line) {
+                    var selected = lines.indexOf(line) !== -1;
+                    return '<label class="solution-product-picker-option"><input type="checkbox" data-config-picker-item="' + escapeHtml(line) + '"' + (selected ? ' checked disabled' : '') + '><span>' + escapeHtml(line) + '</span>' + (selected ? '<small>已关联</small>' : '') + '</label>';
+                }).join('') + '<p class="solution-product-picker-empty" data-config-picker-empty hidden>未找到匹配的产品线，请更换关键词</p></div></div>' +
+                '<div class="solution-modal-foot solution-product-picker-foot"><span data-config-picker-count aria-live="polite"></span><span><button type="button" class="solution-btn plain" data-config-picker-cancel>取消</button> <button type="button" class="solution-btn" data-config-picker-confirm disabled>确认添加</button></span></div></div>';
+            document.body.appendChild(panel);
+            id('solutionConfigModal').inert = true;
+            id('solutionConfigDrawer').inert = true;
+            panel.addEventListener('input', function(event) { if (event.target.hasAttribute('data-config-picker-search')) updateConfigProductPicker(); });
+            panel.addEventListener('change', function(event) { if (event.target.hasAttribute('data-config-picker-item')) updateConfigProductPicker(); });
+            panel.addEventListener('click', handleConfigProductPickerClick);
+            panel.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); closeConfigProductPicker(); return; }
+                if (event.key !== 'Tab') return;
+                var focusable = Array.prototype.slice.call(panel.querySelectorAll('button:not(:disabled), input:not(:disabled)')).filter(function(input) { return !input.closest('[hidden]'); });
+                var first = focusable[0], last = focusable[focusable.length - 1];
+                if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+                else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+            });
+            updateConfigProductPicker();
+            panel.querySelector('[data-config-picker-search]').focus();
+        }
+        function closeConfigProductPicker() {
+            var panel = id('solutionProductPickerModal');
+            if (panel) panel.remove();
+            id('solutionConfigModal').inert = false;
+            id('solutionConfigDrawer').inert = false;
+            var trigger = id('solutionConfigChecks').querySelector('[data-config-picker-open]');
+            if (trigger) trigger.focus();
+        }
+        function handleConfigProductPickerClick(event) {
+            var action = event.target.closest('button');
+            if (!action) return;
+            var panel = id('solutionProductPickerModal');
+            if (action.hasAttribute('data-config-picker-cancel') || action.hasAttribute('data-config-picker-close')) { closeConfigProductPicker(); return; }
+            if (action.hasAttribute('data-config-picker-select-visible') || action.hasAttribute('data-config-picker-clear')) {
+                var clear = action.hasAttribute('data-config-picker-clear');
+                panel.querySelectorAll('[data-config-picker-item]:not(:disabled)').forEach(function(input) {
+                    if (clear || !input.closest('label').hidden) input.checked = !clear;
+                });
+                updateConfigProductPicker();
+                return;
+            }
+            if (action.hasAttribute('data-config-picker-confirm')) {
+                var added = Array.prototype.slice.call(panel.querySelectorAll('[data-config-picker-item]:checked:not(:disabled)')).map(function(input) { return input.dataset.configPickerItem; });
+                renderConfigProductEditor(readConfigProductLines().concat(added));
+                closeConfigProductPicker();
+                id('solutionConfigError').textContent = '';
+            }
+        }
+        function updateConfigProductPicker() {
+            var panel = id('solutionProductPickerModal');
+            var query = panel.querySelector('[data-config-picker-search]').value.trim().toLowerCase();
+            var count = 0, visible = 0;
+            panel.querySelectorAll('[data-config-picker-item]').forEach(function(input) {
+                var matches = input.dataset.configPickerItem.toLowerCase().indexOf(query) !== -1;
+                input.closest('label').hidden = !matches;
+                if (matches) visible++;
+                if (input.checked && !input.disabled) count++;
+            });
+            panel.querySelector('[data-config-picker-results]').textContent = '匹配 ' + visible + ' / ' + productCatalog.length + ' 个产品线';
+            panel.querySelector('[data-config-picker-empty]').hidden = visible !== 0;
+            panel.querySelector('[data-config-picker-count]').textContent = '待添加 ' + count + ' 个 · 搜索切换保留勾选';
+            panel.querySelector('[data-config-picker-confirm]').disabled = count === 0;
+            panel.querySelector('[data-config-picker-confirm]').textContent = count ? '确认添加（' + count + '）' : '确认添加';
+        }
+        function validateConfigProductRules(lines, rules) {
+            var groups = Object.create(null);
+            for (var i = 0; i < lines.length; i++) {
+                var line = lines[i], rule = rules[line];
+                if (rule.mode !== 'exclusive') continue;
+                if (!rule.group) return line + ' 请选择或填写单选组名称。';
+                if (!groups[rule.group]) groups[rule.group] = [];
+                groups[rule.group].push(line);
+            }
+            var names = Object.keys(groups);
+            for (var j = 0; j < names.length; j++) {
+                var group = names[j], members = groups[group];
+                if (members.length < 2) return '单选组“' + group + '”至少需要两个产品线。';
+                if (members.filter(function(line) { return rules[line].defaultEnabled; }).length !== 1) return '单选组“' + group + '”需要且只能设置一个默认选中项。';
+            }
+            return '';
+        }
         function getCurrentApplicant() {
             var userNameEl = document.querySelector('.header-user .user-name');
             return (userNameEl ? userNameEl.textContent.trim() : '钱金城94903');
@@ -12093,7 +12599,8 @@
             if (id('solutionConfigBizTemplate')) id('solutionConfigBizTemplate').value = tpl;
             var currentFields = (item && item.bizFields && item.bizFields.length) ? item.bizFields : (defaultBizTemplateFields[tpl] || []);
             renderModalBizFields(JSON.parse(JSON.stringify(currentFields)));
-            id('solutionConfigChecks').innerHTML = productCatalog.map(function(line) { return '<label><input type="checkbox" value="' + line + '"' + (item && item.productLines.indexOf(line) !== -1 ? ' checked' : '') + '><span>' + line + '</span></label>'; }).join('');
+            configProductDraft = getConfigProductRules(item || { productLines: [] });
+            renderConfigProductEditor(item ? item.productLines : []);
             id('solutionConfigError').textContent = '';
             id('solutionConfigModal').hidden = false;
             id('solutionConfigModal').setAttribute('aria-hidden', 'false');
@@ -12103,7 +12610,9 @@
             var code = id('solutionConfigCode').value.trim().toUpperCase();
             var name = id('solutionConfigName').value.trim();
             var authDays = Number(id('solutionConfigAuthDays').value);
-            var lines = Array.prototype.slice.call(id('solutionConfigChecks').querySelectorAll('input:checked')).map(function(input) { return input.value; });
+            var lines = readConfigProductLines();
+            var productLineRules = {};
+            lines.forEach(function(line) { productLineRules[line] = JSON.parse(JSON.stringify(configProductDraft[line] || { mode: 'required', defaultEnabled: true, group: '' })); });
             var bizTemplate = id('solutionConfigBizTemplate') ? id('solutionConfigBizTemplate').value : 'none';
             var bizFields = readModalBizFields();
             var error = '';
@@ -12111,6 +12620,7 @@
             else if (!name) error = '请填写方案名称。';
             else if (!authDays || authDays <= 0 || Math.floor(authDays) !== authDays) error = '请填写有效的授权天数（正整数）。';
             else if (!lines.length) error = '请至少选择一个产品线。';
+            else if (validateConfigProductRules(lines, productLineRules)) error = validateConfigProductRules(lines, productLineRules);
             else if (!editingConfigCode && findConfig(code)) error = '方案编码已存在。';
             else if (configs.some(function(item) { return item.code !== editingConfigCode && item.name === name; })) error = '方案名称已存在。';
             if (error) { id('solutionConfigError').textContent = error; return; }
@@ -12119,11 +12629,12 @@
                 existing.name = name;
                 existing.authDays = authDays;
                 existing.productLines = lines;
+                existing.productLineRules = productLineRules;
                 existing.bizTemplate = bizTemplate;
                 existing.bizFields = bizFields;
                 existing.updatedAt = '2026-08-06 10:00';
             } else {
-                configs.unshift({ code: code, name: name, productLines: lines, status: 'enabled', authDays: authDays, bizTemplate: bizTemplate, bizFields: bizFields, updatedAt: '2026-08-06 10:00' });
+                configs.unshift({ code: code, name: name, productLines: lines, productLineRules: productLineRules, status: 'enabled', authDays: authDays, bizTemplate: bizTemplate, bizFields: bizFields, updatedAt: '2026-08-06 10:00' });
             }
             closeConfigModal();
             renderConfigs();
@@ -12139,6 +12650,8 @@
             application.solution = null;
             application.lines = [];
             application.params = {};
+            application.productLineRules = {};
+            application.lineSwitches = {};
             application.borrow = null;
             application.authDays = 0;
             application.authEndDate = '';
@@ -12893,6 +13406,7 @@
         function applyScope(config, details) {
             application.solution = { code: config.code, name: config.name };
             application.lines = details.productLines.slice();
+            application.productLineRules = getConfigProductRules(config, application.lines);
             application.applicant = details.applicant || getCurrentApplicant();
             application.customer = details.customer || (solutionLocalCustomer ? solutionLocalCustomer.name : '');
             application.cloud = details.cloud || (solutionLocalCustomer && solutionLocalCustomer.cloud) || (solutionBorrowCustomer && solutionBorrowCustomer.cloud) || null;
@@ -12902,10 +13416,23 @@
                 formatDateOffset(application.authDays) : (details.endDate || '');
             application.params = {};
             application.lines.forEach(function(line) { application.params[line] = createParams(line, details.devices && details.devices[line], application.authEndDate); });
-            application.activeLine = application.lines[0];
-            // 按需产品线开关（如未上线的 SASE-SWG）：默认关闭，关闭时不参与填写/校验/提交
             application.lineSwitches = {};
-            application.lines.forEach(function(line) { if (isOptionalSolutionLine(line)) application.lineSwitches[line] = false; });
+            var selectionGroups = Object.create(null);
+            application.lines.forEach(function(line) {
+                var rule = getApplicationLineRule(line);
+                application.lineSwitches[line] = rule.mode === 'required' || rule.defaultEnabled;
+                if (rule.mode === 'exclusive') {
+                    if (!selectionGroups[rule.group]) selectionGroups[rule.group] = [];
+                    selectionGroups[rule.group].push(line);
+                }
+            });
+            // 借测单可能只包含组中的一项，始终在借测单已批准范围内选取。
+            Object.keys(selectionGroups).forEach(function(group) {
+                var members = selectionGroups[group];
+                var selected = members.find(function(line) { return application.lineSwitches[line]; }) || members[0];
+                members.forEach(function(line) { application.lineSwitches[line] = line === selected; });
+            });
+            application.activeLine = activeLines()[0] || application.lines[0];
             application.biz = isDsocSolution() ? JSON.parse(JSON.stringify(solutionBizDefaults)) : {};
             application.accelBiz = isAccelSolution() ? JSON.parse(JSON.stringify(solutionAccelBizDefaults)) : {};
             application.networkBiz = isGlobalNetworkSolution() ? JSON.parse(JSON.stringify(solutionNetworkBizDefaults)) : {};
@@ -12948,15 +13475,18 @@
                 node.value = biz[node.dataset.solutionAccelParam] || '';
             });
         }
-        // 未上线/按需选择的产品线：导航展示开关，关闭时不渲染表单项且不参与校验与提交
-        var optionalSolutionLines = ['SASE-SWG'];
+        function getApplicationLineRule(line) {
+            return (application.productLineRules || {})[line] || { mode: 'required', defaultEnabled: true, group: '' };
+        }
         function isOptionalSolutionLine(line) {
-            return optionalSolutionLines.indexOf(line) !== -1 || (isDsocSolution() && (line === 'AF' || line === 'aES'));
+            return getApplicationLineRule(line).mode !== 'required';
         }
         function optionalSolutionLineHint(line) {
-            return isDsocSolution() && (line === 'AF' || line === 'aES') ? '按需启用（默认关闭）' : '按需启用（未上线，默认关闭）';
+            var rule = getApplicationLineRule(line);
+            return rule.mode === 'exclusive' ? rule.group + '，组内只能开启一个' : '按需启用（默认' + (rule.defaultEnabled ? '开启' : '关闭') + '）';
         }
         function isLineEnabled(line) {
+            if (getApplicationLineRule(line).mode === 'required') return true;
             return application.lineSwitches ? application.lineSwitches[line] !== false : true;
         }
         function activeLines() {
@@ -13024,19 +13554,30 @@
         function renderProductWorkspace() {
             id('solutionProductWorkspace').hidden = false;
             updateSolutionPhoneRequirement();
-            id('solutionProductNav').innerHTML = application.lines.map(function(line, index) {
-                var optional = isOptionalSolutionLine(line);
+            var renderedGroups = [];
+            function renderLineNavigation(line) {
+                var rule = getApplicationLineRule(line);
+                var optional = rule.mode === 'optional';
                 var enabled = isLineEnabled(line);
                 var toggleHtml = optional ? '<div class="toggle-switch' + (enabled ? ' active' : '') + ' solution-line-switch" data-solution-line-switch="' + line + '" role="switch" aria-checked="' + enabled + '" aria-label="启用 ' + line + '" title="' + line + ' ' + optionalSolutionLineHint(line) + '"></div>' : '';
-                var orderHtml = optional ? '' : '<small>' + (activeLines().indexOf(line) + 1) + '/' + activeLines().length + '</small>';
-                return '<button type="button" data-solution-line="' + line + '" class="' + (line === application.activeLine ? 'is-active' : '') + (!enabled ? ' is-off' : '') + '"><span>' + line + '</span>' + toggleHtml + orderHtml + '</button>';
+                var orderHtml = rule.mode === 'required' ? '<small><span class="solution-line-required">必选 · </span>' + (activeLines().indexOf(line) + 1) + '/' + activeLines().length + '</small>' : '';
+                if (rule.mode === 'exclusive') toggleHtml = '<span class="solution-choice-indicator" aria-hidden="true"></span>';
+                return '<button type="button" data-solution-line="' + line + '"' + (rule.mode === 'exclusive' ? ' data-solution-line-choice="' + line + '" role="radio" aria-checked="' + enabled + '"' : '') + ' class="' + (line === application.activeLine ? 'is-active' : '') + (!enabled ? ' is-off' : '') + '"><span>' + line + '</span>' + toggleHtml + orderHtml + '</button>';
+            }
+            id('solutionProductNav').innerHTML = application.lines.map(function(line) {
+                var rule = getApplicationLineRule(line);
+                if (rule.mode !== 'exclusive') return renderLineNavigation(line);
+                if (renderedGroups.indexOf(rule.group) !== -1) return '';
+                renderedGroups.push(rule.group);
+                var members = application.lines.filter(function(member) { var other = getApplicationLineRule(member); return other.mode === 'exclusive' && other.group === rule.group; });
+                return '<div class="solution-choice-group-title">' + escapeHtml(rule.group) + ' · ' + members.length + ' 选 1</div><div role="radiogroup" aria-label="' + escapeHtml(rule.group) + '">' + members.map(renderLineNavigation).join('') + '</div>';
             }).join('');
             var line = application.activeLine;
             var values = application.params[line];
             var isHci = line === 'HCI';
             var fields = '';
             if (!isLineEnabled(line)) {
-                fields = '<div class="solution-line-off-note"><span class="material-symbols-outlined" aria-hidden="true">info</span>' + line + ' 为按需产品线，当前默认关闭，不参与本单申请；打开右上角开关后填写参数。</div>';
+                fields = '<div class="solution-line-off-note"><span class="material-symbols-outlined" aria-hidden="true">info</span>' + line + (getApplicationLineRule(line).mode === 'exclusive' ? ' 为同组单选产品线' : ' 为按需产品线') + '，当前未开启，不参与本单申请；' + (getApplicationLineRule(line).mode === 'exclusive' ? '在“' + escapeHtml(getApplicationLineRule(line).group) + '”中选择该产品后填写参数。' : '打开产品线旁的开关后填写参数。') + '</div>';
             } else if (line === 'XDR' && isDsocSolution()) {
                 var dsocVersions = ['LOCAL-XDR2.0.45及以上版本（XDR+GPT）'];
                 fields += '<div class="solution-field"><label><span class="solution-required">*</span>版本</label><select class="solution-select" data-solution-param="version">' + dsocVersions.map(function(option) { return '<option value="' + escapeHtml(option) + '"' + (option === values.version ? ' selected' : '') + '>' + escapeHtml(option) + '</option>'; }).join('') + '</select></div>';
@@ -13049,9 +13590,10 @@
                 fields += '<div class="solution-field"><label><span class="solution-required">*</span>版本</label><input class="solution-input" data-solution-param="version" value="' + escapeHtml(values.version) + '"></div>';
                 fields += '<div class="solution-field"><label><span class="solution-required">*</span>授权有效期<span class="solution-readonly-note"><span class="material-symbols-outlined">lock</span>统一取方案授权时间</span></label><input class="solution-input" type="date" data-solution-param="endDate" value="' + escapeHtml(values.endDate) + '" readonly data-solution-readonly></div>';
                 if (isHci) {
-                    var infoName = values.infoFile ? escapeHtml(values.infoFile) : '未选择文件';
-                    var infoEmpty = values.infoFile ? '' : ' empty';
-                    fields += '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>硬件信息文件</label><div class="solution-file-input"><label class="solution-file-btn"><span class="material-symbols-outlined">upload_file</span>上传硬件信息文件<input type="file" data-solution-param="infoFile"></label><span class="solution-file-name' + infoEmpty + '">' + infoName + '</span></div></div>';
+                    var infoFiles = Array.isArray(values.infoFiles) ? values.infoFiles : (values.infoFile ? [{ name: values.infoFile }] : []);
+                    var infoName = infoFiles.length ? escapeHtml(infoFiles[0].name) + (infoFiles.length > 1 ? ' 等 ' + infoFiles.length + ' 个文件' : '') : '未选择文件';
+                    var infoEmpty = infoFiles.length ? '' : ' empty';
+                    fields += '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>硬件信息文件</label><div class="solution-file-input"><label class="solution-file-btn"><span class="material-symbols-outlined">upload_file</span>上传硬件信息文件（可多选）<input type="file" accept=".info" multiple data-solution-param="infoFile"></label><span class="solution-file-name' + infoEmpty + '">' + infoName + '</span><button type="button" class="ic-button ic-button-secondary" data-info-invite="solution"><span class="material-symbols-outlined" aria-hidden="true">link</span>邀请客户上传</button></div><p class="ic-upload-help">发送上传链接，由客户直接提供 HCI 设备信息（支持多个文件）。</p><div data-info-status="solution" class="ic-inline-status" hidden aria-live="polite"></div></div>';
                     fields += '<div class="solution-field"><label><span class="solution-required">*</span>集群标识</label><input class="solution-input" data-solution-param="clusterId" value="' + escapeHtml(values.clusterId) + '"></div>';
                 }
                 var isFromBorrow = Boolean(application.borrow && application.borrow.devices && application.borrow.devices[line]);
@@ -13171,8 +13713,16 @@
                 cloud: solutionLocalCustomer && solutionLocalCustomer.cloud
             });
         }
-        function validateApplication() {
+        function validateApplication(ignoreCollection) {
             if (!application.solution) return '请先关联有效借测单或选择启用方案。';
+            if (!activeLines().length) return '请至少开启一个产品线后提交。';
+            var groupCounts = Object.create(null);
+            application.lines.forEach(function(line) {
+                var rule = getApplicationLineRule(line);
+                if (rule.mode === 'exclusive') groupCounts[rule.group] = (groupCounts[rule.group] || 0) + (isLineEnabled(line) ? 1 : 0);
+            });
+            var invalidGroup = Object.keys(groupCounts).find(function(group) { return groupCounts[group] !== 1; });
+            if (invalidGroup) return '“' + invalidGroup + '”必须且只能开启一个产品线。';
             if (application.source === 'local') {
                 application.applicant = getCurrentApplicant();
                 application.customer = solutionLocalCustomer ? solutionLocalCustomer.name : '';
@@ -13280,14 +13830,14 @@
                     if (!value.version || !value.deviceId) return 'STA 的授权参数未填写完整。';
                     continue;
                 }
-                if (!value.version || !value.deviceId) return line + ' 的授权参数未填写完整。';
+                if (!value.version || (!value.deviceId && !(ignoreCollection && line === 'HCI'))) return line + ' 的授权参数未填写完整。';
                 if (line === 'AC') {
                     if (!value.gatewayLines || !value.gatewayBranch || !value.gatewayMobile || !value.internetSecurityAuth || !value.appUrlUpdate || !value.terminalCount || !value.terminalAuth || !value.softwareUpgrade || !value.leakAudit) return line + ' 的授权参数未填写完整。';
                     if (!value.multiFeatures || !value.multiFeatures.length) return line + ' 请至少选择一项多功能序列号。';
                 } else {
                     if (!value.modules || !value.modules.length || !value.spec) return line + ' 的授权参数未填写完整。';
                 }
-                if (line === 'HCI' && (!value.infoFile || !value.clusterId)) return 'HCI 需上传硬件信息文件并填写集群标识。';
+                if (!ignoreCollection && line === 'HCI' && (!value.infoFile || !value.clusterId)) return 'HCI 需上传硬件信息文件并填写集群标识。';
             }
             return '';
         }
@@ -13318,6 +13868,18 @@
             }
             if (errorBox) errorBox.hidden = true;
             insertSolutionRecord();
+            if (application.params.HCI && application.params.HCI.collectionToken) {
+                var hciParams = application.params.HCI;
+                document.dispatchEvent(new CustomEvent('info-application-submitted', { detail: {
+                    token: hciParams.collectionToken,
+                    applicationNo: application.recordId,
+                    authorization: {
+                        licenseCode: 'LIC-HCI-806',
+                        fileName: '授权信息-' + application.recordId,
+                        validity: hciParams.endDate ? '至 ' + hciParams.endDate : ''
+                    }
+                } }));
+            }
             setStatus('success');
             renderWorkflow();
         }
@@ -13342,14 +13904,6 @@
             tbody.insertAdjacentHTML('afterbegin', record + detail);
             if (typeof window.initRecordsPagination === 'function') window.initRecordsPagination();
         }
-
-        // 成对组件互斥守底规则：至少选一个（如 STA/AF，AF/aES）
-        var atLeastOnePairs = [
-            ['STA', 'AF'],
-            ['AF', 'STA'],
-            ['AF', 'aES'],
-            ['aES', 'AF']
-        ];
 
         function bindEvents() {
             document.querySelectorAll('[data-solution-drawer-close]').forEach(function(el) { el.addEventListener('click', closeSolutionConfigDrawer); });
@@ -13416,24 +13970,26 @@
                 var toggle = event.target.closest('[data-solution-line-switch]');
                 if (toggle) {
                     var switchLine = toggle.dataset.solutionLineSwitch;
+                    if (getApplicationLineRule(switchLine).mode !== 'optional') return;
                     var willBeEnabled = !isLineEnabled(switchLine);
                     application.lineSwitches[switchLine] = willBeEnabled;
-
-                    // 至少选一个交互守底逻辑：一个关闭，另一个必须开启
-                    if (!willBeEnabled) {
-                        atLeastOnePairs.forEach(function(pair) {
-                            if (pair[0] === switchLine && application.lines.indexOf(pair[1]) !== -1) {
-                                var other = pair[1];
-                                if (!isLineEnabled(other)) {
-                                    application.lineSwitches[other] = true;
-                                }
-                            }
-                        });
-                    }
-
-                    if (!isLineEnabled(application.activeLine)) application.activeLine = activeLines()[0] || application.activeLine;
+                    application.activeLine = willBeEnabled ? switchLine : (activeLines()[0] || switchLine);
                     updateSolutionPhoneRequirement();
                     renderProductWorkspace();
+                    renderWorkflow();
+                    return;
+                }
+                var choice = event.target.closest('[data-solution-line-choice]');
+                if (choice) {
+                    var choiceLine = choice.dataset.solutionLineChoice;
+                    var choiceRule = getApplicationLineRule(choiceLine);
+                    application.lines.forEach(function(line) {
+                        var rule = getApplicationLineRule(line);
+                        if (rule.mode === 'exclusive' && rule.group === choiceRule.group) application.lineSwitches[line] = line === choiceLine;
+                    });
+                    application.activeLine = choiceLine;
+                    renderProductWorkspace();
+                    renderWorkflow();
                     return;
                 }
                 var button = event.target.closest('[data-solution-line]');
@@ -13463,10 +14019,24 @@
                     var field = target.closest('[data-solution-param]');
                     if (field) {
                         var fileName = target.files.length ? target.files[0].name : '';
+                        if (field.dataset.solutionParam === 'infoFile') {
+                            clearCollectedSolutionFacts(application.params[application.activeLine]);
+                            var clusterInput = id('solutionProductPanel').querySelector('[data-solution-param="clusterId"]');
+                            var deviceInput = id('solutionProductPanel').querySelector('[data-solution-param="deviceId"]');
+                            if (clusterInput) clusterInput.value = application.params[application.activeLine].clusterId || '';
+                            if (deviceInput) deviceInput.value = application.params[application.activeLine].deviceId || '';
+                            application.params[application.activeLine].infoFiles = Array.prototype.slice.call(target.files).map(function(f) { return { name: f.name, size: f.size }; });
+                        }
                         application.params[application.activeLine][field.dataset.solutionParam] = fileName;
+                        if (field.dataset.solutionParam === 'infoFile') delete application.params[application.activeLine].collectionToken;
                         var wrap = field.closest('.solution-file-input');
                         var nameEl = wrap && wrap.querySelector('.solution-file-name');
-                        if (nameEl) { nameEl.textContent = fileName || '未选择文件'; nameEl.classList.toggle('empty', !fileName); }
+                        var displayName = fileName;
+                        if (field.dataset.solutionParam === 'infoFile' && target.files.length > 1) displayName = fileName + ' 等 ' + target.files.length + ' 个文件';
+                        if (nameEl) { nameEl.textContent = displayName || '未选择文件'; nameEl.classList.toggle('empty', !fileName); }
+                        if (field.dataset.solutionParam === 'infoFile' && target.files.length && window.InfoCollectionUI && window.SolutionInfoCollection) {
+                            try { window.InfoCollectionUI.cancelContext('solution', window.SolutionInfoCollection.getContext().key); } catch (_) {}
+                        }
                     }
                     return;
                 }
@@ -13575,10 +14145,48 @@
             id('solutionConfigNew').addEventListener('click', function() { openConfigModal(); });
             document.querySelectorAll('[data-solution-config-close]').forEach(function(button) { button.addEventListener('click', closeConfigModal); });
             id('solutionConfigSave').addEventListener('click', saveConfig);
+            id('solutionConfigChecks').addEventListener('change', function(event) {
+                var target = event.target;
+                var lines = readConfigProductLines();
+                if (target.classList.contains('solution-config-product-check')) {
+                    if (target.checked && !configProductDraft[target.value]) configProductDraft[target.value] = { mode: 'required', defaultEnabled: true, group: '' };
+                    if (!target.checked) delete configProductDraft[target.value];
+                    renderConfigProductEditor(lines);
+                    return;
+                }
+                var row = target.closest('[data-config-line]');
+                if (!row || !target.dataset.configRule) return;
+                var line = row.dataset.configLine;
+                var rule = configProductDraft[line];
+                if (target.dataset.configRule === 'mode') {
+                    rule.mode = target.value;
+                    rule.group = rule.mode === 'exclusive' ? (rule.group || '组 1') : '';
+                    rule.defaultEnabled = rule.mode === 'required' || (rule.mode === 'exclusive' && !lines.some(function(other) { var otherRule = configProductDraft[other]; return other !== line && otherRule.mode === 'exclusive' && otherRule.group === rule.group && otherRule.defaultEnabled; }));
+                } else if (target.dataset.configRule === 'defaultEnabled') {
+                    rule.defaultEnabled = target.value === 'true';
+                    if (rule.mode === 'exclusive' && rule.defaultEnabled) lines.forEach(function(other) { var otherRule = configProductDraft[other]; if (other !== line && otherRule.mode === 'exclusive' && otherRule.group === rule.group) otherRule.defaultEnabled = false; });
+                } else if (target.dataset.configRule === 'group') {
+                    rule.group = target.value.trim();
+                }
+                renderConfigProductEditor(lines);
+                id('solutionConfigError').textContent = '';
+            });
+            id('solutionConfigChecks').addEventListener('click', function(event) {
+                var action = event.target.closest('button');
+                if (action && action.hasAttribute('data-config-picker-open')) {
+                    openConfigProductPicker();
+                    return;
+                }
+                var remove = event.target.closest('[data-config-remove]');
+                if (!remove) return;
+                var line = remove.closest('[data-config-line]').dataset.configLine;
+                delete configProductDraft[line];
+                renderConfigProductEditor(readConfigProductLines().filter(function(other) { return other !== line; }));
+            });
             id('solutionConfigQuery').addEventListener('click', renderConfigs);
             id('solutionConfigReset').addEventListener('click', function() { id('solutionConfigSearch').value = ''; id('solutionConfigStatus').value = 'all'; renderConfigs(); });
             id('solutionConfigRows').addEventListener('click', function(event) { var action = event.target.closest('[data-solution-config-action]'); if (!action) return; var code = action.closest('[data-solution-config-code]').dataset.solutionConfigCode; if (action.dataset.solutionConfigAction === 'edit') openConfigModal(code); else toggleConfig(code); });
-            id('solutionAssetRead').addEventListener('click', function() { var payload = enabledConfigs().map(function(item) { return { solutionCode: item.code, solutionName: item.name, status: 'enabled', productLines: item.productLines, authDays: Number(item.authDays) || 0 }; }); id('solutionAssetPreview').textContent = JSON.stringify(payload, null, 2); id('solutionAssetPreview').hidden = false; });
+            id('solutionAssetRead').addEventListener('click', function() { var payload = enabledConfigs().map(function(item) { return { solutionCode: item.code, solutionName: item.name, status: 'enabled', productLines: item.productLines, productLineRules: getConfigProductRules(item), authDays: Number(item.authDays) || 0 }; }); id('solutionAssetPreview').textContent = JSON.stringify(payload, null, 2); id('solutionAssetPreview').hidden = false; });
 
             // 业务信息模板切换与自由配置字段事件绑定
             if (id('solutionConfigBizTemplate')) {
@@ -13634,12 +14242,131 @@
                 if (menu) menu.classList.remove('show');
             }
         });
+        function toggleTodoDropdown() {
+            var menu = document.getElementById('headerTodoMenu');
+            if (!menu) return;
+            menu.classList.toggle('show');
+            if (menu.classList.contains('show') && window.InfoCollectionUI) window.InfoCollectionUI.renderBell();
+        }
+        document.addEventListener('click', function(event) {
+            var wrap = document.getElementById('todoDropdown');
+            if (wrap && !wrap.contains(event.target)) {
+                var menu = document.getElementById('headerTodoMenu');
+                if (menu) menu.classList.remove('show');
+            }
+        });
+        document.addEventListener('click', function(event) {
+            var tab = event.target.closest ? event.target.closest('[data-todo-tab]') : null;
+            if (!tab) return;
+            var menu = document.getElementById('headerTodoMenu');
+            if (!menu) return;
+            menu.querySelectorAll('[data-todo-tab]').forEach(function(btn) { btn.classList.toggle('active', btn === tab); });
+            menu.querySelectorAll('[data-todo-panel]').forEach(function(panel) { panel.hidden = panel.dataset.todoPanel !== tab.dataset.todoTab; });
+        });
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest || !event.target.closest('#headerTodoList button')) return;
+            var menu = document.getElementById('headerTodoMenu');
+            if (menu) menu.classList.remove('show');
+        });
         window.toggleSettingsDropdown = toggleSettingsDropdown;
+        window.toggleTodoDropdown = toggleTodoDropdown;
         window.openSolutionConfigDrawer = openSolutionConfigDrawer;
         window.closeSolutionConfigDrawer = closeSolutionConfigDrawer;
+        function clearCollectedSolutionFacts(value) {
+            Object.keys(value.collectionDerived || {}).forEach(function(key) {
+                if (value[key] === value.collectionDerived[key]) value[key] = '';
+            });
+            delete value.collectionDerived;
+            delete value.collectionToken;
+        }
+        window.SolutionInfoCollection = {
+            getContext: function() {
+                var customer = application.source === 'borrow' ? solutionBorrowCustomer : solutionLocalCustomer;
+                return { kind: 'solution', key: 'solution:' + (application.solution ? application.solution.code : '') + ':' +
+                    (customer ? customer.id : '') + ':' + (application.borrow ? application.borrow.number : 'local'),
+                    product: 'HCI', customerId: customer ? customer.id : '', customer: customer ? customer.name : '',
+                    solutionCode: application.solution ? application.solution.code : '', solutionName: application.solution ? application.solution.name : '',
+                    borrowNumber: application.borrow ? application.borrow.number : '', source: application.source, applicant: application.applicant || getCurrentApplicant() };
+            },
+            capture: function() {
+                var fields = {};
+                ['solutionEmail', 'solutionContactPhone', 'solutionBorrowRegion', 'solutionBorrowRegionL2', 'solutionLocalRegion', 'solutionLocalRegionL2',
+                    'solution-borrow-industry-l1', 'solution-borrow-industry-l2', 'solution-local-industry-l1', 'solution-local-industry-l2'].forEach(function(key) {
+                    if (id(key)) fields[key] = id(key).value;
+                });
+                return { context: this.getContext(), application: JSON.parse(JSON.stringify(application)), fields: fields };
+            },
+            restore: function(snapshot) {
+                var ctx = snapshot.context;
+                var customer = solutionBorrowCustomers.find(function(item) { return item.id === ctx.customerId; });
+                if (!customer) throw new Error('客户信息已变化，请重新选择客户后继续。');
+                if (ctx.source === 'borrow') {
+                    var order = borrowOrders[ctx.borrowNumber];
+                    if (!order || order.error || order.returned || order.revoked || order.approvalStatus !== '审批通过') throw new Error('借测单当前不可申请，请重新确认。');
+                } else {
+                    var config = findConfig(ctx.solutionCode);
+                    if (!config || config.status !== 'enabled') throw new Error('方案已不可用，请重新选择。');
+                }
+                id('solutionSourceSelect').value = ctx.source;
+                id('solutionSourceSelect').dispatchEvent(new Event('change', { bubbles: true }));
+                if (ctx.source === 'borrow') {
+                    selectSolutionBorrowCustomer(customer);
+                    id('solutionBorrowOrder').value = ctx.borrowNumber;
+                    lookupBorrowOrder();
+                } else {
+                    id('solutionLocalConfig').value = ctx.solutionCode;
+                    selectSolutionLocalCustomer(customer);
+                }
+                if (!application.solution || application.solution.code !== ctx.solutionCode) throw new Error('方案范围已变化，请重新发起收集。');
+                application.lines.forEach(function(line) {
+                    var saved = snapshot.application.params[line];
+                    if (!saved) return;
+                    var deviceId = application.params[line].deviceId;
+                    application.params[line] = JSON.parse(JSON.stringify(saved));
+                    application.params[line].endDate = application.authEndDate;
+                    if (application.borrow) application.params[line].deviceId = deviceId;
+                });
+                application.biz = snapshot.application.biz || {};
+                application.accelBiz = snapshot.application.accelBiz || {};
+                application.networkBiz = snapshot.application.networkBiz || {};
+                Object.keys(snapshot.fields || {}).forEach(function(key) {
+                    var el = id(key); if (!el) return;
+                    el.value = snapshot.fields[key]; el.dispatchEvent(new Event('change', { bubbles: true }));
+                });
+                application.activeLine = 'HCI';
+                renderBizSection(); renderAccelBizSection(); renderProductWorkspace(); renderWorkflow();
+                document.querySelector('#navBar [data-tab="solution"]').click();
+            },
+            receive: function(files, token) {
+                if (!application.params.HCI) throw new Error('当前方案不包含 HCI。');
+                if (!Array.isArray(files)) files = files ? [files] : [];
+                if (!files.length) return;
+                if (application.params.HCI.collectionToken === token) return;
+                clearCollectedSolutionFacts(application.params.HCI);
+                var first = files[0];
+                application.params.HCI.infoFiles = files.map(function(file) { return { name: file.name, size: file.size, summary: file.summary || {} }; });
+                application.params.HCI.infoFile = files.length > 1 ? first.name + ' 等 ' + files.length + ' 个文件' : first.name;
+                application.params.HCI.collectionToken = token;
+                application.params.HCI.collectionDerived = {};
+                if (first.summary && first.summary.clusterId) {
+                    application.params.HCI.clusterId = first.summary.clusterId;
+                    application.params.HCI.collectionDerived.clusterId = first.summary.clusterId;
+                }
+                if (!application.borrow && first.summary && first.summary.deviceId) {
+                    application.params.HCI.deviceId = first.summary.deviceId;
+                    application.params.HCI.collectionDerived.deviceId = first.summary.deviceId;
+                }
+                application.activeLine = 'HCI'; renderProductWorkspace();
+            },
+            getRecipientEmail: function() { return id('solutionEmail') ? id('solutionEmail').value : ''; },
+            canAutoSubmit: function() { return !validateApplication(true); },
+            submit: function() { submitWholeApplication(); }
+        };
         function initSolutionTab() { if (!id('content-solution')) return; renderConfigs(); renderSolutionBorrowOrders(); bindEvents(); }
         initSolutionTab();
     }());
     </script>
+    <script src="info-collection-model.js"></script>
+    <script src="info-collection-ui.js"></script>
 </body>
 </html>

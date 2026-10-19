@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>授权文件上传中间页 · 流程说明</title>
+<style>
+  :root{
+    --bg:#f4f7fc; --card:#fff; --ink:#0b1c30; --muted:#65738a; --line:#e3e9f3;
+    --primary:#0050cb; --primary-soft:#eaf1ff;
+    --green:#217447; --green-soft:#e8f5ec;
+    --purple:#5b45b0; --purple-soft:#f0ecff;
+    --orange:#a35a00; --orange-soft:#fff3e2;
+    --red:#b42318; --red-soft:#fdecea;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;font-size:14px;line-height:1.65}
+  .page{max-width:1280px;margin:0 auto;padding:28px 24px 72px}
+  .hero{background:linear-gradient(135deg,#003f9e,#0050cb 55%,#2f7bea);color:#fff;border-radius:20px;padding:30px 34px;box-shadow:0 16px 40px rgba(0,60,160,.18)}
+  .hero .eyebrow{font-size:12px;letter-spacing:.08em;opacity:.85;text-transform:uppercase}
+  .hero h1{margin:8px 0 8px;font-size:28px;line-height:1.35;letter-spacing:-.4px}
+  .hero p{margin:0;max-width:860px;color:#e7f0ff;font-size:14px}
+  .legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+  .legend span{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.24);border-radius:999px;padding:5px 12px;font-size:12px}
+  .legend i{width:9px;height:9px;border-radius:50%;display:inline-block}
+
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:24px 0 20px;position:sticky;top:0;z-index:20;background:var(--bg);padding:10px 0}
+  .tab{border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:999px;padding:9px 18px;font-size:13px;font-family:inherit;cursor:pointer;transition:.18s}
+  .tab:hover{border-color:#b9cceb;color:var(--primary)}
+  .tab.active{background:var(--primary);border-color:var(--primary);color:#fff;box-shadow:0 6px 16px rgba(0,80,203,.22)}
+
+  .panel{display:none;animation:fade .25s ease}
+  .panel.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .section-head{margin:26px 0 14px}
+  .section-head h2{margin:0 0 6px;font-size:20px;letter-spacing:-.2px}
+  .section-head p{margin:0;color:var(--muted);font-size:13px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 2px 10px rgba(15,35,70,.04)}
+  .padded{padding:20px 22px}
+
+  /* 对比表 */
+  .table-wrap{overflow:auto;border-radius:14px;border:1px solid var(--line);background:#fff;box-shadow:0 2px 10px rgba(15,35,70,.04)}
+  table.compare{border-collapse:separate;border-spacing:0;width:100%;min-width:980px;font-size:12.5px}
+  table.compare th,table.compare td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+  table.compare thead th{background:#f7f9fe;color:#3d4a61;font-weight:600;position:sticky;top:0}
+  table.compare tbody tr:last-child td{border-bottom:0}
+  table.compare tbody tr:hover td{background:#fbfcff}
+  table.compare td.target{background:#f2f7ff}
+  table.compare td:first-child,table.compare th:first-child{font-weight:600;color:#33415c;background:#fbfcff;position:sticky;left:0;z-index:2;min-width:128px}
+  table.compare thead th:first-child{z-index:3}
+  .tag{display:inline-block;padding:1px 8px;border-radius:999px;font-size:11px;line-height:1.7;white-space:nowrap}
+  .tag.good{background:var(--green-soft);color:var(--green)}
+  .tag.warn{background:var(--orange-soft);color:var(--orange)}
+  .tag.bad{background:var(--red-soft);color:var(--red)}
+  .tag.info{background:var(--primary-soft);color:var(--primary)}
+
+  /* 流程步骤 */
+  .flow{display:flex;flex-direction:column;gap:0}
+  .step{display:grid;grid-template-columns:54px 1fr;gap:16px;position:relative;padding-bottom:16px}
+  .step:last-child{padding-bottom:0}
+  .step .rail{display:flex;flex-direction:column;align-items:center}
+  .step .no{width:32px;height:32px;border-radius:50%;background:var(--primary-soft);color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex:0 0 32px;border:1px solid #cfe0ff}
+  .step .line{width:2px;flex:1;background:linear-gradient(#d7e4fa,#edf2fa);margin-top:6px;border-radius:2px}
+  .step:last-child .line{display:none}
+  .step-body{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:0 2px 8px rgba(15,35,70,.035)}
+  .step-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px}
+  .step-title{font-size:14.5px;font-weight:600}
+  .step-desc{margin:2px 0 0;color:#4a5872;font-size:13px}
+  .step-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;margin-top:12px}
+  .meta{background:#f8faff;border:1px solid #ebf0fa;border-radius:8px;padding:8px 10px;font-size:12px;color:#56647c}
+  .meta b{display:block;color:#32405a;font-size:11px;font-weight:600;margin-bottom:2px}
+  .meta.pain{background:var(--red-soft);border-color:#f6d4d1;color:#8f2a20}
+  .meta.pain b{color:var(--red)}
+  .meta.ok{background:var(--green-soft);border-color:#d4eadb;color:#286244}
+  .meta.ok b{color:var(--green)}
+
+  .role{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:2px 9px;font-size:11px;font-weight:600;white-space:nowrap}
+  .role.applicant{background:var(--primary-soft);color:var(--primary)}
+  .role.customer{background:var(--green-soft);color:var(--green)}
+  .role.system{background:var(--purple-soft);color:var(--purple)}
+  .role.approver{background:var(--orange-soft);color:var(--orange)}
+  .role.offline{background:var(--red-soft);color:var(--red)}
+
+  .branches{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin-top:14px}
+  .branch{border-radius:10px;padding:12px 14px;font-size:12.5px;border:1px dashed #cdd8ea;background:#fbfcff}
+  .branch strong{display:block;font-size:12.5px;margin-bottom:2px}
+  .branch.warn{border-color:#f0c9c4;background:#fff7f6}
+  .branch.warn strong{color:var(--red)}
+  .branch.info{border-color:#c8dbfb;background:#f4f8ff}
+  .branch.info strong{color:var(--primary)}
+
+  .callout{border-radius:12px;padding:14px 16px;margin:14px 0;font-size:12.5px;border:1px solid;display:flex;gap:10px;align-items:flex-start}
+  .callout .dot{width:9px;height:9px;border-radius:50%;flex:0 0 9px;margin-top:6px}
+  .callout.info{background:#f4f8ff;border-color:#cfe0ff;color:#27457a}
+  .callout.info .dot{background:var(--primary)}
+  .callout.warn{background:#fff8ec;border-color:#f4d9ae;color:#7a5200}
+  .callout.warn .dot{background:var(--orange)}
+  .callout.bad{background:#fff6f5;border-color:#f3cfcb;color:#8b2a21}
+  .callout.bad .dot{background:var(--red)}
+  .callout.good{background:#f3fbf6;border-color:#cfe8d9;color:#255f40}
+  .callout.good .dot{background:var(--green)}
+
+  /* 决策卡 */
+  .decision-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin:14px 0}
+  .decision{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:0 2px 8px rgba(15,35,70,.035)}
+  .decision h3{margin:0 0 6px;font-size:14px;display:flex;align-items:center;gap:8px}
+  .decision .pill{font-size:11px;padding:1px 8px;border-radius:999px;background:var(--primary-soft);color:var(--primary);font-weight:600}
+  .decision p{margin:0;color:#4f5e78;font-size:12.5px}
+  .decision ul{margin:8px 0 0;padding-left:18px;color:#4f5e78;font-size:12.5px}
+  .decision li{margin-bottom:3px}
+  .decision.primary-card{border-color:#bcd3f8;box-shadow:0 6px 18px rgba(0,80,203,.10)}
+  .decision.warn-card{border-color:#f0d2ae;background:#fffdf9}
+  .decision.bad-card{border-color:#f0c9c4;background:#fffafa}
+
+  /* 状态机 */
+  .state-flow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:16px 0}
+  .state{padding:10px 16px;border-radius:10px;font-size:12.5px;font-weight:600;border:1px solid;text-align:center;min-width:120px}
+  .state small{display:block;font-weight:400;font-size:11px;opacity:.8;margin-top:2px}
+  .state.wait{background:var(--orange-soft);border-color:#f0d2ae;color:var(--orange)}
+  .state.recv{background:var(--primary-soft);border-color:#c8dbfb;color:var(--primary)}
+  .state.done{background:var(--purple-soft);border-color:#d9cffb;color:var(--purple)}
+  .state.auth{background:var(--green-soft);border-color:#cfe8d9;color:var(--green)}
+  .state.bad{background:var(--red-soft);border-color:#f3cfcb;color:var(--red)}
+  .arrow{color:#9aabc4;font-size:18px;line-height:1}
+  .state-branches{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+
+  /* 通知矩阵 */
+  .matrix{width:100%;border-collapse:separate;border-spacing:0;font-size:12.5px}
+  .matrix th,.matrix td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+  .matrix thead th{background:#f7f9fe;color:#3d4a61}
+  .matrix tbody tr:last-child td{border-bottom:0}
+  .matrix td:first-child{font-weight:600;color:#33415c}
+
+  .grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px}
+  .mini-title{font-size:13px;font-weight:600;margin:18px 0 8px}
+  .muted{color:var(--muted)}
+  .foot{margin-top:34px;color:#8a96a8;font-size:11.5px;text-align:center}
+  @media(max-width:720px){
+    .page{padding:18px 14px 48px}
+    .hero{padding:22px 20px;border-radius:16px}
+    .hero h1{font-size:22px}
+    .step{grid-template-columns:40px 1fr;gap:10px}
+    .step .no{width:28px;height:28px;flex-basis:28px;font-size:12px}
+    .step-body{padding:13px 14px}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="hero">
+    <div class="eyebrow">Test Authorization Platform · Flow Review</div>
+    <h1>授权文件上传中间页 · 流程说明</h1>
+    <p>把“原流程 → 现在生产环境 → Demo 当前实现 → 目标流程”摊开对比，重点说明设备 info 的获取方式、触发方式 A/B、线下代传与通知闭环。</p>
+    <div class="legend">
+      <span><i style="background:#7fb0ff"></i>申请人</span>
+      <span><i style="background:#63c08a"></i>客户</span>
+      <span><i style="background:#a58cf0"></i>平台 / 系统</span>
+      <span><i style="background:#f0b45e"></i>审批人</span>
+      <span><i style="background:#ef8a80"></i>线下 / 异常</span>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab active" data-tab="compare">对比总览</button>
+    <button class="tab" data-tab="original">① 原流程</button>
+    <button class="tab" data-tab="production">② 现在生产环境</button>
+    <button class="tab" data-tab="demo">③ Demo 中间页</button>
+    <button class="tab" data-tab="target">④ 目标流程</button>
+    <button class="tab" data-tab="states">状态与通知</button>
+  </nav>
+
+  <!-- 对比总览 -->
+  <section class="panel active" data-panel="compare">
+    <div class="section-head">
+      <h2>四种形态对比</h2>
+      <p>同一件事：设备 info 从哪来、什么时候验证、谁来推动、授权文件怎么交付。</p>
+    </div>
+    <div class="table-wrap">
+      <table class="compare">
+        <thead>
+          <tr>
+            <th>维度</th>
+            <th>① 原流程</th>
+            <th>② 现在生产环境</th>
+            <th>③ Demo 中间页</th>
+            <th>④ 目标流程</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>设备信息来源</td><td>申请人手填设备 ID/SN</td><td>申请人手填设备 ID/SN</td><td>客户上传 .info；也支持申请人手工上传</td><td class="target">客户上传 / 申请人线下代传 / 授权记录复用</td></tr>
+          <tr><td>客户参与时机</td><td>审批通过后</td><td>审批通过后</td><td>申请提交前</td><td class="target">申请提交前，异步参与</td></tr>
+          <tr><td>审批依据</td><td>手填数据</td><td>手填数据</td><td>文件解析出的设备事实</td><td class="target">文件解析出的设备事实</td></tr>
+          <tr><td>上传链接发送</td><td>申请人手动（企微为主）</td><td>申请人手动（企微为主）</td><td>申请人手动复制链接</td><td class="target">平台邮件发送，客户邮箱在发送时填写</td></tr>
+          <tr><td>申请人代传</td><td><span class="tag bad">不支持</span></td><td><span class="tag bad">不支持</span></td><td><span class="tag good">支持</span></td><td class="target"><span class="tag good">支持，且与邮件链接互斥</span></td></tr>
+          <tr><td>申请提交时机</td><td>建单即提交</td><td>建单即提交</td><td>关联文件后手动提交</td><td class="target">客户上传后按触发方式 A/B 发起</td></tr>
+          <tr><td>触发方式</td><td>—</td><td>—</td><td>—</td><td class="target">A 直接发起 / B 由申请人确认（默认 B）</td></tr>
+          <tr><td>通知中心</td><td>无</td><td>铃铛「待我审批」</td><td>未接入</td><td class="target">「待我审批」+「我的待办」</td></tr>
+          <tr><td>授权文件交付</td><td>客户在中间页获取</td><td>人工上传；已有记录可复用</td><td>邮件 + 同一链接下载</td><td class="target">人工上传/复用 + 邮件 + 同一链接下载</td></tr>
+          <tr><td>续期/复制</td><td>无</td><td>已有授权记录可复用</td><td>未实现</td><td class="target">复用 info 与设备事实，跳过收集</td></tr>
+          <tr><td>跨设备</td><td><span class="tag good">支持</span></td><td><span class="tag good">支持</span></td><td><span class="tag warn">不支持（Demo 边界）</span></td><td class="target">服务端持久化后支持</td></tr>
+          <tr><td>主要痛点</td><td>人工催、人工发链接、无法代传</td><td>同左 + 状态不可见 + 人工上传授权文件</td><td>无通知、无预提交、渠道未互斥</td><td class="target">把申请人从“调度员”变成“确认者”</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout info" style="margin-top:18px">
+      <span class="dot"></span>
+      <div><b>一句话结论：</b>设备 info 的获取有 4 种方式——客户邮件链接、申请人线下代传、客户企微发文件、授权记录复用。平台能自动化的是邮件链接；线下代传必须作为一等公民设计，不能被当成异常。</div>
+    </div>
+  </section>
+
+  <!-- 原流程 -->
+  <section class="panel" data-panel="original">
+    <div class="section-head">
+      <h2>① 原流程（旧旅程）</h2>
+      <p>先申请、后验证设备；客户在审批通过后才参与，申请人承担全部线下协调。</p>
+    </div>
+    <div class="flow">
+      <div class="step"><div class="rail"><div class="no">1</div><div class="line"></div></div><div class="step-body">
+        <div class="step-head"><span class="step-title">申请人建单</span><span class="role applicant">申请人</span></div>
+        <p class="step-desc">在 W3 填写产品线、版本、客户、订单号、设备 ID/SN、区域/办事处。</p>
+        <div class="step-meta">
+          <div class="meta"><b>系统产物</b>申请单、审批流程单号</div>
+          <div class="meta pain"><b>痛点</b>设备信息靠客户口头/邮件，系统无法验证</div>
+        </div>
+      </div></div>
+
+      <div class="step"><div class="rail"><div class="no">2</div><div class="line"></div></div><div class="step-body">
+        <div class="step-head"><span class="step-title">提交审批</span><span class="role approver">审批人</span></div>
+        <p class="step-desc">审批人基于申请人手填的设备信息做出判断。</p>
+        <div class="step-meta"><div class="meta pain"><b>风险</b>审批依据可能是错误或过期的设备信息</div></div>
+      </div></div>
+
+      <div class="step"><div class="rail"><div class="no">3</div><div class="line"></div></div><div class="step-body">
+        <div class="step-head"><span class="step-title">审批通过，生成云授权序列号 + 云图链接</span><span class="role system">许可证平台</span></div>
+        <p class="step-desc">系统生成 <code>sn1</code> 与 <code>active_url</code>，等待客户激活。</p>
+        <div class="step-meta"><div class="meta pain"><b>问题</b>申请已通过，但授权对象尚未验证</div></div>
+      </div></div>
+
+      <div class="step"><div class="rail"><div class="no">4</div><div class="line"></div></div><div class="step-body">
+        <div class="step-head"><span class="step-title">申请人把云图链接发给客户</span><span class="role applicant">申请人</span><span class="role offline">线下</span></div>
+        <p class="step-desc">实际渠道以企微为主，也可能是邮件或口头转达。</p>
+        <div class="step-meta">
+          <div class="meta pain"><b>痛点</b>依赖人工发送，没有发送记录和状态</div>
+          <div class="meta pain"><b>痛点</b>客户不响应时，申请人只能反复催</div>
+        </div>
+        <div class="branches">
+          <div class="branch warn"><strong>客户不响应 / 不会操作</strong>申请人线下催（企微 / 电话），必要时远程指导导出文件。</div>
+          <div class="branch warn"><strong>客户把文件直接发给申请人</strong>原流程没有“申请人代传”入口，只能继续让客户自己点链接上传。</div>
+        </div>
+      </div></div>
+
+      <div class="step"><div class="rail"><div class="no">5</div><div class="line"></div></div><div class="step-body">
+        <div class="step-head"><span class="step-title">客户打开云图授权中间页，上传 info</span><span class="role customer">客户</span></div>
+        <p class="step-desc">客户登录/打开链接，导出并上传设备 info 文件。</p>
+      </div></div>
+
+      <div class="step"><div class="rail"><div class="no">6</div><div class="line"></div></div><div class="step-body">
+        <div class="step-head"><span class="step-title">平台生成授权文件</span><span class="role system">授权平台</span></div>
+        <p class="step-desc">生成 <code>upload_url</code>，客户需要再次回到页面下载。</p>
+      </div></div>
+
+      <div class="step"><div class="rail"><div class="no">7</div><div class="line"></div></div><div class="step-body">
+        <div class="step-head"><span class="step-title">客户下载授权文件并激活</span><span class="role customer">客户</span></div>
+        <p class="step-desc">导入设备完成激活；W3 可感知激活状态，但申请人不一定看得到。</p>
+        <div class="step-meta"><div class="meta pain"><b>结果</b>申请单已通过，但授权是否落地不可见</div></div>
+      </div></div>
+    </div>
+    <div class="callout bad" style="margin-top:18px"><span class="dot"></span><div><b>原流程的本质：</b>申请与授权对象验证串行后置；审批先过，客户后面才上传真实设备信息；申请人承担全部线下协调成本。</div></div>
+  </section>
+
+  <!-- 生产环境 -->
+  <section class="panel" data-panel="production">
+    <div class="section-head">
+      <h2>② 现在生产环境的流程</h2>
+      <p>从生产页面（申请列表、快速审核）还原的系统链路。设备信息仍由申请人手填，客户仍在审批后参与。</p>
+    </div>
+    <div class="flow">
+      <div class="step"><div class="rail"><div class="no">1</div><div class="line"></div></div><div class="step-body">
+        <div class="step-head"><span class="step-title">W3 新建申请</span><span class="role applicant">申请人</span></div>
+        <p class="step-desc">填写产品线、版本、客户、订单号、设备 ID、设备 SN、区域、办事处。</p>
+        <div class="step-meta"><div class="meta pain"><b>痛点</b>设备信息仍是手填，审批看到的数据不可信</div></div>
+      </div></div>
+
+      <div class="step"><div class="rail"><div class="no">2</div><div class="line"></div></div><div class="step-body">
+        <div class="step-head"><span class="step-title">审批流（审批流程单号）</span><span class="role approver">审批人</span></div>
+        <p class="step-desc">授权审核状态：审核中 → 已审核 / 已驳回；通知中心当前只有「待我审批」。</p>
+      </div></div>
+
+      <div class="step"><div class="rail"><div class="no">3</div><div class="line"></div></div><div class="step-body">
+        <div class="step-head"><span class="step-title">审批通过，生成云授权序列号 + 云图链接</span><span class="role system">许可证平台</span></div>
+        <p class="step-desc">列表出现「云图授权」按钮，链接形如 <code>license.sangfor.com.cn/activate/&lt;serial&gt;</code>。</p>
+      </div></div>
+
+      <div class="step"><div class="rail"><div class="no">4</div><div class="line"></div></div><div class="step-body">
+        <div class="step-head"><span class="step-title">申请人线下把云图链接发给客户</span><span class="role applicant">申请人</span><span class="role offline">线下</span></div>
+        <p class="step-desc">实际以企微为主；平台没有企微消息联动。</p>
+        <div class="step-meta"><div class="meta pain"><b>痛点</b>申请人不知道客户是否打开、是否上传</div></div>
+      </div></div>
+
+      <div class="step"><div class="rail"><div class="no">5</div><div class="line"></div></div><div class="step-body">
+        <div class="step-head"><span class="step-title">客户打开云图链接并上传 info</span><span class="role customer">客户</span></div>
+        <div class="branches">
+          <div class="branch warn"><strong>客户不响应</strong>申请人继续线下催，没有平台级兜底。</div>
+          <div class="branch warn"><strong>客户把文件发给申请人</strong>生产页面没有申请人代传入入口。</div>
+        </div>
+      </div></div>
+
+      <div class="step"><div class="rail"><div class="no">6</div><div class="line"></div></div><div class="step-body">
+        <div class="step-head"><span class="step-title">授权文件人工上传</span><span class="role system">授权中台</span></div>
+        <p class="step-desc">生成 <code>upload_url</code>；列表有授权文件时隐藏云图链接。已有授权记录时无需重新上传，可直接开启。</p>
+        <div class="step-meta"><div class="meta pain"><b>痛点</b>人工上传意味着交付有延迟</div><div class="meta ok"><b>已有记录</b>可直接复用，无需重新上传</div></div>
+      </div></div>
+
+      <div class="step"><div class="rail"><div class="no">7</div><div class="line"></div></div><div class="step-body">
+        <div class="step-head"><span class="step-title">客户下载授权文件并激活</span><span class="role customer">客户</span></div>
+        <p class="step-desc">W3 可感知激活状态；申请人侧没有专门的进度通知。</p>
+      </div></div>
+    </div>
+    <div class="callout warn" style="margin-top:18px"><span class="dot"></span><div><b>与原有流程的差别：</b>生产环境把审批、序列号、云图链接、授权文件状态系统化了，但没有改变“先审批、后验证设备”的顺序，也没有解决申请人的可见性与代传问题。</div></div>
+  </section>
+
+  <!-- Demo 当前 -->
+  <section class="panel" data-panel="demo">
+    <div class="section-head">
+      <h2>③ Demo 中间页（当前实现）</h2>
+      <p>把设备收集前置，支持多文件、逐文件校验、进度、催办与授权下载；但渠道互斥、触发方式与通知中心还在补齐。</p>
+    </div>
+
+    <div class="grid-2">
+      <div class="decision primary-card">
+        <h3>路径 A：邀请客户上传 <span class="pill">在线</span></h3>
+        <ul>
+          <li>生成 token + 表单快照 + 7 天有效期</li>
+          <li>申请人手动复制链接发给客户</li>
+          <li>客户免登录打开 <code>info-upload.html#token</code></li>
+          <li>多文件选择 / 拖拽 / 逐个移除</li>
+          <li>逐文件校验：后缀、非空、≤2MB、产品线一致</li>
+          <li>提交后上传入口关闭，进入进度页</li>
+        </ul>
+      </div>
+      <div class="decision">
+        <h3>路径 B：申请人手工上传 <span class="pill">线下</span></h3>
+        <ul>
+          <li>适用于客户通过企微/邮件把文件直接发给申请人</li>
+          <li>在硬件信息文件区直接上传</li>
+          <li>逐文件生成设备事实（SN / 集群 / 设备 ID）</li>
+          <li>不依赖客户点链接</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="flow" style="margin-top:18px">
+      <div class="step"><div class="rail"><div class="no">1</div><div class="line"></div></div><div class="step-body">
+        <div class="step-head"><span class="step-title">客户打开免登录页，选择多个 .info</span><span class="role customer">客户</span></div>
+        <p class="step-desc">页面展示客户、产品、邀请人、所属方案；文件校验结果当场显示。</p>
+      </div></div>
+      <div class="step"><div class="rail"><div class="no">2</div><div class="line"></div></div><div class="step-body">
+        <div class="step-head"><span class="step-title">客户确认提交 → 任务 received</span><span class="role customer">客户</span><span class="role system">平台</span></div>
+        <p class="step-desc">上传入口关闭；页面进入「设备信息已提交」进度视图，可点「催一下进度」。</p>
+      </div></div>
+      <div class="step"><div class="rail"><div class="no">3</div><div class="line"></div></div><div class="step-body">
+        <div class="step-head"><span class="step-title">申请人关联文件并恢复快照</span><span class="role applicant">申请人</span></div>
+        <p class="step-desc">从「待补充申请」进入，恢复产品、客户、字段、模块开关；文件不写 file 控件，用内存对象承接。</p>
+      </div></div>
+      <div class="step"><div class="rail"><div class="no">4</div><div class="line"></div></div><div class="step-body">
+        <div class="step-head"><span class="step-title">申请人提交申请 → completed</span><span class="role applicant">申请人</span></div>
+      </div></div>
+      <div class="step"><div class="rail"><div class="no">5</div><div class="line"></div></div><div class="step-body">
+        <div class="step-head"><span class="step-title">授权生成 → authorized</span><span class="role system">平台</span></div>
+        <p class="step-desc">客户同一链接可查看授权码/有效期并下载授权文件，下载窗口 30 天。</p>
+      </div></div>
+    </div>
+
+    <div class="callout bad" style="margin-top:18px"><span class="dot"></span><div><b>当前缺口：</b>路径 A/B 没有互斥与合并规则；没有 A/B 触发方式；没有通知中心对接；没有邮件自动发送；没有授权记录复用；申请人手工上传后收集任务仍挂着。</div></div>
+  </section>
+
+  <!-- 目标流程 -->
+  <section class="panel" data-panel="target">
+    <div class="section-head">
+      <h2>④ 目标流程（定稿）</h2>
+      <p>核心变化：邮箱在发送链接时填写、触发方式由申请人决定、线下代传与邮件链接互斥、我的待办统一承载申请人事件。</p>
+    </div>
+
+    <div class="decision-grid">
+      <div class="decision primary-card">
+        <h3>A 客户上传后立即发起 <span class="pill">可选</span></h3>
+        <ul><li>客户上传且校验通过 → 系统自动提交申请</li><li>申请人不需要回来操作</li><li>仅当除 info 外全部校验通过时可选</li></ul>
+      </div>
+      <div class="decision">
+        <h3>B 客户上传后由我确认 <span class="pill">默认</span></h3>
+        <ul><li>客户上传后停在「待确认发起」</li><li>申请人查看设备事实后手动提交</li><li>多一次人工，但可控</li></ul>
+      </div>
+      <div class="decision warn-card">
+        <h3>客户邮箱 <span class="pill">发送时填写</span></h3>
+        <ul><li>不修改原申请表单</li><li>点击「发送上传链接」时弹窗填写</li><li>仅邮件发送，不做企微联动、不提供复制链接</li></ul>
+      </div>
+    </div>
+
+    <div class="flow" style="margin-top:8px">
+      <div class="step"><div class="rail"><div class="no">1</div><div class="line"></div></div><div class="step-body">
+        <div class="step-head"><span class="step-title">申请人填表，除设备 info 外校验通过</span><span class="role applicant">申请人</span></div>
+        <p class="step-desc">点击「发送上传链接」→ 弹窗填写客户邮箱 → 选择触发方式 A/B（默认 B）。</p>
+      </div></div>
+
+      <div class="step"><div class="rail"><div class="no">2</div><div class="line"></div></div><div class="step-body">
+        <div class="step-head"><span class="step-title">平台邮件发送上传链接</span><span class="role system">平台</span></div>
+        <p class="step-desc">生成 token + 快照，7 天有效；申请进入「待设备信息」，出现在「我的待办」。</p>
+        <div class="branches">
+          <div class="branch warn"><strong>邮箱格式错误 / 发送失败</strong>停在弹窗提示；失败进入「我的待办」，只能线下获取文件后手工上传。</div>
+        </div>
+      </div></div>
+
+      <div class="step"><div class="rail"><div class="no">3</div><div class="line"></div></div><div class="step-body">
+        <div class="step-head"><span class="step-title">获取文件（三条路径，谁先到谁生效）</span></div>
+        <div class="branches">
+          <div class="branch info"><strong>路径 1：客户点邮件链接上传</strong>免登录页，多文件，逐文件校验。</div>
+          <div class="branch info"><strong>路径 2：申请人线下拿到文件</strong>手工上传；与邮件链接互斥，链接立即失效。</div>
+          <div class="branch info"><strong>路径 3：已有授权记录</strong>复制/续期直接复用 info 与设备事实，跳过收集。</div>
+        </div>
+      </div></div>
+
+      <div class="step"><div class="rail"><div class="no">4</div><div class="line"></div></div><div class="step-body">
+        <div class="step-head"><span class="step-title">校验与触发</span><span class="role system">平台</span></div>
+        <p class="step-desc">逐文件校验通过后，按发送链接时选择的触发方式处理。</p>
+        <div class="branches">
+          <div class="branch info"><strong>A 直接发起</strong>系统自动提交申请 → 进入审批，并通知申请人。</div>
+          <div class="branch info"><strong>B 由我确认</strong>停在「待确认发起」→ 通知申请人 → 申请人查看设备事实后提交。</div>
+          <div class="branch warn"><strong>校验失败</strong>不提交，通知申请人；客户页面当场显示失败原因并允许重新选择。</div>
+        </div>
+      </div></div>
+
+      <div class="step"><div class="rail"><div class="no">5</div><div class="line"></div></div><div class="step-body">
+        <div class="step-head"><span class="step-title">审批</span><span class="role approver">审批人</span></div>
+        <p class="step-desc">进入「待我审批」；驳回后已收集文件保留，可修改重提。</p>
+      </div></div>
+
+      <div class="step"><div class="rail"><div class="no">6</div><div class="line"></div></div><div class="step-body">
+        <div class="step-head"><span class="step-title">授权与交付</span><span class="role system">授权中台</span><span class="role customer">客户</span></div>
+        <p class="step-desc">授权文件人工上传；已有授权记录则直接复用。邮件发送授权文件至接收邮箱，客户同一链接可下载（30 天）。</p>
+      </div></div>
+    </div>
+
+    <div class="mini-title">渠道冲突规则</div>
+    <div class="table-wrap">
+      <table class="matrix">
+        <thead><tr><th>场景</th><th>处理规则</th></tr></thead>
+        <tbody>
+          <tr><td>已发链接，申请人又手工上传</td><td>手工文件生效；收集任务关闭，链接立即失效</td></tr>
+          <tr><td>客户已上传，申请人再手工上传</td><td>默认拒绝；如需替换，申请人显式「替换文件」并重新校验</td></tr>
+          <tr><td>客户传错文件</td><td>不允许客户替换；申请人「重新发起收集」生成新链接，旧链接失效</td></tr>
+          <tr><td>申请已提交后客户才上传</td><td>不采纳，页面提示申请已提交</td></tr>
+          <tr><td>客户上传多个文件</td><td>全部接收，逐文件生成设备事实，按文件名+大小去重</td></tr>
+          <tr><td>7 天未上传</td><td>邮件提醒客户；申请人「我的待办」提示</td></tr>
+          <tr><td>审批驳回后重提</td><td>已收集文件保留，可直接复用</td></tr>
+          <tr><td>续期/复制</td><td>复用授权记录中的 info 与设备事实</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 状态与通知 -->
+  <section class="panel" data-panel="states">
+    <div class="section-head">
+      <h2>状态机与通知矩阵</h2>
+      <p>收集任务的状态流转，以及客户 / 申请人 / 审批人分别在什么时候收到什么。</p>
+    </div>
+
+    <div class="card padded">
+      <div class="mini-title" style="margin-top:0">收集任务状态</div>
+      <div class="state-flow">
+        <div class="state wait">waiting<small>等待客户上传</small></div>
+        <span class="arrow">→</span>
+        <div class="state recv">received<small>客户已上传 / 申请人已代传</small></div>
+        <span class="arrow">→</span>
+        <div class="state done">completed<small>申请已提交</small></div>
+        <span class="arrow">→</span>
+        <div class="state auth">authorized<small>授权生成，可下载</small></div>
+      </div>
+      <div class="state-branches">
+        <div class="state bad">expired<small>7 天未上传</small></div>
+        <div class="state bad">cancelled<small>申请人取消 / 改为手工上传</small></div>
+        <div class="state bad">failed<small>授权失败（建议新增）</small></div>
+      </div>
+    </div>
+
+    <div class="mini-title">通知矩阵</div>
+    <div class="table-wrap">
+      <table class="matrix">
+        <thead><tr><th>事件</th><th>客户</th><th>申请人</th><th>审批人</th></tr></thead>
+        <tbody>
+          <tr><td>上传链接已发送</td><td>邮件</td><td>我的待办</td><td>—</td></tr>
+          <tr><td>邮件退信 / 发送失败</td><td>—</td><td>我的待办 + 线下获取提示</td><td>—</td></tr>
+          <tr><td>客户已上传</td><td>页面进度</td><td>我的待办</td><td>—</td></tr>
+          <tr><td>立即发起成功</td><td>页面进度</td><td>通知</td><td>待我审批</td></tr>
+          <tr><td>待确认发起</td><td>页面进度</td><td>我的待办（含设备事实）</td><td>—</td></tr>
+          <tr><td>上传校验失败</td><td>页面提示</td><td>我的待办 + 失败原因</td><td>—</td></tr>
+          <tr><td>7 天未上传</td><td>邮件提醒</td><td>我的待办</td><td>—</td></tr>
+          <tr><td>审批通过 / 驳回</td><td>—</td><td>通知</td><td>—</td></tr>
+          <tr><td>授权文件可下载</td><td>邮件 + 链接</td><td>通知</td><td>—</td></tr>
+          <tr><td>授权记录复用</td><td>—</td><td>直接开启</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout info" style="margin-top:18px"><span class="dot"></span><div><b>通知中心定位：</b>现有「待我审批」继续服务审批人；新增「我的待办」承载申请人的待补充、客户已上传、自动发起失败、邮件失败、催办等事件。客户侧只走邮件与客户页面，不做企微联动。</div></div>
+
+    <div class="mini-title">关键字段与埋点</div>
+    <div class="table-wrap">
+      <table class="matrix">
+        <thead><tr><th>字段</th><th>用途</th></tr></thead>
+        <tbody>
+          <tr><td>草稿创建时间</td><td>申请准备时长</td></tr>
+          <tr><td>链接发送时间 / 邮箱 / 发送结果</td><td>触达质量</td></tr>
+          <tr><td>触发方式 A/B</td><td>自动发起占比</td></tr>
+          <tr><td>客户上传时间 / 文件数</td><td>收集时长</td></tr>
+          <tr><td>申请人手工上传时间</td><td>线下路径占比</td></tr>
+          <tr><td>文件 hash / 来源渠道</td><td>去重、审计</td></tr>
+          <tr><td>催办次数</td><td>客户响应问题</td></tr>
+          <tr><td>自动/确认发起时间</td><td>自动发起成功率</td></tr>
+          <tr><td>审批 / 授权 / 下载 / 激活时间</td><td>全链路时长</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <p class="foot">授权文件上传中间页 · 流程说明 · 2026-10-19</p>
+</div>
+
+<script>
+  (function(){
+    var tabs = document.querySelectorAll('.tab');
+    var panels = document.querySelectorAll('.panel');
+    function show(name){
+      tabs.forEach(function(t){ t.classList.toggle('active', t.dataset.tab === name); });
+      panels.forEach(function(p){ p.classList.toggle('active', p.dataset.panel === name); });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    tabs.forEach(function(t){ t.addEventListener('click', function(){ show(t.dataset.tab); }); });
+  }());
+</script>
+</body>
+</html>
