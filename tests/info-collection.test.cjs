@@ -27,13 +27,20 @@ function loadCollectionUi() {
   }
   return result;
 }
+function loadUploadRuntime(window) {
+  window.requestAnimationFrame = callback => window.setTimeout(callback, 0);
+  window.cancelAnimationFrame = handle => window.clearTimeout(handle);
+  for (const name of ['vendor/vue/vue.global.prod.js', 'vendor/element-plus/index.full.min.js', 'info-upload.js']) {
+    window.eval(fs.readFileSync(path.join(root, name), 'utf8'));
+  }
+}
 function seedUploadPage(task, data) {
   const dom = new JSDOM(fs.readFileSync(path.join(root, 'info-upload.html'), 'utf8'), { url: 'http://localhost/info-upload.html', runScripts: 'outside-only' });
   dom.window.InfoCollection = model;
   const raw = data.get(model.STORAGE_KEY);
   if (raw) dom.window.localStorage.setItem(model.STORAGE_KEY, raw);
   dom.window.location.hash = task.token;
-  dom.window.eval(fs.readFileSync(path.join(root, 'info-upload.js'), 'utf8'));
+  loadUploadRuntime(dom.window);
   return { dom, document: dom.window.document, window: dom.window, store: model.createStore(dom.window.localStorage) };
 }
 
@@ -291,7 +298,7 @@ test('解决方案替换客户文件后不会继续使用旧文件自动填入�
   } finally { dom.window.close(); }
 });
 
-test('客户在同一上传页切换邀请链接时展示新任务，不沿用上一份收集', () => {
+test('客户在同一上传页切换邀请链接时展示新任务，不沿用上一份收集', async () => {
   const dom = new JSDOM(fs.readFileSync(path.join(root, 'info-upload.html'), 'utf8'), { url:'http://localhost/info-upload.html', runScripts:'outside-only' });
   try {
     dom.window.InfoCollection = model;
@@ -299,10 +306,11 @@ test('客户在同一上传页切换邀请链接时展示新任务，不沿用�
     const first = s.create(context, {});
     const second = s.create({ ...context, key:'hardware:45:C100002', customerId:'C100002', customer:'第二位客户' }, {});
     dom.window.location.hash = first.token;
-    dom.window.eval(fs.readFileSync(path.join(root, 'info-upload.js'), 'utf8'));
+    loadUploadRuntime(dom.window);
     assert.match(dom.window.document.getElementById('uploadContext').textContent, /测试客户/);
     dom.window.location.hash = second.token;
     dom.window.dispatchEvent(new dom.window.HashChangeEvent('hashchange'));
+    await dom.window.Vue.nextTick();
     assert.match(dom.window.document.getElementById('uploadContext').textContent, /第二位客户/);
     assert.equal(dom.window.document.getElementById('uploadForm').hidden, false);
     assert.equal(dom.window.document.getElementById('customerInfoFile').multiple, true);
@@ -362,6 +370,7 @@ test('客户中间页支持一次选择并提交多个 info 文件', async () =>
     assert.equal(document.querySelectorAll('#uploadFileList .upload-file-row').length, 2);
     assert.match(document.getElementById('confirmInfoUpload').textContent, /2 个设备信息文件/);
     document.getElementById('confirmInfoUpload').click();
+    await window.Vue.nextTick();
     const saved = page.store.get(task.token);
     assert.equal(saved.status, 'received');
     assert.equal(saved.files.length, 2);

@@ -3,7 +3,7 @@
 ## 最新状态（2026-10-19）
 
 - 当前分支：`codex/solution-authorization-demo`，合并提交 `a3678bf`，已 push 到 origin。
-- 最新功能：授权文件上传中间页双通道收集与交付，详见文末 §11 的 2026-10-19 条目。
+- 最新功能：授权文件上传中间页双通道收集与交付，详见文末 §11 的 2026-10-19 条目；客户设备信息上传页已使用 Vue 3 + Element Plus 重写，本地 `vendor/` 资源，无 CDN 依赖。
 - 入口与验证：`npm test` 232/232 通过；`npm run build` 成功。
 - 接手优先阅读：`docs/授权文件上传中间页-流程图.md`、`docs/flowcharts-readable.html`、`tests/info-collection.test.cjs`。
 - 下文 §0 为 2026-10-16 的运营看板交接记录，保留作历史参考。
@@ -240,6 +240,14 @@ git diff --check
 若用户要求打包，必须按 `AGENTS.md` 使用 `web-mock-build-deploy`，打包入口重命名为 `index.html` 并包含全部静态资源。
 
 ## 11. 改动历史
+
+### 2026-10-20 客户设备信息上传页改为 Vue 3 + Element Plus
+
+- `info-upload.html` / `info-upload.js` / `info-upload.css`：客户免登录上传页重写为 Vue 3 + Element Plus，使用本地 `vendor/` 资源，不依赖在线 CDN。
+- 保留原有能力：多文件选择/拖拽、逐文件校验、进度时间线、催办、授权文件下载；新增邀请信息侧栏、步骤条与 Element Plus 组件交互。
+- `scripts/build-static.cjs`：构建产物加入 `info-upload.css`。
+- `tests/info-collection.test.cjs`：加载本地 Vue/Element Plus 运行时，并适配异步渲染。
+- 验证：`npm test` 233/233 通过；`npm run build` 成功；浏览器实测 2 个文件上传、校验与提交正常。
 
 ### 2026-10-20 产品授权提交后保留公共表单，支持连续申请多台设备
 

@@ -12,6 +12,7 @@ const files = [
   ['info-collection.css', 'info-collection.css'],
   ['info-upload.html', 'info-upload.html'],
   ['info-upload.js', 'info-upload.js'],
+  ['info-upload.css', 'info-upload.css'],
   ['operations-dashboard.html', 'operations-dashboard.html'],
   ['operations-dashboard.css', 'operations-dashboard.css'],
   ['operations-dashboard.js', 'operations-dashboard.js'],
