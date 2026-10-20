@@ -248,6 +248,42 @@ test('HCI 仅通过 info 文件识别设备事实并成功提交', () => {
   }
 });
 
+test('提交后保留公共表单并清空设备字段，支持继续申请下一台设备', () => {
+  const { dom, document, window, alerts, errors } = loadV2Dom();
+  try {
+    const search = document.getElementById('customerSearchInput');
+    search.value = 'C100001';
+    search.dispatchEvent(new window.Event('input', { bubbles: true }));
+    document.querySelector('#customerDropdown [data-id="C100001"]').click();
+
+    document.getElementById('cloudVersion').value = '6.8.1_1';
+    document.getElementById('authScene').value = '1';
+    fireChange(document.getElementById('authScene'), window);
+    document.getElementById('unifiedDate').value = '2026-12-31';
+    document.getElementById('userEmail').value = 'customer@example.com';
+    document.querySelector('input[name="aDESKvm3d_cpu_limit"]').value = '32';
+
+    window.addChip('DEV-NEXT-001');
+    window.submitStandardForm();
+
+    assert.match(alerts.at(-1), /表单已提交/);
+    assert.equal(window.applicationState.customerId, 'C100001', '客户应保留');
+    assert.equal(document.getElementById('plname').value, '45', '产品线应保留');
+    assert.equal(document.getElementById('cloudVersion').value, '6.8.1_1', '版本应保留');
+    assert.equal(document.getElementById('unifiedDate').value, '2026-12-31', '授权日期应保留');
+    assert.equal(document.getElementById('userEmail').value, 'customer@example.com', '接收邮箱应保留');
+    assert.equal(document.querySelector('input[name="aDESKvm3d_cpu_limit"]').value, '32', '模块参数应保留');
+    assert.equal(document.querySelectorAll('#chipContainer .chip-item').length, 0, '设备ID应清空');
+    assert.equal(document.getElementById('devIdNew').value, '', '设备ID隐藏字段应清空');
+    assert.equal(window.applicationState.deviceFacts.length, 0, '设备事实应清空');
+    assert.match(document.getElementById('standardActionStatusText').textContent, /表单内容已保留/);
+    assert.notEqual(document.getElementById('submissionSnapshot').value, '', '提交快照应保留');
+    assert.deepEqual(errors, []);
+  } finally {
+    dom.window.close();
+  }
+});
+
 test('非强制硬件设备缺少借测字段时仍阻断提交', () => {
   const { dom, document, window, alerts } = loadV2Dom();
   try {
@@ -291,7 +327,8 @@ test('表单重置彻底清理旧流程状态并重新应用默认 HCI 模式', 
     window.submitStandardForm();
     assert.match(alerts.at(-1), /表单已提交/);
     assert.notEqual(document.getElementById('submissionSnapshot').value, '');
-    assert.equal(window.applicationState.deviceFacts[0].deviceId, 'SALES-ATRUST-001');
+    assert.equal(window.applicationState.deviceFacts.length, 0, '提交后应清空设备事实，便于继续申请下一台设备');
+    assert.equal(document.getElementById('plname').value, '20', '提交后应保留产品线');
 
     document.getElementById('formsn').reset();
     await new Promise((resolve) => window.setTimeout(resolve, 20));

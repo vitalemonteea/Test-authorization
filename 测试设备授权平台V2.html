@@ -3112,7 +3112,7 @@
                         </div>
                         <div class="standard-action-buttons">
                             <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-                            <button type="button" class="layui-btn" id="standardSubmitButton" onclick="submitStandardForm()">立即获取</button>
+                            <button type="button" class="layui-btn" id="standardSubmitButton" onclick="submitStandardForm()">提交申请</button>
                         </div>
                     </div>
                 </form>
@@ -8648,6 +8648,39 @@
             return deviceSnChips.add(v);
         };
         window.removeDeviceChip = function (v) { return deviceIdChips.remove(v); };
+        // 提交成功后清理上一台设备的绑定内容，但保留客户/产品/版本/模块参数等公共表单
+        window.clearHardwareForNextDevice = function () {
+            if (hwFileInput) hwFileInput.value = '';
+            clearHwFile();
+            syncingChips = true;
+            try { deviceIdChips.clear(); } finally { syncingChips = false; }
+            deviceSnChips.clear();
+            syncHiddenMirror('devIdNew', []);
+            syncHiddenMirror('devSnNew', []);
+            var summary = document.getElementById('deviceFactsSummary');
+            if (summary) summary.textContent = '';
+            var blocking = document.getElementById('deviceLookupBlocking');
+            if (blocking) blocking.hidden = true;
+            var compat = document.getElementById('deviceCompatibilityBlocking');
+            if (compat) compat.hidden = true;
+            var manualReview = document.getElementById('manualReviewRequired');
+            if (manualReview) manualReview.value = '0';
+            var countEl = document.getElementById('chipCountNum');
+            var clearBtn = document.getElementById('chipClearBtn');
+            if (countEl) countEl.textContent = '0';
+            if (clearBtn) clearBtn.hidden = true;
+            var snCountEl = document.getElementById('snChipCountNum');
+            var snClearBtn = document.getElementById('snChipClearBtn');
+            if (snCountEl) snCountEl.textContent = '0';
+            if (snClearBtn) snClearBtn.hidden = true;
+            if (applicationState) {
+                applicationState.rawDeviceFacts = [];
+                applicationState.deviceFacts = [];
+                applicationState.approvalDecision = null;
+                applicationState.compatibilityIssues = [];
+            }
+            if (typeof resetExistingAuthSection === 'function') resetExistingAuthSection();
+        };
         window.getTrustedDeviceFacts = function() {
             if (isHardwareInfoFileMode()) {
                 var manualIds = deviceIdChips.get();
@@ -9734,6 +9767,22 @@
         }
     }
 
+    // 提交成功后保留公共表单，仅清理与上一台设备绑定的内容，便于继续为下一台设备申请
+    function retainFormForNextDevice() {
+        if (typeof window.clearHardwareForNextDevice === 'function') window.clearHardwareForNextDevice();
+        var statusText = document.getElementById('standardActionStatusText');
+        var statusIcon = document.getElementById('standardActionStatusIcon');
+        var statusBar = document.getElementById('standardActionStatus');
+        if (statusText) statusText.textContent = '上一单已提交，表单内容已保留，请继续填写下一台设备';
+        if (statusIcon) statusIcon.textContent = 'task_alt';
+        if (statusBar) { statusBar.classList.remove('has-conflict'); statusBar.classList.add('is-ready'); }
+        var chipInput = document.getElementById('chipInput');
+        if (chipInput && !chipInput.disabled) {
+            try { chipInput.focus(); } catch (_) {}
+        }
+    }
+    window.retainFormForNextDevice = retainFormForNextDevice;
+
     // 提交表单（模拟）
     function submitStandardForm() {
         var rules = window.AuthorizationApplicationRules || {};
@@ -9750,7 +9799,8 @@
 
         if (hardwareInfoRequired) {
             var submitHwFiles = window.InfoCollectionApplication ? window.InfoCollectionApplication.getFiles() : Array.prototype.slice.call(hwFileInput.files || []);
-            var manualDeviceIds = typeof deviceIdChips !== 'undefined' ? deviceIdChips.get() : [];
+            var manualDeviceIds = ((document.getElementById('devIdNew') || {}).value || '')
+                .split(',').map(function(value) { return value.trim(); }).filter(Boolean);
             if (!submitHwFiles.length && !manualDeviceIds.length) {
                 hwUploadResult.textContent = '请上传硬件信息文件或输入设备ID';
                 hwUploadResult.className = 'hw-upload-result fail';
@@ -9901,7 +9951,8 @@
                 } }));
             }
         }
-        alert('表单已提交，ID: ' + mockId);
+        retainFormForNextDevice();
+        alert('表单已提交，ID: ' + mockId + '\n表单内容已保留，可继续为下一台设备发起申请。');
     }
 
     // 重置按钮：隐藏所有内联规格区，移除产品项选中状态
