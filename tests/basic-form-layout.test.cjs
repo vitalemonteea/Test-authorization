@@ -235,7 +235,7 @@ test('硬件授权应使用带状态反馈的粘性操作栏', () => {
   assert.equal(actionBar.querySelector('[role="status"]')?.getAttribute('aria-live'), 'polite');
   assert.deepEqual(
     Array.from(actionBar.querySelectorAll('button')).map((button) => button.textContent.trim()),
-    ['重置', '提交申请'],
+    ['重置', '提交并继续添加设备', '提交申请'],
     '次要操作应位于主要操作之前'
   );
   assertRuleProperty('.standard-action-bar', 'position', /^sticky$/, '操作栏应跟随滚动容器粘附');

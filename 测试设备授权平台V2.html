@@ -1655,7 +1655,7 @@
                     <input type="hidden" id="renewalType" name="renewalType" value="">
 
                     <div class="special-form-section basic-info-section">
-                        <div class="ic-section-head"><div class="section-title">基本信息</div><button type="button" class="ic-text-button" data-info-list="hardware">待补充申请 <span data-info-count="hardware">0</span></button></div>
+                        <div class="ic-section-head"><div class="section-title">基本信息</div></div>
 
                     <div id="section-basic">
                     <div class="basic-two-col-row product-version-row">
@@ -3112,7 +3112,8 @@
                         </div>
                         <div class="standard-action-buttons">
                             <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-                            <button type="button" class="layui-btn" id="standardSubmitButton" onclick="submitStandardForm()">提交申请</button>
+                            <button type="button" class="layui-btn layui-btn-primary" id="standardSubmitAndContinueButton" onclick="submitStandardForm({ mode: 'continue' })">提交并继续添加设备</button>
+                            <button type="button" class="layui-btn" id="standardSubmitButton" onclick="submitStandardForm({ mode: 'clear' })">提交申请</button>
                         </div>
                     </div>
                 </form>
@@ -3737,7 +3738,7 @@
                     <div class="solution-page">
                         <div class="solution-page-head">
                             <div><h1>解决方案型测试授权</h1></div>
-                            <div class="ic-heading-actions"><button type="button" class="ic-text-button" data-info-list="solution">待补充申请 <span data-info-count="solution">0</span></button><span class="solution-status draft" id="solutionApplicationStatus">草稿</span></div>
+                            <div class="ic-heading-actions"><span class="solution-status draft" id="solutionApplicationStatus">草稿</span></div>
                         </div>
                         <!-- 基本信息：复用产品授权的表单栅格 -->
                         <div class="special-form-section">
@@ -9783,8 +9784,30 @@
     }
     window.retainFormForNextDevice = retainFormForNextDevice;
 
+    // 提交成功后清空整个表单，适合发起新客户/新产品的申请
+    function clearFormAfterSubmit() {
+        var form = document.getElementById('formsn');
+        if (form) form.reset();
+        if (typeof window.resetApplicationFlow === 'function') window.resetApplicationFlow();
+        function applyResetStatus() {
+            var statusText = document.getElementById('standardActionStatusText');
+            var statusIcon = document.getElementById('standardActionStatusIcon');
+            var statusBar = document.getElementById('standardActionStatus');
+            if (statusText) statusText.textContent = '上一单已提交，表单已重置，可发起新的申请';
+            if (statusIcon) statusIcon.textContent = 'task_alt';
+            if (statusBar) { statusBar.classList.remove('has-conflict'); statusBar.classList.add('is-ready'); }
+        }
+        applyResetStatus();
+        // 表单 reset 事件会在下一个 tick 再次刷新状态，这里再覆盖一次
+        setTimeout(applyResetStatus, 0);
+        var search = document.getElementById('customerSearchInput');
+        if (search) { try { search.focus(); } catch (_) {} }
+    }
+    window.clearFormAfterSubmit = clearFormAfterSubmit;
+
     // 提交表单（模拟）
-    function submitStandardForm() {
+    function submitStandardForm(options) {
+        var continueForNext = !options || options.mode !== 'clear';
         var rules = window.AuthorizationApplicationRules || {};
         var state = window.applicationState || { deviceFacts: [] };
         var latestFacts = typeof window.getTrustedDeviceFacts === 'function' ?
@@ -9951,8 +9974,13 @@
                 } }));
             }
         }
-        retainFormForNextDevice();
-        alert('表单已提交，ID: ' + mockId + '\n表单内容已保留，可继续为下一台设备发起申请。');
+        if (continueForNext) {
+            retainFormForNextDevice();
+            alert('表单已提交，ID: ' + mockId + '\n表单内容已保留，可继续为下一台设备发起申请。');
+        } else {
+            clearFormAfterSubmit();
+            alert('表单已提交，ID: ' + mockId + '\n表单已重置，可发起新的申请。');
+        }
     }
 
     // 重置按钮：隐藏所有内联规格区，移除产品项选中状态

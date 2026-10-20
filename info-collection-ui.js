@@ -191,12 +191,19 @@
         if (badge) { badge.hidden = !actionable.length; badge.textContent = String(actionable.length); }
         if (!list) return;
         list.innerHTML = tasks.length ? tasks.map(function(task) {
-            var action = '';
-            if (task.status === 'received' && task.triggerMode === 'confirm') action = '<button type="button" class="primary" data-info-confirm="' + escape(task.token) + '">确认并发起</button>';
-            else action = '<button type="button" data-info-detail="' + escape(task.token) + '">查看</button>';
+            var actions = [];
+            if (task.status === 'waiting') {
+                actions.push('<button type="button" data-info-resume="' + escape(task.token) + '">继续填写</button>');
+                actions.push('<button type="button" data-info-detail="' + escape(task.token) + '">查看链接</button>');
+            } else if (task.status === 'received' && task.triggerMode === 'confirm') {
+                actions.push('<button type="button" class="primary" data-info-confirm="' + escape(task.token) + '">确认并发起</button>');
+                actions.push('<button type="button" data-info-detail="' + escape(task.token) + '">查看</button>');
+            } else {
+                actions.push('<button type="button" data-info-detail="' + escape(task.token) + '">查看</button>');
+            }
             return '<div class="header-todo-item"><strong>' + escape(task.context.customer) + ' · ' + escape(task.context.product) + '</strong>' +
                 '<p>' + taskLabel(task) + (task.email ? ' · ' + escape(task.email) : '') + '</p>' +
-                '<div class="header-todo-actions">' + action + '</div></div>';
+                '<div class="header-todo-actions">' + actions.join('') + '</div></div>';
         }).join('') : '<div class="header-todo-empty">暂无待办</div>';
     }
     function render() {

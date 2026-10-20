@@ -284,6 +284,43 @@ test('提交后保留公共表单并清空设备字段，支持继续申请下�
   }
 });
 
+test('提交申请（清空模式）提交后重置整个表单', async () => {
+  const { dom, document, window, alerts, errors } = loadV2Dom();
+  try {
+    const search = document.getElementById('customerSearchInput');
+    search.value = 'C100001';
+    search.dispatchEvent(new window.Event('input', { bubbles: true }));
+    document.querySelector('#customerDropdown [data-id="C100001"]').click();
+
+    document.getElementById('cloudVersion').value = '6.8.1';
+    document.getElementById('authScene').value = '1';
+    fireChange(document.getElementById('authScene'), window);
+    document.getElementById('unifiedDate').value = '2026-12-31';
+    document.getElementById('userEmail').value = 'customer@example.com';
+    document.querySelector('input[name="aDESKvm3d_cpu_limit"]').value = '32';
+    window.addChip('DEV-CLEAR-001');
+    window.submitStandardForm({ mode: 'clear' });
+
+    assert.match(alerts.at(-1), /表单已提交/);
+    assert.match(alerts.at(-1), /表单已重置/);
+    assert.equal(window.applicationState.customerId, '', '客户应清空');
+    assert.equal(document.getElementById('customerSearchInput').value, '');
+    assert.equal(document.getElementById('plname').value, '45', '应回到默认产品线');
+    assert.equal(document.getElementById('cloudVersion').value, '6.8.1_1', '版本应回到默认');
+    assert.equal(document.getElementById('unifiedDate').value, '', '授权日期应清空');
+    assert.equal(document.getElementById('userEmail').value, '', '邮箱应清空');
+    assert.equal(document.querySelector('input[name="aDESKvm3d_cpu_limit"]').value, '64', '模块参数应回到默认');
+    assert.equal(document.querySelectorAll('#chipContainer .chip-item').length, 0, '设备ID应清空');
+    assert.equal(window.applicationState.deviceFacts.length, 0, '设备事实应清空');
+    assert.equal(document.getElementById('submissionSnapshot').value, '', '提交快照应清空');
+    assert.match(document.getElementById('standardActionStatusText').textContent, /表单已重置/);
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    assert.deepEqual(errors, []);
+  } finally {
+    dom.window.close();
+  }
+});
+
 test('非强制硬件设备缺少借测字段时仍阻断提交', () => {
   const { dom, document, window, alerts } = loadV2Dom();
   try {
