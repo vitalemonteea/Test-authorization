@@ -368,7 +368,7 @@ test('客户中间页支持一次选择并提交多个 info 文件', async () =>
       await new Promise(resolve => setTimeout(resolve, 10));
     }
     assert.equal(document.querySelectorAll('#uploadFileList .upload-file-row').length, 2);
-    assert.match(document.getElementById('confirmInfoUpload').textContent, /2 个设备信息文件/);
+    assert.match(document.querySelector('.file-list-head').textContent, /已选择 2 个文件/);
     document.getElementById('confirmInfoUpload').click();
     await window.Vue.nextTick();
     const saved = page.store.get(task.token);

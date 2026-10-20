@@ -16,11 +16,10 @@
             <div class="brand"><img src="logo.jpg" alt="深信服" width="36" height="36"><strong>深信服<span>测试授权服务</span></strong></div>
             <span class="header-note"><upload-icon name="shield"></upload-icon>客户设备信息收集</span>
         </div></header>
-        <main id="uploadMain" class="upload-main" tabindex="-1" :class="{ 'is-terminal': view === 'result' }">
+        <main id="uploadMain" class="upload-main" tabindex="-1" :class="{ 'is-terminal': view === 'result', 'is-upload-form': view === 'form', 'has-files': view === 'form' && pendingFiles.length > 0 }">
             <div class="page-heading">
-                <div class="eyebrow">测试授权 · 设备信息</div>
-                <h1>{{ view === 'form' ? '上传设备信息，开启测试体验' : view === 'journey' ? '查看测试授权进度' : '设备信息上传' }}</h1>
-                <p>{{ view === 'form' ? '提供设备的 .info 文件，完成本次测试授权的设备信息收集。' : view === 'journey' ? '从设备信息提交到授权下载，在这里查看后续进展。' : '通过邀请链接提供设备信息，办理测试授权。' }}</p>
+                <h1>{{ view === 'form' ? '上传设备信息' : view === 'journey' ? '查看测试授权进度' : '设备信息上传' }}</h1>
+                <p>{{ view === 'form' ? '无需登录，选择设备的 .info 文件并提交即可。' : view === 'journey' ? '从设备信息提交到授权下载，在这里查看后续进展。' : '通过邀请链接提供设备信息，办理测试授权。' }}</p>
             </div>
             <div class="upload-layout" :class="{ 'without-context': !task }">
                 <aside v-if="task" class="context-panel" id="uploadContext" aria-label="本次邀请信息">
@@ -43,29 +42,27 @@
                 </aside>
                 <section class="action-panel" aria-label="设备信息上传与授权进度">
                     <div id="uploadForm" v-show="view === 'form'" :hidden="view !== 'form'">
-                        <div class="panel-heading"><div><h2>上传设备信息文件</h2><p>无需登录，也无需填写申请资料</p></div><el-tag type="info" effect="plain" round>免登录上传</el-tag></div>
-                        <el-steps id="uploadSteps" :active="ready ? 1 : 0" finish-status="success" simple class="upload-steps"><el-step title="选择文件"></el-step><el-step title="核对并提交"></el-step></el-steps>
-                        <el-upload ref="uploadControl" id="uploadDrop" class="device-upload" drag multiple accept=".info" :auto-upload="false" :show-file-list="false" :on-change="selectFile" :disabled="submitting">
+                        <div class="panel-heading"><div><h2>设备信息文件</h2></div><span class="file-requirements">.info 格式 · 单个不超过 2 MB</span></div>
+                        <el-upload ref="uploadControl" id="uploadDrop" class="device-upload" :class="{ 'is-compact': pendingFiles.length > 0 }" drag multiple accept=".info" :auto-upload="false" :show-file-list="false" :on-change="selectFile" :disabled="submitting">
                             <span class="upload-symbol"><upload-icon name="upload"></upload-icon><span class="file-extension">.info</span></span>
-                            <strong id="uploadDropTitle">{{ pendingFiles.length ? '继续添加设备文件' : '点击选择文件，或拖拽到这里' }}</strong>
-                            <span class="drop-caption">支持多个 .info 文件，单个不超过 2 MB</span>
-                            <span class="drop-link">{{ pendingFiles.length ? '添加文件' : '选择设备信息文件' }}<upload-icon name="arrow"></upload-icon></span>
+                            <strong id="uploadDropTitle">{{ pendingFiles.length ? '继续添加文件' : '点击选择文件，或拖拽到这里' }}</strong>
+                            <span class="drop-caption">{{ pendingFiles.length ? '支持多选与拖拽添加' : '支持一次选择多个设备信息文件' }}</span>
+                            <span v-if="!pendingFiles.length" class="drop-link">选择设备信息文件<upload-icon name="arrow"></upload-icon></span>
                         </el-upload>
-                        <div v-if="pendingFiles.length" class="file-list-head"><span>已选择 {{ pendingFiles.length }} 个文件</span><span>{{ ready ? '文件校验通过，请核对设备信息' : '请检查下方文件' }}</span></div>
-                        <div id="uploadFileList" class="upload-file-list" aria-live="polite">
+                        <div v-if="pendingFiles.length" class="file-list-head"><span>已选择 {{ pendingFiles.length }} 个文件</span><span :class="{ 'has-errors': errorCount > 0 }">{{ errorCount ? errorCount + ' 个文件需处理' : ready ? '全部校验通过' : '正在校验文件…' }}</span></div>
+                        <el-scrollbar id="uploadFileList" class="upload-file-list" max-height="var(--upload-list-max-height)" view-class="file-list-content" aria-live="polite" tabindex="0" aria-label="已选设备文件列表，可滚动查看">
                             <div v-for="entry in pendingFiles" :key="entry.key" class="upload-file-row" :class="{ 'is-invalid': entry.status === 'error' }">
                                 <span class="file-symbol"><upload-icon name="file"></upload-icon></span>
-                                <div class="upload-file-main"><div class="upload-file-name">{{ entry.name }}</div><div class="file-meta"><span>{{ formatSize(entry.size) }}</span><span v-if="entry.status === 'ready'" class="file-ready"><upload-icon name="check"></upload-icon>校验通过</span><span v-else-if="entry.status === 'loading'">正在检查文件…</span></div>
-                                    <div v-if="entry.summary" class="upload-file-summary"><span>产品 {{ entry.summary.product }}</span><span v-if="entry.summary.sn">SN {{ entry.summary.sn }}</span><span v-if="entry.summary.clusterId">集群 {{ entry.summary.clusterId }}</span></div>
+                                <div class="upload-file-main"><div class="upload-file-name">{{ entry.name }}</div><div class="file-meta"><span>{{ formatSize(entry.size) }}</span><span v-if="entry.summary">{{ entry.summary.product }}</span><span v-if="entry.summary && (entry.summary.sn || entry.summary.clusterId)" class="device-summary">{{ entry.summary.sn ? 'SN ' + entry.summary.sn : '集群 ' + entry.summary.clusterId }}</span><span v-if="entry.status === 'ready'" class="file-ready"><upload-icon name="check"></upload-icon>校验通过</span><span v-else-if="entry.status === 'loading'">正在检查文件…</span></div>
                                     <p v-if="entry.error" class="upload-file-error" role="alert">{{ entry.error }}</p>
                                 </div>
                                 <el-button text class="remove-file" :disabled="submitting" :aria-label="'移除文件 ' + entry.name" @click="removeFile(entry.key)"><upload-icon name="close"></upload-icon></el-button>
                             </div>
-                        </div>
+                        </el-scrollbar>
                         <el-collapse v-model="helpOpen" class="help-collapse mobile-help"><el-collapse-item name="export"><template #title><span class="help-title"><upload-icon name="help"></upload-icon>如何获取 .info 文件？</span></template><ol class="export-guide"><li>登录测试设备的管理控制台。</li><li>在设备信息或授权信息页面，导出设备信息文件。</li><li>保留 .info 格式，回到本页上传。</li></ol><p class="help-note">多台设备或多个集群，请分别导出。找不到导出入口时，可联系邀请人协助。</p></el-collapse-item></el-collapse>
                         <el-alert v-if="errorMessage" id="uploadError" :title="errorMessage" type="error" :closable="false" show-icon class="upload-error"></el-alert>
-                        <div class="submit-area"><el-button id="confirmInfoUpload" type="primary" size="large" :disabled="!ready" :loading="submitting" @click="submitFiles">{{ pendingFiles.length > 1 ? '确认提交 ' + pendingFiles.length + ' 个设备信息文件' : '确认提交设备信息' }}<upload-icon name="arrow"></upload-icon></el-button><p class="submit-hint">{{ task && task.triggerMode === 'auto' ? '提交并校验通过后，系统将直接发起授权申请。' : '提交后，邀请人将继续为你办理授权申请。' }}</p></div>
-                        <div class="purpose-note"><upload-icon name="shield"></upload-icon><p>设备信息用于识别本次授权对象。授权生成后，可回到此链接下载授权文件，文件也将发送至申请时登记的邮箱。</p></div>
+                        <el-affix ref="submitAffix" position="bottom" :offset="0" :z-index="20" class="submit-affix"><div class="submit-area"><div class="submit-copy"><strong>{{ errorCount ? '请移除或重新选择异常文件' : ready ? '已就绪，共 ' + pendingFiles.length + ' 个文件' : '请先选择设备信息文件' }}</strong><p class="submit-hint">{{ task && task.triggerMode === 'auto' ? '提交后自动发起授权申请' : '提交后由邀请人继续办理授权' }}</p></div><el-button id="confirmInfoUpload" type="primary" size="large" :disabled="!ready" :loading="submitting" @click="submitFiles">确认提交<upload-icon name="arrow"></upload-icon></el-button></div></el-affix>
+                        <div class="purpose-note"><upload-icon name="shield"></upload-icon><p>文件用于识别授权设备；授权生成后，可通过本链接查看进度并下载。</p></div>
                     </div>
                     <div id="uploadJourney" v-show="view === 'journey'" :hidden="view !== 'journey'" tabindex="-1" aria-live="polite">
                         <template v-if="view === 'journey'">

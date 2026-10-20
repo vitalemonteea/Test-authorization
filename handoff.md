@@ -256,7 +256,8 @@ git diff --check
 - 保留原有能力：多文件选择/拖拽、逐文件校验、进度时间线、催办、授权文件下载；新增邀请信息侧栏、步骤条与 Element Plus 组件交互。
 - `scripts/build-static.cjs`：构建产物加入 `info-upload.css`。
 - `tests/info-collection.test.cjs`：加载本地 Vue/Element Plus 运行时，并适配异步渲染。
-- 验证：`npm test` 233/233 通过；`npm run build` 成功；浏览器实测 2 个文件上传、校验与提交正常。
+- 后续微调：简化页头文案，文件列表头部统一为“已选择 N 个文件”，补充上传表单布局与响应式样式。
+- 验证：`npm test` 234/234 通过；`npm run build` 成功；浏览器实测 2 个文件上传、校验与提交正常。
 
 ### 2026-10-20 产品授权提交后保留公共表单，支持连续申请多台设备
 

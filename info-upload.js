@@ -36,10 +36,15 @@
     var app = Vue.createApp({
         setup: function() {
             var task = Vue.ref(null), pendingFiles = Vue.ref([]), submitting = Vue.ref(false);
-            var errorMessage = Vue.ref(''), helpOpen = Vue.ref([]), uploadControl = Vue.ref(null);
+            var errorMessage = Vue.ref(''), helpOpen = Vue.ref([]), uploadControl = Vue.ref(null), submitAffix = Vue.ref(null);
             var view = Vue.ref('result'), terminalTitle = Vue.ref(''), terminalMessage = Vue.ref('');
             var store, token = readToken(), version = 0;
             var ready = Vue.computed(function() { return pendingFiles.value.length > 0 && pendingFiles.value.every(function(entry) { return entry.status === 'ready'; }); });
+            var errorCount = Vue.computed(function() { return pendingFiles.value.filter(function(entry) { return entry.status === 'error'; }).length; });
+            // Adding files moves the affix without resizing it; refresh its measured position after the list updates.
+            Vue.watch([function() { return pendingFiles.value.length; }, ready, errorCount, helpOpen, errorMessage, view], function() {
+                if (view.value === 'form' && submitAffix.value) submitAffix.value.updateRoot();
+            }, { flush:'post', deep:true });
             function terminal(title, message) {
                 view.value = 'result'; terminalTitle.value = title; terminalMessage.value = message;
                 pendingFiles.value = []; version++;
@@ -178,8 +183,8 @@
             });
             try { store = window.InfoCollection.createStore(localStorage); refresh(); }
             catch (_) { terminal('暂时无法打开上传页面', '请稍后重试，或联系邀请人。'); }
-            return { task:task, pendingFiles:pendingFiles, submitting:submitting, errorMessage:errorMessage, helpOpen:helpOpen, uploadControl:uploadControl,
-                view:view, terminalTitle:terminalTitle, terminalMessage:terminalMessage, ready:ready, selectFile:selectFile, removeFile:removeFile, submitFiles:submitFiles,
+            return { task:task, pendingFiles:pendingFiles, submitting:submitting, errorMessage:errorMessage, helpOpen:helpOpen, uploadControl:uploadControl, submitAffix:submitAffix,
+                view:view, terminalTitle:terminalTitle, terminalMessage:terminalMessage, ready:ready, errorCount:errorCount, selectFile:selectFile, removeFile:removeFile, submitFiles:submitFiles,
                 remindedAt:remindedAt, remind:remind, journeyTitle:journeyTitle, journeyDescription:journeyDescription, journeySteps:journeySteps, journeyNote:journeyNote,
                 expiryText:expiryText, downloadLicense:downloadLicense, formatDate:formatDate, formatSize:formatSize, focusMain:focusMain };
         }
