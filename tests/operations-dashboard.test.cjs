@@ -93,7 +93,7 @@ test('dashboard omits unsolicited dimension filters and retains date controls an
 });
 test('compact header omits duplicate navigation and removed historical archive',t=>{
   const {dom,w,d,range,text,errors}=load();t.after(()=>dom.window.close());
-  assert.deepEqual(Array.from(d.querySelectorAll('.page-head button'),b=>b.textContent),['指标口径','导出当前数据']);
+  assert.equal(d.querySelectorAll('.page-head button').length,0);
   assert.equal(d.querySelector('.page-head .eyebrow,.page-head p,#open-records,#snapshot-toggle,[data-source]'),null);
   assert.equal(d.querySelector('.page-head h1').firstChild.textContent.trim(),'运营看板');assert.equal(d.getElementById('source-note').hidden,true);
   assert.equal(d.querySelector('#historical-reference, #historical-reference-body'),null);
@@ -120,18 +120,13 @@ test('entry telemetry is scoped and does not create unsupported pass, generation
 });
 test('remaining plan sections show formulas and missing evidence without invented device or node rules',t=>{
   const {dom,d,text,errors}=load();t.after(()=>dom.window.close());
-  assert.equal(d.querySelectorAll('#business-metrics .metric-value').length,2);assert.ok(Array.from(d.querySelectorAll('#business-metrics .metric-value')).every(el=>el.textContent==='—'));
-  assert.ok(text('business-metrics').includes('已测试时长＋本次申请时长'));
   assert.equal(d.querySelector('#ops-journey, #ops-approval-nodes, #ops-submit-failures'),null);
   assert.equal(d.querySelector('#data-readiness, #ops-readiness'),null);
-  d.querySelector('[data-metric="abnormalDevices"]').click();assert.ok(text('ops-dialog-body').includes('不自行把激活失败、超期或多次申请定义为异常设备'));
   assert.deepEqual(errors,[]);
 });
-test('tabs and metric dialogs work by keyboard and retain current real source evidence',async t=>{
-  const {dom,w,d,text,errors}=load();t.after(()=>dom.window.close());
+test('tabs work by keyboard and retain current real source evidence',async t=>{
+  const {dom,w,d,errors}=load();t.after(()=>dom.window.close());
   const first=d.getElementById('tab-overview');first.focus();first.dispatchEvent(new w.KeyboardEvent('keydown',{key:'ArrowRight',code:'ArrowRight',bubbles:true}));await w.Vue.nextTick();await w.Vue.nextTick();assert.equal(d.getElementById('panel-quality').hidden,false);
-  d.querySelector('[data-metric="platform"]').click();assert.ok(d.getElementById('ops-dialog').open);assert.ok(text('ops-dialog-body').includes('2498'));assert.ok(!text('ops-dialog-body').includes('374'));
-  d.getElementById('ops-dialog-done').click();d.getElementById('definitions').click();assert.ok(text('ops-dialog-body').includes('负责人'));assert.ok(text('ops-dialog-body').includes('统计对象按设备还是按申请'));
   assert.deepEqual(errors,[]);
 });
 test('event tab uses Element tables, scopes aggregates and leaves individual logs unfilled',async t=>{
@@ -155,26 +150,7 @@ test('event tab uses Element tables, scopes aggregates and leaves individual log
   assert.ok(text('ops-event-summary').includes('当前区间事件汇总待接入'));assert.ok(!text('ops-event-summary').includes('9,120'));
   assert.equal(w.OperationsDashboard.context().platform,1141);assert.equal(d.getElementById('panel-events').hidden,false);
   range('2026-09-08','2026-10-11');await w.Vue.nextTick();assert.ok(text('ops-event-summary').includes('9,120'));
-  let blob;w.URL.createObjectURL=b=>{blob=b;return 'blob:test';};w.URL.revokeObjectURL=()=>{};w.HTMLAnchorElement.prototype.click=function(){};
-  d.getElementById('export-ops').click();
-  const csv=await new Promise((resolve,reject)=>{const reader=new w.FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsText(blob);});
-  assert.ok(csv.includes('点击提交'));assert.ok(csv.includes('9120'));assert.ok(csv.includes('逐条日志待接入'));
-  assert.ok(!/旅程标识|执行结果/.test(csv));assert.ok(csv.includes('事件ID')&&csv.includes('submit_click'));
-  assert.ok(csv.includes('"时间","事件","场景","申请单号","用户","产品线","入口","失败节点","失败原因"'));
-  assert.ok(!/7366|3359|CSSQ202610150100066/.test(csv));
   assert.deepEqual(errors,[]);
-});
-test('CSV honors query and grain and always excludes the historical reference',async t=>{
-  const {dom,w,d,range}=load();t.after(()=>dom.window.close());let blob;
-  w.URL.createObjectURL=b=>{blob=b;return 'blob:test';};w.URL.revokeObjectURL=()=>{};w.HTMLAnchorElement.prototype.click=function(){};
-  const read=()=>new Promise((resolve,reject)=>{const r=new w.FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsText(blob);});
-  d.getElementById('export-ops').click();let csv=await read();
-  assert.ok(csv.includes('"平台申请量","7366"'));assert.ok(csv.includes('"09.21—09.27","1585","业务真实汇总"'));assert.ok(csv.includes('"授权类别","申请量"'));assert.ok(csv.includes('"填单完成率",""'));
-  assert.ok(!/企微|跨渠道|估算拆分|CSSQ202610150100066|上一等长区间|对照区间/.test(csv));
-  d.querySelector('[data-grain="day"]').click();d.getElementById('export-ops').click();csv=await read();assert.ok(csv.includes('"趋势粒度","日"'));assert.ok(csv.includes('"09.08—09.08","","数据待补充"'));
-  d.getElementById('export-ops').click();csv=await read();assert.ok(!/7212|3081|CSSQ202610150100066/.test(csv));
-  assert.ok(csv.includes('7366'));assert.ok(csv.includes('9120'));assert.ok(!csv.includes('维度筛选'));
-  range('2026-10-05','2026-10-11');d.getElementById('export-ops').click();csv=await read();assert.ok(csv.includes('"平台申请量","1141"'));assert.ok(!/16.6小时|3610|9120/.test(csv));
 });
 test('quick ranges use Shanghai calendar and cross year and leap day',t=>{
   for(const [now,days,start,end] of [['2026-10-14T17:00:00Z','7','2026-10-09','2026-10-15'],['2026-01-02T17:00:00Z','30','2025-12-05','2026-01-03'],['2024-02-29T17:00:00Z','7','2024-02-24','2024-03-01'],['2026-10-15T04:00:00Z','90','2026-07-18','2026-10-15']]){
@@ -214,7 +190,7 @@ test('mock cohorts, event logs and date grains reconcile without using confirmed
   assert.deepEqual(mock.aggregate(s,e),c);
 });
 
-test('mock dashboard populates all tabs and dates, event pagination and CSV stay linked',async t=>{
+test('mock dashboard populates all tabs and dates, event pagination stays linked',async t=>{
   const {dom,w,d,range,text,errors}=load({mock:true,now:'2026-10-16T04:00:00Z'});t.after(()=>dom.window.close());
   const flush=async()=>{await w.Vue.nextTick();await w.Vue.nextTick();};await flush();
   assert.equal(d.getElementById('mock-badge').hidden,false);assert.ok(w.ConfirmedOperationsModel);
@@ -243,11 +219,6 @@ test('mock dashboard populates all tabs and dates, event pagination and CSV stay
   d.querySelector('#ops-events .el-pagination .btn-next').click();await flush();assert.notEqual(rows()[0].textContent,first);
   range('2026-10-12','2026-10-12');await flush();assert.ok(rows().every(row=>row.textContent.includes('2026-10-12')));
   assert.equal(d.querySelector('#ops-events .el-pager .is-active').textContent.trim(),'1');
-  const expected=w.OperationsModel.eventLogs('2026-10-12','2026-10-12');
-  let blob;w.URL.createObjectURL=b=>{blob=b;return 'blob:mock';};w.URL.revokeObjectURL=()=>{};w.HTMLAnchorElement.prototype.click=function(){};
-  d.getElementById('export-ops').click();const csv=await new Promise(resolve=>{const reader=new w.FileReader();reader.onload=()=>resolve(reader.result);reader.readAsText(blob);});
-  assert.ok(csv.includes('模拟数据（非生产统计）'));assert.ok(csv.includes('MOCK'));assert.ok(!csv.includes('逐条日志待接入'));
-  assert.equal(csv.split('\r\n').filter(line=>line.startsWith('"2026-10-12 ')).length,expected.length);
   d.getElementById('tab-overview').click();await flush();assert.equal(w.OperationsDashboard.context().platform,w.OperationsModel.sum('2026-10-12','2026-10-12'));
   assert.equal(d.querySelector('#ops-observations, footer, #data-readiness, #ops-comparison'),null);
   assert.deepEqual(errors,[]);
