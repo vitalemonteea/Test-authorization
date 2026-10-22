@@ -19,7 +19,6 @@
   <main id="ops-main" class="ops-shell">
     <header class="page-head compact-head">
       <h1>运营看板 <span class="tag" id="mock-badge" hidden>模拟数据</span></h1>
-      <div class="head-actions"><button class="button" id="definitions">指标口径</button><button class="button" id="export-ops">导出当前数据</button></div>
     </header>
 
     <div class="filter-bar">
@@ -42,19 +41,18 @@
     <div id="ops-tabs" class="operations-tabs"></div>
 
     <section id="panel-overview">
-      <div class="section-head"><div><h2>平台申请规模与办理效率</h2><p>观察申请数量、填单体验和授权耗时。</p></div><span class="muted" id="overview-scope"></span></div>
+      <div class="section-head"><div><h2>平台申请规模与办理效率</h2></div><span class="muted" id="overview-scope"></span></div>
       <div id="outcome-row" class="outcome-row"></div>
-      <div class="section-head compact"><h2>申请体验与授权质量</h2><span class="muted">点击卡片查看计算口径和已有数据</span></div>
+      <div class="section-head compact"><h2>申请体验与授权质量</h2></div>
       <div class="metric-grid four" id="overview-process"></div>
       <div class="chart-grid">
         <article class="panel"><div class="panel-head"><div><h3 id="trend-heading">平台申请趋势</h3><p id="trend-caption">按真实业务周表观察变化</p></div></div><div class="trend-controls"><label>观察指标<select id="trend-metric"><option value="count">平台申请量</option><option value="activated">激活成功量</option><option value="activationFailed">激活失败量</option><option value="needsApproval">需审批量</option><option value="rejected">审批拒绝量</option></select></label><div class="quick-ranges" role="group" aria-label="趋势统计粒度"><button type="button" data-grain="day" aria-pressed="false">日</button><button type="button" data-grain="week" aria-pressed="true">周</button><button type="button" data-grain="month" aria-pressed="false">月</button></div></div><div id="ops-trend"></div><p class="footnote" id="trend-note"></p></article>
         <article class="panel"><div class="panel-head"><div><h3>授权类别分布</h3><p>产品授权与 XaaS 为申请类别，非产品线</p></div></div><div id="ops-categories"></div><div class="panel-subhead"><h3>平台申请产线分布</h3></div><div id="ops-products"></div><div class="panel-subhead"><h3>申请场景分布</h3></div><div id="ops-authscenes"></div></article>
       </div>
-      <article class="panel business-panel"><div class="panel-head"><div><h3>业务指标</h3><p>产品测试平均时长、异常设备比例；与办理耗时分别观察</p></div></div><div class="metric-grid two" id="business-metrics"></div></article>
     </section>
 
     <section id="panel-quality" hidden>
-      <div class="section-head"><div><h2>申请与授权链路</h2><p>从申请、审批到授权与激活的全旅程。</p></div></div>
+      <div class="section-head"><div><h2>申请与授权链路</h2></div></div>
       <div class="section-head compact"><h2>一、申请体验与审批</h2></div>
       <div class="metric-grid four" id="quality-metrics"></div>
       <div class="chart-grid equal">
@@ -70,11 +68,10 @@
     </section>
 
     <section id="panel-events" hidden>
-      <div class="section-head"><div><h2>埋点事件</h2><p>汇总查看事件发生情况，日志逐条追溯具体过程。</p></div></div>
+      <div class="section-head"><div><h2>埋点事件</h2></div></div>
       <div id="ops-events"></div>
     </section>
   </main>
-  <dialog id="ops-dialog" aria-labelledby="ops-dialog-title"><div class="dialog-head"><h2 id="ops-dialog-title"></h2><button class="icon-button" id="ops-dialog-close" aria-label="关闭详情">×</button></div><div id="ops-dialog-body"></div><div class="dialog-foot"><button class="button primary" id="ops-dialog-done">知道了</button></div></dialog>
   <div id="ops-toast" role="status" aria-live="polite"></div>
 </body>
 </html>

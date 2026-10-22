@@ -11,6 +11,13 @@ function click(document, window, id) {
   return element;
 }
 
+function uploadHciInfo(document, window) {
+  const input = document.querySelector('#solutionProductPanel input[data-solution-param="infoFile"]');
+  assert.ok(input, 'HCI 参数区应提供硬件信息文件输入');
+  Object.defineProperty(input, 'files', { value: [new window.File(['productLine=HCI'], 'HCI-INFO.info')], configurable: true });
+  input.dispatchEvent(new window.Event('change', { bubbles: true }));
+}
+
 function openSolutionTab(document) {
   document.querySelector('#navBar li[data-tab="solution"]').click();
 }
@@ -366,6 +373,7 @@ test('区域字段规范：借测单/本地申请自动带入、下拉选择修�
     // 选择新区域（如 广东省/广东区）并重新提交
     borrowRegion.value = '广东省';
     borrowRegion.dispatchEvent(new window.Event('change', { bubbles: true }));
+    uploadHciInfo(document, window);
     click(document, window, 'solutionSubmitWhole');
     assert.equal(submitError.hidden, true, '填写真确区域后提交成功');
 

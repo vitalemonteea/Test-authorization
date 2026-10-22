@@ -1145,10 +1145,15 @@
         .record-workflow-file-remove{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;padding:0;color:#6b7890;background:transparent;border:0;border-radius:5px;cursor:pointer}
         .record-workflow-file-remove:hover{color:#b42318;background:#fff0ee}
         .record-workflow-file-remove .material-symbols-outlined{font-size:17px}
-        .record-decision-group{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:14px}
-        .record-decision-option{display:flex;align-items:center;gap:8px;min-height:42px;padding:0 12px;color:#0b1c30;background:#fff;border:1px solid #c8d1e0;border-radius:6px;font-size:13px;cursor:pointer}
-        .record-decision-option:has(input:checked){color:#003f9e;background:#eef4ff;border-color:#0050cb}
-        .record-decision-option input{width:16px;height:16px;margin:0;accent-color:#0050cb}
+        .record-decision-actions{display:flex;align-items:center;gap:12px;margin-top:18px;margin-bottom:0;width:100%}
+        .record-decision-transfer{display:inline-flex;flex:0 0 56px;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-width:56px;height:42px;padding:0 8px;color:#424656;background:#fff;border:1px solid #d5ddea;border-radius:6px;font-size:11px;line-height:1.1;cursor:pointer}
+        .record-decision-transfer .material-symbols-outlined{font-size:18px;color:#0050cb}
+        .record-decision-transfer:hover{background:#f2f6ff;border-color:#a5b6d2}
+        .record-decision-reject{flex:1 1 0;min-width:96px;height:40px;padding:0 20px;color:#d92d20;background:#fff;border:1px solid #f0b8b3;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer}
+        .record-decision-reject:hover{color:#b42318;background:#fff5f4;border-color:#d92d20}
+        .record-decision-approve{flex:1.4 1 0;min-width:140px;height:40px;padding:0 24px;color:#fff;background:#0050cb;border:1px solid #0050cb;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer}
+        .record-decision-approve:hover{background:#003f9e;border-color:#003f9e}
+        @media (min-width:601px){#recordDrawerLayer[data-record-workflow-action="approve"] #recordDrawerPrimary{display:none}}
         .record-confirm-layer{position:fixed;inset:0;z-index:5400;display:flex;align-items:center;justify-content:center;padding:16px}
         .record-confirm-layer[hidden]{display:none}
         .record-confirm-backdrop{position:absolute;inset:0;background:rgba(11,28,48,.38)}
@@ -1166,7 +1171,7 @@
         .record-action-toast .material-symbols-outlined{color:#12a474;font-size:19px}
         .record-action-control:focus-visible{outline:2px solid rgba(0,80,203,.45);outline-offset:2px}
         @media (max-width:600px){.record-drawer{width:100%}.record-detail-grid,.record-copy-options,.record-xaas-subscription-meta{grid-template-columns:1fr}.record-detail-item{grid-template-columns:90px minmax(0,1fr)}.record-product-change-head,.record-product-change-row{grid-template-columns:72px minmax(0,1fr) minmax(0,1fr);gap:8px}.record-drawer-header,.record-drawer-body,.record-drawer-footer{padding-left:16px;padding-right:16px}.record-drawer-summary{margin-left:-16px;margin-right:-16px;padding-left:16px;padding-right:16px}
-            #recordDrawerLayer[data-record-workflow-action="approve"] .record-drawer-footer{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding-top:10px;padding-bottom:calc(10px + env(safe-area-inset-bottom))}
+            #recordDrawerLayer[data-record-workflow-action="approve"] .record-drawer-footer{display:grid;grid-template-columns:auto minmax(0,1fr) minmax(0,1fr);gap:8px;padding-top:10px;padding-bottom:calc(10px + env(safe-area-inset-bottom))}
             #recordDrawerLayer[data-record-workflow-action="approve"] .record-mobile-approval-composer{display:block;grid-column:1 / -1}
             .record-mobile-approval-input-wrap{display:flex;align-items:center;gap:6px;min-height:44px;padding:0 8px 0 11px;background:#f5f7fa;border:1px solid #e2e8f0;border-radius:6px}
             .record-mobile-approval-input-wrap:focus-within{background:#fff;border-color:#0050cb;box-shadow:0 0 0 2px rgba(0,80,203,.12)}
@@ -1177,6 +1182,8 @@
             .record-mobile-approval-attachment .material-symbols-outlined{font-size:20px}
             .record-mobile-attachment-status{margin:5px 2px 0;color:#6b7890;font-size:11px;line-height:16px}
             #recordDrawerLayer[data-record-workflow-action="approve"] #recordDrawerSecondary{display:none}
+            #recordDrawerLayer[data-record-workflow-action="approve"] #recordDrawerTransfer{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-width:52px;padding:0 7px;font-size:11px;line-height:1.1}
+            #recordDrawerLayer[data-record-workflow-action="approve"] #recordDrawerTransfer .material-symbols-outlined{font-size:17px}
             #recordDrawerLayer[data-record-workflow-action="approve"] #recordDrawerReject{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-width:0;color:#d92d20;background:#fff;border-color:#f0b8b3}
             #recordDrawerLayer[data-record-workflow-action="approve"] #recordDrawerReject:hover{color:#b42318;background:#fff5f4;border-color:#d92d20}
             #recordDrawerLayer[data-record-workflow-action="approve"] #recordDrawerPrimary{min-width:0;display:inline-flex;align-items:center;justify-content:center;gap:5px}
@@ -1297,6 +1304,7 @@
         .solution-file-input .solution-file-btn .material-symbols-outlined { font-size: 17px; line-height: 1; display: inline-flex; align-items: center; max-width: 20px; overflow: hidden; flex-shrink: 0; }
         .solution-file-name { flex: 1 1 auto; min-width: 0; overflow: hidden; color: #536177; font-size: 13px; text-overflow: ellipsis; white-space: nowrap; padding: 6px 10px; background: #f7f9fc; border-radius: 6px; }
         .solution-file-name.empty { color: #9aa6b5; background: transparent; }
+        .solution-device-block .solution-file-name.empty { font-size: 12px; }
         .solution-file-input input[type=file] { display: none; }
         .solution-workspace-inner { display: grid; grid-template-columns: 180px minmax(0, 1fr); max-width: 860px; margin: 0 auto; overflow: hidden; border: 1px solid #e5eeff; border-radius: 8px; background: #fff; }
         .solution-product-nav { padding: 10px; border-right: 1px solid #e5eeff; background: #fafbff; }
@@ -1867,23 +1875,21 @@
                         </div>
                     </div>
 
-                    <!-- HCI/SCP 通过硬件信息文件识别设备与授权信息 -->
+                    <!-- HCI/SCP 通过硬件信息文件识别设备与授权信息；非必填，提交时缺文件会引导发送链接给客户 -->
                     <div class="layui-form-item basic-full" id="hwInfoSection" style="align-items: center;">
-                        <label class="layui-form-label">硬件信息文件<span class="required-mark">*</span></label>
+                        <label class="layui-form-label">硬件信息文件</label>
                         <div class="layui-input-block">
                             <div class="hw-upload-area">
                                 <input type="file" id="hwFileInput" accept=".info" multiple>
                                 <div class="hw-file-info" id="hwFileInfo">
-                                    <span class="hw-file-name empty" id="hwFileName">未选择文件（支持 .info 格式，可多选）</span>
+                                    <span class="hw-file-name empty" id="hwFileName">未选文件；可先填其他信息，再发链接由外部上传（多选 .info）</span>
                                     <span class="hw-file-meta" id="hwFileMeta"></span>
                                     <span class="hw-file-clear" id="hwFileClear" title="删除全部文件">&times;</span>
                                 </div>
                                 <div class="hw-file-list" id="hwFileList"></div>
                                 <label class="hw-upload-btn" for="hwFileInput"><span class="upload-icon">&#8679;</span> 上传文件</label>
-                                <button type="button" class="ic-button ic-button-secondary" data-info-invite="hardware"><span class="material-symbols-outlined" aria-hidden="true">link</span>邀请客户上传</button>
                                 <div class="hw-upload-result" id="hwUploadResult"></div>
                             </div>
-                            <p class="ic-upload-help">文件在客户手中？发送上传链接，由客户直接提供。</p>
                             <div data-info-status="hardware" class="ic-inline-status" hidden aria-live="polite"></div>
                         </div>
                     </div>
@@ -2280,7 +2286,7 @@
                     <div class="layui-form-item basic-full">
                         <label class="layui-form-label">接收邮箱</label>
                         <div class="layui-input-block">
-                            <input type="text" id="userEmail" name="userEmail" placeholder="请输入接收邮箱，建议优先填写客户邮箱" class="layui-input" title="用于接收授权结果及相关文件">
+                            <input type="text" id="userEmail" name="userEmail" placeholder="请输入接收邮箱，建议优先填写接收人邮箱" class="layui-input" title="用于接收授权结果及相关文件">
                         </div>
                     </div>
 
@@ -4182,7 +4188,7 @@
                                         </span>
                                     </label>
                                     <div class="solution-form-control">
-                                        <input class="solution-input" id="solutionEmail" placeholder="请输入接收邮箱，建议优先填写客户邮箱" title="用于接收授权结果及相关文件">
+                                        <input class="solution-input" id="solutionEmail" placeholder="请输入接收邮箱，建议优先填写接收人邮箱" title="用于接收授权结果及相关文件">
                                     </div>
                                 </div>
                             </div>
@@ -5406,6 +5412,7 @@
                     <div class="record-mobile-attachment-status" id="recordMobileAttachmentStatus" hidden></div>
                 </div>
                 <button type="button" class="record-drawer-button" id="recordDrawerSecondary" data-record-drawer-close>关闭</button>
+                <button type="button" class="record-drawer-button" id="recordDrawerTransfer" hidden><span class="material-symbols-outlined" aria-hidden="true">swap_horiz</span>转签</button>
                 <button type="button" class="record-drawer-button" id="recordDrawerReject" hidden><span class="material-symbols-outlined" aria-hidden="true">close</span>驳回</button>
                 <button type="button" class="record-drawer-button primary" id="recordDrawerPrimary" hidden></button>
             </footer>
@@ -6861,7 +6868,7 @@
 
         function renderHwFileList() {
             if (!hwFiles.length) {
-                hwFileName.textContent = '未选择文件（支持 .info 格式，可多选）';
+                hwFileName.textContent = '未选文件；可先填其他信息，再发链接由外部上传（多选 .info）';
                 hwFileName.className = 'hw-file-name empty';
                 hwFileMeta.textContent = '';
                 hwFileInfo.classList.remove('has-file');
@@ -6873,7 +6880,7 @@
             hwFileMeta.textContent = formatFileSize(hwFiles.reduce(function(total, f) { return total + f.size; }, 0));
             hwFileInfo.classList.add('has-file');
             hwFileList.innerHTML = hwFiles.map(function(f) {
-                return '<div class="hw-file-info has-file"><span class="hw-file-name">' + escapeHtml(f.name) + (f.collectionToken ? '<span class="hw-file-source">客户提供</span>' : '') + '</span><span class="hw-file-meta">' + formatFileSize(f.size) + '</span><span class="hw-file-clear" data-hw-remove="' + escapeHtml(hwFileKeyOf(f)) + '" title="删除文件">&times;</span></div>';
+                return '<div class="hw-file-info has-file"><span class="hw-file-name">' + escapeHtml(f.name) + (f.collectionToken ? '<span class="hw-file-source">外部提供</span>' : '') + '</span><span class="hw-file-meta">' + formatFileSize(f.size) + '</span><span class="hw-file-clear" data-hw-remove="' + escapeHtml(hwFileKeyOf(f)) + '" title="删除文件">&times;</span></div>';
             }).join('');
         }
 
@@ -9052,7 +9059,7 @@
                     return { name: file.name, size: file.size, summary: file.summary || {}, collectionToken: token };
                 });
                 renderHwFileList();
-                hwUploadResult.textContent = '客户已提供 ' + files.length + ' 个文件';
+                hwUploadResult.textContent = '外部已提供 ' + files.length + ' 个文件';
                 hwUploadResult.className = 'hw-upload-result pass';
                 rebuildHwFacts();
                 syncDeviceIdChipsFromFacts();
@@ -9805,6 +9812,56 @@
     }
     window.clearFormAfterSubmit = clearFormAfterSubmit;
 
+    // ===== 提交前引导：缺少设备信息时告诉申请人接下来怎么做 =====
+    function showDeviceInfoGuide(kind) {
+        var overlay = document.getElementById('deviceInfoGuideOverlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.className = 'ic-overlay';
+            overlay.id = 'deviceInfoGuideOverlay';
+            overlay.hidden = true;
+            overlay.innerHTML = '<div class="ic-dialog" role="dialog" aria-modal="true" aria-labelledby="deviceInfoGuideTitle">' +
+                '<div class="ic-dialog-head"><div><p class="ic-eyebrow">提交前检查</p><h2 id="deviceInfoGuideTitle">还缺少设备信息</h2></div>' +
+                '<button type="button" class="ic-close" data-device-guide-close aria-label="关闭">&times;</button></div>' +
+                '<p class="ic-dialog-intro">生成授权需要设备的硬件信息文件（.info）。你可以自己上传；如果文件不在你手里，先把上传链接发出去——已填写的申请会保留，外部上传后到「我的待办」确认即可，不用现在等着。</p>' +
+                '<div class="ic-dialog-actions">' +
+                    '<button type="button" class="ic-button ic-button-quiet" data-device-guide-close>继续填写</button>' +
+                    '<button type="button" class="ic-button ic-button-secondary" data-device-guide-upload><span class="material-symbols-outlined" aria-hidden="true">upload_file</span>我自己上传</button>' +
+                    '<button type="button" class="ic-button" data-device-guide-invite><span class="material-symbols-outlined" aria-hidden="true">mail</span>发送链接让外部上传</button>' +
+                '</div>' +
+            '</div>';
+            document.body.appendChild(overlay);
+            overlay.addEventListener('click', function(event) {
+                var target = event.target;
+                if (!target || !target.closest) return;
+                if (target === overlay || target.closest('[data-device-guide-close]')) { overlay.hidden = true; return; }
+                var guideKind = overlay.dataset.kind || 'hardware';
+                if (target.closest('[data-device-guide-invite]')) {
+                    overlay.hidden = true;
+                    if (window.InfoCollectionUI && typeof window.InfoCollectionUI.invite === 'function') window.InfoCollectionUI.invite(guideKind);
+                    return;
+                }
+                if (target.closest('[data-device-guide-upload]')) {
+                    overlay.hidden = true;
+                    if (guideKind === 'solution') {
+                        if (application.activeLine !== 'HCI') { application.activeLine = 'HCI'; renderProductWorkspace(); }
+                        var block = document.querySelector('#solutionProductPanel [data-solution-device-block]');
+                        if (block && block.scrollIntoView) { try { block.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (_) { block.scrollIntoView(); } }
+                        var solutionInput = document.querySelector('#solutionProductPanel input[data-solution-param="infoFile"]');
+                        if (solutionInput) { try { solutionInput.click(); } catch (_) {} }
+                    } else {
+                        var section = document.getElementById('hwInfoSection');
+                        if (section && section.scrollIntoView) { try { section.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (_) { section.scrollIntoView(); } }
+                        var hwInput = document.getElementById('hwFileInput');
+                        if (hwInput) { try { hwInput.click(); } catch (_) {} }
+                    }
+                }
+            });
+        }
+        overlay.dataset.kind = kind;
+        overlay.hidden = false;
+    }
+
     // 提交表单（模拟）
     function submitStandardForm(options) {
         var continueForNext = !options || options.mode !== 'clear';
@@ -9822,12 +9879,11 @@
 
         if (hardwareInfoRequired) {
             var submitHwFiles = window.InfoCollectionApplication ? window.InfoCollectionApplication.getFiles() : Array.prototype.slice.call(hwFileInput.files || []);
-            var manualDeviceIds = ((document.getElementById('devIdNew') || {}).value || '')
-                .split(',').map(function(value) { return value.trim(); }).filter(Boolean);
-            if (!submitHwFiles.length && !manualDeviceIds.length) {
-                hwUploadResult.textContent = '请上传硬件信息文件或输入设备ID';
-                hwUploadResult.className = 'hw-upload-result fail';
-                alert('请上传硬件信息文件或输入设备ID');
+            // 设备 ID 只用于识别设备，不能替代硬件信息文件；文件必须由申请人上传或客户上传后回传。
+            if (!submitHwFiles.length) {
+                hwUploadResult.textContent = '';
+                hwUploadResult.className = 'hw-upload-result';
+                showDeviceInfoGuide('hardware');
                 return;
             }
             if (submitHwFiles.some(function(f) { return !f.name.toLowerCase().endsWith('.info'); })) {
@@ -10136,11 +10192,13 @@
         var secondary = document.getElementById('recordDrawerSecondary');
         var primary = document.getElementById('recordDrawerPrimary');
         var reject = document.getElementById('recordDrawerReject');
+        var transfer = document.getElementById('recordDrawerTransfer');
         var mobileComposer = document.getElementById('recordMobileApprovalComposer');
         secondary.textContent = isView ? '关闭' : '取消';
         secondary.hidden = false;
         primary.hidden = isView;
         reject.hidden = true;
+        transfer.hidden = true;
         mobileComposer.hidden = true;
         document.getElementById('recordMobileApprovalOpinion').value = '';
         document.getElementById('recordMobileAttachmentStatus').hidden = true;
@@ -11159,18 +11217,31 @@
         timelineSection.appendChild(timeline);
         var decisionSection = createApproveSection(container, '审批决定', 'how_to_reg');
         decisionSection.classList.add('record-approval-decision');
-        var group = createRecordWorkflowElement('div', 'record-decision-group');
+        var actions = createRecordWorkflowElement('div', 'record-decision-actions');
+        var transfer = createRecordWorkflowElement('button', 'record-decision-transfer');
+        transfer.type = 'button';
+        transfer.innerHTML = '<span class="material-symbols-outlined" aria-hidden="true">swap_horiz</span><span>转签</span>';
+        transfer.addEventListener('click', function() { showRecordActionToast('转签功能待接入。'); });
+        var reject = createRecordWorkflowElement('button', 'record-decision-reject');
+        reject.type = 'button';
+        reject.textContent = '驳回';
+        reject.addEventListener('click', function() { submitRecordWorkflow('reject'); });
+        var approve = createRecordWorkflowElement('button', 'record-decision-approve');
+        approve.type = 'button';
+        approve.textContent = '通过';
+        approve.addEventListener('click', function() { submitRecordWorkflow('approve'); });
+        actions.appendChild(transfer);
+        actions.appendChild(reject);
+        actions.appendChild(approve);
+        // 保留隐藏单选项，兼容既有提交校验与移动端流程
         [['approve', '审批通过'], ['reject', '审批驳回']].forEach(function(optionData) {
-            var option = createRecordWorkflowElement('label', 'record-decision-option');
             var radio = createRecordWorkflowElement('input');
             radio.type = 'radio';
             radio.name = 'recordApprovalDecision';
             radio.value = optionData[0];
-            option.appendChild(radio);
-            option.appendChild(createRecordWorkflowElement('span', '', optionData[1]));
-            group.appendChild(option);
+            radio.hidden = true;
+            decisionSection.appendChild(radio);
         });
-        decisionSection.appendChild(group);
         appendRecordWorkflowField(decisionSection, {
             id: 'recordApprovalOpinion',
             label: '审批意见',
@@ -11183,6 +11254,7 @@
             label: '审批附件（可选）',
             hint: '可上传审批判断依据、补充说明等材料，支持一次选择多个文件。'
         });
+        decisionSection.appendChild(actions);
     }
 
     function openRecordWorkflowDrawer(action, row, trigger) {
@@ -11215,11 +11287,13 @@
         var isMobileApproval = action === 'approve' && window.innerWidth <= 600;
         var secondary = document.getElementById('recordDrawerSecondary');
         var reject = document.getElementById('recordDrawerReject');
+        var transfer = document.getElementById('recordDrawerTransfer');
         var mobileComposer = document.getElementById('recordMobileApprovalComposer');
         layer.dataset.recordWorkflowAction = action;
-        primary.textContent = isMobileApproval ? '同意' : config.primary;
+        primary.textContent = isMobileApproval ? '通过' : config.primary;
         primary.hidden = false;
         secondary.hidden = isMobileApproval;
+        transfer.hidden = !isMobileApproval;
         reject.hidden = !isMobileApproval;
         mobileComposer.hidden = !isMobileApproval;
         layer.hidden = false;
@@ -11407,6 +11481,7 @@
             var mobileApprove = activeRecordWorkflow && activeRecordWorkflow.action === 'approve' && !document.getElementById('recordMobileApprovalComposer').hidden;
             submitRecordWorkflow(mobileApprove ? 'approve' : null);
         });
+        document.getElementById('recordDrawerTransfer').addEventListener('click', function() { showRecordActionToast('转签功能待接入。'); });
         document.getElementById('recordDrawerReject').addEventListener('click', function() { submitRecordWorkflow('reject'); });
         document.getElementById('recordMobileApprovalAttachment').addEventListener('click', function() {
             var attachmentInput = document.getElementById('recordApprovalAttachments');
@@ -13213,7 +13288,9 @@
                 };
             }
             if (line === 'HCI') {
-                params.infoFile = deviceId ? ('硬件信息-' + deviceId + '.xlsx') : '';
+                // 借测单只带入设备 ID/集群标识，不伪造已上传的硬件信息文件；
+                // 文件必须由申请人上传或客户通过链接上传后确认。
+                params.infoFile = '';
                 params.clusterId = defaults.clusterId || deviceId || '';
             }
             if (line === 'AC') {
@@ -13630,6 +13707,88 @@
                 '<div class="solution-field"><label><span class="solution-required">*</span>项目预计落地时间</label><input class="solution-input" type="date" data-solution-param="projectLandingDate" value="' + escapeHtml(values.projectLandingDate || '') + '"></div>' +
                 '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>客户信息收集表</label><div class="solution-file-input"><label class="solution-file-btn"><span class="material-symbols-outlined">upload_file</span>上传收集表<input type="file" accept=".xlsx,.xls" data-solution-param="collectedFile"></label><span class="solution-file-name' + (values.collectedFile ? '' : ' empty') + '">' + escapeHtml(values.collectedFile || '未选择文件') + '</span></div></div>';
         }
+        function solutionCollectionTask() {
+            try {
+                if (window.InfoCollectionUI && typeof window.InfoCollectionUI.getTask === 'function') return window.InfoCollectionUI.getTask('solution');
+            } catch (_) {}
+            return null;
+        }
+        function solutionHasDeviceInfo(values) {
+            return !!(values && (values.infoFile || (Array.isArray(values.infoFiles) && values.infoFiles.length)));
+        }
+        function solutionTaskActive(task) {
+            return !!(task && (task.status === 'waiting' || task.status === 'received'));
+        }
+        function solutionTaskDate(value) {
+            if (!value) return '';
+            return new Date(value).toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false });
+        }
+        function solutionTaskFilesLabel(task) {
+            var files = (task && task.files) || [];
+            if (!files.length) return '';
+            return files.length === 1 ? files[0].name : files[0].name + ' 等 ' + files.length + ' 个文件';
+        }
+        function renderSolutionDeviceCustomer(values, task) {
+            if (task.status === 'waiting') {
+                var failed = task.emailStatus === 'failed';
+                return '<div class="solution-device-card is-waiting">' +
+                    '<span class="solution-device-card-icon material-symbols-outlined" aria-hidden="true">' + (failed ? 'error' : 'schedule') + '</span>' +
+                    '<div class="solution-device-card-main"><strong>' + (failed ? '邮件发送失败，请线下获取文件' : '上传链接已发送') + '</strong>' +
+                        '<small>' + (failed ? '链接有效期至 ' : '已发送至 ' + escapeHtml(task.email || '外部邮箱') + ' · 有效期至 ') + escapeHtml(solutionTaskDate(task.expiresAt)) + '</small>' +
+                        '<small class="solution-device-card-hint">等待外部上传。你可以继续填写申请，外部上传后会在这里提示你。</small>' +
+                    '</div>' +
+                    '<div class="solution-device-card-actions">' +
+                        '<button type="button" class="solution-btn plain" data-info-detail="' + escapeHtml(task.token) + '">查看链接</button>' +
+                        '<button type="button" class="ic-text-button" data-info-copy="' + escapeHtml(task.token) + '">复制文案</button>' +
+                        '<button type="button" class="ic-text-button" data-solution-device-switch="self">改由我上传</button>' +
+                    '</div>' +
+                '</div>';
+            }
+            if (task.status === 'received') {
+                var autoState = task.autoSubmit || {};
+                var stateText = task.triggerMode === 'auto'
+                    ? (autoState.status === 'running' ? '自动发起中' : autoState.status === 'failed' ? '自动发起失败，请手动确认' : '外部已上传，待自动发起')
+                    : '外部已上传，待你确认发起';
+                var action = task.triggerMode === 'auto'
+                    ? (autoState.status === 'failed'
+                        ? '<button type="button" class="solution-btn" data-info-confirm="' + escapeHtml(task.token) + '">查看并手动发起</button>'
+                        : '<button type="button" class="solution-btn" data-info-resume="' + escapeHtml(task.token) + '">查看关联文件</button>')
+                    : '<button type="button" class="solution-btn" data-info-confirm="' + escapeHtml(task.token) + '">确认并发起申请</button>';
+                return '<div class="solution-device-card is-received">' +
+                    '<span class="solution-device-card-icon material-symbols-outlined" aria-hidden="true">task_alt</span>' +
+                    '<div class="solution-device-card-main"><strong>' + stateText + '</strong>' +
+                        '<small>' + escapeHtml(solutionTaskFilesLabel(task)) + (task.receivedAt ? ' · ' + escapeHtml(solutionTaskDate(task.receivedAt)) : '') + '</small>' +
+                    '</div>' +
+                    '<div class="solution-device-card-actions">' + action + '</div>' +
+                '</div>';
+            }
+            return '';
+        }
+        function renderSolutionDeviceBlock(values, task) {
+            var activeTask = solutionTaskActive(task);
+            var infoFiles = Array.isArray(values.infoFiles) ? values.infoFiles : (values.infoFile ? [{ name: values.infoFile }] : []);
+            var infoName = infoFiles.length ? escapeHtml(infoFiles[0].name) + (infoFiles.length > 1 ? ' 等 ' + infoFiles.length + ' 个文件' : '') : '未选文件；可先填其他信息，再发链接由外部上传（多选 .info）';
+            var infoEmpty = infoFiles.length ? '' : ' empty';
+            return '<div class="solution-field solution-field-full solution-device-block" data-solution-device-block>' +
+                '<label>设备信息</label>' +
+                '<div class="solution-device-self" data-solution-device-self' + (activeTask ? ' hidden' : '') + '>' +
+                    '<div class="solution-file-input"><label class="solution-file-btn"><span class="material-symbols-outlined" aria-hidden="true">upload_file</span>上传文件（可多选）<input type="file" accept=".info" multiple data-solution-param="infoFile"></label><span class="solution-file-name' + infoEmpty + '">' + infoName + '</span></div>' +
+                '</div>' +
+                '<div class="solution-device-customer" data-solution-device-customer' + (activeTask ? '' : ' hidden') + '>' + (activeTask ? renderSolutionDeviceCustomer(values, task) : '') + '</div>' +
+            '</div>';
+        }
+        function refreshSolutionDeviceUI() {
+            var block = document.querySelector('#solutionProductPanel [data-solution-device-block]');
+            var values = application.params && application.params.HCI;
+            if (!block || !values) return;
+            var task = solutionCollectionTask();
+            var activeTask = solutionTaskActive(task);
+            var selfPanel = block.querySelector('[data-solution-device-self]');
+            var customerPanel = block.querySelector('[data-solution-device-customer]');
+            if (selfPanel) selfPanel.hidden = activeTask;
+            if (customerPanel) { customerPanel.hidden = !activeTask; customerPanel.innerHTML = activeTask ? renderSolutionDeviceCustomer(values, task) : ''; }
+        }
+        window.refreshSolutionDeviceUI = refreshSolutionDeviceUI;
         function renderProductWorkspace() {
             id('solutionProductWorkspace').hidden = false;
             updateSolutionPhoneRequirement();
@@ -13669,10 +13828,7 @@
                 fields += '<div class="solution-field"><label><span class="solution-required">*</span>版本</label><input class="solution-input" data-solution-param="version" value="' + escapeHtml(values.version) + '"></div>';
                 fields += '<div class="solution-field"><label><span class="solution-required">*</span>授权有效期<span class="solution-readonly-note"><span class="material-symbols-outlined">lock</span>统一取方案授权时间</span></label><input class="solution-input" type="date" data-solution-param="endDate" value="' + escapeHtml(values.endDate) + '" readonly data-solution-readonly></div>';
                 if (isHci) {
-                    var infoFiles = Array.isArray(values.infoFiles) ? values.infoFiles : (values.infoFile ? [{ name: values.infoFile }] : []);
-                    var infoName = infoFiles.length ? escapeHtml(infoFiles[0].name) + (infoFiles.length > 1 ? ' 等 ' + infoFiles.length + ' 个文件' : '') : '未选择文件';
-                    var infoEmpty = infoFiles.length ? '' : ' empty';
-                    fields += '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>硬件信息文件</label><div class="solution-file-input"><label class="solution-file-btn"><span class="material-symbols-outlined">upload_file</span>上传硬件信息文件（可多选）<input type="file" accept=".info" multiple data-solution-param="infoFile"></label><span class="solution-file-name' + infoEmpty + '">' + infoName + '</span><button type="button" class="ic-button ic-button-secondary" data-info-invite="solution"><span class="material-symbols-outlined" aria-hidden="true">link</span>邀请客户上传</button></div><p class="ic-upload-help">发送上传链接，由客户直接提供 HCI 设备信息（支持多个文件）。</p><div data-info-status="solution" class="ic-inline-status" hidden aria-live="polite"></div></div>';
+                    fields += renderSolutionDeviceBlock(values, solutionCollectionTask());
                     fields += '<div class="solution-field"><label><span class="solution-required">*</span>集群标识</label><input class="solution-input" data-solution-param="clusterId" value="' + escapeHtml(values.clusterId) + '"></div>';
                 }
                 var isFromBorrow = Boolean(application.borrow && application.borrow.devices && application.borrow.devices[line]);
@@ -13923,7 +14079,10 @@
         function renderWorkflow() {
             var box = id('solutionWorkflow');
             if (!application.solution) { box.innerHTML = '<div class="solution-workflow-copy">请选择申请入口并确认方案范围。</div>'; return; }
-            if (application.status === 'draft') { box.innerHTML = '<div class="solution-workflow-copy">已锁定 ' + activeLines().length + ' 条产品线，填写产品参数后提交一张 W3 整单审批单。</div><div class="solution-form-error solution-workflow-error" id="solutionSubmitError" hidden></div><div class="solution-workflow-actions"><button type="button" class="solution-btn" id="solutionSubmitWhole"><span class="material-symbols-outlined">send</span>提交 W3 整单审批</button></div>'; return; }
+            if (application.status === 'draft') {
+                box.innerHTML = '<div class="solution-workflow-copy">已锁定 ' + activeLines().length + ' 条产品线，填写产品参数后提交一张 W3 整单审批单。</div><div class="solution-form-error solution-workflow-error" id="solutionSubmitError" hidden></div><div class="solution-workflow-actions"><button type="button" class="solution-btn" id="solutionSubmitWhole"><span class="material-symbols-outlined">send</span>提交 W3 整单审批</button></div>';
+                return;
+            }
             box.innerHTML = '';
         }
         function getSolutionLineSummary(line, item) {
@@ -13938,11 +14097,24 @@
             if (line === 'AC') return item.deviceId + extraNote + ' | 网关：线路' + item.gatewayLines + '/分支' + item.gatewayBranch + '/移动' + item.gatewayMobile + ' | 多功能：' + (item.multiFeatures || []).join('、') + ' | 终端' + item.terminalCount;
             return item.deviceId + extraNote + ' | ' + (item.modules || []).join('、') + ' | ' + item.spec;
         }
+        function showSolutionSubmitError(message) {
+            var errorBox = id('solutionSubmitError');
+            if (!errorBox) return;
+            errorBox.hidden = false;
+            errorBox.textContent = message;
+        }
         function submitWholeApplication() {
             var error = validateApplication();
             var errorBox = id('solutionSubmitError');
             if (error) {
-                if (errorBox) { errorBox.textContent = error; errorBox.hidden = false; }
+                var hci = application.params && application.params.HCI;
+                var hciMissingInfo = hci && activeLines().indexOf('HCI') !== -1 && (!hci.infoFile || !hci.clusterId);
+                if (hciMissingInfo && error.indexOf('硬件信息') !== -1) {
+                    if (errorBox) errorBox.hidden = true;
+                    showDeviceInfoGuide('solution');
+                    return;
+                }
+                showSolutionSubmitError(error);
                 return;
             }
             if (errorBox) errorBox.hidden = true;
@@ -14112,7 +14284,11 @@
                         var nameEl = wrap && wrap.querySelector('.solution-file-name');
                         var displayName = fileName;
                         if (field.dataset.solutionParam === 'infoFile' && target.files.length > 1) displayName = fileName + ' 等 ' + target.files.length + ' 个文件';
-                        if (nameEl) { nameEl.textContent = displayName || '未选择文件'; nameEl.classList.toggle('empty', !fileName); }
+                        if (nameEl) {
+                            var emptyName = field.dataset.solutionParam === 'infoFile' ? '未选文件；可先填其他信息，再发链接由外部上传（多选 .info）' : '未选择文件';
+                            nameEl.textContent = displayName || emptyName;
+                            nameEl.classList.toggle('empty', !fileName);
+                        }
                         if (field.dataset.solutionParam === 'infoFile' && target.files.length && window.InfoCollectionUI && window.SolutionInfoCollection) {
                             try { window.InfoCollectionUI.cancelContext('solution', window.SolutionInfoCollection.getContext().key); } catch (_) {}
                         }
@@ -14131,6 +14307,17 @@
             }
             id('solutionProductPanel').addEventListener('input', collectSolutionParam);
             id('solutionProductPanel').addEventListener('change', collectSolutionParam);
+            document.addEventListener('click', function(event) {
+                var target = event.target;
+                if (!target || !target.closest) return;
+                var switchBtn = target.closest('[data-solution-device-switch]');
+                if (switchBtn) {
+                    // 改由自己上传：取消进行中的客户收集任务，字段回到上传面板
+                    try { window.InfoCollectionUI.cancelContext('solution', window.SolutionInfoCollection.getContext().key); } catch (_) {}
+                    refreshSolutionDeviceUI();
+                    return;
+                }
+            });
             function collectBizParam(event) {
                 var target = event.target;
                 var field = target.closest ? target.closest('[data-solution-biz-param]') : null;

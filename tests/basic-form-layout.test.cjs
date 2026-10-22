@@ -458,9 +458,9 @@ test('接收邮箱、设备SN和设备ID应为全宽 basic-full', () => {
   );
 });
 
-test('接收邮箱应在输入框内提示优先填写客户邮箱', () => {
+test('接收邮箱应在输入框内提示优先填写接收人邮箱', () => {
   const email = doc.getElementById('userEmail');
-  assert.match(email.placeholder, /建议优先填写客户邮箱/);
+  assert.match(email.placeholder, /建议优先填写接收人邮箱/);
   assert.match(email.title, /授权结果及相关文件/);
   assert.equal(doc.getElementById('userEmailHelp'), null, '不应在输入框下方重复占用一行');
 });

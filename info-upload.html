@@ -14,7 +14,7 @@
         <a class="skip-link" href="#uploadMain" @click.prevent="focusMain">跳转到上传内容</a>
         <header class="site-header"><div class="header-inner">
             <div class="brand"><img src="logo.jpg" alt="深信服" width="36" height="36"><strong>深信服<span>测试授权服务</span></strong></div>
-            <span class="header-note"><upload-icon name="shield"></upload-icon>客户设备信息收集</span>
+            <span class="header-note"><upload-icon name="shield"></upload-icon>设备信息收集</span>
         </div></header>
         <main id="uploadMain" class="upload-main" tabindex="-1" :class="{ 'is-terminal': view === 'result', 'is-upload-form': view === 'form', 'has-files': view === 'form' && pendingFiles.length > 0 }">
             <div class="page-heading">

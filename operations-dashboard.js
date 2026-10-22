@@ -25,18 +25,6 @@
     ["需要进一步明确背景并对齐测试方案，测试环境就绪后可申请快速开通",1],
     ["已延期申请过",1],["saas xdr 有固定成本开销，不支持长期测试",1]
   ];
-  const snapshotEvents = [
-    {date:"2026-10-15",time:"10:31:50",event:"入口曝光",scene:"硬件",request:"",product:"",entry:"productAuthApply",node:"",reason:""},
-    {date:"2026-10-15",time:"10:31:13",event:"提交成功",scene:"硬件",request:"CSSQ202610150100066",product:"aTrust",entry:"",node:"",reason:""}
-  ];
-  const rawEvents = [
-    ["入口曝光","entry_source_view",5341,934,6275], ["开始填单","form_start",2732,139,2871],
-    ["点击提交","submit_click",null,null,7212], ["提交校验失败","submit_validation_fail",null,null,3081],
-    ["提交成功","submit_success",null,null,3359], ["进入审批","approval_enter",0,75,75],
-    ["审批完成","approval_done",0,71,71], ["授权完成","auth_completed",0,74,74],
-    ["应自动授权","auto_auth_expected",0,22,22], ["自动授权成功","auto_auth_success",0,22,22],
-    ["自动授权失败","auto_auth_fail",0,13,13]
-  ];
   const definitions = {
     platform:{name:"平台申请量",meaning:"统计区间内的平台申请单数",formula:"同一区间无重叠的原始申请汇总之和",source:"业务已确认的区间汇总",note:"不能把设备数、授权条目数或埋点次数与申请单数混用。只提供汇总时，不推算未提供区间的真实申请量。"},
     completion:{name:"填单完成率",meaning:"开始填写的旅程中最终提交成功的比例",formula:"同一批填单旅程中已成功提交旅程数 ÷ 开始填单旅程数",source:"旅程标识、开始填单与提交成功事件",note:"一个旅程只计一次；多次点击、重试不增加成功旅程数。不能使用提交成功单数除以人数，也不能把超过 100% 的结果直接截为 100%。"},
@@ -56,14 +44,9 @@
     approvalPending:{name:"审批中申请量",meaning:"已进入审批、尚未给出结果的申请数",formula:"同区间审批状态为审批中的申请数",source:"审批链路日志",note:"审批中不等于驳回，需与已结束审批分开观察。"},
     activationFailed:{name:"设备激活失败量",meaning:"设备激活失败的申请数量",formula:"同区间激活失败申请数",source:"设备激活结果日志",note:"与审批拒绝、授权生成失败分开统计，不把失败事件数直接当作失败申请数。"},
     activationDuration:{name:"创单至激活平均耗时（样本）",meaning:"从平台创单到设备激活成功的样本平均等待时间",formula:"平均（激活成功时间－创单时间）",source:"09.08—10.11 平台入口埋点，不含 PRM；66 样本",note:"平均 16.6 小时。起点不同于方案“提交成功→激活成功”，不可直接替代方案端到端指标，也不能外推全部业务周表申请。"},
-    testDuration:{name:"产品测试平均时长",meaning:"预计累计测试时长的平均值",formula:"Σ（已测试时长＋本次申请时长）÷统计对象数",source:"设备测试历史、本次申请时长及产品线",note:"按业务最新说明设置；统计对象按设备还是按申请、延期及重复申请的去重方式待确认，未确认前留空。该指标不是表单填写或办理等待时长。"},
-    abnormalDevices:{name:"异常设备比例",meaning:"原方案中的业务指标，异常规则尚未定义",formula:"待确认：异常设备判定规则、统计范围、去重方式及分母",source:"设备标识、已确认异常规则及命中结果",note:"不自行把激活失败、超期或多次申请定义为异常设备。规则未确认前不计算比例。"}
   };
   if(model.mock){
     Object.values(definitions).forEach(d=>{d.source="独立模拟数据";d.note="仅用于演示页面效果，不代表生产运营结果。";});
-    definitions.testDuration.note="演示假设：按申请计算已测试时长＋本次申请时长的平均值；正式统计对象及去重规则仍待确认。";
-    definitions.abnormalDevices.formula="模拟异常标记的申请数 / 模拟申请总数（演示假设）";
-    definitions.abnormalDevices.note="演示假设：每条申请对应一台设备，以模拟异常标记演示比例；实际生产判定规则仍待确认。";
     definitions.activationDuration.name="开始填写至激活平均耗时";
     definitions.activationDuration.formula="平均（激活成功时间－开始填写时间）";
     definitions.auto.formula="1－激活失败量 ÷ 通过量（含免审批）";
@@ -78,7 +61,7 @@
     return {snapshot,filtered,platform:stats.count,stats,telemetry:!snapshot&&model.hasTelemetry(state.start,state.end,state.filters),passed:!snapshot&&!filtered&&state.start==="2026-09-08"&&state.end==="2026-10-11"?7251:null};
   }
   function metric(key,value,foot,{label,unit="",primary=false,caption=""}={}) {
-    return `<button class="metric ${primary?"primary":""}" data-metric="${key}" aria-label="${esc(label??definitions[key].name)}，查看口径与数据"><span class="metric-label">${esc(label??definitions[key].name)}<span class="info" aria-hidden="true">?</span></span><div class="metric-value">${esc(value??"—")}${unit?`<small>${esc(unit)}</small>`:""}</div><p class="metric-foot">${esc(foot)}</p>${caption?`<div class="metric-caption">${esc(caption)}</div>`:""}</button>`;
+    return `<article class="metric ${primary?"primary":""}" data-metric="${key}"><span class="metric-label">${esc(label??definitions[key].name)}</span><div class="metric-value">${esc(value??"—")}${unit?`<small>${esc(unit)}</small>`:""}</div><p class="metric-foot">${esc(foot)}</p>${caption?`<div class="metric-caption">${esc(caption)}</div>`:""}</article>`;
   }
   function empty(title,body){return `<div class="empty"><strong>${esc(title)}</strong><p>${esc(body)}</p></div>`;}
   function table(headers,rows,cls="") {return `<div class="table-wrap"><table class="small-table ${cls}"><thead><tr>${headers.map(h=>`<th>${esc(h)}</th>`).join("")}</tr></thead><tbody>${rows.map(row=>`<tr>${row.map(v=>`<td>${esc(v??"—")}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;}
@@ -132,7 +115,6 @@
     $("outcome-row").innerHTML=metric("platform",n(c.platform),c.snapshot?"原页面建单 97，与提交成功 3,359 不一致":c.platform==null?"当前范围或维度的真实汇总待补充":"已确认真实周表 · 不以事件次数替代申请量",{primary:true,unit:c.platform==null?"":"条"})+metric("completion",null,c.snapshot?"3,359 单 / 926 人，统计对象不一致":"待补同旅程开始与成功提交事件")+metric("end",null,"待补提交成功至激活成功的关联时间");
     $("overview-process").innerHTML=metric("validation",c.snapshot?pct(3081,7212):c.telemetry?pct(t.validationFailed,t.submitClicks):null,c.snapshot?"失败 3,081 次 / 点击提交 7,212 次":c.telemetry?"4,723 / 9,120 次 · 平台入口样本，不含 PRM":"待补同范围提交与校验失败事件")+metric("approval",null,c.snapshot?"通过 64 次、进入 75 次；待关联":"需同批进入审批申请及明确终态")+metric("auto",c.passed?pct(c.passed-c.stats.activationFailed,c.passed):null,c.passed?"1－360 / 7,251 · 通过量包含免审批":"缺少同范围已确认通过量，留空")+metric("activation",c.passed?pct(c.stats.activationFailed,c.passed):null,c.passed?"激活失败 360 / 通过 7,251":"缺少同范围业务分母，留空");
     renderTrend(c);renderProducts(c);
-    $("business-metrics").innerHTML=metric("testDuration",null,"已测试时长＋本次申请时长；平均单位待确认")+metric("abnormalDevices",null,"原方案有该指标；异常规则及分母待确认");
   }
   function renderQuality(c) {
     const t=model.telemetry;
@@ -166,50 +148,6 @@
     if(view==="events")window.OperationsEvents.activate();
   }
   function toast(message){$("ops-toast").textContent=message;$("ops-toast").classList.add("visible");clearTimeout(toast.timer);toast.timer=setTimeout(()=>$("ops-toast").classList.remove("visible"),2800);}
-  function dialog(title,html){$("ops-dialog-title").textContent=title;$("ops-dialog-body").innerHTML=html;$("ops-dialog").showModal();}
-  function definition(key) {const d=definitions[key];return `<article class="definition-block"><h3>${d.name}</h3><dl><dt>业务含义</dt><dd>${d.meaning}</dd><dt>计算口径</dt><dd>${d.formula}</dd><dt>数据来源</dt><dd>${d.source}</dd><dt>管理目标</dt><dd>待业务确认</dd><dt>负责人</dt><dd>待补充</dd><dt>观察频率</dt><dd>建议日看异常、周看趋势；待确认</dd><dt>触发动作</dt><dd>阈值待确认；按场景、产品线和失败节点排查</dd></dl><p>${d.note}</p></article>`;}
-  function metricData(key,c) {
-    if(model.mock)return window.OperationsMockView.detail(key,c,state.view);
-    if(c.filtered)return "<p>当前维度明细尚未接入，此筛选下不显示总体观测或其他范围的数值。</p>";
-    if(key==="validation"&&c.snapshot)return table(["原始事件","次数"],[["点击提交",7212],["校验失败",3081]])+`<p>3,081 / 7,212 = ${pct(3081,7212)}，按事件次数。</p>`;
-    if(key==="generation"&&c.snapshot)return table(["截图观测","次数"],[["应自动授权",22],["自动授权成功",22],["失败（节点 lc_activate）",13]])+"<p>需要申请编号、重试及最终结果；不据此认定最终成功率 100%。</p>";
-    if(key==="completion"&&c.snapshot)return table(["原始观测","数量及单位"],[["提交成功","3359 单（去重待核对）"],["开始填单","926 人 / 2871 次事件"],["原页面计算","362.7%（不作为有效转化率）"]]);
-    if(key==="approval"&&c.snapshot)return table(["截图观测","次数"],[["进入审批",75],["审批完成",71],["passed",64],["其他结果",7]]);
-    if(key==="activation"&&c.snapshot)return table(["节点","次数","原因"],[["lc_activate",13,"部分授权激活失败（已退出自动重试，可手动触发）"]]);
-    if((key==="end"||key==="approvalDuration")&&c.snapshot)return table(["链路","原展示值（统计类型待确认）","均值","样本"],[["端到端","23.5 分钟","14.5 小时",73],["审批","1.9 小时","24.0 小时",70],["自动授权","2 秒","3 秒",22]])+"<p>不把原展示值直接认定为 P50；原端到端从“创单”计时，是否等于方案中的“提交成功”仍需确认。</p>";
-    if(key==="platform"&&!c.snapshot)return table(["实际统计区间","申请量"],blocks.filter(b=>b.start>=state.start&&b.end<=state.end).map(b=>[`${short(b.start)}—${short(b.end)}`,b.count]))+"<p>采用最新真实周表，已替换旧版汇总及估算。首周实际自 09.08 上线起；若查询切开原始周汇总，不计算该范围总量。</p>";
-    if(!c.snapshot&&["activated","needsApproval","rejected"].includes(key))return table(["业务指标","当前值"],[[definitions[key].name,n(c.stats[key])]]);
-    if(!c.snapshot&&["auto","activation"].includes(key))return table(["同范围业务口径","数量"],[["激活失败",c.passed?c.stats.activationFailed:null],["审批通过（含免审批）",c.passed]])+"<p>仅 09.08—10.11 全区间提供了已确认通过分母 7,251；其他范围不推算。</p>";
-    if(c.telemetry){const t=model.telemetry;
-      if(key==="validation")return table(["入口样本，不含 PRM","次数"],[["点击提交",t.submitClicks],["提交校验失败",t.validationFailed]]);
-      if(key==="generation")return table(["自动执行原始观测，节点归属待核对","次数"],[["应执行",t.autoExpected],["成功",t.autoSucceeded],["失败",t.autoFailed]])+"<p>计数未闭合，不直接计算生成成功率，也不假设失败均为重试。</p>";
-      if(key==="approval")return table(["入口事件样本，不含 PRM","次数"],[["进入审批",t.approvalEntered],["passed",t.approvalPassed]])+"<p>同批关联及其他终态未知，暂不计算审批通过率。</p>";
-      if(key==="activationDuration"||key==="approvalDuration")return table(["入口样本，不含 PRM","均值","样本量"],[["创单→设备激活","16.6 小时",66],["进入审批→结束","25.5 小时",62]])+"<p>两组样本不可相减；都不能替代提交成功→激活成功的方案端到端指标。</p>";
-    }
-    return "<p>当前来源尚未提供符合该指标口径的数据，保留为空。生产截图快照中的数值不会填入历史运营区间。</p>";
-  }
-  function exportData() {
-    const c=context(),rows=[["数据来源",model.mock?"模拟数据（非生产统计）":c.snapshot?"平台生产埋点截图快照":"平台业务汇总"],["统计区间",`${state.start}—${state.end}`],["趋势粒度",{day:"日",week:"周",month:"月"}[state.grain]],["趋势指标",trendLabels[state.trendMetric]]];
-    if(model.mock){
-      if(state.view==="events"){const summary=model.summaryFor(state.start,state.end,window.OperationsMockView?.getFilters?.()||{}),scenes=model.sceneTypes||[];rows.push(["事件","事件ID","合计",...scenes],...summary.map(r=>[r.name,r.eventId,r.count,...scenes.map(scene=>r.byScene?.[scene]??0)]),["时间","事件","场景","申请单号","用户","产品线","入口","失败节点","失败原因"],...c.events.map(r=>[r.time,r.name,r.scene,r.requestId,r.user,r.productLine,r.entry,r.failureNode,r.reason]));}
-      else rows.push(...window.OperationsMockView.exportRows(c),["区间",trendLabels[state.trendMetric]],...trendRows(c).map(r=>[`${r.start}—${r.end}`,r.count]));
-    }
-    else if(state.view==="events") {
-      rows[0][1]="平台入口埋点样本，不含 PRM";
-      const summary=window.OperationsEvents.summaryFor(state.start,state.end);
-      rows.push(["事件汇总状态",summary.length?"已有同区间原始观测":"当前区间数据待接入"],["事件","事件ID","合计","单位","说明"],...summary.map(r=>[r.name,r.eventId,r.count,r.unit,r.note]),["事件日志状态","逐条日志待接入"],["时间","事件","场景","申请单号","用户","产品线","入口","失败节点","失败原因"]);
-    }
-    else if(c.filtered)rows.push(["数据状态","维度明细尚未接入，不使用总体数据"],["平台申请量",""],["提交校验失败率",""],["自动授权成功率（业务口径）",""],["产线分布",""],["节点明细",""]);
-    else if(c.snapshot)rows.push(["数据状态","口径冲突项留空，截图可见样本非全量"],["填单完成率",""],["审批通过率",""],["自动授权成功率",""],["提交校验失败率",pct(3081,7212)],["原始事件","事件ID","硬件","XaaS","合计"],...rawEvents,["校验失败原因（截图可见）","次数"],...validation,["其他审批结果原因","次数"],...approvalReasons,["原页面覆盖场景（口径待核对）","平台提交","系统总授权"],["硬件",0,751],["XaaS",97,97],["失败节点","原始次数","原因"],["lc_activate",13,"部分授权激活失败（已退出自动重试，可手动触发）；最终失败申请数未知"],["耗时链路","原展示值（统计类型待确认）","均值","样本数"],["端到端","23.5分钟","14.5小时",73],["审批","1.9小时","24.0小时",70],["自动授权","2秒","3秒",22],["截图可见事件样本","仅 2 条，非全量申请记录"],["时间","事件","场景","申请编号","产品线","入口"],...snapshotEvents.map(r=>[`${r.date} ${r.time}`,r.event,r.scene,r.request,r.product,r.entry]));
-    else {
-      rows.push(["平台申请量",c.platform],["填单完成率",""],["审批通过率",""],["端到端授权耗时",""],["激活成功量",c.stats.activated],["需审批量",c.stats.needsApproval],["审批拒绝量",c.stats.rejected],["激活失败量",c.stats.activationFailed],["自动授权成功率（业务口径）",c.passed?pct(c.passed-c.stats.activationFailed,c.passed):""],["激活失败率（业务口径）",c.passed?pct(c.stats.activationFailed,c.passed):""],["自动授权成功率（方案口径）",""],["区间",trendLabels[state.trendMetric],"数据状态"],...trendRows(c).map(r=>[`${short(r.start)}—${short(r.end)}`,r.count,r.count==null?"数据待补充":"业务真实汇总"]),["授权类别","申请量"],...(productRows()??[]),["产品线分布","明细待接入"]);
-      if(c.telemetry){const t=model.telemetry;rows.push(["入口埋点样本范围",`${t.start}—${t.end}，不含 PRM，不与业务周表混算`],["提交校验失败率（事件次数）",pct(t.validationFailed,t.submitClicks)],["点击提交",t.submitClicks],["校验失败",t.validationFailed],["提交成功（原始观测）",t.submitted],["开始填单（原始观测）",t.started],["原页面建单（统计冲突供核对）",t.created],["进入审批（事件）",t.approvalEntered],["passed（事件）",t.approvalPassed],["自动执行应执行（节点待核对）",t.autoExpected],["自动执行成功（节点待核对）",t.autoSucceeded],["自动执行失败（节点待核对）",t.autoFailed],["耗时样本","均值","样本量"],["创单→设备激活","16.6小时",66],["审批","25.5小时",62],["自动授权","3秒",20]);}
-    }
-    if(!model.mock)rows.push(["产品测试平均时长","","平均单位和去重方式待确认"],["异常设备比例","","异常规则及分母待确认"],["审批/授权节点、失败原因明细","","待后端数据接入"],["数据刷新状态","本地演示，未连接生产接口"]);
-    const cell=v=>{let str=String(v??"");if(/^[=+@-]/.test(str))str="'"+str;return '"'+str.replaceAll('"','""')+'"';};
-    const csv="\uFEFF"+rows.map(r=>r.map(cell).join(",")).join("\r\n"),url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));
-    const a=document.createElement("a");a.href=url;a.download=`测试授权运营_${state.source}_${state.start}_${state.end}.csv`;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);toast("已按当前统计区间导出；缺项保留为空");
-  }
   document.querySelectorAll("[data-range]").forEach(button=>button.addEventListener("click",()=>{
     const range=button.dataset.range;markRange(range);
     if(range==="custom"){$("ops-start").focus();return;}
@@ -221,11 +159,6 @@
   $("refresh-ops").addEventListener("click",()=>{render();toast(model.mock?"已刷新模拟数据":"已重新载入本地数据，未请求生产系统");});
   $("trend-metric").addEventListener("change",()=>{state.trendMetric=$("trend-metric").value;render();});
   document.querySelectorAll("[data-grain]").forEach(button=>button.addEventListener("click",()=>{state.grain=button.dataset.grain;document.querySelectorAll("[data-grain]").forEach(b=>b.setAttribute("aria-pressed",String(b===button)));render();}));
-  document.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;if(b.dataset.view)switchView(b.dataset.view);if(b.dataset.metric)dialog(definitions[b.dataset.metric].name,definition(b.dataset.metric)+"<h3>当前来源数据</h3>"+metricData(b.dataset.metric,context()));});
-  $("definitions").addEventListener("click",()=>dialog("指标口径与使用边界",Object.keys(definitions).map(definition).join("")));
-  ["ops-dialog-close","ops-dialog-done"].forEach(id=>$(id).addEventListener("click",()=>$("ops-dialog").close()));
-  $("ops-dialog").addEventListener("click",e=>{if(e.target!==$("ops-dialog"))return;const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();});
-  $("export-ops").addEventListener("click",exportData);
   window.OperationsDashboard={platformFor,context,trendRows,render};
   window.OperationsEvents.mountTabs(switchView);if(model.mock)markRange("30");render();
 })();

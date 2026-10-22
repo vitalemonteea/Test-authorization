@@ -63,6 +63,7 @@
 .ic-copy-row input,.ic-dialog textarea { width:100%; min-width:0; border:1px solid var(--ic-border); border-radius:8px; background:#f8faff; color:var(--ic-text); padding:10px 12px; font-size:12px; line-height:1.7; font-family:inherit; resize:none; box-sizing:border-box; }
 .ic-link-tools { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:8px; }
 .ic-link-tools a { font-size:12px; color:var(--ic-primary); padding:8px 0; }
+.ic-link-tools>span { display:flex; align-items:center; gap:8px; }
 .ic-muted { color:var(--ic-muted); font-size:12px; }
 .ic-drawer { position:absolute; right:0; top:0; height:100dvh; max-height:100dvh; border-radius:16px 0 0 16px; width:460px; }
 .ic-task { padding:18px; border:1px solid var(--ic-border); border-radius:10px; margin:12px 0; }
@@ -106,3 +107,30 @@
     .ic-heading-actions { gap:8px; flex-wrap:wrap; }
 }
 @media(prefers-reduced-motion:reduce) { .ic-button { transition:none; } }
+
+/* 解决方案申请：设备信息字段内的客户上传任务卡 */
+.solution-device-self,.solution-device-customer { width:100%; }
+.solution-device-card { display:flex; align-items:flex-start; gap:10px; padding:12px 14px; border:1px solid #d6e2f7; border-radius:10px; background:#eff4ff; }
+.solution-device-card.is-received { border-color:#cce6d6; background:#f0faf4; }
+.solution-device-card-icon { color:#0050cb; font-size:22px; flex:0 0 auto; }
+.solution-device-card.is-received .solution-device-card-icon { color:#217447; }
+.solution-device-card-main { flex:1 1 auto; min-width:0; }
+.solution-device-card-main strong { display:block; color:#0b1c30; font-size:13px; font-weight:600; }
+.solution-device-card-main small { display:block; margin-top:4px; color:#536177; font-size:12px; line-height:1.6; overflow-wrap:anywhere; }
+.solution-device-card-hint { color:#0050cb!important; }
+.solution-device-card-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+.solution-device-card-actions .solution-btn { min-height:34px; padding:0 12px; font-size:12px; }
+/* 发送链接弹窗：触发方式单选 */
+.ic-choice-group { margin:18px 0 0; padding:0; border:0; }
+.ic-choice-group legend { padding:0; margin-bottom:8px; }
+.ic-choice { display:flex; align-items:flex-start; gap:9px; margin-top:8px; padding:11px 12px; border:1px solid var(--ic-border); border-radius:9px; background:#fff; cursor:pointer; }
+.ic-choice:has(input:checked) { border-color:var(--ic-primary); background:#eff4ff; }
+.ic-choice.is-disabled { opacity:.55; cursor:default; }
+.ic-choice input { margin:2px 0 0; accent-color:var(--ic-primary); }
+.ic-choice span { display:block; min-width:0; }
+.ic-choice strong { display:block; color:var(--ic-text); font-size:13px; font-weight:500; }
+.ic-choice small { display:block; margin-top:3px; color:var(--ic-muted); font-size:12px; line-height:1.55; }
+@media(max-width:640px) {
+    .solution-device-card { flex-wrap:wrap; }
+    .solution-device-card-actions { width:100%; justify-content:flex-start; }
+}

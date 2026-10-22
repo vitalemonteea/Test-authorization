@@ -8,6 +8,13 @@ const fixtures = require('./fixtures/authorization-fixtures.cjs');
 
 const rules = require(path.join(__dirname, '..', 'authorization-application-rules.js'));
 
+function attachHwInfo(document, window) {
+  const input = document.getElementById('hwFileInput');
+  const infoFile = new window.File(['device-info'], 'device.info', { type: 'text/plain' });
+  Object.defineProperty(input, 'files', { configurable: true, value: [infoFile] });
+  input.dispatchEvent(new window.Event('change', { bubbles: true }));
+}
+
 function applicationFor(fact, overrides = {}) {
   return {
     deviceFacts: fact,
@@ -264,6 +271,7 @@ test('提交后保留公共表单并清空设备字段，支持继续申请下�
     document.querySelector('input[name="aDESKvm3d_cpu_limit"]').value = '32';
 
     window.addChip('DEV-NEXT-001');
+    attachHwInfo(document, window);
     window.submitStandardForm();
 
     assert.match(alerts.at(-1), /表单已提交/);
@@ -299,6 +307,7 @@ test('提交申请（清空模式）提交后重置整个表单', async () => {
     document.getElementById('userEmail').value = 'customer@example.com';
     document.querySelector('input[name="aDESKvm3d_cpu_limit"]').value = '32';
     window.addChip('DEV-CLEAR-001');
+    attachHwInfo(document, window);
     window.submitStandardForm({ mode: 'clear' });
 
     assert.match(alerts.at(-1), /表单已提交/);
@@ -386,7 +395,10 @@ test('表单重置彻底清理旧流程状态并重新应用默认 HCI 模式', 
     assert.equal(window.applicationState.deviceFacts.some((fact) => fact.deviceId === 'SALES-ATRUST-001'), false);
 
     window.submitStandardForm();
-    assert.match(alerts.at(-1), /请上传硬件信息文件或输入设备ID/);
+    const guide = document.getElementById('deviceInfoGuideOverlay');
+    assert.ok(guide && !guide.hidden, '提交时缺少设备信息应弹出操作引导而非仅报错');
+    assert.match(guide.textContent, /发送链接让外部上传/);
+    assert.match(guide.textContent, /我自己上传/);
     assert.equal(document.getElementById('submissionSnapshot').value, '');
     assert.deepEqual(errors, []);
   } finally {

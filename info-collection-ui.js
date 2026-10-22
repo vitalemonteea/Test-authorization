@@ -6,7 +6,7 @@
     var seenReminders = {}, autoRunning = false;
     var root = document.createElement('div');
     root.id = 'infoCollectionOverlay'; root.className = 'ic-overlay'; root.hidden = true;
-    root.innerHTML = '<section class="ic-dialog" role="dialog" aria-modal="true" aria-labelledby="infoDialogTitle" tabindex="-1"><header class="ic-dialog-head"><div><p class="ic-eyebrow" id="infoDialogEyebrow">客户协作</p><h2 id="infoDialogTitle"></h2></div><button type="button" class="ic-close" data-info-close aria-label="关闭">×</button></header><div id="infoDialogBody"></div></section>';
+    root.innerHTML = '<section class="ic-dialog" role="dialog" aria-modal="true" aria-labelledby="infoDialogTitle" tabindex="-1"><header class="ic-dialog-head"><div><p class="ic-eyebrow" id="infoDialogEyebrow">外部协作</p><h2 id="infoDialogTitle"></h2></div><button type="button" class="ic-close" data-info-close aria-label="关闭">×</button></header><div id="infoDialogBody"></div></section>';
     document.body.appendChild(root);
     var feedback = document.createElement('div'); feedback.id = 'infoCollectionFeedback'; feedback.className = 'ic-toast'; feedback.hidden = true; feedback.setAttribute('role', 'status'); document.body.appendChild(feedback);
     function escape(value) { return String(value == null ? '' : value).replace(/[&<>"']/g, function(c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
@@ -17,6 +17,40 @@
     }
     function date(value) { return new Date(value).toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }); }
     function link(task) { return new URL('info-upload.html#' + encodeURIComponent(task.token), location.href).href; }
+    function shareText(task) {
+        var title = task.context.solutionName ? task.context.solutionName + ' · ' + task.context.product : task.context.product;
+        return '【设备信息收集】' + (task.context.customer || '') + '\n' +
+            title + '\n' +
+            '请打开以下链接上传设备 .info 文件（支持多选）：\n' +
+            link(task) + '\n' +
+            '链接有效期至 ' + date(task.expiresAt) + '。';
+    }
+    function copyShare(token, btn) {
+        var task = store.get(token);
+        if (!task) return;
+        var text = shareText(task);
+        function done() {
+            if (btn) {
+                var old = btn.textContent;
+                btn.textContent = '已复制';
+                setTimeout(function() { btn.textContent = old; }, 1500);
+            }
+            notify('文案已复制，可直接粘贴发给外部。');
+        }
+        function fallback() {
+            var area = document.createElement('textarea');
+            area.value = text;
+            area.style.position = 'fixed';
+            area.style.opacity = '0';
+            document.body.appendChild(area);
+            area.select();
+            try { document.execCommand('copy'); done(); } catch (_) {}
+            document.body.removeChild(area);
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(done).catch(fallback);
+        } else fallback();
+    }
     function filesOf(task) { return task.files || []; }
     function filesLabel(task) {
         var files = filesOf(task);
@@ -40,13 +74,19 @@
         if (root.hidden) previousFocus = document.activeElement;
         root.querySelector('.ic-dialog').classList.toggle('ic-drawer', !!drawer);
         document.getElementById('infoDialogTitle').textContent = title;
-        document.getElementById('infoDialogEyebrow').textContent = drawer ? '申请工作台' : '客户协作';
+        document.getElementById('infoDialogEyebrow').textContent = drawer ? '申请工作台' : '外部协作';
         document.getElementById('infoDialogBody').innerHTML = content;
         root.hidden = false;
         var focus = root.querySelector('[autofocus]') || root.querySelector('[data-info-close]');
         focus.focus();
     }
     function close() { root.hidden = true; if (previousFocus && previousFocus.isConnected) previousFocus.focus(); }
+    function continueFilling() {
+        close();
+        notify('可以继续填写申请，完成后回来提交。');
+        var target = document.getElementById('solutionProductWorkspace') || document.getElementById('hwInfoSection') || document.getElementById('content-solution');
+        if (target && target.scrollIntoView) { try { target.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (_) { target.scrollIntoView(); } }
+    }
     function summary(task) {
         return '<div class="ic-context"><span class="ic-context-icon material-symbols-outlined" aria-hidden="true">domain</span><div><strong>' + escape(task.context.customer) + '</strong><p>' + escape(task.context.solutionName ? task.context.solutionName + ' · ' + task.context.product : task.context.product + ' 测试授权') + '</p></div><span class="ic-pill">仅收集设备信息</span></div>';
     }
@@ -69,23 +109,27 @@
         activeDialogToken = '';
         var autoAllowed = canAutoSubmit(kind);
         open('发送设备信息上传链接', summary({ context: ctx }) +
-            '<p class="ic-dialog-intro">平台将把上传链接发送到客户邮箱。客户上传并通过校验后，按你选择的发起方式进入申请。</p>' +
-            '<label class="ic-field-label" for="infoCustomerEmail">客户邮箱</label>' +
-            '<input class="ic-input" id="infoCustomerEmail" type="email" inputmode="email" placeholder="请输入客户邮箱" value="' + escape(defaultEmail(kind)) + '">' +
+            '<p class="ic-dialog-intro">平台会把上传链接发送到外部邮箱（7 天有效）。你可以先发送链接，再继续填写申请；外部上传后回到这里确认即可。</p>' +
+            '<label class="ic-field-label" for="infoCustomerEmail">外部邮箱</label>' +
+            '<input class="ic-input" id="infoCustomerEmail" type="email" inputmode="email" placeholder="请输入外部邮箱" value="' + escape(defaultEmail(kind)) + '">' +
             '<p class="ic-field-error" id="infoEmailError" hidden role="alert"></p>' +
-            '<label class="ic-checkbox' + (autoAllowed ? '' : ' is-disabled') + '"><input type="checkbox" id="infoAutoSubmit"' + (autoAllowed ? '' : ' disabled') + '> 客户上传校验通过后直接发起申请（无需我再确认）</label>' +
-            '<p class="ic-hint">' + (autoAllowed ? '不勾选时，客户上传后由你查看设备信息并确认发起。' : '当前申请还有未完成的必填项，只能选择“客户上传后由我确认发起”。') + '</p>' +
-            '<div class="ic-note"><span class="material-symbols-outlined" aria-hidden="true">info</span><p>上传链接有效期 7 天；平台仅通过邮件发送，不做企微消息联动。客户可一次上传多个 ' + escape(ctx.product) + ' 的 .info 文件；授权生成后客户可通过同一链接查看进度并下载授权文件。</p></div>' +
+            '<fieldset class="ic-choice-group"><legend class="ic-field-label">外部上传后</legend>' +
+                '<label class="ic-choice"><input type="radio" name="infoTriggerMode" value="confirm" checked><span><strong>由我确认后再发起</strong><small>推荐。外部上传后进入「我的待办」，你核对设备信息后再提交。</small></span></label>' +
+                '<label class="ic-choice' + (autoAllowed ? '' : ' is-disabled') + '"><input type="radio" name="infoTriggerMode" value="auto"' + (autoAllowed ? '' : ' disabled') + '><span><strong>直接发起申请</strong><small>' + (autoAllowed ? '其余必填项已填写完整，外部上传校验通过后自动提交。' : '其余必填项尚未填写完整，暂不可选。') + '</small></span></label>' +
+            '</fieldset>' +
+            '<p class="ic-hint">外部可一次上传多个 ' + escape(ctx.product) + ' 的 .info 文件；授权生成后，外部可通过同一链接查看进度并下载授权文件。</p>' +
+            '<div class="ic-note"><span class="material-symbols-outlined" aria-hidden="true">info</span><p>平台仅通过邮件发送，不做企微消息联动。</p></div>' +
             '<footer class="ic-dialog-actions"><button type="button" class="ic-button ic-button-quiet" data-info-close>暂不发送</button><button type="button" class="ic-button" id="infoSendLink" autofocus><span class="material-symbols-outlined" aria-hidden="true">mail</span>发送邮件</button></footer>');
     }
     function sendLink() {
         var email = String((document.getElementById('infoCustomerEmail') || {}).value || '').trim();
         var errorEl = document.getElementById('infoEmailError');
         if (!validEmail(email)) {
-            if (errorEl) { errorEl.hidden = false; errorEl.textContent = '请输入正确的客户邮箱地址。'; }
+            if (errorEl) { errorEl.hidden = false; errorEl.textContent = '请输入正确的外部邮箱地址。'; }
             return;
         }
-        var auto = !!(document.getElementById('infoAutoSubmit') || {}).checked;
+        var autoRadio = document.querySelector('input[name="infoTriggerMode"]:checked');
+        var auto = !!autoRadio && autoRadio.value === 'auto';
         if (auto && !canAutoSubmit(activeKind)) {
             if (errorEl) { errorEl.hidden = false; errorEl.textContent = '当前申请还有未完成的必填项，暂不能选择直接发起。'; }
             return;
@@ -98,7 +142,7 @@
         render();
         notify('上传链接已发送至 ' + email + '（演示环境为模拟发送）');
     }
-    function triggerLabel(task) { return task.triggerMode === 'auto' ? '校验通过后直接发起申请' : '客户上传后由我确认发起'; }
+    function triggerLabel(task) { return task.triggerMode === 'auto' ? '校验通过后直接发起申请' : '外部上传后由我确认发起'; }
     function emailLine(task) {
         if (!task.email) return '';
         var states = { pending: '邮件待发送', sent: '已发送至 ' + escape(task.email), failed: '发送失败（' + escape(task.email) + '）' };
@@ -110,51 +154,56 @@
         if (hasUnackedReminder(task)) { try { store.ackReminders(task.token); } catch (_) {} }
         var statusLine, title, actions;
         if (task.status === 'received') {
-            title = task.triggerMode === 'auto' ? '客户已上传 · 自动发起申请' : '客户已上传 · 待确认发起';
+            title = task.triggerMode === 'auto' ? '外部已上传 · 自动发起申请' : '外部已上传 · 待确认发起';
             statusLine = '已收到 ' + escape(filesLabel(task)) + '<span>' + date(task.receivedAt) + '</span>';
             var autoState = task.autoSubmit || {};
             if (task.triggerMode === 'auto') {
                 if (autoState.status === 'running') statusLine = '正在自动发起申请<span>' + date(task.receivedAt) + '</span>';
                 else if (autoState.status === 'failed') statusLine = '自动发起失败：' + escape(autoState.message || '请手动确认') + '<span>' + date(autoState.at) + '</span>';
             }
-            actions = task.triggerMode === 'auto' ?
+            var receiveAction = task.triggerMode === 'auto' ?
                 (autoState.status === 'failed' ? '<button type="button" class="ic-button" data-info-confirm="' + escape(task.token) + '">查看并手动发起</button>' : '<button type="button" class="ic-button" data-info-resume="' + escape(task.token) + '">查看关联文件</button>') :
                 '<button type="button" class="ic-button" data-info-confirm="' + escape(task.token) + '">确认并发起申请</button>';
+            actions = '<button type="button" class="ic-button ic-button-quiet" data-info-continue>继续填写申请</button>' + receiveAction;
         } else if (task.status === 'completed') {
             title = '申请审批中';
-            statusLine = '客户已上传，申请已提交审批<span>' + (task.application && task.application.no ? '申请编号 ' + escape(task.application.no) : '') + '</span>';
+            statusLine = '外部已上传，申请已提交审批<span>' + (task.application && task.application.no ? '申请编号 ' + escape(task.application.no) : '') + '</span>';
             actions = '';
         } else if (task.status === 'authorized') {
             title = '授权已生成';
-            statusLine = '客户可通过同一链接下载授权文件<span>' + (task.authorization ? date(task.authorization.generatedAt) : '') + '</span>';
+            statusLine = '外部可通过同一链接下载授权文件<span>' + (task.authorization ? date(task.authorization.generatedAt) : '') + '</span>';
             actions = '';
         } else {
             title = '上传链接已发送';
-            statusLine = task.emailStatus === 'failed' ? '邮件发送失败，请线下获取文件<span>有效期至 ' + date(task.expiresAt) + '</span>' : '等待客户上传<span>有效期至 ' + date(task.expiresAt) + '</span>';
-            actions = '';
+            statusLine = task.emailStatus === 'failed' ? '邮件发送失败，请线下获取文件<span>有效期至 ' + date(task.expiresAt) + '</span>' : '等待外部上传<span>有效期至 ' + date(task.expiresAt) + '</span>';
+            actions = '<button type="button" class="ic-button" data-info-continue>继续填写申请</button>';
         }
         var dotCls = (task.status === 'received' || task.status === 'authorized') ? ' is-received' : '';
         var remindLine = '';
         var last = lastReminder(task);
-        if (last) remindLine = '<div class="ic-link-status"><span class="ic-status-dot"></span>客户催办了进度<span>' + date(last.at) + '</span></div>';
+        if (last) remindLine = '<div class="ic-link-status"><span class="ic-status-dot"></span>外部催办了进度<span>' + date(last.at) + '</span></div>';
+        var followHint = '';
+        if (task.status === 'waiting') followHint = '<p class="ic-hint">外部上传后会自动出现在「我的待办」；你可以先继续填写申请。</p>';
+        else if (task.status === 'received' && task.triggerMode === 'confirm') followHint = '<p class="ic-hint">申请资料还没填完？可以先继续填写，再回来确认发起。</p>';
         open(title, summary(task) +
-            '<div class="ic-link-status"><span class="ic-status-dot' + dotCls + '"></span>' + statusLine + '</div>' + emailLine(task) + remindLine +
-            '<div class="ic-link-tools"><a href="' + escape(link(task)) + '" target="_blank" rel="noopener">预览客户页面（演示用） <span aria-hidden="true">↗</span></a>' + (task.status === 'waiting' || task.status === 'received' ? '<button type="button" class="ic-text-button ic-muted" data-info-cancel="' + escape(task.token) + '">取消收集</button>' : '') + '</div>' +
+            '<div class="ic-link-status"><span class="ic-status-dot' + dotCls + '"></span>' + statusLine + '</div>' + emailLine(task) + remindLine + followHint +
+            '<div class="ic-link-tools"><a href="' + escape(link(task)) + '" target="_blank" rel="noopener">预览上传页面（演示用） <span aria-hidden="true">↗</span></a>' +
+                '<span>' + (task.status === 'waiting' || task.status === 'received' ? '<button type="button" class="ic-text-button" data-info-copy="' + escape(task.token) + '">复制文案</button>' : '') + (task.status === 'waiting' || task.status === 'received' ? '<button type="button" class="ic-text-button ic-muted" data-info-cancel="' + escape(task.token) + '">取消收集</button>' : '') + '</span></div>' +
             '<footer class="ic-dialog-actions"><button type="button" class="ic-button ic-button-quiet" data-info-close>关闭</button>' + actions + '</footer>');
     }
     function taskLabel(task) {
-        if (task.status === 'waiting') return task.emailStatus === 'failed' ? '邮件发送失败' : '等待客户上传';
+        if (task.status === 'waiting') return task.emailStatus === 'failed' ? '邮件发送失败' : '等待外部上传';
         if (task.status === 'received') {
             if (task.triggerMode === 'auto') {
                 var state = task.autoSubmit || {};
                 if (state.status === 'running') return '自动发起中';
                 if (state.status === 'failed') return '自动发起失败';
-                return '客户已上传 · 待自动发起';
+                return '外部已上传 · 待自动发起';
             }
-            return '客户已上传 · 待确认发起';
+            return '外部已上传 · 待确认发起';
         }
         if (task.status === 'completed') return '申请审批中';
-        if (task.status === 'authorized') return '授权已生成 · 待客户下载';
+        if (task.status === 'authorized') return '授权已生成 · 待外部下载';
         if (task.status === 'expired') return '链接已过期';
         return '收集已取消';
     }
@@ -166,17 +215,17 @@
         activeKind = kind; activeDialogToken = '';
         var tasks = store.list().filter(function(task) { return task.context.kind === kind && !(task.status === 'authorized' && task.downloadExpired); });
         tasks.forEach(function(task) { if (hasUnackedReminder(task)) { try { store.ackReminders(task.token); } catch (_) {} } });
-        open('我的待办', '<p class="ic-dialog-intro">这里集中展示设备信息收集与申请进度；授权生成后客户通过同一链接下载授权文件。</p><div class="ic-task-list">' +
+        open('我的待办', '<p class="ic-dialog-intro">这里集中展示设备信息收集与申请进度；授权生成后外部通过同一链接下载授权文件。</p><div class="ic-task-list">' +
             (tasks.length ? tasks.map(function(task) {
                 var active = task.status === 'waiting' || task.status === 'received';
-                var remindBadge = lastReminder(task) ? '<p style="color:#b26a00;font-size:11px;margin:4px 0 0;">客户催办 · ' + date(lastReminder(task).at) + '</p>' : '';
+                var remindBadge = lastReminder(task) ? '<p style="color:#b26a00;font-size:11px;margin:4px 0 0;">外部催办 · ' + date(lastReminder(task).at) + '</p>' : '';
                 var modeBadge = task.status === 'waiting' && task.email ? '<p style="color:#68768a;font-size:11px;margin:4px 0 0;">' + (task.emailStatus === 'sent' ? '已邮件发送至 ' + escape(task.email) : '邮件发送失败') + ' · ' + triggerLabel(task) + '</p>' : '';
                 var action;
                 if (task.status === 'received' && task.triggerMode === 'confirm') action = '<button type="button" class="ic-button ic-button-secondary" data-info-confirm="' + escape(task.token) + '">确认并发起申请</button>';
                 else if (task.status === 'received' && task.triggerMode === 'auto') action = (task.autoSubmit && task.autoSubmit.status === 'failed') ? '<button type="button" class="ic-button ic-button-secondary" data-info-confirm="' + escape(task.token) + '">查看并手动发起</button>' : '<button type="button" class="ic-text-button" data-info-detail="' + escape(task.token) + '">查看进度</button>';
                 else if (task.status === 'waiting') action = '<button type="button" class="ic-text-button" data-info-detail="' + escape(task.token) + '">查看链接</button><button type="button" class="ic-text-button" data-info-resume="' + escape(task.token) + '">继续填写</button>';
                 else if (task.status === 'completed' || task.status === 'authorized') action = '<button type="button" class="ic-text-button" data-info-detail="' + escape(task.token) + '">查看链接</button>';
-                else action = '<button type="button" class="ic-text-button" data-info-renew="' + escape(task.token) + '">重新发起收集</button>';
+                else action = '<button type="button" class="ic-text-button" data-info-renew="' + escape(task.token) + '" data-info-kind="' + escape(task.context.kind) + '">重新发起收集</button>';
                 return '<article class="ic-task"><div class="ic-task-top"><strong>' + escape(task.context.customer) + '</strong><span class="ic-task-state ' + taskStateClass(task) + '">' + taskLabel(task) + '</span></div><p>' + escape(task.context.solutionName ? task.context.solutionName + ' · ' + task.context.product : task.context.product + ' 测试授权') + '</p>' +
                     (filesOf(task).length ? '<div class="ic-task-file"><span class="material-symbols-outlined" aria-hidden="true">description</span>' + escape(filesLabel(task)) + '</div>' : '') + modeBadge + remindBadge +
                     '<div class="ic-task-bottom"><small>' + (task.receivedAt ? '收到于 ' + date(task.receivedAt) : '创建于 ' + date(task.createdAt)) + '</small>' + action + '</div></article>';
@@ -217,11 +266,12 @@
             var received = task.status === 'received';
             var failedAuto = received && task.triggerMode === 'auto' && task.autoSubmit && task.autoSubmit.status === 'failed';
             el.classList.toggle('is-received', received);
-            var copy = received ? (task.triggerMode === 'auto' ? '客户已上传设备信息' : '客户已上传设备信息，待确认发起') : task.status === 'waiting' ? '等待客户上传设备信息' : task.status === 'expired' ? '上传链接已过期' : '资料收集已取消';
+            var copy = received ? (task.triggerMode === 'auto' ? '外部已上传设备信息' : '外部已上传设备信息，待确认发起') : task.status === 'waiting' ? '等待外部上传设备信息' : task.status === 'expired' ? '上传链接已过期' : '资料收集已取消';
             if (failedAuto) copy = '自动发起失败，请手动确认';
             el.innerHTML = '<span class="material-symbols-outlined" aria-hidden="true">' + (received ? 'task_alt' : 'schedule') + '</span><div><strong>' + copy + '</strong><small>' + (received ? escape(filesLabel(task)) + ' · ' + date(task.receivedAt) : task.status === 'waiting' ? '有效期至 ' + date(task.expiresAt) + '，可先填写其他资料' : '需要文件时可重新发送上传链接') + '</small></div>' +
-                (received && task.triggerMode === 'confirm' ? '<button type="button" class="ic-text-button" data-info-confirm="' + escape(task.token) + '">确认并发起申请</button>' : received ? '<button type="button" class="ic-text-button" data-info-detail="' + escape(task.token) + '">查看进度</button>' : task.status === 'waiting' ? '<button type="button" class="ic-text-button" data-info-detail="' + escape(task.token) + '">查看链接</button>' : '<button type="button" class="ic-text-button" data-info-invite="' + escape(task.context.kind) + '">重新发送</button>');
+                (received && task.triggerMode === 'confirm' ? '<button type="button" class="ic-text-button" data-info-confirm="' + escape(task.token) + '">确认并发起申请</button>' : received ? '<button type="button" class="ic-text-button" data-info-detail="' + escape(task.token) + '">查看进度</button>' : task.status === 'waiting' ? '<button type="button" class="ic-text-button" data-info-copy="' + escape(task.token) + '">复制文案</button><button type="button" class="ic-text-button" data-info-detail="' + escape(task.token) + '">查看链接</button>' : '<button type="button" class="ic-text-button" data-info-invite="' + escape(task.context.kind) + '">重新发送</button>');
         });
+        if (window.refreshSolutionDeviceUI) { try { window.refreshSolutionDeviceUI(); } catch (_) {} }
         renderBell();
     }
     function resume(token, options) {
@@ -234,7 +284,7 @@
             if (task.status === 'received') bridge.receive(filesOf(task), task.token, needsRestore ? task.snapshot : null);
         } finally { restoring = false; }
         close(); render();
-        if (!options || !options.silent) notify(task.status === 'received' ? '客户文件已关联，请补全资料后提交授权申请。' : '已恢复申请资料，可继续填写。');
+        if (!options || !options.silent) notify(task.status === 'received' ? '外部文件已关联，请补全资料后提交授权申请。' : '已恢复申请资料，可继续填写。');
     }
     function submitTask(task, auto) {
         var bridge = adapter(task.context.kind);
@@ -244,7 +294,7 @@
         var latest = store.get(task.token);
         if (latest && ['completed', 'authorized'].indexOf(latest.status) !== -1) {
             if (auto) store.markAutoSubmit(task.token, 'done');
-            notify(auto ? '客户已上传，申请已自动发起。' : '客户文件已关联，申请已提交。');
+            notify(auto ? '外部已上传，申请已自动发起。' : '外部文件已关联，申请已提交。');
         } else if (auto) {
             store.markAutoSubmit(task.token, 'failed', '自动发起未完成，请手动确认');
             notify('自动发起未完成，请在「我的待办」中手动确认。');
@@ -265,7 +315,7 @@
         });
         if (changed) {
             render();
-            notify('已切换为手工上传，原客户上传链接已关闭。');
+            notify('已切换为手工上传，原外部上传链接已关闭。');
         }
     }
     function maybeAutoSubmit() {
@@ -292,10 +342,17 @@
             else if (el.hasAttribute('data-info-close')) close();
             else if (el.id === 'infoSendLink') sendLink();
             else if (el.hasAttribute('data-info-detail')) showLink(store.get(el.dataset.infoDetail));
+            else if (el.hasAttribute('data-info-copy')) copyShare(el.dataset.infoCopy, el);
             else if (el.hasAttribute('data-info-resume')) resume(el.dataset.infoResume);
             else if (el.hasAttribute('data-info-confirm')) confirmAndSubmit(el.dataset.infoConfirm);
+            else if (el.hasAttribute('data-info-continue')) continueFilling();
             else if (el.hasAttribute('data-info-cancel')) { store.cancel(el.dataset.infoCancel); close(); render(); notify('收集已取消，原上传链接已关闭。'); }
-            else if (el.hasAttribute('data-info-renew')) { resume(el.dataset.infoRenew); invite(activeKind); }
+            else if (el.hasAttribute('data-info-renew')) {
+                var renewKind = el.dataset.infoKind || activeKind;
+                resume(el.dataset.infoRenew);
+                activeKind = renewKind;
+                invite(renewKind);
+            }
         } catch (error) { notify(error.message); }
     });
     root.addEventListener('click', function(event) { if (event.target === root) close(); });
@@ -338,7 +395,7 @@
                     var key = task.token + ':' + last.at;
                     if (!seenReminders[key]) {
                         seenReminders[key] = true;
-                        notify('客户催办了「' + task.context.customer + '」的' + (last.stage === 'received' ? '申请提交' : '审批') + '进度。');
+                        notify('外部催办了「' + task.context.customer + '」的' + (last.stage === 'received' ? '申请提交' : '审批') + '进度。');
                     }
                 }
             });
@@ -350,6 +407,6 @@
     window.addEventListener('storage', refresh); window.addEventListener('focus', refresh);
     var panel = document.getElementById('solutionProductPanel');
     if (panel) new MutationObserver(function() { try { render(); } catch (error) { notify(error.message); } }).observe(panel, { childList: true });
-    window.InfoCollectionUI = { store: store, resume: resume, render: render, renderBell: renderBell, cancelContext: cancelContext };
+    window.InfoCollectionUI = { store: store, resume: resume, render: render, renderBell: renderBell, cancelContext: cancelContext, getTask: currentTask, invite: invite };
     refresh();
 }());
