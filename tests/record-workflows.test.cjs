@@ -419,7 +419,8 @@ test('移动端审核将审批意见、附件和同意操作收纳在固定页�
     assert.equal(mobileComposer.hidden, false);
     assert.equal(document.getElementById('recordDrawerSecondary').hidden, true);
     assert.equal(reject.hidden, false);
-    assert.equal(primary.textContent, '同意');
+    assert.equal(primary.textContent, '通过');
+    assert.equal(document.getElementById('recordDrawerTransfer').hidden, false);
     assert.ok(document.querySelector('.record-approval-decision'));
 
     const attachmentInput = document.getElementById('recordApprovalAttachments');

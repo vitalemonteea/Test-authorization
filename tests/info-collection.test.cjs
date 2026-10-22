@@ -140,18 +140,18 @@ test('客户催办按阶段去重，申请人确认后不再重复提示', () =>
 test('尚未选择客户时不发送链接；发送时填写客户邮箱并默认由申请人确认发起', () => {
   const { dom, document, window } = loadCollectionUi();
   try {
-    const invite = document.querySelector('[data-info-invite="hardware"]');
-    assert.ok(invite, '硬件上传区应支持发送上传链接');
-    invite.click();
+    assert.equal(typeof window.InfoCollectionUI.invite, 'function', '应提供发送上传链接的入口');
+    window.InfoCollectionUI.invite('hardware');
     assert.equal(window.InfoCollectionUI.store.list().length, 0);
     assert.match(document.getElementById('infoCollectionFeedback').textContent, /客户/);
     const search = document.getElementById('customerSearchInput');
     search.value = 'C100001';
     search.dispatchEvent(new window.Event('input', { bubbles: true }));
     document.querySelector('#customerDropdown [data-id="C100001"]').click();
-    invite.click();
+    window.InfoCollectionUI.invite('hardware');
     assert.ok(document.getElementById('infoCustomerEmail'), '发送弹窗应要求填写客户邮箱');
-    assert.equal(document.getElementById('infoAutoSubmit').checked, false);
+    assert.equal(document.querySelector('input[name="infoTriggerMode"][value="confirm"]').checked, true);
+    assert.equal(document.querySelector('input[name="infoTriggerMode"][value="auto"]').disabled, true);
     document.getElementById('infoCustomerEmail').value = 'not-an-email';
     document.getElementById('infoSendLink').click();
     assert.equal(window.InfoCollectionUI.store.list().length, 0);
@@ -163,7 +163,7 @@ test('尚未选择客户时不发送链接；发送时填写客户邮箱并默�
     assert.equal(task.emailStatus, 'sent');
     assert.equal(task.triggerMode, 'confirm');
     assert.match(document.getElementById('infoCollectionFeedback').textContent, /发送至 customer@example.com/);
-    assert.match(document.getElementById('infoDialogBody').textContent, /等待客户上传/);
+    assert.match(document.getElementById('infoDialogBody').textContent, /等待外部上传/);
   } finally { dom.window.close(); }
 });
 
@@ -177,9 +177,9 @@ test('申请信息齐全时可选择客户上传后直接发起申请', () => {
     document.getElementById('unifiedDate').value = '2026-12-31';
     document.getElementById('requestAction').value = 'open';
     assert.equal(window.InfoCollectionApplication.canAutoSubmit(), true, '信息齐全时应允许直接发起');
-    document.querySelector('[data-info-invite="hardware"]').click();
-    assert.equal(document.getElementById('infoAutoSubmit').disabled, false);
-    document.getElementById('infoAutoSubmit').checked = true;
+    window.InfoCollectionUI.invite('hardware');
+    assert.equal(document.querySelector('input[name="infoTriggerMode"][value="auto"]').disabled, false);
+    document.querySelector('input[name="infoTriggerMode"][value="auto"]').checked = true;
     document.getElementById('infoCustomerEmail').value = 'customer@example.com';
     document.getElementById('infoSendLink').click();
     assert.equal(window.InfoCollectionUI.store.list()[0].triggerMode, 'auto');
@@ -253,6 +253,65 @@ test('解决方案续填恢复业务参数，并保持借测单设备 ID 锁定'
     assert.equal(current.application.params.HCI.infoFiles.length, 2);
     assert.match(current.application.params.HCI.infoFile, /等 2 个文件/);
     assert.equal(document.querySelector('#solutionProductPanel [data-solution-param="deviceId"]').readOnly, true);
+  } finally { dom.window.close(); }
+});
+
+test('解决方案设备信息非必填：提交缺少设备信息时弹出操作引导，可直接发链接', async () => {
+  const { dom, document, window } = loadCollectionUi();
+  try {
+    const search = document.getElementById('solutionBorrowCustomerSearch');
+    search.value = 'C100101';
+    search.dispatchEvent(new window.Event('input', { bubbles: true }));
+    document.querySelector('[data-solution-borrow-customer="C100101"]').click();
+    document.getElementById('solutionBorrowOrder').value = 'BOR-202608-001';
+    document.getElementById('solutionBorrowLookup').click();
+
+    const block = document.querySelector('#solutionProductPanel [data-solution-device-block]');
+    assert.ok(block, 'HCI 参数区应提供设备信息字段');
+    assert.equal(block.querySelectorAll('input[name="solutionDeviceMode"]').length, 0, '不应提供自己上传/客户上传的模式单选');
+    assert.equal(block.querySelector('[data-info-invite]'), null, '字段内不再提前提供发送链接入口');
+    assert.equal(block.querySelector('.solution-required'), null, '设备信息不再标记必填');
+
+    // 清掉借测单带入的模拟文件，模拟“尚未拿到设备信息”
+    const input = block.querySelector('input[data-solution-param="infoFile"]');
+    Object.defineProperty(input, 'files', { value: [], configurable: true });
+    input.dispatchEvent(new window.Event('change', { bubbles: true }));
+
+    document.getElementById('solutionSubmitWhole').click();
+    const guide = document.getElementById('deviceInfoGuideOverlay');
+    assert.ok(guide && !guide.hidden, '提交时缺少设备信息应弹出操作引导');
+    assert.match(guide.textContent, /发送链接让外部上传/);
+    assert.match(guide.textContent, /我自己上传/);
+    guide.querySelector('[data-device-guide-invite]').click();
+    assert.equal(guide.hidden, true, '选择发送链接后引导应关闭');
+
+    assert.ok(document.getElementById('infoCustomerEmail'), '引导后应打开发送链接弹窗');
+    assert.equal(document.querySelector('input[name="infoTriggerMode"][value="confirm"]').checked, true);
+    document.getElementById('infoCustomerEmail').value = 'customer@example.com';
+    document.getElementById('infoSendLink').click();
+    assert.match(document.getElementById('infoDialogBody').textContent, /等待外部上传/);
+
+    let copied = '';
+    Object.defineProperty(window.navigator, 'clipboard', {
+      configurable: true,
+      value: { writeText: (text) => { copied = text; return Promise.resolve(); } }
+    });
+    document.querySelector('#infoDialogBody [data-info-copy]').click();
+    await Promise.resolve();
+    assert.match(copied, /【设备信息收集】/);
+    assert.match(copied, /info-upload\.html#/);
+    assert.match(copied, /支持多选/);
+    assert.match(copied, /有效期至/);
+
+    document.querySelector('[data-info-continue]').click();
+    assert.equal(document.getElementById('infoCollectionOverlay').hidden, true);
+    assert.match(block.textContent, /上传链接已发送/);
+    assert.equal(block.querySelector('[data-solution-device-self]').hidden, true, '等待外部上传期间应收起上传面板');
+
+    const switchSelf = block.querySelector('[data-solution-device-switch="self"]');
+    assert.ok(switchSelf, '等待中应可改由自己上传');
+    switchSelf.click();
+    assert.equal(block.querySelector('[data-solution-device-self]').hidden, false, '取消收集后应回到上传面板');
   } finally { dom.window.close(); }
 });
 

@@ -60,8 +60,16 @@ function chooseSolutionSource(document, window, value) {
   select.dispatchEvent(new window.Event('change', { bubbles: true }));
 }
 
+function uploadHciInfo(document, window) {
+  const input = document.querySelector('#solutionProductPanel input[data-solution-param="infoFile"]');
+  if (!input) return; // 方案不含 HCI 时无需上传设备信息
+  Object.defineProperty(input, 'files', { value: [new window.File(['productLine=HCI'], 'HCI-INFO.info')], configurable: true });
+  input.dispatchEvent(new window.Event('change', { bubbles: true }));
+}
+
 function submitForApproval(document, window) {
   assert.equal(document.getElementById('solutionSubmitError').hidden, true, '提交前不应显示校验错误');
+  uploadHciInfo(document, window);
   click(document, window, 'solutionSubmitWhole');
   assert.match(document.getElementById('solutionApplicationStatus').textContent, /已授权/);
 }
@@ -407,6 +415,7 @@ test('关联借测单与纯软件本地申请均展示接收邮箱，支持自�
     // 3. 修正邮箱后正常通过并生成记录
     emailInput.value = 'custom-receiver@company.com';
     emailInput.dispatchEvent(new window.Event('input', { bubbles: true }));
+    uploadHciInfo(document, window);
     click(document, window, 'solutionSubmitWhole');
     assert.match(document.getElementById('solutionApplicationStatus').textContent, /已授权/);
 
