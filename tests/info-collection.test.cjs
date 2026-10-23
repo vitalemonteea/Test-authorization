@@ -470,9 +470,12 @@ test('触发方式 B：客户上传后停在待确认，确认后发起申请', 
     const task = window.InfoCollectionUI.store.create(window.InfoCollectionApplication.getContext(), window.InfoCollectionApplication.capture());
     window.InfoCollectionUI.store.configure(task.token, { email: 'customer@example.com', triggerMode: 'confirm' });
     window.InfoCollectionUI.store.submit(task.token, [file('customer.info', 'productLine=HCI\ndeviceSn=SN-CONFIRM')]);
+    const legacyStatus = document.createElement('div');
+    legacyStatus.setAttribute('data-info-status', 'hardware');
+    document.body.appendChild(legacyStatus);
     window.dispatchEvent(new window.Event('focus'));
     assert.equal(window.InfoCollectionUI.store.get(task.token).status, 'received', '触发方式 B 不应自动提交');
-    const status = document.querySelector('[data-info-status="hardware"]');
+    const status = legacyStatus;
     assert.match(status.textContent, /待确认发起/);
     status.querySelector('[data-info-confirm]').click();
     const saved = window.InfoCollectionUI.store.get(task.token);
@@ -524,7 +527,7 @@ test('申请人手工上传文件后关闭同一申请对象的客户上传链�
   } finally { dom.window.close(); }
 });
 
-test('通知中心「我的待办」展示待确认任务并可一键确认', () => {
+test('旧硬件收集任务不再出现在通知中心', () => {
   const { dom, document, window } = loadCollectionUi();
   try {
     window.InfoCollectionApplication.restore({ productId: '45', customerId: 'C100001', customer: '测试客户', customerType: 'normal', fields: [] });
@@ -532,10 +535,8 @@ test('通知中心「我的待办」展示待确认任务并可一键确认', ()
     window.InfoCollectionUI.store.configure(task.token, { email: 'customer@example.com', triggerMode: 'confirm' });
     window.InfoCollectionUI.store.submit(task.token, [file('customer.info', 'productLine=HCI')]);
     window.InfoCollectionUI.renderBell();
-    assert.equal(document.getElementById('headerTodoBadge').hidden, false);
-    assert.equal(document.getElementById('headerTodoBadge').textContent, '1');
-    assert.match(document.getElementById('headerTodoList').textContent, /待确认发起/);
-    assert.ok(document.querySelector('#headerTodoList [data-info-confirm]'));
+    assert.equal(document.getElementById('headerTodoBadge').hidden, true, '旧硬件任务不应再计入铃铛');
+    assert.doesNotMatch(document.getElementById('headerTodoList').textContent, /待确认发起/);
   } finally { dom.window.close(); }
 });
 

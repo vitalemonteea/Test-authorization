@@ -235,7 +235,8 @@
         var badge = document.getElementById('headerTodoBadge');
         var list = document.getElementById('headerTodoList');
         if (!badge && !list) return;
-        var tasks = store.list().filter(function(task) { return ['waiting', 'received', 'completed'].indexOf(task.status) !== -1; });
+        // 方案 B 后产品授权不再在申请阶段收集设备信息，旧 hardware 任务不再出现在通知中心。
+        var tasks = store.list().filter(function(task) { return task.context.kind !== 'hardware' && ['waiting', 'received', 'completed'].indexOf(task.status) !== -1; });
         var actionable = tasks.filter(function(task) { return task.status === 'waiting' || task.status === 'received'; });
         if (badge) { badge.hidden = !actionable.length; badge.textContent = String(actionable.length); }
         if (!list) return;
