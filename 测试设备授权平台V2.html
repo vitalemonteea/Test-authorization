@@ -1882,7 +1882,7 @@
                             <div class="hw-upload-area">
                                 <input type="file" id="hwFileInput" accept=".info" multiple>
                                 <div class="hw-file-info" id="hwFileInfo">
-                                    <span class="hw-file-name empty" id="hwFileName">未选文件；可先填其他信息，再发链接由外部上传（多选 .info）</span>
+                                    <span class="hw-file-name empty" id="hwFileName">未选择文件（可先提交申请，激活时再上传该设备的 .info）</span>
                                     <span class="hw-file-meta" id="hwFileMeta"></span>
                                     <span class="hw-file-clear" id="hwFileClear" title="删除全部文件">&times;</span>
                                 </div>
@@ -1929,14 +1929,14 @@
                         <label class="layui-form-label" id="deviceIdentifierLabel">设备ID</label>
                         <div class="layui-input-block">
                             <div class="chip-input-container" id="chipContainer">
-                                <input type="text" id="chipInput" class="chip-input-field" placeholder="输入设备ID（回车/逗号确认，支持直接粘贴）..." autocomplete="off">
+                                <input type="text" id="chipInput" class="chip-input-field" placeholder="输入设备ID（每单 1 台设备）" autocomplete="off">
                                 <button type="button" class="chip-add-btn" id="chipAddBtn" title="添加此设备ID"><span class="material-symbols-outlined">add</span>添加</button>
                                 <input type="hidden" id="devIdNew" name="devIdNew" value="">
                             </div>
                             <div class="chip-helper-bar">
-                                <span class="chip-count-badge">已录入 <strong id="chipCountNum">0</strong> 台设备</span>
+                                <span class="chip-count-badge">已录入 <strong id="chipCountNum">0</strong> 台设备（每单限 1 台）</span>
                                 <button type="button" class="chip-clear-link" id="chipClearBtn" hidden>全部清空</button>
-                                <span class="chip-helper-tip" style="margin-left:auto;"><span class="material-symbols-outlined">info</span>支持回车/逗号分隔，支持 Excel 复制批量粘贴</span>
+                                <span class="chip-helper-tip" style="margin-left:auto;"><span class="material-symbols-outlined">info</span>每台设备单独提交一次申请</span>
                             </div>
                             <div id="deviceLookupBlocking" class="device-lookup-blocking" role="alert" hidden>
                                 <span id="deviceLookupBlockingText"></span>
@@ -1957,14 +1957,14 @@
                         <label class="layui-form-label">设备SN<span class="required-mark">*</span></label>
                         <div class="layui-input-block">
                             <div class="chip-input-container" id="snChipContainer">
-                                <input type="text" id="snChipInput" class="chip-input-field" placeholder="输入设备SN（回车/逗号确认，支持直接粘贴）..." autocomplete="off">
+                                <input type="text" id="snChipInput" class="chip-input-field" placeholder="输入设备SN（每单 1 台设备）" autocomplete="off">
                                 <button type="button" class="chip-add-btn" id="snChipAddBtn" title="添加此设备SN"><span class="material-symbols-outlined">add</span>添加</button>
                                 <input type="hidden" id="devSnNew" name="devSnNew" value="">
                             </div>
                             <div class="chip-helper-bar">
-                                <span class="chip-count-badge">已录入 <strong id="snChipCountNum">0</strong> 台设备SN</span>
+                                <span class="chip-count-badge">已录入 <strong id="snChipCountNum">0</strong> 条设备SN（每单限 1 台）</span>
                                 <button type="button" class="chip-clear-link" id="snChipClearBtn" hidden>全部清空</button>
-                                <span class="chip-helper-tip" style="margin-left:auto;"><span class="material-symbols-outlined">info</span>支持回车/逗号分隔，支持 Excel 复制批量粘贴</span>
+                                <span class="chip-helper-tip" style="margin-left:auto;"><span class="material-symbols-outlined">info</span>每台设备单独提交一次申请</span>
                             </div>
                         </div>
                     </div>
@@ -6868,7 +6868,7 @@
 
         function renderHwFileList() {
             if (!hwFiles.length) {
-                hwFileName.textContent = '未选文件；可先填其他信息，再发链接由外部上传（多选 .info）';
+                hwFileName.textContent = '未选择文件（可先提交申请，激活时再上传该设备的 .info）';
                 hwFileName.className = 'hw-file-name empty';
                 hwFileMeta.textContent = '';
                 hwFileInfo.classList.remove('has-file');
@@ -6950,7 +6950,9 @@
 
         function buildManualDeviceFactsForFileMode(deviceIds) {
             var productLineId = plnameSelect.value;
-            var productName = getSelectedProductName();
+            var productSelectEl = document.getElementById('plname');
+        var productOption = productSelectEl && productSelectEl.options[productSelectEl.selectedIndex];
+        var productName = productOption ? productOption.textContent.trim() : (productSelectEl ? productSelectEl.value : '');
             var fileFacts = (applicationState.deviceFacts || []).slice();
             return deviceIds.map(function(id) {
                 var match = fileFacts.filter(function(fact) { return fact.deviceId === id; })[0];
@@ -7673,8 +7675,9 @@
         // ===== 设备ID / 设备SN Chip 输入 + HCI/SCP 模式（恢复 V1 联动） =====
         function escapeHtml(str) { return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 
-        function createChipControl(container, input, defaultPlaceholder, onAdd, onChange, onRemove) {
+        function createChipControl(container, input, defaultPlaceholder, onAdd, onChange, onRemove, options) {
             var values = [];
+            var singleValue = !!(options && options.singleValue);
             function render() {
                 container.querySelectorAll('.chip-item').forEach(function (el) { el.remove(); });
                 values.forEach(function (val) {
@@ -7727,7 +7730,8 @@
                     e.preventDefault();
                     var raw = this.value;
                     // 按多种分隔符拆分（支持一次性输入多个）
-                    var tokens = raw.split(/[\r\n,，;；\s]+/);
+                    var tokens = raw.split(/[\r\n,，;；\s]+/).filter(Boolean);
+                    if (singleValue) { values = []; tokens = tokens.slice(0, 1); }
                     tokens.forEach(function (t) { add(t); });
                     this.value = '';
                     return false;
@@ -7740,7 +7744,8 @@
                 e.preventDefault();
                 var tokens = clip.split(/[\r\n,，;；\t]+/).map(function (t) { return t.trim(); }).filter(Boolean);
                 if (tokens.length > 1) {
-                    tokens.forEach(function (t) { add(t); });
+                    if (singleValue) { values = []; add(tokens[0]); }
+                    else tokens.forEach(function (t) { add(t); });
                     this.value = '';
                 } else if (tokens.length === 1) {
                     // 单个值：正常粘贴到输入框（不自动添加，让用户确认后回车）
@@ -7749,7 +7754,7 @@
             });
             input.addEventListener('blur', function () {
                 var v = this.value.trim();
-                if (v) add(v);
+                if (v) { if (singleValue) values = []; add(v); }
             });
             container.addEventListener('click', function (e) {
                 if (!e.target.closest('.chip-item') && !e.target.closest('.chip-add-btn') && !input.disabled) input.focus();
@@ -8515,7 +8520,9 @@
 
         function buildHardwareInfoFacts(file) {
             var productLineId = plnameSelect.value;
-            var productName = getSelectedProductName();
+            var productSelectEl = document.getElementById('plname');
+        var productOption = productSelectEl && productSelectEl.options[productSelectEl.selectedIndex];
+        var productName = productOption ? productOption.textContent.trim() : (productSelectEl ? productSelectEl.value : '');
             var fileKey = file.name.replace(/\.info$/i, '').replace(/[^a-zA-Z0-9_-]/g, '').toUpperCase();
             if (!fileKey) fileKey = 'DEVICE';
             var recognizedId = productName.toUpperCase() + '-INFO-' + fileKey.slice(0, 16);
@@ -8605,7 +8612,7 @@
             return null;
         }
 
-        var deviceIdChips = createChipControl(chipContainer, chipInput, '输入设备ID（回车/逗号确认，支持直接粘贴）...', function (val) {
+        var deviceIdChips = createChipControl(chipContainer, chipInput, '输入设备ID（每单 1 台设备）', function (val) {
             deviceIdsAutoFilled = false;
             syncBorrowInfoByDevice(val, 'id');
         }, function (vals) {
@@ -8626,9 +8633,9 @@
             pairRemovalInProgress = true;
             deviceSnChips.remove(fact.sn);
             pairRemovalInProgress = false;
-        });
+        }, { singleValue: true });
 
-        var deviceSnChips = createChipControl(snChipContainer, snChipInput, '输入设备SN（回车/逗号确认，支持直接粘贴）...', function (val) {
+        var deviceSnChips = createChipControl(snChipContainer, snChipInput, '输入设备SN（每单 1 台设备）', function (val) {
             syncBorrowInfoByDevice(val, 'sn');
         }, function (vals) {
             syncHiddenMirror('devSnNew', vals);
@@ -8644,7 +8651,7 @@
             pairRemovalInProgress = true;
             deviceIdChips.remove(fact.deviceId);
             pairRemovalInProgress = false;
-        });
+        }, { singleValue: true });
 
         function getChips() { return deviceIdChips.get(); }
         function getSnChips() { return deviceSnChips.get(); }
@@ -8704,12 +8711,12 @@
         // ===== 设备ID / SN 添加按钮 & 清空按钮 绑定 =====
         document.getElementById('chipAddBtn').addEventListener('click', function () {
             var v = chipInput.value.trim();
-            if (v) { deviceIdChips.add(v); chipInput.value = ''; }
+            if (v) { if (deviceIdChips.get().length) deviceIdChips.clear(); deviceIdChips.add(v); chipInput.value = ''; }
             chipInput.focus();
         });
         document.getElementById('snChipAddBtn').addEventListener('click', function () {
             var v = snChipInput.value.trim();
-            if (v) { deviceSnChips.add(v); snChipInput.value = ''; }
+            if (v) { if (deviceSnChips.get().length) deviceSnChips.clear(); deviceSnChips.add(v); snChipInput.value = ''; }
             snChipInput.focus();
         });
         document.getElementById('chipClearBtn').addEventListener('click', function () {
@@ -9862,6 +9869,148 @@
         overlay.hidden = false;
     }
 
+    // ===== 方案 B：产品授权先申请，激活时再补充 .info =====
+    var PRODUCT_DEVICE_INFO_KEY = 'test-authorization-device-info-v1';
+    var pendingProductActivations = {};
+
+    function parseProductActivationInfo(content) {
+        var fields = {};
+        String(content || '').split(/\r?\n/).forEach(function(line) {
+            var match = line.match(/^\s*([a-zA-Z][\w]*)\s*=\s*(.*?)\s*$/);
+            if (match) fields[match[1]] = match[2];
+        });
+        return { productLine: fields.productLine || '', sn: fields.deviceSn || '', clusterId: fields.clusterId || '', deviceId: fields.deviceId || '' };
+    }
+
+    function insertProductRecord(record) {
+        function escapeHtml(value) {
+            return String(value == null ? '' : value).replace(/[&<>"']/g, function(c) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+            });
+        }
+        var tbody = document.querySelector('#content-records .table-scroll-wrap > table > tbody');
+        if (!tbody) return;
+        var actionLinks = '<span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px] record-action-control" data-record-action="view" role="button" tabindex="0" aria-haspopup="dialog">查看</span>' +
+            '<span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px] record-action-control" data-record-action="copy" role="button" tabindex="0">复制</span>' +
+            '<span class="px-2 py-0.5 bg-primary text-white rounded text-[10px] font-medium cursor-pointer hover:bg-primary/90 record-action-control" data-record-action="renew" role="button" tabindex="0" aria-haspopup="dialog">续期</span>';
+        var statusCell = record.pending
+            ? '<div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-amber-50 text-amber-700 border border-amber-200"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>待激活</span><div class="flex items-center gap-1.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px] record-action-control" data-product-activate="' + record.id + '" role="button" tabindex="0">去激活</span>' + actionLinks + '</div></div>'
+            : '<div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已授权</span><div class="flex items-center gap-1.5 ml-auto">' + actionLinks + '</div></div>';
+        var row = '<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-product-record="true" data-product-record-id="' + record.id + '"' + (record.pending ? ' data-product-pending="true"' : '') + '>' +
+            '<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">' + record.id + '</a></td>' +
+            '<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td>' +
+            '<td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>' +
+            '<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">' + escapeHtml(record.productName) + '</td>' +
+            '<td class="py-3 px-4 whitespace-nowrap text-[#424656]">' + escapeHtml(record.version) + '</td>' +
+            '<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="' + escapeHtml(record.customer) + '">' + escapeHtml(record.customer) + '</span></div></td>' +
+            '<td class="py-3 px-4 whitespace-nowrap text-[#424656]">' + escapeHtml(record.deviceDisplay) + '</td>' +
+            '<td class="py-3 px-4 whitespace-nowrap text-[#424656]">' + escapeHtml(record.sn) + '</td>' +
+            '<td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>' +
+            '<td class="py-3 px-4 whitespace-nowrap text-[#424656]">' + escapeHtml(record.region) + '</td>' +
+            '<td class="py-3 px-4 whitespace-nowrap text-[#424656]">' + escapeHtml(record.startDate) + ' ~ ' + escapeHtml(record.endDate) + '</td>' +
+            '<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">' + escapeHtml(record.applicant) + '</td>' +
+            '<td class="py-3 px-4 whitespace-nowrap text-[#424656]">' + escapeHtml(record.time) + '</td>' +
+            '<td class="sticky-right py-3 px-4 whitespace-nowrap">' + statusCell + '</td></tr>';
+        tbody.insertAdjacentHTML('afterbegin', row);
+        if (typeof window.initRecordsPagination === 'function') window.initRecordsPagination();
+    }
+
+    function openProductActivation(recordId) {
+        var pending = pendingProductActivations[recordId];
+        if (!pending) return;
+        var overlay = document.getElementById('productActivationOverlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.className = 'ic-overlay';
+            overlay.id = 'productActivationOverlay';
+            overlay.hidden = true;
+            overlay.innerHTML = '<div class="ic-dialog" role="dialog" aria-modal="true" aria-labelledby="productActivationTitle">' +
+                '<div class="ic-dialog-head"><div><p class="ic-eyebrow">激活授权</p><h2 id="productActivationTitle">上传设备信息</h2></div><button type="button" class="ic-close" data-product-activation-close aria-label="关闭">&times;</button></div>' +
+                '<p class="ic-dialog-intro">上传设备的 .info 文件，校验通过后立即生成授权。文件会留存，后续续期可直接复用，不用再向外部索取。</p>' +
+                '<label class="ic-field-label" for="productActivationFile">设备信息文件</label>' +
+                '<input class="ic-input" id="productActivationFile" type="file" accept=".info" multiple>' +
+                '<p class="ic-field-error" id="productActivationError" hidden role="alert"></p>' +
+                '<div class="ic-note"><span class="material-symbols-outlined" aria-hidden="true">info</span><p>支持一次选择多个 .info 文件；文件中的产品线需与本次申请一致。</p></div>' +
+                '<footer class="ic-dialog-actions"><button type="button" class="ic-button ic-button-quiet" data-product-activation-close>暂不激活</button><button type="button" class="ic-button" id="productActivationSubmit"><span class="material-symbols-outlined" aria-hidden="true">bolt</span>上传并激活</button></footer>' +
+            '</div>';
+            document.body.appendChild(overlay);
+            overlay.addEventListener('click', function(event) {
+                if (event.target === overlay || (event.target.closest && event.target.closest('[data-product-activation-close]'))) overlay.hidden = true;
+            });
+            overlay.querySelectorAll('[data-product-activation-close]').forEach(function(btn) { btn.addEventListener('click', function() { overlay.hidden = true; }); });
+            var submitBtn = overlay.querySelector('#productActivationSubmit');
+            if (submitBtn) submitBtn.addEventListener('click', submitProductActivation);
+        }
+        overlay.dataset.recordId = recordId;
+        var errorEl = document.getElementById('productActivationError');
+        if (errorEl) { errorEl.hidden = true; errorEl.textContent = ''; }
+        overlay.hidden = false;
+    }
+
+    function submitProductActivation() {
+        var overlay = document.getElementById('productActivationOverlay');
+        var recordId = overlay && overlay.dataset.recordId;
+        var pending = pendingProductActivations[recordId];
+        var input = document.getElementById('productActivationFile');
+        var errorEl = document.getElementById('productActivationError');
+        var files = input && input.files ? Array.prototype.slice.call(input.files) : [];
+        function fail(message) { if (errorEl) { errorEl.hidden = false; errorEl.textContent = message; } }
+        if (!pending) { fail('待激活记录不存在。'); return; }
+        if (!files.length) { fail('请选择 .info 文件。'); return; }
+        if (files.some(function(file) { return !/\.info$/i.test(file.name); })) { fail('仅支持 .info 格式文件。'); return; }
+        Promise.all(files.map(function(file) {
+            return new Promise(function(resolve, reject) {
+                var reader = new FileReader();
+                reader.onload = function() {
+                    try { resolve({ name: file.name, size: file.size, summary: parseProductActivationInfo(reader.result) }); }
+                    catch (error) { reject(error); }
+                };
+                reader.onerror = function() { reject(new Error('文件读取失败，请重试。')); };
+                reader.readAsText(file);
+            });
+        })).then(function(parsed) {
+            var mismatch = parsed.filter(function(item) {
+                return item.summary.productLine && item.summary.productLine.toUpperCase() !== pending.productName.toUpperCase();
+            })[0];
+            if (mismatch) { fail('文件中的产品为 ' + mismatch.summary.productLine + '，与本次申请的 ' + pending.productName + ' 不一致。'); return; }
+            var summary = parsed.filter(function(item) { return item.summary.clusterId || item.summary.deviceId; })[0];
+            if (!summary) { fail('文件中缺少设备 ID 或集群标识，无法激活。'); return; }
+            var deviceIds = parsed.map(function(item) { return item.summary.deviceId; }).filter(Boolean);
+            var snList = parsed.map(function(item) { return item.summary.sn; }).filter(Boolean);
+            var row = document.querySelector('[data-product-record-id="' + recordId + '"]');
+            if (row) {
+                row.removeAttribute('data-product-pending');
+                row.children[6].textContent = deviceIds.length ? deviceIds.join(', ') : (pending.deviceDisplay || '—');
+                row.children[7].textContent = snList.length ? snList.join(', ') : '—';
+                row.lastElementChild.innerHTML = '<div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已授权</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span></div></div>';
+            }
+            var key = [pending.customerId || pending.customer, pending.productName, summary.summary.deviceId || summary.summary.clusterId].join('|');
+            var data = {};
+            try { data = JSON.parse(localStorage.getItem(PRODUCT_DEVICE_INFO_KEY) || '{}'); } catch (_) { data = {}; }
+            data[key] = {
+                customerId: pending.customerId,
+                customer: pending.customer,
+                productLine: pending.productName,
+                deviceId: summary.summary.deviceId || '',
+                clusterId: summary.summary.clusterId || '',
+                sn: summary.summary.sn || '',
+                fileName: parsed[0].name,
+                source: 'applicant',
+                verifiedAt: Date.now()
+            };
+            localStorage.setItem(PRODUCT_DEVICE_INFO_KEY, JSON.stringify(data));
+            delete pendingProductActivations[recordId];
+            overlay.hidden = true;
+            alert('激活成功，授权文件已生成。');
+            if (typeof window.initRecordsPagination === 'function') window.initRecordsPagination();
+        }).catch(function(error) { fail(error.message); });
+    }
+
+    document.addEventListener('click', function(event) {
+        var btn = event.target && event.target.closest ? event.target.closest('[data-product-activate]') : null;
+        if (btn) openProductActivation(btn.dataset.productActivate);
+    });
+
     // 提交表单（模拟）
     function submitStandardForm(options) {
         var continueForNext = !options || options.mode !== 'clear';
@@ -9879,11 +10028,13 @@
 
         if (hardwareInfoRequired) {
             var submitHwFiles = window.InfoCollectionApplication ? window.InfoCollectionApplication.getFiles() : Array.prototype.slice.call(hwFileInput.files || []);
-            // 设备 ID 只用于识别设备，不能替代硬件信息文件；文件必须由申请人上传或客户上传后回传。
-            if (!submitHwFiles.length) {
-                hwUploadResult.textContent = '';
-                hwUploadResult.className = 'hw-upload-result';
-                showDeviceInfoGuide('hardware');
+            var manualDeviceIds = ((document.getElementById('devIdNew') || {}).value || '')
+                .split(',').map(function(value) { return value.trim(); }).filter(Boolean);
+            // 方案 B：申请阶段只要求设备 ID，.info 文件在激活时再上传。
+            if (!submitHwFiles.length && !manualDeviceIds.length) {
+                hwUploadResult.textContent = '请先输入设备ID；硬件信息文件可在激活时上传';
+                hwUploadResult.className = 'hw-upload-result fail';
+                alert('请先输入设备ID；硬件信息文件可在激活时上传');
                 return;
             }
             if (submitHwFiles.some(function(f) { return !f.name.toLowerCase().endsWith('.info'); })) {
@@ -10030,12 +10181,51 @@
                 } }));
             }
         }
+        var needsActivation = !!hardwareInfoRequired && !submitHwFiles.length;
+        var productSelectEl = document.getElementById('plname');
+        var productOption = productSelectEl && productSelectEl.options[productSelectEl.selectedIndex];
+        var productName = productOption ? productOption.textContent.trim() : (productSelectEl ? productSelectEl.value : '');
+        var customerName = (document.getElementById('selectedCustomerName') || {}).textContent || '';
+        var recordDeviceIds = (manualDeviceIds || []).slice();
+        var recordDeviceDisplay = recordDeviceIds.length ? recordDeviceIds.join(', ') : '待激活补充';
+        var recordEndDate = (document.getElementById('unifiedDate') || {}).value || '—';
+        var recordRegion = (document.getElementById('area') || {}).value || '—';
+        var recordTime = new Date().toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false });
+        insertProductRecord({
+            id: mockId,
+            productName: productName,
+            version: (document.getElementById('cloudVersion') || {}).value || '—',
+            customer: customerName,
+            deviceDisplay: recordDeviceDisplay,
+            sn: '—',
+            region: recordRegion,
+            startDate: new Date().toISOString().slice(0, 10),
+            endDate: recordEndDate,
+            applicant: (document.querySelector('.header-user .user-name') || {}).textContent || '申请人',
+            time: recordTime,
+            pending: needsActivation
+        });
+        if (needsActivation) {
+            pendingProductActivations[mockId] = {
+                id: mockId,
+                productName: productName,
+                customer: customerName,
+                customerId: applicationState.customerId,
+                deviceDisplay: recordDeviceDisplay,
+                deviceIds: recordDeviceIds,
+                endDate: recordEndDate
+            };
+        }
         if (continueForNext) {
             retainFormForNextDevice();
-            alert('表单已提交，ID: ' + mockId + '\n表单内容已保留，可继续为下一台设备发起申请。');
+            alert(needsActivation
+                ? '申请已提交，ID: ' + mockId + '\n设备信息待激活：请到「授权记录」上传 .info 完成激活。'
+                : '表单已提交，ID: ' + mockId + '\n表单内容已保留，可继续为下一台设备发起申请。');
         } else {
             clearFormAfterSubmit();
-            alert('表单已提交，ID: ' + mockId + '\n表单已重置，可发起新的申请。');
+            alert(needsActivation
+                ? '申请已提交，ID: ' + mockId + '\n设备信息待激活：请到「授权记录」上传 .info 完成激活。'
+                : '表单已提交，ID: ' + mockId + '\n表单已重置，可发起新的申请。');
         }
     }
 

@@ -395,11 +395,54 @@ test('表单重置彻底清理旧流程状态并重新应用默认 HCI 模式', 
     assert.equal(window.applicationState.deviceFacts.some((fact) => fact.deviceId === 'SALES-ATRUST-001'), false);
 
     window.submitStandardForm();
-    const guide = document.getElementById('deviceInfoGuideOverlay');
-    assert.ok(guide && !guide.hidden, '提交时缺少设备信息应弹出操作引导而非仅报错');
-    assert.match(guide.textContent, /发送链接让外部上传/);
-    assert.match(guide.textContent, /我自己上传/);
+    assert.match(alerts.at(-1), /请先输入设备ID.*激活时上传/);
     assert.equal(document.getElementById('submissionSnapshot').value, '');
+    assert.deepEqual(errors, []);
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('产品授权先提交，缺 .info 时进入待激活，上传文件后完成激活并留存设备信息', async () => {
+  const { dom, document, window, alerts, errors } = loadV2Dom();
+  try {
+    const search = document.getElementById('customerSearchInput');
+    search.value = 'C100001';
+    search.dispatchEvent(new window.Event('input', { bubbles: true }));
+    document.querySelector('#customerDropdown [data-id="C100001"]').click();
+    document.getElementById('cloudVersion').value = '6.8.1_1';
+    const scene = document.getElementById('authScene');
+    scene.value = '1';
+    fireChange(scene, window);
+    document.getElementById('unifiedDate').value = '2026-12-31';
+    document.getElementById('userEmail').value = 'customer@example.com';
+    window.addChip('DEV-HCI-001');
+
+    window.submitStandardForm();
+    assert.match(alerts.at(-1), /设备信息待激活/);
+    const pending = document.querySelector('[data-product-pending="true"]');
+    assert.ok(pending, '缺少 .info 时应生成待激活记录');
+    assert.match(pending.textContent, /待激活/);
+    assert.match(pending.textContent, /去激活/);
+
+    pending.querySelector('[data-product-activate]').click();
+    const overlay = document.getElementById('productActivationOverlay');
+    assert.ok(overlay && !overlay.hidden, '应打开激活弹窗');
+    const file = new window.File(['productLine=HCI\nclusterId=CLUSTER-ACT\ndeviceId=DEV-ACT'], 'activate.info', { type: 'text/plain' });
+    const input = document.getElementById('productActivationFile');
+    Object.defineProperty(input, 'files', { value: [file], configurable: true });
+    document.getElementById('productActivationSubmit').click();
+    await new Promise((resolve) => window.setTimeout(resolve, 600));
+
+    assert.equal(overlay.hidden, true, '激活成功后弹窗应关闭');
+    const activated = document.querySelector('[data-product-record="true"]');
+    assert.match(activated.textContent, /已授权/);
+    assert.match(activated.textContent, /DEV-ACT/);
+    const store = JSON.parse(window.localStorage.getItem('test-authorization-device-info-v1') || '{}');
+    const saved = Object.values(store)[0];
+    assert.ok(saved, '激活后应留存设备信息');
+    assert.equal(saved.deviceId, 'DEV-ACT');
+    assert.equal(saved.clusterId, 'CLUSTER-ACT');
     assert.deepEqual(errors, []);
   } finally {
     dom.window.close();
