@@ -527,16 +527,12 @@ test('申请人手工上传文件后关闭同一申请对象的客户上传链�
   } finally { dom.window.close(); }
 });
 
-test('旧硬件收集任务不再出现在通知中心', () => {
-  const { dom, document, window } = loadCollectionUi();
+test('申请页不再展示旧设备收集待办入口', () => {
+  const { dom, document } = loadCollectionUi();
   try {
-    window.InfoCollectionApplication.restore({ productId: '45', customerId: 'C100001', customer: '测试客户', customerType: 'normal', fields: [] });
-    const task = window.InfoCollectionUI.store.create(window.InfoCollectionApplication.getContext(), window.InfoCollectionApplication.capture());
-    window.InfoCollectionUI.store.configure(task.token, { email: 'customer@example.com', triggerMode: 'confirm' });
-    window.InfoCollectionUI.store.submit(task.token, [file('customer.info', 'productLine=HCI')]);
-    window.InfoCollectionUI.renderBell();
-    assert.equal(document.getElementById('headerTodoBadge').hidden, true, '旧硬件任务不应再计入铃铛');
-    assert.doesNotMatch(document.getElementById('headerTodoList').textContent, /待确认发起/);
+    assert.equal(document.getElementById('headerTodoBadge'), null, '铃铛不再展示旧设备收集计数');
+    assert.equal(document.getElementById('headerTodoList'), null, '铃铛不再展示旧设备收集列表');
+    assert.equal(document.querySelector('[data-todo-tab="mine"]'), null, '不再保留「我的待办」Tab');
   } finally { dom.window.close(); }
 });
 
