@@ -9908,6 +9908,80 @@
         if (typeof window.initRecordsPagination === 'function') window.initRecordsPagination();
     }
 
+    function esc(value) {
+        return String(value == null ? '' : value).replace(/[&<>"']/g, function(c) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+    }
+
+    function ensureActivationTask(recordId) {
+        var pending = pendingProductActivations[recordId];
+        if (!pending || !window.InfoCollection) return null;
+        var store = window.InfoCollection.createStore(window.localStorage);
+        if (pending.activationToken) {
+            var existing = store.get(pending.activationToken);
+            if (existing && ['waiting', 'received'].indexOf(existing.status) !== -1) return existing;
+        }
+        var task = store.create({
+            kind: 'hardware',
+            key: 'activation:' + recordId,
+            product: pending.productName,
+            productId: pending.productId || '',
+            customerId: pending.customerId || '',
+            customer: pending.customer || '',
+            applicant: pending.applicant || '申请人'
+        }, { fields: [], modules: [] });
+        pending.activationToken = task.token;
+        pending.activationExpiresAt = task.expiresAt;
+        return task;
+    }
+
+    function activationLink(task) {
+        return new URL('info-upload.html#' + encodeURIComponent(task.token), location.href).href;
+    }
+
+    function activationShareText(recordId) {
+        var pending = pendingProductActivations[recordId];
+        var task = ensureActivationTask(recordId);
+        if (!pending || !task) return '';
+        var device = (pending.deviceIds && pending.deviceIds[0]) || pending.deviceDisplay || '待激活设备';
+        var expires = new Date(task.expiresAt).toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false });
+        return '【设备信息收集】' + pending.customer + '\n' +
+            pending.productName + ' · ' + device + '\n' +
+            '请打开以下链接上传该设备的 .info 文件：\n' +
+            activationLink(task) + '\n' +
+            '链接有效期至 ' + expires + '。';
+    }
+
+    function copyText(text, onDone) {
+        function fallback() {
+            var area = document.createElement('textarea');
+            area.value = text;
+            area.style.position = 'fixed';
+            area.style.opacity = '0';
+            document.body.appendChild(area);
+            area.select();
+            try { document.execCommand('copy'); if (onDone) onDone(); } catch (_) {}
+            document.body.removeChild(area);
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(function() { if (onDone) onDone(); }).catch(fallback);
+        } else fallback();
+    }
+
+    function copyActivationLink(recordId, btn) {
+        var text = activationShareText(recordId);
+        if (!text) { alert('激活外链生成失败，请重试。'); return; }
+        copyText(text, function() {
+            if (btn) {
+                var old = btn.textContent;
+                btn.textContent = '已复制';
+                setTimeout(function() { btn.textContent = old; }, 1500);
+            }
+            alert('激活外链已复制，可直接粘贴发给外部。');
+        });
+    }
+
     function openProductActivation(recordId) {
         var pending = pendingProductActivations[recordId];
         if (!pending) return;
@@ -9919,12 +9993,19 @@
             overlay.hidden = true;
             overlay.innerHTML = '<div class="ic-dialog" role="dialog" aria-modal="true" aria-labelledby="productActivationTitle">' +
                 '<div class="ic-dialog-head"><div><p class="ic-eyebrow">激活授权</p><h2 id="productActivationTitle">上传设备信息</h2></div><button type="button" class="ic-close" data-product-activation-close aria-label="关闭">&times;</button></div>' +
-                '<p class="ic-dialog-intro">上传设备的 .info 文件，校验通过后立即生成授权。文件会留存，后续续期可直接复用，不用再向外部索取。</p>' +
+                '<p class="ic-dialog-intro">上传该设备的 .info 文件，校验通过后立即生成授权。文件会留存，后续续期可直接复用。</p>' +
+                '<div id="productActivationDevices"></div>' +
                 '<label class="ic-field-label" for="productActivationFile">设备信息文件</label>' +
-                '<input class="ic-input" id="productActivationFile" type="file" accept=".info" multiple>' +
+                '<label class="ic-upload" for="productActivationFile">' +
+                    '<span class="material-symbols-outlined" aria-hidden="true">upload_file</span>' +
+                    '<strong>点击选择 .info 文件</strong>' +
+                    '<small>仅支持单个 .info 文件</small>' +
+                '</label>' +
+                '<input id="productActivationFile" type="file" accept=".info" hidden>' +
+                '<div class="ic-file-list" id="productActivationFileList" hidden></div>' +
                 '<p class="ic-field-error" id="productActivationError" hidden role="alert"></p>' +
-                '<div class="ic-note"><span class="material-symbols-outlined" aria-hidden="true">info</span><p>支持一次选择多个 .info 文件；文件中的产品线需与本次申请一致。</p></div>' +
-                '<footer class="ic-dialog-actions"><button type="button" class="ic-button ic-button-quiet" data-product-activation-close>暂不激活</button><button type="button" class="ic-button" id="productActivationSubmit"><span class="material-symbols-outlined" aria-hidden="true">bolt</span>上传并激活</button></footer>' +
+                '<p class="ic-note-subtle"><span class="material-symbols-outlined" aria-hidden="true">info</span>文件中的产品线需与本次申请一致，校验通过后自动完成激活。</p>' +
+                '<footer class="ic-dialog-actions"><button type="button" class="ic-button ic-button-quiet" data-product-activation-close>暂不激活</button><button type="button" class="ic-button ic-button-secondary" data-product-activation-copy><span class="material-symbols-outlined" aria-hidden="true">link</span>复制外链</button><button type="button" class="ic-button" id="productActivationSubmit"><span class="material-symbols-outlined" aria-hidden="true">bolt</span>上传并激活</button></footer>' +
             '</div>';
             document.body.appendChild(overlay);
             overlay.addEventListener('click', function(event) {
@@ -9933,11 +10014,75 @@
             overlay.querySelectorAll('[data-product-activation-close]').forEach(function(btn) { btn.addEventListener('click', function() { overlay.hidden = true; }); });
             var submitBtn = overlay.querySelector('#productActivationSubmit');
             if (submitBtn) submitBtn.addEventListener('click', submitProductActivation);
+            var copyBtn = overlay.querySelector('[data-product-activation-copy]');
+            if (copyBtn) copyBtn.addEventListener('click', function() { copyActivationLink(overlay.dataset.recordId, copyBtn); });
+            var input = overlay.querySelector('#productActivationFile');
+            if (input) input.addEventListener('change', function() {
+                var list = document.getElementById('productActivationFileList');
+                if (!list) return;
+                var files = Array.prototype.slice.call(input.files || []);
+                list.hidden = !files.length;
+                list.innerHTML = files.map(function(file) {
+                    return '<span class="ic-file-chip"><span class="material-symbols-outlined" aria-hidden="true">description</span>' + esc(file.name) + '</span>';
+                }).join('');
+            });
         }
+        var deviceEl = document.getElementById('productActivationDevices');
+        var deviceId = ((pending.deviceIds && pending.deviceIds[0]) || pending.deviceDisplay || '').trim();
+        if (deviceEl) {
+            deviceEl.innerHTML = '<div class="ic-device-block"><span class="material-symbols-outlined ic-device-block-icon" aria-hidden="true">dns</span><div class="ic-device-block-body"><p class="ic-device-label">本次激活设备</p><p class="ic-device-value">' + esc(deviceId || '未填写设备 ID') + '</p></div></div>';
+        }
+        var inputEl = document.getElementById('productActivationFile');
+        if (inputEl) inputEl.value = '';
+        var fileList = document.getElementById('productActivationFileList');
+        if (fileList) { fileList.hidden = true; fileList.innerHTML = ''; }
         overlay.dataset.recordId = recordId;
         var errorEl = document.getElementById('productActivationError');
         if (errorEl) { errorEl.hidden = true; errorEl.textContent = ''; }
         overlay.hidden = false;
+    }
+
+    function validateActivationFiles(pending, parsed) {
+        if (!parsed || parsed.length !== 1) return '每台设备只需上传 1 个 .info 文件。';
+        var summary = parsed[0].summary || {};
+        if (summary.productLine && summary.productLine.toUpperCase() !== pending.productName.toUpperCase()) {
+            return '文件中的产品为 ' + summary.productLine + '，与本次申请的 ' + pending.productName + ' 不一致。';
+        }
+        if (!summary.deviceId && !summary.clusterId) return '文件中缺少设备 ID 或集群标识，无法激活。';
+        return '';
+    }
+
+    function applyProductActivation(recordId, parsed, source) {
+        var pending = pendingProductActivations[recordId];
+        if (!pending) return { ok: false, error: '待激活记录不存在。' };
+        var error = validateActivationFiles(pending, parsed);
+        if (error) return { ok: false, error: error };
+        var summary = parsed[0].summary || {};
+        var row = document.querySelector('[data-product-record-id="' + recordId + '"]');
+        if (row) {
+            row.removeAttribute('data-product-pending');
+            row.children[6].textContent = summary.deviceId || (pending.deviceDisplay || '—');
+            row.children[7].textContent = summary.sn || '—';
+            row.lastElementChild.innerHTML = '<div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已授权</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span></div></div>';
+        }
+        var key = [pending.customerId || pending.customer, pending.productName, summary.deviceId || summary.clusterId].join('|');
+        var data = {};
+        try { data = JSON.parse(localStorage.getItem(PRODUCT_DEVICE_INFO_KEY) || '{}'); } catch (_) { data = {}; }
+        data[key] = {
+            customerId: pending.customerId,
+            customer: pending.customer,
+            productLine: pending.productName,
+            deviceId: summary.deviceId || '',
+            clusterId: summary.clusterId || '',
+            sn: summary.sn || '',
+            fileName: parsed[0].name,
+            source: source || 'applicant',
+            verifiedAt: Date.now()
+        };
+        localStorage.setItem(PRODUCT_DEVICE_INFO_KEY, JSON.stringify(data));
+        delete pendingProductActivations[recordId];
+        if (typeof window.initRecordsPagination === 'function') window.initRecordsPagination();
+        return { ok: true };
     }
 
     function submitProductActivation() {
@@ -9949,7 +10094,7 @@
         var files = input && input.files ? Array.prototype.slice.call(input.files) : [];
         function fail(message) { if (errorEl) { errorEl.hidden = false; errorEl.textContent = message; } }
         if (!pending) { fail('待激活记录不存在。'); return; }
-        if (!files.length) { fail('请选择 .info 文件。'); return; }
+        if (files.length !== 1) { fail('每台设备只需上传 1 个 .info 文件。'); return; }
         if (files.some(function(file) { return !/\.info$/i.test(file.name); })) { fail('仅支持 .info 格式文件。'); return; }
         Promise.all(files.map(function(file) {
             return new Promise(function(resolve, reject) {
@@ -9962,42 +10107,72 @@
                 reader.readAsText(file);
             });
         })).then(function(parsed) {
-            var mismatch = parsed.filter(function(item) {
-                return item.summary.productLine && item.summary.productLine.toUpperCase() !== pending.productName.toUpperCase();
-            })[0];
-            if (mismatch) { fail('文件中的产品为 ' + mismatch.summary.productLine + '，与本次申请的 ' + pending.productName + ' 不一致。'); return; }
-            var summary = parsed.filter(function(item) { return item.summary.clusterId || item.summary.deviceId; })[0];
-            if (!summary) { fail('文件中缺少设备 ID 或集群标识，无法激活。'); return; }
-            var deviceIds = parsed.map(function(item) { return item.summary.deviceId; }).filter(Boolean);
-            var snList = parsed.map(function(item) { return item.summary.sn; }).filter(Boolean);
-            var row = document.querySelector('[data-product-record-id="' + recordId + '"]');
-            if (row) {
-                row.removeAttribute('data-product-pending');
-                row.children[6].textContent = deviceIds.length ? deviceIds.join(', ') : (pending.deviceDisplay || '—');
-                row.children[7].textContent = snList.length ? snList.join(', ') : '—';
-                row.lastElementChild.innerHTML = '<div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已授权</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span></div></div>';
-            }
-            var key = [pending.customerId || pending.customer, pending.productName, summary.summary.deviceId || summary.summary.clusterId].join('|');
-            var data = {};
-            try { data = JSON.parse(localStorage.getItem(PRODUCT_DEVICE_INFO_KEY) || '{}'); } catch (_) { data = {}; }
-            data[key] = {
-                customerId: pending.customerId,
-                customer: pending.customer,
-                productLine: pending.productName,
-                deviceId: summary.summary.deviceId || '',
-                clusterId: summary.summary.clusterId || '',
-                sn: summary.summary.sn || '',
-                fileName: parsed[0].name,
-                source: 'applicant',
-                verifiedAt: Date.now()
-            };
-            localStorage.setItem(PRODUCT_DEVICE_INFO_KEY, JSON.stringify(data));
-            delete pendingProductActivations[recordId];
+            var result = applyProductActivation(recordId, parsed, 'applicant');
+            if (!result.ok) { fail(result.error); return; }
             overlay.hidden = true;
             alert('激活成功，授权文件已生成。');
-            if (typeof window.initRecordsPagination === 'function') window.initRecordsPagination();
         }).catch(function(error) { fail(error.message); });
     }
+
+    function showActivationPrompt(recordId) {
+        var overlay = document.getElementById('activationPromptOverlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.className = 'ic-overlay';
+            overlay.id = 'activationPromptOverlay';
+            overlay.hidden = true;
+            overlay.innerHTML = '<div class="ic-dialog" role="dialog" aria-modal="true" aria-labelledby="activationPromptTitle">' +
+                '<div class="ic-dialog-head"><div><p class="ic-eyebrow">提交成功</p><h2 id="activationPromptTitle">设备信息待激活</h2></div><button type="button" class="ic-close" data-activation-prompt-close aria-label="关闭">&times;</button></div>' +
+                '<p class="ic-dialog-intro">申请已提交。你可以把激活链接发给外部上传，也可以到「授权记录」里自己上传该设备的 .info 完成激活。</p>' +
+                '<div class="ic-dialog-actions"><button type="button" class="ic-button ic-button-quiet" data-activation-prompt-close>稍后处理</button><button type="button" class="ic-button ic-button-secondary" data-activation-prompt-record><span class="material-symbols-outlined" aria-hidden="true">history</span>去授权记录激活</button><button type="button" class="ic-button" data-activation-prompt-copy><span class="material-symbols-outlined" aria-hidden="true">link</span>复制外链</button></div>' +
+            '</div>';
+            document.body.appendChild(overlay);
+            overlay.addEventListener('click', function(event) {
+                if (event.target === overlay || (event.target.closest && event.target.closest('[data-activation-prompt-close]'))) overlay.hidden = true;
+            });
+            overlay.querySelectorAll('[data-activation-prompt-close]').forEach(function(btn) { btn.addEventListener('click', function() { overlay.hidden = true; }); });
+            var copyBtn = overlay.querySelector('[data-activation-prompt-copy]');
+            if (copyBtn) copyBtn.addEventListener('click', function() {
+                copyActivationLink(overlay.dataset.recordId, copyBtn);
+                overlay.hidden = true;
+            });
+            var recordBtn = overlay.querySelector('[data-activation-prompt-record]');
+            if (recordBtn) recordBtn.addEventListener('click', function() {
+                var recordId = overlay.dataset.recordId;
+                overlay.hidden = true;
+                var nav = document.querySelector('#navBar li[data-tab="records"]');
+                if (nav) nav.click();
+                setTimeout(function() {
+                    var row = document.querySelector('[data-product-record-id="' + recordId + '"]');
+                    if (row && row.scrollIntoView) { try { row.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (_) { row.scrollIntoView(); } }
+                    openProductActivation(recordId);
+                }, 180);
+            });
+        }
+        overlay.dataset.recordId = recordId;
+        overlay.hidden = false;
+    }
+
+    function checkActivationTasks() {
+        if (!window.InfoCollection) return;
+        var store = window.InfoCollection.createStore(window.localStorage);
+        Object.keys(pendingProductActivations).forEach(function(recordId) {
+            var pending = pendingProductActivations[recordId];
+            if (!pending.activationToken) return;
+            var task = store.get(pending.activationToken);
+            if (!task) return;
+            if (task.status === 'expired' || task.status === 'cancelled') return;
+            if (task.status !== 'received' || !task.files || !task.files.length) return;
+            var parsed = task.files.map(function(file) {
+                return { name: file.name, size: file.size, summary: file.summary || {} };
+            });
+            var result = applyProductActivation(recordId, parsed, 'external');
+            if (result.ok) alert('外部已完成设备信息上传，授权已生成。');
+        });
+    }
+
+    window.addEventListener('focus', checkActivationTasks);
+    document.addEventListener('visibilitychange', function() { if (!document.hidden) checkActivationTasks(); });
 
     document.addEventListener('click', function(event) {
         var btn = event.target && event.target.closest ? event.target.closest('[data-product-activate]') : null;
@@ -10184,6 +10359,7 @@
         var recordEndDate = (document.getElementById('unifiedDate') || {}).value || '—';
         var recordRegion = (document.getElementById('area') || {}).value || '—';
         var recordTime = new Date().toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false });
+        var applicantName = (document.querySelector('.header-user .user-name') || {}).textContent || '申请人';
         insertProductRecord({
             id: mockId,
             productName: productName,
@@ -10194,7 +10370,7 @@
             region: recordRegion,
             startDate: new Date().toISOString().slice(0, 10),
             endDate: recordEndDate,
-            applicant: (document.querySelector('.header-user .user-name') || {}).textContent || '申请人',
+            applicant: applicantName,
             time: recordTime,
             pending: needsActivation
         });
@@ -10204,21 +10380,23 @@
                 productName: productName,
                 customer: customerName,
                 customerId: applicationState.customerId,
+                productId: productLineId,
+                applicant: applicantName,
                 deviceDisplay: recordDeviceDisplay,
                 deviceIds: recordDeviceIds,
                 endDate: recordEndDate
             };
         }
-        if (continueForNext) {
+        if (needsActivation) {
+            if (continueForNext) retainFormForNextDevice();
+            else clearFormAfterSubmit();
+            showActivationPrompt(mockId);
+        } else if (continueForNext) {
             retainFormForNextDevice();
-            alert(needsActivation
-                ? '申请已提交，ID: ' + mockId + '\n设备信息待激活：请到「授权记录」上传 .info 完成激活。'
-                : '表单已提交，ID: ' + mockId + '\n表单内容已保留，可继续为下一台设备发起申请。');
+            alert('表单已提交，ID: ' + mockId + '\n表单内容已保留，可继续为下一台设备发起申请。');
         } else {
             clearFormAfterSubmit();
-            alert(needsActivation
-                ? '申请已提交，ID: ' + mockId + '\n设备信息待激活：请到「授权记录」上传 .info 完成激活。'
-                : '表单已提交，ID: ' + mockId + '\n表单已重置，可发起新的申请。');
+            alert('表单已提交，ID: ' + mockId + '\n表单已重置，可发起新的申请。');
         }
     }
 

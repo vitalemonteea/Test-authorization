@@ -3,6 +3,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const path = require('path');
+const fs = require('fs');
 const { loadV2Dom, fireChange } = require('./helpers/load-v2-dom.cjs');
 const fixtures = require('./fixtures/authorization-fixtures.cjs');
 
@@ -406,6 +407,7 @@ test('表单重置彻底清理旧流程状态并重新应用默认 HCI 模式', 
 test('产品授权先提交，缺 .info 时进入待激活，上传文件后完成激活并留存设备信息', async () => {
   const { dom, document, window, alerts, errors } = loadV2Dom();
   try {
+    window.eval(fs.readFileSync(path.join(__dirname, '..', 'info-collection-model.js'), 'utf8'));
     const search = document.getElementById('customerSearchInput');
     search.value = 'C100001';
     search.dispatchEvent(new window.Event('input', { bubbles: true }));
@@ -419,7 +421,20 @@ test('产品授权先提交，缺 .info 时进入待激活，上传文件后完�
     window.addChip('DEV-HCI-001');
 
     window.submitStandardForm();
-    assert.match(alerts.at(-1), /设备信息待激活/);
+    const prompt = document.getElementById('activationPromptOverlay');
+    assert.ok(prompt && !prompt.hidden, '缺少 .info 提交后应弹出激活引导');
+    assert.ok(prompt.querySelector('[data-activation-prompt-copy]'), '应提供复制外链');
+    assert.ok(prompt.querySelector('[data-activation-prompt-record]'), '应提供去授权记录');
+    let copied = '';
+    Object.defineProperty(window.navigator, 'clipboard', {
+      configurable: true,
+      value: { writeText: (text) => { copied = text; return Promise.resolve(); } }
+    });
+    prompt.querySelector('[data-activation-prompt-copy]').click();
+    await Promise.resolve();
+    assert.match(copied, /info-upload\.html#/);
+    assert.equal(prompt.hidden, true);
+
     const pending = document.querySelector('[data-product-pending="true"]');
     assert.ok(pending, '缺少 .info 时应生成待激活记录');
     assert.match(pending.textContent, /待激活/);
@@ -428,6 +443,7 @@ test('产品授权先提交，缺 .info 时进入待激活，上传文件后完�
     pending.querySelector('[data-product-activate]').click();
     const overlay = document.getElementById('productActivationOverlay');
     assert.ok(overlay && !overlay.hidden, '应打开激活弹窗');
+    assert.ok(overlay.querySelector('[data-product-activation-copy]'), '激活弹窗应提供复制外链');
     const file = new window.File(['productLine=HCI\nclusterId=CLUSTER-ACT\ndeviceId=DEV-ACT'], 'activate.info', { type: 'text/plain' });
     const input = document.getElementById('productActivationFile');
     Object.defineProperty(input, 'files', { value: [file], configurable: true });
@@ -443,6 +459,83 @@ test('产品授权先提交，缺 .info 时进入待激活，上传文件后完�
     assert.ok(saved, '激活后应留存设备信息');
     assert.equal(saved.deviceId, 'DEV-ACT');
     assert.equal(saved.clusterId, 'CLUSTER-ACT');
+    assert.deepEqual(errors, []);
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('激活外链由外部上传后，授权记录自动完成激活', async () => {
+  const { dom, document, window, errors } = loadV2Dom();
+  try {
+    window.eval(fs.readFileSync(path.join(__dirname, '..', 'info-collection-model.js'), 'utf8'));
+    const search = document.getElementById('customerSearchInput');
+    search.value = 'C100001';
+    search.dispatchEvent(new window.Event('input', { bubbles: true }));
+    document.querySelector('#customerDropdown [data-id="C100001"]').click();
+    document.getElementById('cloudVersion').value = '6.8.1_1';
+    const scene = document.getElementById('authScene');
+    scene.value = '1';
+    fireChange(scene, window);
+    document.getElementById('unifiedDate').value = '2026-12-31';
+    document.getElementById('userEmail').value = 'customer@example.com';
+    window.addChip('DEV-HCI-EXTERNAL');
+
+    window.submitStandardForm();
+    const prompt = document.getElementById('activationPromptOverlay');
+    assert.ok(!prompt.hidden);
+    Object.defineProperty(window.navigator, 'clipboard', { configurable: true, value: { writeText: () => Promise.resolve() } });
+    prompt.querySelector('[data-activation-prompt-copy]').click();
+    await Promise.resolve();
+    const store = window.InfoCollection.createStore(window.localStorage);
+    const task = store.list().filter((item) => item.context.key.indexOf('activation:') === 0)[0];
+    assert.ok(task, '应生成激活外链任务');
+    store.submit(task.token, [{
+      name: 'external.info',
+      size: 60,
+      content: 'productLine=HCI\nclusterId=CLUSTER-EXT\ndeviceId=DEV-EXT'
+    }]);
+    window.dispatchEvent(new window.Event('focus'));
+
+    const row = document.querySelector('[data-product-record="true"]');
+    assert.match(row.textContent, /已授权/);
+    assert.match(row.textContent, /DEV-EXT/);
+    const saved = Object.values(JSON.parse(window.localStorage.getItem('test-authorization-device-info-v1') || '{}'))[0];
+    assert.ok(saved, '外部上传后应留存设备信息');
+    assert.equal(saved.source, 'external');
+    assert.equal(saved.clusterId, 'CLUSTER-EXT');
+    assert.deepEqual(errors, []);
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('待激活引导可跳转授权记录并打开对应激活弹窗', async () => {
+  const { dom, document, window, errors } = loadV2Dom();
+  try {
+    window.eval(fs.readFileSync(path.join(__dirname, '..', 'info-collection-model.js'), 'utf8'));
+    const search = document.getElementById('customerSearchInput');
+    search.value = 'C100001';
+    search.dispatchEvent(new window.Event('input', { bubbles: true }));
+    document.querySelector('#customerDropdown [data-id="C100001"]').click();
+    document.getElementById('cloudVersion').value = '6.8.1_1';
+    const scene = document.getElementById('authScene');
+    scene.value = '1';
+    fireChange(scene, window);
+    document.getElementById('unifiedDate').value = '2026-12-31';
+    document.getElementById('userEmail').value = 'customer@example.com';
+    window.addChip('DEV-HCI-JUMP');
+
+    window.submitStandardForm();
+    const prompt = document.getElementById('activationPromptOverlay');
+    assert.ok(prompt && !prompt.hidden);
+    prompt.querySelector('[data-activation-prompt-record]').click();
+    await new Promise((resolve) => window.setTimeout(resolve, 300));
+
+    assert.equal(document.body.dataset.activeTab, 'records', '应跳到授权记录页');
+    const overlay = document.getElementById('productActivationOverlay');
+    assert.ok(overlay && !overlay.hidden, '应打开对应记录的激活弹窗');
+    assert.match(document.querySelector('.ic-device-value').textContent, /DEV-HCI-JUMP/);
     assert.deepEqual(errors, []);
   } finally {
     dom.window.close();
