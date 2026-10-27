@@ -423,7 +423,7 @@ test('产品授权先提交，缺 .info 时进入待激活，上传文件后完�
     window.submitStandardForm();
     const prompt = document.getElementById('activationPromptOverlay');
     assert.ok(prompt && !prompt.hidden, '缺少 .info 提交后应弹出激活引导');
-    assert.match(prompt.textContent, /推荐在平台内完成激活/);
+    assert.match(prompt.textContent, /建议优先在平台内完成激活/);
     assert.ok(prompt.querySelector('[data-activation-prompt-copy]'), '应提供复制外链');
     assert.ok(prompt.querySelector('[data-activation-prompt-record]'), '应提供去授权记录');
     let copied = '';
@@ -445,7 +445,7 @@ test('产品授权先提交，缺 .info 时进入待激活，上传文件后完�
     const overlay = document.getElementById('productActivationOverlay');
     assert.ok(overlay && !overlay.hidden, '应打开激活弹窗');
     assert.ok(overlay.querySelector('[data-product-activation-copy]'), '激活弹窗应提供复制外链');
-    assert.match(overlay.textContent, /推荐直接在此上传并激活/);
+    assert.match(overlay.textContent, /建议在本页面直接上传并激活/);
     const file = new window.File(['productLine=HCI\nclusterId=CLUSTER-ACT\ndeviceId=DEV-ACT'], 'activate.info', { type: 'text/plain' });
     const input = document.getElementById('productActivationFile');
     Object.defineProperty(input, 'files', { value: [file], configurable: true });
