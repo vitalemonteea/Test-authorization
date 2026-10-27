@@ -70,7 +70,7 @@ test('多设备记录悬浮展开设备ID明细', () => {
       assert.ok(summary.getAttribute('data-full').includes('\n'), '明细应为多行设备ID');
     });
 
-    const solutionSummary = summaries.find((el) => el.textContent.trim() === '6个设备');
+    const solutionSummary = summaries.find((el) => el.textContent.trim() === 'GW-HCI-001 等6个设备');
     solutionSummary.dispatchEvent(new window.MouseEvent('mouseenter'));
     const tooltip = document.getElementById('recordsActionTooltip');
     assert.ok(tooltip.classList.contains('show'));
@@ -289,7 +289,11 @@ test('产品线快捷筛选含 XaaS 产品并参与过滤，扫帚按钮一键�
     const visibleRows = allRows.filter((row) => row.style.display !== 'none');
     assert.ok(visibleRows.length > 0);
     visibleRows.forEach((row) => {
-      assert.equal(row.cells[3].textContent.trim(), 'SaaS-XDR', '可见记录应均为所选产品线');
+      const mainProduct = row.cells[3].textContent.trim();
+      if (mainProduct === 'SaaS-XDR') return;
+      assert.equal(row.cells[1].textContent.trim(), '解决方案', '命中子产品时应保留所属方案主行');
+      assert.match(row.nextElementSibling.textContent, /SaaS-XDR/, '方案主行展开后应回显命中的子产品');
+      assert.equal(row.nextElementSibling.style.display, '', '命中子产品时方案主行应自动展开');
     });
 
     // 产品线与状态可组合过滤
@@ -467,7 +471,7 @@ test('授权记录表新增设备SN与云授权ID两列', () => {
     const solutionRow = rows.find((row) => row.textContent.includes('SOL-20260701-001'));
     const snSummary = solutionRow.cells[7].querySelector('.device-summary');
     assert.ok(snSummary, '方案行 SN 列应为悬浮展开入口');
-    assert.equal(snSummary.textContent.trim(), '6个设备');
+    assert.equal(snSummary.textContent.trim(), 'SN-HCI-001 等6个设备');
     ['SN-HCI-001', 'SN-AC-005', 'SN-NGAF-003', 'SN-AD-002', 'SN-WOC-001'].forEach((sn) => {
       assert.ok(snSummary.getAttribute('data-full').includes(sn), `SN 明细应包含 ${sn}`);
     });
