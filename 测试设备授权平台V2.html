@@ -10005,6 +10005,7 @@
                 '<div class="ic-file-list" id="productActivationFileList" hidden></div>' +
                 '<p class="ic-field-error" id="productActivationError" hidden role="alert"></p>' +
                 '<p class="ic-note-subtle"><span class="material-symbols-outlined" aria-hidden="true">info</span>文件中的产品线需与本次申请一致，校验通过后自动完成激活。</p>' +
+                '<p class="ic-note-caution"><span class="material-symbols-outlined" aria-hidden="true">info</span>推荐直接在此上传并激活；复制外链仅用于文件不在你手中、需要外部协助时。</p>' +
                 '<footer class="ic-dialog-actions"><button type="button" class="ic-button ic-button-quiet" data-product-activation-close>暂不激活</button><button type="button" class="ic-button ic-button-secondary" data-product-activation-copy><span class="material-symbols-outlined" aria-hidden="true">link</span>复制外链</button><button type="button" class="ic-button" id="productActivationSubmit"><span class="material-symbols-outlined" aria-hidden="true">bolt</span>上传并激活</button></footer>' +
             '</div>';
             document.body.appendChild(overlay);
@@ -10123,8 +10124,9 @@
             overlay.hidden = true;
             overlay.innerHTML = '<div class="ic-dialog" role="dialog" aria-modal="true" aria-labelledby="activationPromptTitle">' +
                 '<div class="ic-dialog-head"><div><p class="ic-eyebrow">提交成功</p><h2 id="activationPromptTitle">设备信息待激活</h2></div><button type="button" class="ic-close" data-activation-prompt-close aria-label="关闭">&times;</button></div>' +
-                '<p class="ic-dialog-intro">申请已提交。你可以把激活链接发给外部上传，也可以到「授权记录」里自己上传该设备的 .info 完成激活。</p>' +
-                '<div class="ic-dialog-actions"><button type="button" class="ic-button ic-button-quiet" data-activation-prompt-close>稍后处理</button><button type="button" class="ic-button ic-button-secondary" data-activation-prompt-record><span class="material-symbols-outlined" aria-hidden="true">history</span>去授权记录激活</button><button type="button" class="ic-button" data-activation-prompt-copy><span class="material-symbols-outlined" aria-hidden="true">link</span>复制外链</button></div>' +
+                '<p class="ic-dialog-intro">申请已提交。推荐在「授权记录」里直接上传该设备的 .info 完成激活；如果文件不在你手中，再复制外链由外部协助上传。</p>' +
+                '<p class="ic-note-caution"><span class="material-symbols-outlined" aria-hidden="true">info</span>推荐在平台内完成激活，外链方式仅用于外部协助。</p>' +
+                '<div class="ic-dialog-actions"><button type="button" class="ic-button ic-button-quiet" data-activation-prompt-close>稍后处理</button><button type="button" class="ic-button ic-button-secondary" data-activation-prompt-copy><span class="material-symbols-outlined" aria-hidden="true">link</span>复制外链</button><button type="button" class="ic-button" data-activation-prompt-record><span class="material-symbols-outlined" aria-hidden="true">history</span>去授权记录激活</button></div>' +
             '</div>';
             document.body.appendChild(overlay);
             overlay.addEventListener('click', function(event) {
