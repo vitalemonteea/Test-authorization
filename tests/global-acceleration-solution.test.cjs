@@ -145,7 +145,7 @@ test('全球加速方案-SaaS版：借测单入口锁定 SASE-ZTNA+SASE-GA 并�
     assert.match(parent.textContent, /全球加速方案-SaaS版/);
     const detail = parent.nextElementSibling;
     assert.match(detail.textContent, /SASE-ZTNA 标准版/);
-    assert.match(detail.textContent, /LIC-SASE-ZTNA-806/);
+    assert.match(detail.textContent, /LIC-SASE-ZTNA-\d{3}/);
     assert.match(detail.textContent, /云图ID: YT-10010888/);
     assert.deepEqual(errors, []);
   } finally { dom.window.close(); }

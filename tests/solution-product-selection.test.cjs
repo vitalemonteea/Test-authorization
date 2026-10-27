@@ -156,7 +156,7 @@ test('未开启的可选产品和未选中的组内产品不校验、不生成�
     deviceInput.dispatchEvent(new window.Event('input', { bubbles: true }));
     document.getElementById('solutionSubmitWhole').click();
     assert.match(document.getElementById('solutionApplicationStatus').textContent, /已授权/);
-    const recordLines = [...document.querySelectorAll('[data-solution-generated-detail="true"] tbody tr')].map(row => row.cells[0].textContent);
+    const recordLines = [...document.querySelectorAll('[data-solution-generated-detail="true"] tbody tr')].map(row => row.cells[0].querySelector('.solution-device-name').textContent);
     assert.deepEqual(recordLines, ['WAF']);
     assert.deepEqual(errors, []);
   } finally { dom.window.close(); }

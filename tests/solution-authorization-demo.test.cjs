@@ -282,16 +282,16 @@ test('全部产品成功后向 V2 现有记录表新增一组解决方案主行�
     submitForApproval(document, window);
     const parent = document.querySelector('#content-records .solution-parent[data-solution-generated="true"]');
     assert.ok(parent);
-    assert.match(parent.textContent, /SOL-20260806-003/);
+    assert.match(parent.textContent, /SOL-\d{8}-\d{3}/);
     const detail = parent.nextElementSibling;
     assert.ok(detail.classList.contains('solution-detail-row'));
     assert.equal(detail.dataset.solutionGeneratedDetail, 'true');
     parent.querySelector('button').click();
     assert.notEqual(detail.style.display, 'none');
     assert.match(detail.textContent, /HCI-6\.8\.1-VKEY/);
-    assert.match(detail.textContent, /LIC-HCI-806/);
+    assert.match(detail.textContent, /LIC-HCI-\d{3}/);
     assert.match(detail.textContent, /SaaS-XDR 标准版/);
-    assert.match(detail.textContent, /LIC-SaaS-XDR-806/);
+    assert.match(detail.textContent, /LIC-SaaS-XDR-\d{3}/);
     assert.match(detail.textContent, /云图ID: YT-10010101/);
   } finally { dom.window.close(); }
 });
@@ -377,15 +377,18 @@ test('XaaS 方案整单成功后复用 SOL 主行和展开明细展示云图ID�
     submitForApproval(document, window);
     const parent = document.querySelector('#content-records .solution-parent[data-solution-generated="true"]');
     assert.match(parent.textContent, /云网安全运营方案/);
-    assert.match(parent.textContent, /关联借测单/);
+    window.initRecordDetailDrawer();
+    parent.querySelector('[data-record-action="view"]').dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    assert.match(document.getElementById('recordApplicationGrid').textContent, /关联借测单/);
+    document.querySelector('#recordDrawerLayer [data-record-drawer-close]').click();
     const detail = parent.nextElementSibling;
     parent.querySelector('button').click();
     assert.match(detail.textContent, /设备ID\/云图ID/);
     assert.match(detail.textContent, /云图ID: YT-10010688/);
     assert.doesNotMatch(detail.textContent, /SASE-GA 标准版/, 'SASE-GA 无版本区分，不应出现标准版');
     assert.match(detail.textContent, /SaaS-XDR 标准版/);
-    assert.match(detail.textContent, /LIC-SASE-GA-806/);
-    assert.match(detail.textContent, /LIC-SaaS-XDR-806/);
+    assert.match(detail.textContent, /LIC-SASE-GA-\d{3}/);
+    assert.match(detail.textContent, /LIC-SaaS-XDR-\d{3}/);
   } finally { dom.window.close(); }
 });
 
@@ -428,13 +431,55 @@ test('关联借测单与纯软件本地申请均展示接收邮箱，支持自�
     const viewBtn = generatedRow.querySelector('[data-record-action="view"]');
     assert.ok(viewBtn, '应存在详情触发项');
     viewBtn.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
-    assert.match(document.getElementById('recordAuthorizationGrid').textContent, /接收邮箱/);
-    assert.match(document.getElementById('recordAuthorizationGrid').textContent, /custom-receiver@company\.com/);
+    assert.match(document.getElementById('recordSolutionDeliveryGrid').textContent, /接收邮箱/);
+    assert.match(document.getElementById('recordSolutionDeliveryGrid').textContent, /custom-receiver@company\.com/);
 
     // 5. 切换到纯软件本地申请模式下，接收邮箱依然存在且可用
     chooseSolutionSource(document, window, 'local');
     assert.ok(document.getElementById('solutionEmail'), '纯软模式下仍应存在接收邮箱');
     selectLocalCustomer(document, window, 'C100102');
     assert.equal(document.getElementById('solutionEmail').value, 'contact@beichen-energy.com', '纯软模式选择客户后应带入北辰能源邮箱');
+  } finally { dom.window.close(); }
+});
+
+test('方案产品线按每条线本次选择的授权场景展示', () => {
+  const { dom, document, window } = loadV2Dom();
+  try {
+    openSolutionTab(document);
+    chooseBorrowOrder(document, window, 'BOR-202608-001');
+
+    let sceneSelect = document.querySelector('#solutionProductPanel select[data-solution-param="authScene"]');
+    assert.ok(sceneSelect, '产品线参数区应提供授权场景选择');
+    assert.deepEqual(
+      [...sceneSelect.options].map((option) => option.value),
+      ['首次开通', '延期', '授权变更', '销售设备开通测试授权', '退市产品测试授权'],
+      '设备类产品线使用产品授权场景'
+    );
+    sceneSelect.value = '延期';
+    sceneSelect.dispatchEvent(new window.Event('change', { bubbles: true }));
+
+    document.querySelector('[data-solution-line="SaaS-XDR"]').click();
+    sceneSelect = document.querySelector('#solutionProductPanel select[data-solution-param="authScene"]');
+    assert.deepEqual(
+      [...sceneSelect.options].map((option) => option.value),
+      ['新客户试用', '单自然年多次试用', '授权变更（单自然年内授权60天或以内）', '授权变更（单自然年内授权60天以上）', '兜底审批'],
+      'SaaS-XDR 使用 XaaS 场景'
+    );
+    sceneSelect.value = '单自然年多次试用';
+    sceneSelect.dispatchEvent(new window.Event('change', { bubbles: true }));
+
+    document.querySelector('[data-solution-line="HCI"]').click();
+    uploadHciInfo(document, window);
+    click(document, window, 'solutionSubmitWhole');
+    const generated = document.querySelector('#content-records .solution-parent[data-solution-generated="true"]');
+    assert.ok(generated, '应生成方案授权主行');
+    window.initRecordDetailDrawer();
+    generated.querySelector('[data-record-action="view"]').dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    const lineRows = [...document.querySelectorAll('#recordSolutionLineList .record-solution-line-row:not(.record-solution-line-head)')].map((row) => ({
+      name: row.querySelector('.record-solution-line-name').textContent,
+      scene: row.querySelector('.solution-scene-tag').textContent
+    }));
+    assert.deepEqual(lineRows.find((row) => row.name === 'HCI'), { name: 'HCI', scene: '延期' });
+    assert.deepEqual(lineRows.find((row) => row.name === 'SaaS-XDR'), { name: 'SaaS-XDR', scene: '单自然年多次试用' });
   } finally { dom.window.close(); }
 });

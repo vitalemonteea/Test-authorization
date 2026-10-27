@@ -129,13 +129,14 @@ test('XaaS 详情展示客户、订阅规格、业务补充信息和开通结果
     assert.match(document.getElementById('recordCustomerGrid').textContent, /联系人姓名/);
     assert.match(document.getElementById('recordCustomerGrid').textContent, /所属云图账号/);
     assert.match(document.getElementById('recordXaasSubscriptionList').textContent, /SASE-GA 全球加速/);
-    assert.match(document.getElementById('recordXaasSubscriptionList').textContent, /带宽 10M/);
+    assert.match(document.getElementById('recordXaasSubscriptionList').textContent, /带宽10M/);
     assert.match(document.getElementById('recordXaasSubscriptionList').textContent, /已开通/);
     assert.doesNotMatch(document.getElementById('recordXaasSubscriptionList').textContent, /2个设备/);
     assert.match(document.getElementById('recordXaasSupplementGrid').textContent, /客户需求/);
     assert.match(document.getElementById('recordXaasDeliveryGrid').textContent, /租户\/实例标识/);
     assert.match(document.getElementById('recordXaasDeliveryGrid').textContent, /云授权IDCLA-SASE-JD-050/, '已授权 XaaS 开通结果应展示云授权ID');
-    assert.match(document.getElementById('recordXaasDeliveryGrid').textContent, /授权文件/);
+    assert.match(document.getElementById('recordXaasDeliveryGrid').textContent, /出版版本/);
+    assert.match(document.getElementById('recordXaasDeliveryGrid').textContent, /授权码/);
 
     const productView = rows[0].querySelector('[data-record-action="view"]');
     productView.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
@@ -149,7 +150,7 @@ test('XaaS 详情展示客户、订阅规格、业务补充信息和开通结果
   }
 });
 
-test('超期产品提示升级审批，解决方案仍使用通用授权信息', () => {
+test('超期产品提示升级审批，解决方案使用方案专属详情', () => {
   const { dom, document, window } = setupRecords();
   try {
     const rows = [...document.querySelectorAll('#content-records .table-scroll-wrap > table > tbody > tr:not(.solution-detail-row)')];
@@ -170,9 +171,28 @@ test('超期产品提示升级审批，解决方案仍使用通用授权信息',
     const solutionRow = rows.find((row) => row.children[1]?.textContent.trim() === '解决方案');
     assert.ok(solutionRow, '应存在解决方案 Mock 记录');
     solutionRow.querySelector('[data-record-action="view"]').dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
-    assert.equal(document.getElementById('recordAuthorizationSection').hidden, false);
-    assert.equal(document.getElementById('recordCustomerSection').hidden, true);
-    assert.match(document.getElementById('recordAuthorizationGrid').textContent, /授权对象/);
+    assert.equal(document.getElementById('recordAuthorizationSection').hidden, true, '方案记录不应复用通用授权信息');
+    assert.equal(document.getElementById('recordCustomerSection').hidden, false, '方案记录应展示客户信息');
+    assert.equal(document.getElementById('recordSolutionDeviceHintSection').hidden, false, '方案记录应提示到展开行查看设备详情');
+    assert.equal(document.getElementById('recordSolutionProductSection'), null, '方案主抽屉不再重复展示产品明细');
+    assert.doesNotMatch(document.getElementById('recordApplicationGrid').textContent, /方案编码/, '方案编码仅后台记录，不在授权记录展示');
+    assert.doesNotMatch(document.getElementById('recordApplicationGrid').textContent, /SOL-CLOUD-001/);
+    assert.match(document.getElementById('recordApplicationGrid').textContent, /企业云一体化方案/);
+    assert.match(document.getElementById('recordCustomerGrid').textContent, /联系人手机号/);
+    assert.match(document.getElementById('recordSolutionDeliveryGrid').textContent, /6 个设备/);
+
+    document.getElementById('recordDrawerSecondary').click();
+    solutionRow.querySelector('td button').click();
+    const deviceLink = solutionRow.nextElementSibling.querySelector('.solution-device-detail');
+    assert.ok(deviceLink, '方案明细行应提供设备详情入口');
+    deviceLink.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    assert.equal(document.getElementById('recordDrawerTitle').textContent, '设备授权详情');
+    assert.equal(document.getElementById('recordProductDetailSection').hidden, false);
+    assert.equal(document.getElementById('recordSolutionDeviceParamTitle').hidden, false);
+    assert.match(document.getElementById('recordProductDeviceGrid').textContent, /GW-HCI-001/);
+    assert.match(document.getElementById('recordSolutionDeviceParamGrid').textContent, /计算虚拟化/);
+    assert.match(document.getElementById('recordProductDeliveryGrid').textContent, /LIC-HCI-001/);
+    assert.equal(document.getElementById('recordDrawerBack').hidden, false);
   } finally {
     dom.window.close();
   }
@@ -344,11 +364,11 @@ test('审核抽屉展示完整判断依据并要求主动选择审批决定', ()
     assert.equal(document.getElementById('recordDrawerLayer').classList.contains('is-approval'), false);
     assert.ok(document.getElementById('recordWorkflowContent').classList.contains('record-approve-content'));
     assert.match(document.getElementById('recordApproveApplicationGrid').textContent, /授权类型XaaS/);
-    assert.match(document.getElementById('recordApproveApplicationGrid').textContent, /申请动作首次开通试用/);
+    assert.match(document.getElementById('recordApproveApplicationGrid').textContent, /申请动作/);
     assert.match(document.getElementById('recordApproveCustomerGrid').textContent, /客户名称阿里巴巴/);
     assert.match(document.getElementById('recordApproveCustomerGrid').textContent, /联系人手机号/);
     assert.match(document.getElementById('recordApproveCustomerGrid').textContent, /所属行业/);
-    assert.match(document.getElementById('recordApproveSubscriptionList').textContent, /2 亿条/);
+    assert.match(document.getElementById('recordApproveSubscriptionList').textContent, /日志接入数量\(亿\)/);
     assert.match(document.getElementById('recordApproveBasisGrid').textContent, /测试驱动力/);
     assert.match(document.getElementById('recordApproveBasisGrid').textContent, /客户信息收集表/);
     assert.equal(document.getElementById('recordApproveRiskGrid'), null);
@@ -357,11 +377,11 @@ test('审核抽屉展示完整判断依据并要求主动选择审批决定', ()
     assert.deepEqual(sectionTitles, ['申请信息', '客户信息', '订阅授权明细', '业务补充信息', '已有审批记录', '审批决定']);
     assert.match(document.getElementById('recordWorkflowContent').textContent, /已有审批记录/);
     assert.match(document.getElementById('recordWorkflowContent').textContent, /意见：已提交申请信息和相关材料/);
-    const submissionAttachment = document.querySelector('[aria-label="下载附件 阿里集团-XDR客户信息收集表.xlsx"]');
+    const submissionAttachment = document.querySelector('[aria-label="下载附件 SFSS-MSS-X1003-客户信息收集表-测试AI安全运营方案用0428.xlsx"]');
     assert.ok(submissionAttachment);
     assert.equal(submissionAttachment.tagName, 'BUTTON');
     submissionAttachment.click();
-    assert.equal(downloadedFiles.at(-1).name, '阿里集团-XDR客户信息收集表.xlsx');
+    assert.equal(downloadedFiles.at(-1).name, 'SFSS-MSS-X1003-客户信息收集表-测试AI安全运营方案用0428.xlsx');
     assert.match(document.getElementById('recordActionToastText').textContent, /附件下载已开始/);
     assert.equal(document.querySelectorAll('input[name="recordApprovalDecision"]').length, 2);
     assert.equal(document.querySelector('input[name="recordApprovalDecision"]:checked'), null);

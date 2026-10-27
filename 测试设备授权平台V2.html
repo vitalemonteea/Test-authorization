@@ -1048,6 +1048,21 @@
         .record-detail-value.is-code{font-family:Consolas,"SFMono-Regular",monospace;color:#003f9e}
         .record-detail-nowrap{white-space:nowrap}
         .record-detail-value-row{display:flex;align-items:center;gap:6px;min-width:0}
+        .solution-scene-tag,.solution-overlimit-tag{display:inline-flex;align-items:center;min-height:20px;padding:0 7px;border-radius:4px;font-size:11px;font-weight:600;line-height:20px;overflow-wrap:anywhere}
+        .solution-scene-tag{color:#0050cb;background:#e5eeff}
+        .solution-overlimit-tag{color:#8a4b00;background:#fff1d6}
+        .record-solution-line-table{display:flex;flex-direction:column;overflow:hidden;background:#fff;border:1px solid #e2e8f2;border-radius:8px}
+        .record-solution-line-row{display:grid;grid-template-columns:110px 130px 140px minmax(0,1fr) 96px;align-items:center;gap:12px;padding:9px 12px;border-top:1px solid #eef1f6;font-size:12.5px;line-height:20px}
+        .record-solution-line-row:first-child{border-top:0}
+        .record-solution-line-head{background:#f5f8fd;color:#6b7890;font-size:11.5px;font-weight:600}
+        .record-solution-line-name{color:#0b1c30;font-weight:600}
+        .record-solution-line-device{color:#4b5a70;font-size:12px;overflow-wrap:anywhere}
+        .record-solution-line-ops{display:flex;flex-direction:column;gap:4px}
+        .record-solution-line-op{display:inline-flex;align-items:center;gap:5px}
+        .record-solution-line-op-device{color:#6b7890;font-size:11.5px}
+        .record-solution-line-marks{display:flex;flex-wrap:wrap;align-items:center;gap:6px;color:#8b92a5}
+        .record-solution-line-mark{display:inline-flex;align-items:center;gap:5px}
+        .record-solution-line-mark-device{color:#6b7890;font-size:11.5px}
         .record-detail-copy{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;padding:0;color:#6b7890;background:transparent;border:0;border-radius:5px;cursor:pointer;flex:0 0 auto}
         .record-detail-copy:hover{color:#0050cb;background:#eef4ff}
         .record-detail-copy .material-symbols-outlined{font-size:16px}
@@ -1056,7 +1071,18 @@
         .record-detail-attachment:hover{background:#e0eaff}
         .record-detail-attachment .material-symbols-outlined{flex:0 0 auto;font-size:14px}
         .record-detail-attachment span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-        .record-xaas-only[hidden],.record-product-auth-only[hidden],.record-product-only[hidden]{display:none!important}
+        .record-xaas-only[hidden],.record-product-auth-only[hidden],.record-product-only[hidden],.record-solution-only[hidden]{display:none!important}
+        .record-solution-empty{padding:10px 12px;color:#8b92a5;font-size:12px;background:#fbfcfe;border:1px dashed #dce3ed;border-radius:6px}
+        .record-detail-grid > .record-solution-empty{grid-column:1/-1}
+        .record-solution-hint{display:flex;align-items:flex-start;gap:8px;padding:10px 12px;color:#35506f;background:#eef4ff;border:1px solid #d6e4ff;border-radius:6px;font-size:12px;line-height:18px}
+        .record-solution-hint .material-symbols-outlined{flex:0 0 auto;color:#0050cb;font-size:16px}
+        .solution-device-name{color:#0b1c30;font-weight:600;margin-right:6px}
+        #content-records .solution-op-col{width:56px;min-width:56px;white-space:nowrap;text-align:left}
+        .solution-device-detail{color:#0050cb;font-size:11px;white-space:nowrap;text-decoration:none;cursor:pointer}
+        .solution-device-detail:hover{text-decoration:underline}
+        #recordSolutionBizGrid .record-detail-item{grid-template-columns:132px minmax(0,1fr)}
+        #recordProductDeviceGrid .record-detail-item{grid-template-columns:100px minmax(0,1fr)}
+        #recordProductDeliveryGrid .record-detail-item{grid-template-columns:110px minmax(0,1fr)}
         .record-xaas-subscriptions{display:flex;flex-direction:column;gap:10px}
         .record-xaas-subscription{padding:12px 14px;background:#f7f9fc;border:1px solid #e3e8f1;border-radius:6px}
         .record-xaas-subscription-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
@@ -4322,7 +4348,7 @@
 </div>
 <!-- 移动端筛选栏：搜索 + 快捷筛选 + 展开完整筛选（仅 ≤768px 显示） -->
 <div class="records-mobile-filterbar shrink-0" id="recordsMobileFilterbar">
-<div class="records-mobile-search"><span class="material-symbols-outlined">search</span><input type="text" id="recordsMobileSearch" placeholder="请输入设备ID/SN搜索" aria-label="按设备ID/SN搜索" /></div>
+<div class="records-mobile-search"><span class="material-symbols-outlined">search</span><input type="text" id="recordsMobileSearch" placeholder="借测单号/客户/设备ID/授权码" aria-label="按关键字搜索" /></div>
 <div class="records-quickrow">
 <div class="records-quick-select"><select id="recordsMobileType" data-placeholder="类型" aria-label="按类型筛选"><option value="">类型</option><option>产品授权</option><option>XaaS</option><option>解决方案</option></select><button type="button" class="quick-trigger" aria-haspopup="listbox" aria-expanded="false" aria-label="按类型筛选"><span class="quick-label">类型</span><span class="material-symbols-outlined quick-caret">arrow_drop_down</span></button></div>
 <div class="records-quick-divider"></div>
@@ -4368,12 +4394,12 @@
         </select>
       </div>
       <div class="flex items-center gap-3">
-        <label class="text-[12px] text-[#424656] whitespace-nowrap w-[84px] text-right">设备ID/SN</label>
-        <input type="text" id="recordsDeviceInput" class="h-9 px-3 text-[12px] text-[#0b1c30] flex-1 max-w-[300px] border border-[#c2c6d8]/50 rounded-md bg-white focus:border-primary focus:outline-none placeholder:text-[#727687]" placeholder="请输入设备ID/SN" />
+        <label class="text-[12px] text-[#424656] whitespace-nowrap w-[84px] text-right">关键字</label>
+        <input type="text" id="recordsDeviceInput" class="h-9 px-3 text-[12px] text-[#0b1c30] flex-1 max-w-[300px] border border-[#c2c6d8]/50 rounded-md bg-white focus:border-primary focus:outline-none placeholder:text-[#727687]" placeholder="借测单号/客户/设备ID/授权码" />
       </div>
       <div class="flex items-center gap-3">
         <label class="text-[12px] text-[#424656] whitespace-nowrap w-[84px] text-right">申请人</label>
-        <input type="text" class="h-9 px-3 text-[12px] text-[#0b1c30] flex-1 max-w-[300px] border border-[#c2c6d8]/50 rounded-md bg-white focus:border-primary focus:outline-none placeholder:text-[#727687]" placeholder="请输入申请人" />
+        <input type="text" id="recordsApplicantInput" class="h-9 px-3 text-[12px] text-[#0b1c30] flex-1 max-w-[300px] border border-[#c2c6d8]/50 rounded-md bg-white focus:border-primary focus:outline-none placeholder:text-[#727687]" placeholder="请输入申请人" />
       </div>
       <div class="flex items-center gap-3">
         <label class="text-[12px] text-[#424656] whitespace-nowrap w-[84px] text-right">申请日期</label>
@@ -4528,8 +4554,8 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">企业云一体化方案</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="中国工商银行股份有限公司" title="中国工商银行股份有限公司">中国工商银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-amber-100 text-amber-800 border border-amber-200">KA</span></div></td>
-<td class="py-3 px-4 whitespace-nowrap text-[#424656]"><span class="device-summary" data-full="GW-HCI-001&#10;GW-AC-005&#10;GW-NGAF-003&#10;GW-AD-002&#10;GW-WOC-001&#10;YT-10200001">6个设备</span></td>
-<td class="py-3 px-4 whitespace-nowrap text-[#424656]"><span class="device-summary" data-full="SN-HCI-001&#10;SN-AC-005&#10;SN-NGAF-003&#10;SN-AD-002&#10;SN-WOC-001&#10;—">6个设备</span></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]"><span class="device-summary" data-full="GW-HCI-001&#10;GW-AC-005&#10;GW-NGAF-003&#10;GW-AD-002&#10;GW-WOC-001&#10;YT-10200001">GW-HCI-001 等6个设备</span></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]"><span class="device-summary" data-full="SN-HCI-001&#10;SN-AC-005&#10;SN-NGAF-003&#10;SN-AD-002&#10;SN-WOC-001&#10;—">SN-HCI-001 等6个设备</span></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">杭州区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-01 ~ 2026-12-28</td>
@@ -4544,14 +4570,14 @@
 <div style="padding:6px 12px 10px;"><div class="solution-expand-wrap">
 <div class="bg-white rounded border border-[#c2c6d8]/20 overflow-hidden" style="font-size:11.5px;">
 <table class="w-full">
-<thead><tr class="border-b border-[#c2c6d8]/30 bg-[#e8eeff]"><th class="py-2 px-3 text-[10.5px] font-medium text-[#424656] uppercase">产品线</th><th class="py-2 px-3 text-[10.5px] font-medium text-[#424656] uppercase">版本号</th><th class="py-2 px-3 text-[10.5px] font-medium text-[#424656] uppercase">设备ID</th><th class="py-2 px-3 text-[10.5px] font-medium text-[#424656] uppercase">设备SN</th><th class="py-2 px-3 text-[10.5px] font-medium text-[#424656] uppercase">区域</th><th class="py-2 px-3 text-[10.5px] font-medium text-[#424656] uppercase">授权有效期</th><th class="py-2 px-3 text-[10.5px] font-medium text-[#424656] uppercase">授权码</th></tr></thead>
+<thead><tr class="border-b border-[#c2c6d8]/30 bg-[#e8eeff]"><th class="py-2 px-3 text-[10.5px] font-medium text-[#424656] uppercase">产品线</th><th class="py-2 px-3 solution-op-col">操作</th><th class="py-2 px-3 text-[10.5px] font-medium text-[#424656] uppercase">版本号</th><th class="py-2 px-3 text-[10.5px] font-medium text-[#424656] uppercase">设备ID/云图ID</th><th class="py-2 px-3 text-[10.5px] font-medium text-[#424656] uppercase">设备SN</th><th class="py-2 px-3 text-[10.5px] font-medium text-[#424656] uppercase">区域</th><th class="py-2 px-3 text-[10.5px] font-medium text-[#424656] uppercase">授权有效期</th><th class="py-2 px-3 text-[10.5px] font-medium text-[#424656] uppercase">授权码</th></tr></thead>
 <tbody>
-<tr class="hover:bg-[#eef4ff]"><td class="py-2 px-3">HCI</td><td class="py-2 px-3">HCI-6.8.1-VKEY</td><td class="py-2 px-3">GW-HCI-001</td><td class="py-2 px-3">SN-HCI-001</td><td class="py-2 px-3">上海区</td><td class="py-2 px-3">2026-07-01~2026-12-28</td><td class="py-2 px-3">LIC-HCI-001</td></tr>
-<tr class="hover:bg-[#eef4ff]"><td class="py-2 px-3">AC</td><td class="py-2 px-3">AC-13.0.3</td><td class="py-2 px-3">GW-AC-005</td><td class="py-2 px-3">SN-AC-005</td><td class="py-2 px-3">上海区</td><td class="py-2 px-3">2026-07-01~2026-12-28</td><td class="py-2 px-3">LIC-AC-005</td></tr>
-<tr class="hover:bg-[#eef4ff]"><td class="py-2 px-3">NGAF</td><td class="py-2 px-3">NGAF-8.0.15</td><td class="py-2 px-3">GW-NGAF-003</td><td class="py-2 px-3">SN-NGAF-003</td><td class="py-2 px-3">上海区</td><td class="py-2 px-3">2026-07-01~2026-12-28</td><td class="py-2 px-3">LIC-NGAF-003</td></tr>
-<tr class="hover:bg-[#eef4ff]"><td class="py-2 px-3">AD</td><td class="py-2 px-3">AD-7.0.8</td><td class="py-2 px-3">GW-AD-002</td><td class="py-2 px-3">SN-AD-002</td><td class="py-2 px-3">上海区</td><td class="py-2 px-3">2026-07-01~2026-12-28</td><td class="py-2 px-3">LIC-AD-002</td></tr>
-<tr class="hover:bg-[#eef4ff]"><td class="py-2 px-3">WOC</td><td class="py-2 px-3">WOC-8.0.5</td><td class="py-2 px-3">GW-WOC-001</td><td class="py-2 px-3">SN-WOC-001</td><td class="py-2 px-3">上海区</td><td class="py-2 px-3">2026-07-01~2026-12-28</td><td class="py-2 px-3">LIC-WOC-001</td></tr>
-<tr class="hover:bg-[#eef4ff]"><td class="py-2 px-3">SaaS-XDR</td><td class="py-2 px-3">SaaS-XDR 标准版</td><td class="py-2 px-3">云图ID: YT-10200001</td><td class="py-2 px-3">—</td><td class="py-2 px-3">上海区</td><td class="py-2 px-3">2026-07-01~2026-12-28</td><td class="py-2 px-3">LIC-SaaS-XDR-001</td></tr>
+<tr class="hover:bg-[#eef4ff]"><td class="py-2 px-3"><span class="solution-device-name">HCI</span></td><td class="py-2 px-3 solution-op-col"><a href="javascript:;" class="solution-device-detail" data-solution-device-index="0">详情</a></td><td class="py-2 px-3">HCI-6.8.1-VKEY</td><td class="py-2 px-3">GW-HCI-001</td><td class="py-2 px-3">SN-HCI-001</td><td class="py-2 px-3">杭州区</td><td class="py-2 px-3">2026-07-01~2026-12-28</td><td class="py-2 px-3">LIC-HCI-001</td></tr>
+<tr class="hover:bg-[#eef4ff]"><td class="py-2 px-3"><span class="solution-device-name">AC</span></td><td class="py-2 px-3 solution-op-col"><a href="javascript:;" class="solution-device-detail" data-solution-device-index="1">详情</a></td><td class="py-2 px-3">AC-13.0.3</td><td class="py-2 px-3">GW-AC-005</td><td class="py-2 px-3">SN-AC-005</td><td class="py-2 px-3">杭州区</td><td class="py-2 px-3">2026-07-01~2026-12-28</td><td class="py-2 px-3">LIC-AC-005</td></tr>
+<tr class="hover:bg-[#eef4ff]"><td class="py-2 px-3"><span class="solution-device-name">NGAF</span></td><td class="py-2 px-3 solution-op-col"><a href="javascript:;" class="solution-device-detail" data-solution-device-index="2">详情</a></td><td class="py-2 px-3">NGAF-8.0.15</td><td class="py-2 px-3">GW-NGAF-003</td><td class="py-2 px-3">SN-NGAF-003</td><td class="py-2 px-3">杭州区</td><td class="py-2 px-3">2026-07-01~2026-12-28</td><td class="py-2 px-3">LIC-NGAF-003</td></tr>
+<tr class="hover:bg-[#eef4ff]"><td class="py-2 px-3"><span class="solution-device-name">AD</span></td><td class="py-2 px-3 solution-op-col"><a href="javascript:;" class="solution-device-detail" data-solution-device-index="3">详情</a></td><td class="py-2 px-3">AD-7.0.8</td><td class="py-2 px-3">GW-AD-002</td><td class="py-2 px-3">SN-AD-002</td><td class="py-2 px-3">杭州区</td><td class="py-2 px-3">2026-07-01~2026-12-28</td><td class="py-2 px-3">LIC-AD-002</td></tr>
+<tr class="hover:bg-[#eef4ff]"><td class="py-2 px-3"><span class="solution-device-name">WOC</span></td><td class="py-2 px-3 solution-op-col"><a href="javascript:;" class="solution-device-detail" data-solution-device-index="4">详情</a></td><td class="py-2 px-3">WOC-8.0.5</td><td class="py-2 px-3">GW-WOC-001</td><td class="py-2 px-3">SN-WOC-001</td><td class="py-2 px-3">杭州区</td><td class="py-2 px-3">2026-07-01~2026-12-28</td><td class="py-2 px-3">LIC-WOC-001</td></tr>
+<tr class="hover:bg-[#eef4ff]"><td class="py-2 px-3"><span class="solution-device-name">SaaS-XDR</span></td><td class="py-2 px-3 solution-op-col"><a href="javascript:;" class="solution-device-detail" data-solution-device-index="5">详情</a></td><td class="py-2 px-3">SaaS-XDR 标准版</td><td class="py-2 px-3">云图ID: YT-10200001</td><td class="py-2 px-3">—</td><td class="py-2 px-3">杭州区</td><td class="py-2 px-3">2026-07-01~2026-12-28</td><td class="py-2 px-3">LIC-SaaS-XDR-001</td></tr>
 </tbody></table></div></div></div></td>
 </tr>
 
@@ -4563,14 +4589,28 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">安全态势感知方案</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
 <td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="中国建设银行股份有限公司" title="中国建设银行股份有限公司">中国建设银行股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border border-slate-200">普通</span></div></td>
-<td class="py-3 px-4 whitespace-nowrap text-[#424656]"><span class="device-summary" data-full="GW-SIP-006&#10;GW-STA-004&#10;GW-NDR-002">3个设备</span></td>
-<td class="py-3 px-4 whitespace-nowrap text-[#424656]"><span class="device-summary" data-full="SN-SIP-006&#10;SN-STA-004&#10;SN-NDR-002">3个设备</span></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]"><span class="device-summary" data-full="GW-SIP-006&#10;GW-STA-004&#10;GW-NDR-002">GW-SIP-006 等3个设备</span></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]"><span class="device-summary" data-full="SN-SIP-006&#10;SN-STA-004&#10;SN-NDR-002">SN-SIP-006 等3个设备</span></td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">北京区</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-04 ~ 2026-10-02</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">孙八</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-04 15:30</td>
 <td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-red-50 text-error border border-error/20"><span class="w-1.5 h-1.5 rounded-full bg-error"></span>已驳回</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">重新提交</span></div></div></td>
+</tr>
+
+<!-- Solution 2 Expand -->
+<tr class="solution-detail-row" style="display:none;">
+<td colspan="13" class="p-0 bg-[#f8f9ff]" style="border-top:2px solid #e5eeff;">
+<div style="padding:6px 12px 10px;"><div class="solution-expand-wrap">
+<div class="bg-white rounded border border-[#c2c6d8]/20 overflow-hidden" style="font-size:11.5px;">
+<table class="w-full">
+<thead><tr class="border-b border-[#c2c6d8]/30 bg-[#e8eeff]"><th class="py-2 px-3 text-[10.5px] font-medium text-[#424656] uppercase">产品线</th><th class="py-2 px-3 solution-op-col">操作</th><th class="py-2 px-3 text-[10.5px] font-medium text-[#424656] uppercase">版本号</th><th class="py-2 px-3 text-[10.5px] font-medium text-[#424656] uppercase">设备ID/云图ID</th><th class="py-2 px-3 text-[10.5px] font-medium text-[#424656] uppercase">设备SN</th><th class="py-2 px-3 text-[10.5px] font-medium text-[#424656] uppercase">区域</th><th class="py-2 px-3 text-[10.5px] font-medium text-[#424656] uppercase">授权有效期</th><th class="py-2 px-3 text-[10.5px] font-medium text-[#424656] uppercase">授权码</th></tr></thead>
+<tbody>
+<tr class="hover:bg-[#eef4ff]"><td class="py-2 px-3"><span class="solution-device-name">SIP</span></td><td class="py-2 px-3 solution-op-col"><a href="javascript:;" class="solution-device-detail" data-solution-device-index="0">详情</a></td><td class="py-2 px-3">SIP-5.0.2</td><td class="py-2 px-3">GW-SIP-006</td><td class="py-2 px-3">SN-SIP-006</td><td class="py-2 px-3">北京区</td><td class="py-2 px-3">2026-07-04~2026-10-02</td><td class="py-2 px-3">—</td></tr>
+<tr class="hover:bg-[#eef4ff]"><td class="py-2 px-3"><span class="solution-device-name">STA</span></td><td class="py-2 px-3 solution-op-col"><a href="javascript:;" class="solution-device-detail" data-solution-device-index="1">详情</a></td><td class="py-2 px-3">STA-3.2.1</td><td class="py-2 px-3">GW-STA-004</td><td class="py-2 px-3">SN-STA-004</td><td class="py-2 px-3">北京区</td><td class="py-2 px-3">2026-07-04~2026-10-02</td><td class="py-2 px-3">—</td></tr>
+<tr class="hover:bg-[#eef4ff]"><td class="py-2 px-3"><span class="solution-device-name">NDR</span></td><td class="py-2 px-3 solution-op-col"><a href="javascript:;" class="solution-device-detail" data-solution-device-index="2">详情</a></td><td class="py-2 px-3">NDR-2.4.0</td><td class="py-2 px-3">GW-NDR-002</td><td class="py-2 px-3">SN-NDR-002</td><td class="py-2 px-3">北京区</td><td class="py-2 px-3">2026-07-04~2026-10-02</td><td class="py-2 px-3">—</td></tr>
+</tbody></table></div></div></div></td>
 </tr>
 
 <!-- Row 8: WAF -->
@@ -5349,20 +5389,37 @@
                         <span class="record-detail-status" id="recordDetailStatus"></span>
                     </div>
                     <section class="record-detail-section">
-                        <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">description</span>申请信息</h3>
+                        <h3 class="record-detail-section-title" id="recordApplicationTitle"><span class="material-symbols-outlined" aria-hidden="true">description</span>申请信息</h3>
                         <div class="record-detail-grid" id="recordApplicationGrid"></div>
+                    </section>
+                    <section class="record-detail-section record-solution-only" id="recordSolutionLineSection" hidden>
+                        <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">view_list</span>方案产品线</h3>
+                        <div class="record-solution-line-table" id="recordSolutionLineList"></div>
                     </section>
                     <section class="record-detail-section" id="recordCustomerSection" hidden>
                         <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">contact_page</span>客户信息</h3>
                         <div class="record-detail-grid" id="recordCustomerGrid"></div>
+                    </section>
+                    <section class="record-detail-section record-solution-only" id="recordSolutionDeviceHintSection" hidden>
+                        <div class="record-solution-hint"><span class="material-symbols-outlined" aria-hidden="true">info</span><span>设备级授权详情可在上方「方案产品线」中点击「查看详情」进入，也可在列表中展开方案主行后查看。</span></div>
+                    </section>
+                    <section class="record-detail-section record-solution-only" id="recordSolutionBizSection" hidden>
+                        <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">fact_check</span>业务申请信息</h3>
+                        <div class="record-detail-grid" id="recordSolutionBizGrid"></div>
+                    </section>
+                    <section class="record-detail-section record-solution-only" id="recordSolutionDeliverySection" hidden>
+                        <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">verified</span>开通结果</h3>
+                        <div class="record-detail-grid" id="recordSolutionDeliveryGrid"></div>
                     </section>
                     <section class="record-detail-section record-product-auth-only" id="recordProductDetailSection" hidden>
                         <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">license</span>产品授权明细</h3>
                         <div class="record-detail-grid" id="recordProductOverviewGrid"></div>
                         <h4 class="record-detail-subsection-title">授权对象</h4>
                         <div class="record-detail-grid" id="recordProductDeviceGrid"></div>
-                        <h4 class="record-detail-subsection-title">配置变更</h4>
+                        <h4 class="record-detail-subsection-title" id="recordProductChangeTitle">配置变更</h4>
                         <div class="record-product-change-list" id="recordProductChangeList"></div>
+                        <h4 class="record-detail-subsection-title" id="recordSolutionDeviceParamTitle" hidden>授权参数</h4>
+                        <div class="record-detail-grid" id="recordSolutionDeviceParamGrid" hidden></div>
                     </section>
                     <section class="record-detail-section record-product-auth-only" id="recordProductSupplementSection" hidden>
                         <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">fact_check</span>业务补充信息</h3>
@@ -5388,7 +5445,7 @@
                         <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">cloud_done</span>开通结果</h3>
                         <div class="record-detail-grid" id="recordXaasDeliveryGrid"></div>
                     </section>
-                    <section class="record-detail-section">
+                    <section class="record-detail-section" id="recordApprovalSection">
                         <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">approval</span>审批信息</h3>
                         <div class="record-detail-grid" id="recordApprovalGrid"></div>
                         <div class="record-approval-timeline" id="recordApprovalTimeline"></div>
@@ -5411,6 +5468,7 @@
                     </div>
                     <div class="record-mobile-attachment-status" id="recordMobileAttachmentStatus" hidden></div>
                 </div>
+                <button type="button" class="record-drawer-button" id="recordDrawerBack" hidden>返回方案详情</button>
                 <button type="button" class="record-drawer-button" id="recordDrawerSecondary" data-record-drawer-close>关闭</button>
                 <button type="button" class="record-drawer-button" id="recordDrawerTransfer" hidden><span class="material-symbols-outlined" aria-hidden="true">swap_horiz</span>转签</button>
                 <button type="button" class="record-drawer-button" id="recordDrawerReject" hidden><span class="material-symbols-outlined" aria-hidden="true">close</span>驳回</button>
@@ -10182,6 +10240,21 @@
     var lastRecordDrawerTrigger = null;
     var activeRecordWorkflow = null;
     var activeRecordRevoke = null;
+    var activeSolutionDeviceContext = null;
+
+    function resetSolutionDeviceMode() {
+        activeSolutionDeviceContext = null;
+        var back = document.getElementById('recordDrawerBack');
+        if (back) back.hidden = true;
+        var paramTitle = document.getElementById('recordSolutionDeviceParamTitle');
+        if (paramTitle) paramTitle.hidden = true;
+        var paramGrid = document.getElementById('recordSolutionDeviceParamGrid');
+        if (paramGrid) paramGrid.hidden = true;
+        var changeTitle = document.getElementById('recordProductChangeTitle');
+        if (changeTitle) changeTitle.hidden = false;
+        var changeList = document.getElementById('recordProductChangeList');
+        if (changeList) changeList.hidden = false;
+    }
     var recordActionToastTimer = null;
 
     function setRecordDrawerMode(mode) {
@@ -10252,8 +10325,463 @@
         };
     }
 
+    // 静态解决方案 Mock 记录的补充信息；产品行从展开明细表读取，避免与表格数据脱节。
+    var SOLUTION_PRODUCT_AUTH_SCENES = ['首次开通', '延期', '授权变更', '销售设备开通测试授权', '退市产品测试授权'];
+    var SOLUTION_XAAS_SCENE_MAP = {
+        'SaaS-XDR': ['新客户试用', '单自然年多次试用', '授权变更（单自然年内授权60天或以内）', '授权变更（单自然年内授权60天以上）', '兜底审批'],
+        'SASE-GA': ['新客户审批', '单自然年多次试用', '授权变更'],
+        'SASE-ZTNA': ['新客户审批', '单自然年多次试用', '授权变更'],
+        'SASE-SWG': ['单自然年多次试用', '授权变更']
+    };
+
+    function getSolutionAuthSceneOptions(line) {
+        return SOLUTION_XAAS_SCENE_MAP[line] ? SOLUTION_XAAS_SCENE_MAP[line].slice() : SOLUTION_PRODUCT_AUTH_SCENES.slice();
+    }
+
+    function getDefaultSolutionAuthScene(line) {
+        return getSolutionAuthSceneOptions(line)[0];
+    }
+
+    function isSolutionXaasSceneLine(line) {
+        return Object.prototype.hasOwnProperty.call(SOLUTION_XAAS_SCENE_MAP, line);
+    }
+
+    var SOLUTION_MOCK_RECORDS = {
+        'SOL-20260701-001': {
+            solutionCode: 'SOL-CLOUD-001',
+            solutionName: '企业云一体化方案',
+            industry: '金融 / 银行',
+            source: '关联借测单',
+            borrowOrder: 'BOR-202607-011',
+            borrowApplicant: '李晓',
+            borrowStatus: '借测中',
+            borrowType: '硬件借测',
+            sales: '王建国',
+            contactName: '王建国',
+            phone: '13800138000',
+            email: 'license@icbc.com.cn',
+            cloudTenantId: 'YT-10200001',
+            params: {
+                HCI: '计算虚拟化、分布式存储 · 16 核 / 100 TB · 集群 GW-HCI-001',
+                AC: '网关线路 10 / 分支 10 / 移动 10 · 终端接入 1000',
+                NGAF: '基础防护、IPS、应用控制 · 8 核 / 1 Gbps',
+                AD: '应用交付基础功能 · 并发 100',
+                WOC: '广域网优化 · 带宽 200 Mbps',
+                'SaaS-XDR': '威胁检测、终端响应 · 云图租户 YT-10200001'
+            },
+            paramItems: {
+                HCI: [{ label: '授权模块', value: '计算虚拟化、分布式存储' }, { label: '规格', value: '16 核 / 100 TB' }, { label: '集群标识', value: 'GW-HCI-001', code: true }, { label: '硬件信息文件', value: 'GW-HCI-001-硬件信息.info（已上传）', full: true }],
+                AC: [{ label: '网关线路数', value: '10' }, { label: '分支机构数', value: '10' }, { label: '移动分支数', value: '10' }, { label: '终端接入数', value: '1000' }],
+                NGAF: [{ label: '授权模块', value: '基础防护、IPS、应用控制' }, { label: '规格', value: '8 核 / 1 Gbps' }],
+                AD: [{ label: '授权模块', value: '应用交付基础功能' }, { label: '规格', value: '并发 100' }],
+                WOC: [{ label: '授权模块', value: '广域网优化' }, { label: '规格', value: '带宽 200 Mbps' }],
+                'SaaS-XDR': [{ label: '授权模块', value: '威胁检测、终端响应' }, { label: '云图ID', value: 'YT-10200001', code: true }]
+            },
+            clusterIds: { HCI: 'GW-HCI-001' },
+            overlimits: { AC: '超时间限制' },
+            biz: []
+        },
+        'SOL-20260704-002': {
+            solutionCode: 'SOL-SEC-002',
+            solutionName: '安全态势感知方案',
+            industry: '金融 / 银行',
+            source: '本地申请',
+            borrowOrder: '',
+            sales: '李静',
+            phone: '13900139000',
+            email: 'ccb-license@ccb.com',
+            cloudTenantId: '—',
+            productLines: [
+                { line: 'SIP', version: 'SIP-5.0.2', deviceId: 'GW-SIP-006', sn: 'SN-SIP-006', region: '北京区', validity: '2026-07-04 ~ 2026-10-02', licenseCode: '—', params: '态势感知平台 · 日志接入 5,000 万条' },
+                { line: 'STA', version: 'STA-3.2.1', deviceId: 'GW-STA-004', sn: 'SN-STA-004', region: '北京区', validity: '2026-07-04 ~ 2026-10-02', licenseCode: '—', params: '流量探针 · 2 Gbps' },
+                { line: 'NDR', version: 'NDR-2.4.0', deviceId: 'GW-NDR-002', sn: 'SN-NDR-002', region: '北京区', validity: '2026-07-04 ~ 2026-10-02', licenseCode: '—', params: '威胁检测 · 1 Gbps', overlimit: '超时间限制' }
+            ],
+            paramItems: {
+                SIP: [{ label: '授权模块', value: '态势感知平台' }, { label: '日志接入', value: '5,000 万条' }],
+                STA: [{ label: '授权模块', value: '流量探针' }, { label: '规格', value: '2 Gbps' }],
+                NDR: [{ label: '授权模块', value: '威胁检测' }, { label: '规格', value: '1 Gbps' }]
+            },
+            biz: []
+        }
+    };
+
+    function parseSolutionDetailRow(row) {
+        var lines = [];
+        var detail = row.nextElementSibling;
+        if (!detail || !detail.classList.contains('solution-detail-row')) return lines;
+        detail.querySelectorAll('tbody tr').forEach(function(tr) {
+            var cells = Array.prototype.filter.call(tr.querySelectorAll('td'), function(cell) {
+                return !cell.classList.contains('solution-op-col');
+            });
+            if (cells.length < 7) return;
+            var nameEl = cells[0].querySelector('.solution-device-name');
+            lines.push({
+                line: (nameEl ? nameEl.textContent : cells[0].textContent).trim(),
+                version: cells[1].textContent.trim(),
+                deviceId: cells[2].textContent.trim(),
+                sn: cells[3].textContent.trim(),
+                region: cells[4] ? cells[4].textContent.trim() : '',
+                validity: cells[5] ? cells[5].textContent.trim() : '',
+                licenseCode: cells[6] ? cells[6].textContent.trim() : '',
+                params: ''
+            });
+        });
+        return lines;
+    }
+
+    function getSolutionRecordDetail(row, data) {
+        var store = window.solutionRecordStore || {};
+        var stored = store[data.applicationNo];
+        if (stored) return stored;
+        var meta = SOLUTION_MOCK_RECORDS[data.applicationNo] || {};
+        var productLines = (meta.productLines || parseSolutionDetailRow(row)).map(function(item) {
+            return {
+                line: item.line,
+                version: item.version || '—',
+                deviceId: item.deviceId || '—',
+                sn: item.sn || '—',
+                region: item.region || data.region || '—',
+                validity: item.validity || data.validity,
+                licenseCode: item.licenseCode || '—',
+                params: item.params || (meta.params && meta.params[item.line]) || '按方案统一配置',
+                paramItems: item.paramItems || (meta.paramItems && meta.paramItems[item.line]) || [],
+                authScene: item.authScene || getDefaultSolutionAuthScene(item.line),
+                overlimit: item.overlimit || (meta.overlimits && meta.overlimits[item.line]) || '',
+                clusterId: item.clusterId || (meta.clusterIds && meta.clusterIds[item.line]) || ''
+            };
+        });
+        return {
+            applicationNo: data.applicationNo,
+            solutionCode: meta.solutionCode || '—',
+            solutionName: meta.solutionName || data.product,
+            industry: meta.industry || '—',
+            source: meta.source || '—',
+            borrowOrder: meta.borrowOrder || '',
+            borrowApplicant: meta.borrowApplicant || '',
+            borrowStatus: meta.borrowStatus || '—',
+            borrowType: meta.borrowType || '—',
+            sales: meta.sales || data.sales,
+            customerType: data.customerType,
+            contactName: meta.contactName || '—',
+            phone: meta.phone || '—',
+            email: meta.email || '—',
+            cloudTenantId: meta.cloudTenantId || '—',
+            validity: data.validity,
+            status: data.status,
+            productLines: productLines,
+            biz: meta.biz || []
+        };
+    }
+
+    function getSolutionRecordApplicationItems(data, detail) {
+        return [
+            { label: '授权类型', value: '解决方案' },
+            { label: '申请平台', value: data.platform },
+            { label: '申请人', value: data.applicant },
+            { label: '申请时间', value: data.appliedAt },
+            { label: '区域', value: data.region },
+            { label: '办事处', value: data.office },
+            { label: '所属行业', value: detail.industry },
+            { label: '来源', value: detail.source },
+            { label: '借测单号', value: detail.borrowOrder || '—', code: Boolean(detail.borrowOrder) },
+            { label: '方案名称', value: detail.solutionName },
+            { label: '授权有效期', value: detail.validity }
+        ];
+    }
+
+    function renderSolutionLineTable(container, detail, solutionRow) {
+        container.textContent = '';
+        var rows = [];
+        detail.productLines.forEach(function(item, index) {
+            var row = null;
+            rows.forEach(function(candidate) {
+                if (candidate.line === item.line) row = candidate;
+            });
+            if (!row) {
+                row = { line: item.line, scene: item.authScene || getDefaultSolutionAuthScene(item.line), devices: [] };
+                rows.push(row);
+            }
+            if (item.deviceId && item.deviceId !== '—') row.devices.push({ id: item.deviceId, overlimit: item.overlimit || '', index: index });
+        });
+
+        var head = document.createElement('div');
+        head.className = 'record-solution-line-row record-solution-line-head';
+        ['产品线', '授权场景', '超限标记', '设备', '操作'].forEach(function(text) {
+            head.appendChild(createRecordWorkflowElement('span', '', text));
+        });
+        container.appendChild(head);
+
+        rows.forEach(function(row) {
+            var rowEl = document.createElement('div');
+            rowEl.className = 'record-solution-line-row';
+            rowEl.setAttribute('data-record-solution-line', row.line);
+            rowEl.appendChild(createRecordWorkflowElement('span', 'record-solution-line-name', row.line));
+            var sceneCell = document.createElement('span');
+            sceneCell.appendChild(createRecordWorkflowElement('span', 'solution-scene-tag', row.scene));
+            rowEl.appendChild(sceneCell);
+
+            var marks = row.devices.filter(function(device) { return device.overlimit; });
+            var markCell = document.createElement('span');
+            markCell.className = 'record-solution-line-marks';
+            if (!marks.length) markCell.textContent = '—';
+            marks.forEach(function(device) {
+                var markEl = document.createElement('span');
+                markEl.className = 'record-solution-line-mark';
+                if (row.devices.length > 1) {
+                    markEl.appendChild(createRecordWorkflowElement('span', 'record-solution-line-mark-device', device.id));
+                }
+                markEl.appendChild(createRecordWorkflowElement('span', 'solution-overlimit-tag', device.overlimit));
+                markCell.appendChild(markEl);
+            });
+            rowEl.appendChild(markCell);
+
+            var deviceCell = createRecordWorkflowElement('span', 'record-solution-line-device', row.devices.map(function(device) { return device.id; }).join('、') || '—');
+            rowEl.appendChild(deviceCell);
+
+            var opsCell = createRecordWorkflowElement('span', 'record-solution-line-ops', row.devices.length ? '' : '—');
+            row.devices.forEach(function(device) {
+                var opEl = createRecordWorkflowElement('span', 'record-solution-line-op', '');
+                if (row.devices.length > 1) {
+                    opEl.appendChild(createRecordWorkflowElement('span', 'record-solution-line-op-device', device.id));
+                }
+                var detailLink = createRecordWorkflowElement('a', 'solution-device-detail', '查看详情');
+                detailLink.href = 'javascript:;';
+                detailLink.setAttribute('data-solution-device-index', String(device.index));
+                detailLink.addEventListener('click', function() {
+                    openSolutionDeviceDetail(solutionRow, device.index, detailLink);
+                });
+                opEl.appendChild(detailLink);
+                opsCell.appendChild(opEl);
+            });
+            rowEl.appendChild(opsCell);
+            container.appendChild(rowEl);
+        });
+    }
+
+    function getSolutionRecordCustomerItems(data, detail) {
+        return [
+            { label: '客户名称', value: data.customer, full: true },
+            { label: '客户类型', value: detail.customerType || data.customerType },
+            { label: '所属销售', value: detail.sales || data.sales },
+            { label: '云图ID', value: detail.cloudTenantId || '—', code: true },
+            { label: '联系人手机号', value: detail.phone || '—' },
+            { label: '接收邮箱', value: detail.email || '—', full: true }
+        ];
+    }
+
+    function renderSolutionDeviceChanges(container) {
+        container.textContent = '';
+        container.appendChild(createRecordWorkflowElement('div', 'record-solution-empty', '首次开通，无历史配置变更。'));
+    }
+
+    function renderSolutionRecordBiz(container, detail) {
+        container.textContent = '';
+        if (!detail.biz || !detail.biz.length) {
+            container.appendChild(createRecordWorkflowElement('div', 'record-solution-empty', '该方案未配置业务申请信息。'));
+            return;
+        }
+        appendRecordDetailItems(container, detail.biz);
+    }
+
+    function getSolutionRecordDeliveryItems(detail) {
+        var authorized = detail.status === '已授权' || detail.status === '已过期';
+        var lineNames = [];
+        detail.productLines.forEach(function(item) {
+            if (lineNames.indexOf(item.line) === -1) lineNames.push(item.line);
+        });
+        return [
+            { label: '接收邮箱', value: detail.email || '—', full: true },
+            { label: '授权文件', value: authorized ? '授权信息-' + detail.applicationNo : '待生成' },
+            { label: '产品线/设备', value: lineNames.length + ' 条产品线 · ' + detail.productLines.length + ' 个设备' },
+            { label: '开通结果', value: authorized ? '全部设备授权成功' : (detail.status === '已驳回' ? '未开通（审批驳回）' : '待开通') }
+        ];
+    }
+
+    function getSolutionDeviceApplicationItems(data, detail, device, isXaas) {
+        var items = [{ label: '授权场景', value: device.authScene || getDefaultSolutionAuthScene(device.line), tagClass: 'solution-scene-tag' }];
+        if (!isXaas) items.push({ label: '超限标记', value: device.overlimit || '—', tagClass: device.overlimit ? 'solution-overlimit-tag' : '' });
+        return items;
+    }
+
+    function getSolutionDeviceObjectItems(data, detail, device) {
+        var isXaas = device.deviceId.indexOf('云图ID') === 0;
+        if (isXaas) {
+            return [
+                { label: '云图ID', value: device.deviceId.replace(/^云图ID:\s*/, ''), code: true },
+                { label: '来源', value: detail.source },
+                { label: '最新授权有效期', value: '—' },
+                { label: '累计测试', value: '首次申请' }
+            ];
+        }
+        var items = [];
+        if (device.clusterId) items.push({ label: '集群标识', value: device.clusterId, code: true });
+        items.push(
+            { label: '设备id', value: device.deviceId, code: true },
+            { label: 'SN', value: device.sn, code: true },
+            { label: '来源', value: detail.source },
+            { label: '最新授权有效期', value: '—' },
+            { label: '累计测试', value: '首次申请' },
+            { label: '借测单号', value: detail.borrowOrder || '—', code: Boolean(detail.borrowOrder) },
+            { label: '借测人', value: detail.borrowApplicant || '—' },
+            { label: '借测状态', value: detail.borrowStatus || '—' },
+            { label: '借测类型', value: detail.borrowType || '—' }
+        );
+        return items;
+    }
+
+    function getSolutionDeviceDeliveryItems(data, detail, device) {
+        var authorized = detail.status === '已授权' || detail.status === '已过期';
+        var isXaas = device.deviceId.indexOf('云图ID') === 0;
+        return [
+            { label: '云授权ID', value: isXaas ? device.deviceId.replace(/^云图ID:\s*/, '') : '—', code: true },
+            { label: '授权码', value: authorized ? device.licenseCode : '—', code: true }
+        ];
+    }
+
+    function getSolutionXaasCustomerItems(data, detail) {
+        return [
+            { label: '联系人姓名', value: detail.contactName || '—' }
+        ];
+    }
+
+    function getSolutionXaasSubscription(detail, device) {
+        function paramValue(label) {
+            var matched = (device.paramItems || []).filter(function(item) { return item.label === label; })[0];
+            return matched ? matched.value : '';
+        }
+        var line = device.line;
+        if (line === 'SaaS-XDR') {
+            var wan = paramValue('日志量（万条）');
+            var yi = wan ? String(Number(wan) / 10000) : paramValue('日志接入数量(亿)');
+            return {
+                family: 'SaaS-XDR 产品族',
+                name: '平台基本授权',
+                status: '',
+                meta: [{ label: '日志接入数量(亿)', value: yi || '2' }]
+            };
+        }
+        if (line === 'XDR') {
+            return {
+                family: 'XDR 产品族',
+                name: '平台基本授权',
+                status: '',
+                meta: [{ label: '日志接入数量(亿)', value: paramValue('日志接入数量(亿)') || '1' }]
+            };
+        }
+        if (line === 'SASE-GA') {
+            return {
+                family: 'SASE 产品族',
+                name: 'SASE-GA 全球加速',
+                status: '',
+                meta: [{ label: '带宽', value: paramValue('带宽') || '—' }]
+            };
+        }
+        if (line === 'SASE-SWG') {
+            return {
+                family: 'SASE 产品族',
+                name: '上网安全',
+                status: '',
+                meta: []
+            };
+        }
+        if (line === 'SASE-ZTNA') {
+            return {
+                family: 'SASE 产品族',
+                name: '零信任接入',
+                status: '',
+                meta: [{ label: '授权用户数', value: paramValue('授权用户数') || '—' }]
+            };
+        }
+        return {
+            family: line + ' 产品族',
+            name: line,
+            status: '',
+            meta: []
+        };
+    }
+
+    function getSolutionXaasDeliveryItems(data, detail, device) {
+        var authorized = detail.status === '已授权' || detail.status === '已过期';
+        var tenant = detail.cloudTenantId || (device.deviceId ? device.deviceId.replace(/^云图ID:\s*/, '') : '—');
+        return [
+            { label: '租户/实例标识', value: tenant, code: true },
+            { label: '云授权ID', value: '—', code: true },
+            { label: '出版版本', value: '试用' },
+            { label: '开通时间', value: authorized ? data.appliedAt : '—' },
+            { label: '授权码', value: authorized ? device.licenseCode : '—', code: true }
+        ];
+    }
+
+    function openSolutionDeviceDetail(solutionRow, index, trigger) {
+        var data = getRecordRowData(solutionRow);
+        var detail = getSolutionRecordDetail(solutionRow, data);
+        var device = detail.productLines[index];
+        if (!device) return;
+        var layer = document.getElementById('recordDrawerLayer');
+        lastRecordDrawerTrigger = trigger || null;
+        activeRecordWorkflow = null;
+        activeSolutionDeviceContext = { row: solutionRow, index: index };
+        setRecordDrawerMode('view');
+        document.getElementById('recordDrawerTitle').textContent = '设备授权详情';
+        document.getElementById('recordDrawerSubtitle').textContent = detail.solutionName + ' · ' + device.line + ' · ' + device.deviceId;
+        document.getElementById('recordDetailApplicationNo').textContent = data.applicationNo;
+        var status = document.getElementById('recordDetailStatus');
+        status.className = 'record-detail-status ' + getRecordStatusClass(data.status);
+        status.textContent = data.status;
+
+        var isXaas = device.deviceId.indexOf('云图ID') === 0;
+        document.getElementById('recordApplicationTitle').lastChild.textContent = '授权信息';
+        document.getElementById('recordAuthorizationSection').hidden = true;
+        document.getElementById('recordCustomerSection').hidden = !isXaas;
+        document.getElementById('recordApprovalSection').hidden = true;
+        document.querySelectorAll('#recordDrawerView .record-solution-only').forEach(function(section) { section.hidden = true; });
+        document.querySelectorAll('#recordDrawerView .record-xaas-only').forEach(function(section) { section.hidden = !isXaas; });
+        document.getElementById('recordXaasSupplementSection').hidden = true;
+        document.querySelectorAll('#recordDrawerView .record-product-auth-only').forEach(function(section) {
+            section.hidden = isXaas || section.id === 'recordProductSupplementSection';
+        });
+        document.getElementById('recordProductChangeTitle').hidden = false;
+        document.getElementById('recordProductChangeList').hidden = false;
+        document.getElementById('recordSolutionDeviceParamTitle').hidden = false;
+        document.getElementById('recordSolutionDeviceParamGrid').hidden = false;
+
+        appendRecordDetailItems(document.getElementById('recordApplicationGrid'), getSolutionDeviceApplicationItems(data, detail, device, isXaas));
+        if (isXaas) {
+            appendRecordDetailItems(document.getElementById('recordCustomerGrid'), getSolutionXaasCustomerItems(data, detail));
+            renderXaasSubscriptions(document.getElementById('recordXaasSubscriptionList'), [getSolutionXaasSubscription(detail, device)]);
+            appendRecordDetailItems(document.getElementById('recordXaasDeliveryGrid'), getSolutionXaasDeliveryItems(data, detail, device));
+        } else {
+            appendRecordDetailItems(document.getElementById('recordProductOverviewGrid'), [
+                { label: '产品线', value: device.line },
+                { label: '版本号', value: device.version },
+                { label: '申请有效期', value: device.validity, full: true }
+            ]);
+            appendRecordDetailItems(document.getElementById('recordProductDeviceGrid'), getSolutionDeviceObjectItems(data, detail, device));
+            appendRecordDetailItems(
+                document.getElementById('recordSolutionDeviceParamGrid'),
+                device.paramItems && device.paramItems.length ? device.paramItems : [{ label: '参数摘要', value: device.params || '—', full: true }]
+            );
+            renderSolutionDeviceChanges(document.getElementById('recordProductChangeList'));
+            appendRecordDetailItems(document.getElementById('recordProductDeliveryGrid'), getSolutionDeviceDeliveryItems(data, detail, device));
+        }
+
+        document.getElementById('recordDrawerBack').hidden = false;
+        layer.hidden = false;
+        layer.setAttribute('aria-hidden', 'false');
+        var drawerBody = layer.querySelector('.record-drawer-body');
+        if (drawerBody) drawerBody.scrollTop = 0;
+        var closeButton = layer.querySelector('.record-drawer-close');
+        if (closeButton) closeButton.focus();
+    }
+
     function openCopiedRecordApplication(row) {
         var data = getRecordRowData(row);
+        if (data.authorizationType === '解决方案') {
+            var solutionNav = document.querySelector('#navBar [data-tab="solution"]');
+            if (solutionNav) solutionNav.click();
+            showRecordActionToast('解决方案记录暂不支持复制，请在解决方案申请页重新发起。');
+            return;
+        }
         var targetTab = data.authorizationType === 'XaaS' ? 'xaas' : 'hardware';
         var navigationItem = document.querySelector('#navBar [data-tab="' + targetTab + '"]');
         if (navigationItem) navigationItem.click();
@@ -10331,47 +10859,73 @@
 
     function getXaasRecordDetail(data) {
         var authorized = data.status === '已授权' || data.status === '已过期';
-        var licenseCode = authorized ? 'LIC-' + data.applicationNo.replace(/[^A-Z0-9]/gi, '').slice(-12) : '待生成';
+        var licenseCode = authorized ? 'LIC-' + data.applicationNo.replace(/[^A-Z0-9]/gi, '').slice(-12) : '—';
+        var endDate = (data.validity.split('~')[1] || '').trim() || data.validity;
         if (data.product === 'SaaS-XDR') {
             return {
-                action: '首次开通试用',
+                action: authorized ? '首次开通试用' : '—',
                 customer: {
                     contact: '赵敏', phone: '138****5621', email: 'zhao***@alibaba-inc.com',
                     cloudAccount: '阿里云图企业账号', industry: '互联网 / 综合互联网服务'
                 },
                 subscriptions: [{
-                    family: 'XDR 产品族', name: 'SaaS-XDR（含 SaaS GPT）',
-                    specLabel: '日志量', spec: '2 亿条', validity: data.validity,
-                    status: authorized ? '已开通' : data.status
+                    family: 'SaaS-XDR 产品族',
+                    name: '平台基本授权',
+                    status: authorized ? '已开通' : data.status,
+                    specLabel: '日志接入数量(亿)',
+                    spec: '2 亿条',
+                    meta: [
+                        { label: '日志接入数量(亿)', value: '2' },
+                        { label: '授权有效期', value: endDate }
+                    ]
                 }],
                 supplement: [
-                    { label: '测试场景', value: '全流量检测、聚合降噪' },
-                    { label: '测试驱动力', value: '提升集团威胁发现与跨区域联动处置能力' },
-                    { label: '核心需求', value: '统一接入现有安全设备日志，验证高级威胁检测效果', full: true },
-                    { label: '客户环境信息', value: '集团总部及 3 个区域数据中心，已部署 AF、SIP' },
-                    { label: '预算信息', value: '当年预算 / 50-80W' },
-                    { label: '客户信息收集表', value: '阿里集团-XDR客户信息收集表.xlsx', full: true }
+                    { label: '申请理由', value: '还在测试阶段 需要延期', full: true },
+                    { label: '测试场景', value: '新建安全运营场景' },
+                    { label: '测试驱动力', value: '各类安全设备告警量大且误报多，威胁运营效率低', full: true },
+                    { label: '核心需求', value: '作为常态化威胁检测/运营中心', full: true },
+                    { label: '期望呈现的效果', value: '威胁运营成果展示' },
+                    { label: '是否 PK', value: '否' },
+                    { label: '客户特殊环境信息', value: '深信服 AF、AC 借测了 STA', full: true },
+                    { label: '客户安全运营模式', value: '单点运维' },
+                    { label: '安全人员配置', value: '1个' },
+                    { label: '深信服现有设备/组件', value: 'AF、STA' },
+                    { label: '第三方设备类型及版本号', value: '亚信 Trustone V9.0、亚信 DS V20.0、亚信信栀威胁感知探针 TDA V7.0.3.2231', full: true },
+                    { label: '预算信息', value: '当年预算' },
+                    { label: '安全预算区间', value: '20-30W' },
+                    { label: '项目预计落地时间', value: '2026-12-01' },
+                    { label: '客户信息收集表', value: 'SFSS-MSS-X1003-客户信息收集表-测试AI安全运营方案用0428.xlsx', full: true }
                 ],
                 delivery: {
                     tenant: authorized ? 'TENANT-XDR-ALB-015' : '待审批通过后生成',
-                    version: data.version,
-                    openedAt: authorized ? data.appliedAt : '待开通',
+                    version: '试用',
+                    openedAt: authorized ? data.appliedAt : '—',
                     email: 'zhao***@alibaba-inc.com',
-                    licenseCode: licenseCode,
-                    file: authorized ? '授权信息-' + data.applicationNo : '待生成'
+                    licenseCode: licenseCode
                 }
             };
         }
+        var subscriptionName = data.product === 'SASE-GA' ? 'SASE-GA 全球加速'
+            : (data.product === 'SASE-SWG' ? '上网安全'
+                : (data.product === 'SASE-ZTNA' ? '零信任接入' : data.product));
+        var specLabel = data.product === 'SASE-GA' ? '带宽' : (data.product === 'SASE-ZTNA' ? '授权用户数' : '授权规格');
+        var specValue = data.product === 'SASE-GA' ? '10M' : (data.product === 'SASE-ZTNA' ? '50' : '按申请配置');
         return {
-            action: '首次开通试用',
+            action: authorized ? '首次开通试用' : '—',
             customer: {
                 contact: '王蕾', phone: '186****3098', email: 'wanglei***@jd.com',
                 cloudAccount: '京东集团云图账号', industry: '批发和零售业 / 电子商务'
             },
             subscriptions: [{
-                family: 'SASE 产品族', name: data.product === 'SASE-GA' ? 'SASE-GA 全球加速' : data.product,
-                specLabel: '授权规格', spec: data.product === 'SASE-GA' ? '带宽 10M' : '按申请配置',
-                validity: data.validity, status: authorized ? '已开通' : data.status
+                family: 'SASE 产品族',
+                name: subscriptionName,
+                status: authorized ? '已开通' : data.status,
+                specLabel: specLabel,
+                spec: data.product === 'SASE-GA' ? '带宽 10M' : specValue,
+                meta: [
+                    { label: specLabel, value: specValue },
+                    { label: '授权有效期', value: endDate }
+                ]
             }],
             supplement: [
                 { label: '客户需求', value: '改善海外办公与国内核心业务系统之间的访问质量', full: true },
@@ -10380,11 +10934,10 @@
             ],
             delivery: {
                 tenant: authorized ? 'TENANT-SASE-JD-050' : '待审批通过后生成',
-                version: data.version,
-                openedAt: authorized ? '2026-06-29 16:20' : '待开通',
+                version: '试用',
+                openedAt: authorized ? data.appliedAt : '—',
                 email: 'wanglei***@jd.com',
-                licenseCode: licenseCode,
-                file: authorized ? '授权信息-' + data.applicationNo : '待生成'
+                licenseCode: licenseCode
             }
         };
     }
@@ -10532,7 +11085,7 @@
                 wrap.appendChild(value);
             } else {
                 var value = document.createElement('span');
-                value.className = 'record-detail-value' + (item.code ? ' is-code' : '') + (item.nowrap ? ' record-detail-nowrap' : '');
+                value.className = 'record-detail-value' + (item.code ? ' is-code' : '') + (item.nowrap ? ' record-detail-nowrap' : '') + (item.tagClass ? ' ' + item.tagClass : '');
                 value.textContent = item.value || '—';
                 if (item.copyable) {
                     var valueRow = document.createElement('div');
@@ -10574,21 +11127,25 @@
             var name = document.createElement('div');
             name.className = 'record-xaas-subscription-name';
             name.textContent = subscription.name;
-            var status = document.createElement('span');
-            status.className = 'record-xaas-subscription-status' + (subscription.status === '已开通' ? '' : ' pending');
-            status.textContent = subscription.status;
+            var status = null;
+            if (subscription.status) {
+                status = document.createElement('span');
+                status.className = 'record-xaas-subscription-status' + (subscription.status === '已开通' ? '' : ' pending');
+                status.textContent = subscription.status;
+            }
             heading.appendChild(family);
             heading.appendChild(name);
             head.appendChild(heading);
-            head.appendChild(status);
+            if (status) head.appendChild(status);
             card.appendChild(head);
 
             var meta = document.createElement('div');
             meta.className = 'record-xaas-subscription-meta';
-            [
+            var metaItems = subscription.meta && subscription.meta.length ? subscription.meta : [
                 { label: subscription.specLabel, value: subscription.spec },
                 { label: '授权有效期', value: subscription.validity }
-            ].forEach(function(item) {
+            ];
+            metaItems.forEach(function(item) {
                 var metaItem = document.createElement('div');
                 metaItem.className = 'record-xaas-subscription-meta-item';
                 var label = document.createElement('span');
@@ -10601,6 +11158,7 @@
                 metaItem.appendChild(value);
                 meta.appendChild(metaItem);
             });
+            meta.hidden = metaItems.length === 0;
             card.appendChild(meta);
             container.appendChild(card);
         });
@@ -10827,9 +11385,10 @@
         return '';
     }
 
-    function getRecordApplicationItems(data, xaasDetail, productDetail) {
+    function getRecordApplicationItems(data, xaasDetail, productDetail, solutionDetail) {
         var isXaas = Boolean(xaasDetail);
         var isProductAuth = Boolean(productDetail);
+        if (solutionDetail) return getSolutionRecordApplicationItems(data, solutionDetail);
         if (!isProductAuth) {
             return [
                 { label: '授权类型', value: data.authorizationType },
@@ -10852,7 +11411,8 @@
         ];
     }
 
-    function getRecordCustomerItems(data, xaasDetail) {
+    function getRecordCustomerItems(data, xaasDetail, solutionDetail) {
+        if (solutionDetail) return getSolutionRecordCustomerItems(data, solutionDetail);
         if (!xaasDetail) {
             return [
                 { label: '客户名称', value: data.customer, full: true },
@@ -10876,7 +11436,11 @@
         var layer = document.getElementById('recordDrawerLayer');
         lastRecordDrawerTrigger = trigger || null;
         activeRecordWorkflow = null;
+        resetSolutionDeviceMode();
         setRecordDrawerMode('view');
+        var applicationTitle = document.getElementById('recordApplicationTitle');
+        if (applicationTitle) applicationTitle.lastChild.textContent = '申请信息';
+        document.getElementById('recordApprovalSection').hidden = false;
         document.getElementById('recordDrawerTitle').textContent = '授权记录详情';
         document.getElementById('recordDrawerSubtitle').textContent = data.customer + ' · ' + data.product;
         document.getElementById('recordDetailApplicationNo').textContent = data.applicationNo;
@@ -10885,11 +11449,18 @@
         status.textContent = data.status;
         var isXaas = data.authorizationType === 'XaaS';
         var isProductAuth = data.authorizationType === '产品授权';
+        var isSolution = data.authorizationType === '解决方案';
         var xaasDetail = isXaas ? getXaasRecordDetail(data) : null;
         var productDetail = isProductAuth ? getProductRecordDetail(data) : null;
-        appendRecordDetailItems(document.getElementById('recordApplicationGrid'), getRecordApplicationItems(data, xaasDetail, productDetail));
-        document.getElementById('recordAuthorizationSection').hidden = isXaas || isProductAuth;
-        document.getElementById('recordCustomerSection').hidden = !(isXaas || isProductAuth);
+        var solutionDetail = isSolution ? getSolutionRecordDetail(row, data) : null;
+        var drawerElement = document.querySelector('.record-drawer');
+        if (drawerElement) drawerElement.style.width = isSolution ? 'min(760px,100vw)' : '';
+        appendRecordDetailItems(document.getElementById('recordApplicationGrid'), getRecordApplicationItems(data, xaasDetail, productDetail, solutionDetail));
+        document.getElementById('recordAuthorizationSection').hidden = isXaas || isProductAuth || isSolution;
+        document.getElementById('recordCustomerSection').hidden = !(isXaas || isProductAuth || isSolution);
+        document.querySelectorAll('#recordDrawerView .record-solution-only').forEach(function(section) {
+            section.hidden = !isSolution;
+        });
         document.querySelectorAll('#recordDrawerView .record-xaas-only').forEach(function(section) {
             section.hidden = !isXaas;
         });
@@ -10902,12 +11473,11 @@
             appendRecordDetailItems(document.getElementById('recordXaasSupplementGrid'), xaasDetail.supplement);
             appendRecordDetailItems(document.getElementById('recordXaasDeliveryGrid'), [
                 { label: '租户/实例标识', value: xaasDetail.delivery.tenant, code: true },
-                { label: '云授权ID', value: data.cloudAuthId && data.cloudAuthId !== '—' ? data.cloudAuthId : '待审批通过后生成', code: true },
-                { label: '实际版本', value: xaasDetail.delivery.version },
+                { label: '云授权ID', value: data.cloudAuthId && data.cloudAuthId !== '—' ? data.cloudAuthId : '—', code: true },
+                { label: '出版版本', value: xaasDetail.delivery.version },
                 { label: '开通时间', value: xaasDetail.delivery.openedAt },
                 { label: '接收邮箱', value: xaasDetail.delivery.email },
-                { label: '授权码', value: xaasDetail.delivery.licenseCode, code: true },
-                { label: '授权文件', value: xaasDetail.delivery.file }
+                { label: '授权码', value: xaasDetail.delivery.licenseCode, code: true }
             ]);
         } else if (isProductAuth) {
             appendRecordDetailItems(document.getElementById('recordCustomerGrid'), getRecordCustomerItems(data, null));
@@ -10920,6 +11490,11 @@
             renderProductChanges(document.getElementById('recordProductChangeList'), productDetail.changes);
             appendRecordDetailItems(document.getElementById('recordProductSupplementGrid'), productDetail.scene.slice(2));
             appendRecordDetailItems(document.getElementById('recordProductDeliveryGrid'), productDetail.delivery);
+        } else if (isSolution) {
+            appendRecordDetailItems(document.getElementById('recordCustomerGrid'), getRecordCustomerItems(data, null, solutionDetail));
+            renderSolutionLineTable(document.getElementById('recordSolutionLineList'), solutionDetail, row);
+            renderSolutionRecordBiz(document.getElementById('recordSolutionBizGrid'), solutionDetail);
+            appendRecordDetailItems(document.getElementById('recordSolutionDeliveryGrid'), getSolutionRecordDeliveryItems(solutionDetail));
         } else {
             var hasAuthorization = data.status === '已授权' || data.status === '已过期';
             var solutionEmail = row.getAttribute('data-solution-email') || ((typeof application !== 'undefined' && application.email) ? application.email : 'license-recipient@sangfor.com.cn');
@@ -11452,6 +12027,16 @@
             if (actionType !== 'copy') action.setAttribute('aria-haspopup', 'dialog');
         });
         records.addEventListener('click', function(event) {
+            var deviceLink = event.target.closest('.solution-device-detail');
+            if (deviceLink) {
+                event.preventDefault();
+                var detailRow = deviceLink.closest('tr.solution-detail-row');
+                var solutionRow = detailRow ? detailRow.previousElementSibling : null;
+                if (solutionRow && solutionRow.classList.contains('solution-parent')) {
+                    openSolutionDeviceDetail(solutionRow, parseInt(deviceLink.dataset.solutionDeviceIndex, 10), deviceLink);
+                }
+                return;
+            }
             var action = event.target.closest('[data-record-action]');
             if (!action) return;
             if (action.dataset.recordAction === 'view') openRecordDetailDrawer(action.closest('tr'), action);
@@ -11481,6 +12066,11 @@
             var mobileApprove = activeRecordWorkflow && activeRecordWorkflow.action === 'approve' && !document.getElementById('recordMobileApprovalComposer').hidden;
             submitRecordWorkflow(mobileApprove ? 'approve' : null);
         });
+        document.getElementById('recordDrawerBack').addEventListener('click', function() {
+            if (!activeSolutionDeviceContext) return;
+            var context = activeSolutionDeviceContext;
+            openRecordDetailDrawer(context.row, context.row.querySelector('a'));
+        });
         document.getElementById('recordDrawerTransfer').addEventListener('click', function() { showRecordActionToast('转签功能待接入。'); });
         document.getElementById('recordDrawerReject').addEventListener('click', function() { submitRecordWorkflow('reject'); });
         document.getElementById('recordMobileApprovalAttachment').addEventListener('click', function() {
@@ -11509,11 +12099,22 @@
 
     function applyRecordsStatusFilter(status) {
         recordsActiveStatus = status || '';
+        var keyword = (document.getElementById('recordsDeviceInput') || {}).value || '';
+        keyword = keyword.trim().toLowerCase();
+        var applicant = (document.getElementById('recordsApplicantInput') || {}).value || '';
+        applicant = applicant.trim().toLowerCase();
+        var dateRange = parseRecordsDateRange((document.getElementById('applyDateRange') || {}).value || '');
         recordsFilteredRows = recordsAllRows.filter(function(row) {
             var statusOk = !recordsActiveStatus || getRecordRowStatus(row) === recordsActiveStatus;
-            var productOk = !recordsActiveProduct || getRecordRowProduct(row) === recordsActiveProduct;
+            var products = getRecordRowProducts(row);
+            var productOk = !recordsActiveProduct || products.indexOf(recordsActiveProduct) !== -1;
             var typeOk = !recordsActiveType || getRecordRowType(row) === recordsActiveType;
-            return statusOk && productOk && typeOk;
+            var keywordOk = !keyword || getRecordSearchText(row).indexOf(keyword) !== -1;
+            var applicantOk = !applicant || ((row.cells[11] ? row.cells[11].textContent : '').toLowerCase().indexOf(applicant) !== -1);
+            var dateOk = !dateRange || isRecordDateInRange(row, dateRange);
+            row._autoExpand = Boolean(recordsActiveProduct && products[0] !== recordsActiveProduct && productOk) ||
+                Boolean(keyword && getRecordMainSearchText(row).indexOf(keyword) === -1 && keywordOk && getRecordSubProducts(row).length);
+            return statusOk && productOk && typeOk && keywordOk && applicantOk && dateOk;
         });
         recordsTotalRows = recordsFilteredRows.length;
         recordsCurrentPage = 1;
@@ -11528,10 +12129,81 @@
         renderRecordsPage();
     }
 
+    function parseRecordsDateRange(value) {
+        var parts = String(value || '').split('~').map(function(part) { return part.trim(); });
+        if (!parts[0]) return null;
+        return { start: parts[0], end: parts[1] || parts[0] };
+    }
+
+    function isRecordDateInRange(row, range) {
+        var applied = row.cells[12] ? row.cells[12].textContent.trim().slice(0, 10) : '';
+        if (!applied) return false;
+        return applied >= range.start && applied <= range.end;
+    }
+
+    function getRecordMainSearchText(row) {
+        return (row.textContent || '').toLowerCase();
+    }
+
+    function getRecordSubProducts(row) {
+        var values = [];
+        var detail = row.nextElementSibling;
+        if (detail && detail.classList.contains('solution-detail-row')) {
+            detail.querySelectorAll('tbody tr').forEach(function(tr) {
+                var first = tr.querySelector('td');
+                if (!first) return;
+                var nameEl = first.querySelector('.solution-device-name');
+                var value = (nameEl ? nameEl.textContent : first.textContent).trim();
+                if (value && values.indexOf(value) === -1) values.push(value);
+            });
+        }
+        return values;
+    }
+
+    function getRecordSearchText(row) {
+        var text = getRecordMainSearchText(row);
+        var detail = row.nextElementSibling;
+        if (detail && detail.classList.contains('solution-detail-row')) text += ' ' + detail.textContent.toLowerCase();
+        var appNo = row.cells[0] ? row.cells[0].textContent.trim().replace(/^chevron_right\s*/, '') : '';
+        var stored = (window.solutionRecordStore || {})[appNo] || SOLUTION_MOCK_RECORDS[appNo];
+        if (stored) {
+            text += ' ' + [stored.solutionCode, stored.borrowOrder, stored.phone, stored.email, stored.cloudTenantId].join(' ');
+            text = text.toLowerCase();
+        }
+        return text;
+    }
+
+    function getRecordRowProducts(row) {
+        var values = [getRecordRowProduct(row)];
+        getRecordSubProducts(row).forEach(function(value) {
+            if (values.indexOf(value) === -1) values.push(value);
+        });
+        return values;
+    }
+
     function getRecordRowProduct(row) {
         var cell = row.cells && row.cells[3];
         return cell ? cell.textContent.trim() : '';
     }
+
+    function refreshRecordsProductOptions() {
+        var productValues = [];
+        document.querySelectorAll('#content-records .table-scroll-wrap > table > tbody > tr:not(.solution-detail-row)').forEach(function(row) {
+            getRecordRowProducts(row).forEach(function(value) {
+                if (value && value !== '—' && productValues.indexOf(value) === -1) productValues.push(value);
+            });
+        });
+        ['recordsMobileProduct', 'recordsProductSelect'].forEach(function(id) {
+            var select = document.getElementById(id);
+            if (!select) return;
+            productValues.forEach(function(value) {
+                if (!Array.prototype.some.call(select.options, function(option) { return option.value === value; })) {
+                    select.appendChild(new Option(value, value));
+                }
+            });
+        });
+    }
+    window.refreshRecordsProductOptions = refreshRecordsProductOptions;
 
     function applyRecordsProductFilter(product) {
         recordsActiveProduct = product || '';
@@ -11577,6 +12249,14 @@
             if (productSelect) productSelect.value = '全部';
             var typeSelect = document.getElementById('recordsTypeSelect');
             if (typeSelect) typeSelect.value = '全部';
+            var keywordInput = document.getElementById('recordsDeviceInput');
+            if (keywordInput) keywordInput.value = '';
+            var mobileSearch = document.getElementById('recordsMobileSearch');
+            if (mobileSearch) mobileSearch.value = '';
+            var applicantInput = document.getElementById('recordsApplicantInput');
+            if (applicantInput) applicantInput.value = '';
+            var dateInput = document.getElementById('applyDateRange');
+            if (dateInput) dateInput.value = '';
             applyRecordsStatusFilter('');
         });
         updateRecordsStatusSummary();
@@ -11598,11 +12278,12 @@
         var mobileProduct = document.getElementById('recordsMobileProduct');
         var productSelect = document.getElementById('recordsProductSelect');
 
-        // 从记录列表收集产品线/方案选项（含 XaaS 产品），同时填充快捷与完整表单下拉
+        // 从记录列表收集产品线/方案选项（含 XaaS 产品与方案明细子行），同时填充快捷与完整表单下拉
         var productValues = [];
         document.querySelectorAll('#content-records .table-scroll-wrap > table > tbody > tr:not(.solution-detail-row)').forEach(function(row) {
-            var value = row.cells[3] ? row.cells[3].textContent.trim() : '';
-            if (value && value !== '—' && productValues.indexOf(value) === -1) productValues.push(value);
+            getRecordRowProducts(row).forEach(function(value) {
+                if (value && value !== '—' && productValues.indexOf(value) === -1) productValues.push(value);
+            });
         });
         productValues.forEach(function(value) {
             if (mobileProduct) mobileProduct.appendChild(new Option(value, value));
@@ -11647,30 +12328,34 @@
             panel.appendChild(title);
             var grid = document.createElement('div');
             grid.className = 'quick-option-grid';
-            Array.prototype.forEach.call(select.options, function(option) {
-                var item = document.createElement('button');
-                item.type = 'button';
-                item.className = 'quick-option';
-                item.setAttribute('role', 'option');
-                item.dataset.value = option.value;
-                item.textContent = option.value === '' ? '全部' : option.text;
-                item.addEventListener('click', function() {
-                    select.value = option.value;
-                    select.dispatchEvent(new Event('change', { bubbles: true }));
-                    closeQuickPanels();
+
+            function renderQuickOptions() {
+                grid.textContent = '';
+                Array.prototype.forEach.call(select.options, function(option) {
+                    var item = document.createElement('button');
+                    item.type = 'button';
+                    item.className = 'quick-option';
+                    item.setAttribute('role', 'option');
+                    item.dataset.value = option.value;
+                    item.textContent = option.value === '' ? '全部' : option.text;
+                    item.classList.toggle('is-selected', option.value === select.value);
+                    item.setAttribute('aria-selected', option.value === select.value ? 'true' : 'false');
+                    item.addEventListener('click', function() {
+                        select.value = option.value;
+                        select.dispatchEvent(new Event('change', { bubbles: true }));
+                        closeQuickPanels();
+                    });
+                    grid.appendChild(item);
                 });
-                grid.appendChild(item);
-            });
+            }
+            renderQuickOptions();
             panel.appendChild(grid);
             bar.appendChild(panel);
             trigger.addEventListener('click', function() {
                 var willOpen = panel.hidden;
                 closeQuickPanels();
                 if (!willOpen) return;
-                panel.querySelectorAll('.quick-option').forEach(function(item) {
-                    item.classList.toggle('is-selected', item.dataset.value === select.value);
-                    item.setAttribute('aria-selected', item.dataset.value === select.value ? 'true' : 'false');
-                });
+                renderQuickOptions();
                 panel.hidden = false;
                 trigger.setAttribute('aria-expanded', 'true');
                 quickBackdrop.hidden = false;
@@ -11742,6 +12427,10 @@
             if (search) search.value = '';
             if (deviceInput) deviceInput.value = '';
             if (typeSelect) typeSelect.value = '全部';
+            var applicantInput = document.getElementById('recordsApplicantInput');
+            if (applicantInput) applicantInput.value = '';
+            var dateInput = document.getElementById('applyDateRange');
+            if (dateInput) dateInput.value = '';
             syncFromDesktop();
         });
         if (statusSelect) statusSelect.addEventListener('change', syncFromDesktop);
@@ -11880,7 +12569,16 @@
             if (detail && detail.classList.contains('solution-detail-row')) detail.style.display = 'none';
         });
         recordsFilteredRows.forEach(function(row, i) {
-            row.style.display = (i >= start && i < end) ? "" : "none";
+            var isVisible = i >= start && i < end;
+            row.style.display = isVisible ? "" : "none";
+            if (isVisible && row._autoExpand) {
+                var autoDetail = row.nextElementSibling;
+                if (autoDetail && autoDetail.classList.contains('solution-detail-row')) {
+                    autoDetail.style.display = '';
+                    var autoIcon = row.querySelector('.expand-icon');
+                    if (autoIcon) autoIcon.classList.add('expanded');
+                }
+            }
         });
         var info = document.getElementById("paginationInfo");
         if (info) info.textContent = recordsTotalRows
@@ -13571,7 +14269,10 @@
             application.authEndDate = application.authDays ?
                 formatDateOffset(application.authDays) : (details.endDate || '');
             application.params = {};
-            application.lines.forEach(function(line) { application.params[line] = createParams(line, details.devices && details.devices[line], application.authEndDate); });
+            application.lines.forEach(function(line) {
+                application.params[line] = createParams(line, details.devices && details.devices[line], application.authEndDate);
+                application.params[line].authScene = getDefaultSolutionAuthScene(line);
+            });
             application.lineSwitches = {};
             var selectionGroups = Object.create(null);
             application.lines.forEach(function(line) {
@@ -13656,6 +14357,13 @@
         }
         function solutionSelectOptions(options, selected) {
             return '<option value="">请选择</option>' + options.map(function(option) { return '<option value="' + escapeHtml(option) + '"' + (option === selected ? ' selected' : '') + '>' + escapeHtml(option) + '</option>'; }).join('');
+        }
+        function renderSolutionAuthSceneField(line, values) {
+            var options = getSolutionAuthSceneOptions(line);
+            var selected = values.authScene || getDefaultSolutionAuthScene(line);
+            return '<div class="solution-field solution-field-full"><label><span class="solution-required">*</span>授权场景</label><select class="solution-select" data-solution-param="authScene">' + options.map(function(option) {
+                return '<option value="' + escapeHtml(option) + '"' + (option === selected ? ' selected' : '') + '>' + escapeHtml(option) + '</option>';
+            }).join('') + '</select></div>';
         }
         function renderXaasFields(line, values) {
             var baseFields = '<div class="solution-field"><label><span class="solution-required">*</span>授权有效期<span class="solution-readonly-note"><span class="material-symbols-outlined">lock</span>统一取方案授权时间</span></label><input class="solution-input" type="date" data-solution-param="endDate" value="' + escapeHtml(values.endDate || '') + '" readonly data-solution-readonly></div>';
@@ -13812,6 +14520,7 @@
             }).join('');
             var line = application.activeLine;
             var values = application.params[line];
+            values.authScene = values.authScene || getDefaultSolutionAuthScene(line);
             var isHci = line === 'HCI';
             var fields = '';
             if (!isLineEnabled(line)) {
@@ -13864,6 +14573,7 @@
                 '</div>';
                 fields += renderSolutionModuleCards(line, values);
             }
+            if (isLineEnabled(line)) fields = renderSolutionAuthSceneField(line, values) + fields;
             var active = activeLines();
             var headCount = isOptionalSolutionLine(line) ? '' : '<span>' + (active.indexOf(line) + 1) + ' / ' + active.length + '</span>';
             id('solutionProductPanel').innerHTML = '<div class="solution-product-panel-head"><h3>' + line + ' 授权参数</h3>' + headCount + '</div><div class="solution-grid two solution-product-fields" data-product-line="' + line + '">' + fields + '</div>';
@@ -13951,6 +14661,11 @@
         function validateApplication(ignoreCollection) {
             if (!application.solution) return '请先关联有效借测单或选择启用方案。';
             if (!activeLines().length) return '请至少开启一个产品线后提交。';
+            activeLines().forEach(function(line) {
+                if (application.params[line] && !application.params[line].authScene) {
+                    application.params[line].authScene = getDefaultSolutionAuthScene(line);
+                }
+            });
             var groupCounts = Object.create(null);
             application.lines.forEach(function(line) {
                 var rule = getApplicationLineRule(line);
@@ -14092,10 +14807,57 @@
             if (line === 'SASE-SWG') return '云图ID ' + (application.cloud ? application.cloud.tenantId : '-') + ' | ' + (business ? business.customerNeed : item.customerNeed);
             if (line === 'SASE-ZTNA') return '云图ID ' + (application.cloud ? application.cloud.tenantId : '-') + ' | 授权用户数 ' + (item.userCount || 50) + ' | ' + (business ? business.customerNeed : item.customerNeed);
             if (line === 'AF') return item.deviceId + extraNote + ' | 网关' + (item.af_gw_users || '') + '用户/' + (item.af_gw_lines || '') + '线路 · SSL VPN ' + (item.af_sslvpn_users || '') + '用户 · 已启用 ' + (item.modules || []).length + ' 项授权功能';
-            if (line === 'SaaS-XDR' || line === 'XDR') return '云图ID ' + (application.cloud ? application.cloud.tenantId : '-') + ' | 日志量 ' + item.logAmount + ' 万条 | ' + item.coreNeed;
+            if (line === 'XDR' && isDsocSolution()) {
+                var dsocModules = item.modules || [];
+                return '云图ID ' + (application.cloud ? application.cloud.tenantId : '-') + (item.version ? ' | ' + item.version : '') + ' | 已启用 ' + dsocModules.length + ' 项授权模块' + (dsocModules.length ? '：' + dsocModules.slice(0, 3).join('、') + (dsocModules.length > 3 ? ' 等' : '') : '');
+            }
+            if (line === 'SaaS-XDR' || line === 'XDR') return '云图ID ' + (application.cloud ? application.cloud.tenantId : '-') + ' | 日志量 ' + (item.logAmount || '—') + ' 万条 | ' + (item.coreNeed || '—');
             if (line === 'HCI') return item.deviceId + extraNote + ' | ' + (item.modules || []).join('、') + ' | 集群 ' + item.clusterId + ' | ' + item.spec;
             if (line === 'AC') return item.deviceId + extraNote + ' | 网关：线路' + item.gatewayLines + '/分支' + item.gatewayBranch + '/移动' + item.gatewayMobile + ' | 多功能：' + (item.multiFeatures || []).join('、') + ' | 终端' + item.terminalCount;
             return item.deviceId + extraNote + ' | ' + (item.modules || []).join('、') + ' | ' + item.spec;
+        }
+        function getSolutionDeviceParamItems(line, value) {
+            var items = [];
+            function add(label, itemValue) {
+                if (itemValue !== undefined && itemValue !== null && String(itemValue).trim() !== '') {
+                    items.push({ label: label, value: String(itemValue) });
+                }
+            }
+            if (line === 'HCI') {
+                add('集群标识', value.clusterId);
+                add('授权模块', (value.modules || []).join('、'));
+                add('规格', value.spec);
+                add('硬件信息文件', value.infoFile);
+            } else if (line === 'AC') {
+                add('网关线路数', value.gatewayLines);
+                add('分支机构数', value.gatewayBranch);
+                add('移动分支数', value.gatewayMobile);
+                add('多功能序列号', (value.multiFeatures || []).join('、'));
+                add('终端接入数', value.terminalCount);
+            } else if (line === 'AF') {
+                add('网关用户数', value.af_gw_users);
+                add('线路数', value.af_gw_lines);
+                add('分支机构数', value.af_branches);
+                add('SSL VPN 用户数', value.af_sslvpn_users);
+                add('已启用授权功能', (value.modules || []).join('、'));
+            } else if (line === 'SASE-GA') {
+                add('带宽', value.bandwidth ? value.bandwidth + 'M' : '');
+                add('云图ID', application.cloud ? application.cloud.tenantId : '');
+            } else if (line === 'SASE-ZTNA') {
+                add('授权用户数', value.userCount);
+                add('云图ID', application.cloud ? application.cloud.tenantId : '');
+            } else if (line === 'XDR' && isDsocSolution()) {
+                add('日志接入数量(亿)', value.xdr_daily_log_count);
+                add('授权模块', (value.modules || []).join('、'));
+            } else if (line === 'SaaS-XDR' || line === 'XDR') {
+                add('日志量（万条）', value.logAmount);
+                add('测试场景', value.testScenario);
+                add('核心需求', value.coreNeed);
+            } else {
+                add('授权模块', (value.modules || []).join('、'));
+                add('规格', value.spec);
+            }
+            return items;
         }
         function showSolutionSubmitError(message) {
             var errorBox = id('solutionSubmitError');
@@ -14136,24 +14898,141 @@
         }
         function insertSolutionRecord() {
             if (application.recordId) return;
-            application.recordId = 'SOL-20260806-003';
-            var rows = activeLines().map(function(line, index) {
-                var value = application.params[line];
+            function pad(value) { return String(value).padStart(2, '0'); }
+            var now = new Date();
+            var startDate = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
+            var stamp = now.getFullYear() + pad(now.getMonth() + 1) + pad(now.getDate());
+            var appliedAt = startDate + ' ' + pad(now.getHours()) + ':' + pad(now.getMinutes());
+            var solutionSeq = document.querySelectorAll('#content-records tr.solution-parent').length + 1;
+            application.recordId = 'SOL-' + stamp + '-' + String(solutionSeq).padStart(3, '0');
+
+            var solution = application.solution || {};
+            var lines = activeLines();
+            var endDate = application.authEndDate || '';
+            if (!endDate && lines.length && application.params[lines[0]]) endDate = application.params[lines[0]].endDate || '';
+            var validity = startDate + ' ~ ' + (endDate || '—');
+            var customerObj = application.source === 'borrow' ? solutionBorrowCustomer : solutionLocalCustomer;
+            var customerType = customerObj && customerObj.type === 'KA' ? 'KA' : '普通';
+            var sales = customerObj ? (customerObj.sales || '') : '';
+            var cloudTenantId = application.cloud && application.cloud.tenantId ? application.cloud.tenantId : '—';
+            var productRows = [];
+
+            lines.forEach(function(line) {
+                var value = application.params[line] || {};
                 var xaas = isXaasLine(line);
-                var devDisplay = xaas ? '云图ID: ' + (application.cloud ? application.cloud.tenantId : '-') : (value.deviceId + (value.extraDevices && value.extraDevices.length ? (' / 追加: ' + value.extraDevices.join(', ')) : ''));
-                return { line: line, version: value.version, deviceId: devDisplay, sn: xaas ? '—' : 'SN-' + line + '-' + String(index + 1).padStart(3, '0'), endDate: value.endDate, license: 'LIC-' + line + '-806' };
+                var lineEnd = value.endDate || endDate || '—';
+                var lineSummary = getSolutionLineSummary(line, value);
+                var licenseSeq = String(solutionSeq).padStart(3, '0');
+                if (xaas) {
+                    productRows.push({
+                        line: line,
+                        version: value.version || '—',
+                        deviceId: '云图ID: ' + cloudTenantId,
+                        sn: '—',
+                        region: application.region || '—',
+                        validity: startDate + ' ~ ' + lineEnd,
+                        licenseCode: 'LIC-' + line + '-' + licenseSeq,
+                        status: '已授权',
+                        params: lineSummary,
+                        authScene: value.authScene || getDefaultSolutionAuthScene(line),
+                        paramItems: getSolutionDeviceParamItems(line, value),
+                        clusterId: ''
+                    });
+                    return;
+                }
+                var devices = [value.deviceId].concat(value.extraDevices || []).filter(function(item) { return item && String(item).trim(); });
+                if (!devices.length) devices = ['—'];
+                devices.forEach(function(deviceId, index) {
+                    productRows.push({
+                        line: line,
+                        version: value.version || '—',
+                        deviceId: deviceId,
+                        sn: 'SN-' + line + '-' + licenseSeq + (index ? '-' + String(index + 1) : ''),
+                        region: application.region || '—',
+                        validity: startDate + ' ~ ' + lineEnd,
+                        licenseCode: 'LIC-' + line + '-' + licenseSeq + (index ? '-' + String(index + 1) : ''),
+                        status: '已授权',
+                        params: lineSummary,
+                        authScene: value.authScene || getDefaultSolutionAuthScene(line),
+                        paramItems: getSolutionDeviceParamItems(line, value),
+                        clusterId: line === 'HCI' ? (value.clusterId || '') : ''
+                    });
+                });
             });
-            var deviceIds = rows.map(function(row) { return row.deviceId; }).join('&#10;');
-            var sns = rows.map(function(row) { return row.sn; }).join('&#10;');
+
+            var deviceIds = productRows.map(function(row) { return row.deviceId; }).join('&#10;');
+            var sns = productRows.map(function(row) { return row.sn; }).join('&#10;');
+            var deviceCount = productRows.length;
+            var deviceSummaryText = !deviceCount ? '0个设备' : (deviceCount > 1 ? escapeHtml(productRows[0].deviceId) + ' 等' + deviceCount + '个设备' : escapeHtml(productRows[0].deviceId));
+            var snSummaryText = !deviceCount || productRows[0].sn === '—' ? (deviceCount > 1 ? deviceCount + '个设备' : productRows[0].sn) : (deviceCount > 1 ? escapeHtml(productRows[0].sn) + ' 等' + deviceCount + '个设备' : escapeHtml(productRows[0].sn));
             var tbody = document.querySelector('#content-records .table-scroll-wrap > table > tbody');
             var sourceLabel = application.source === 'borrow' ? '关联借测单' : '本地申请';
-            var emailAttr = application.email ? (' data-solution-email="' + escapeHtml(application.email) + '"') : '';
-            var phoneAttr = application.contactPhone ? (' data-solution-phone="' + escapeHtml(application.contactPhone) + '"') : '';
-            var regionAttr = application.region ? (' data-solution-region="' + escapeHtml(application.region) + '"') : '';
-            var record = '<tr class="hover:bg-[#eef3ff]/40 transition-colors solution-parent" data-solution-generated="true"' + emailAttr + phoneAttr + regionAttr + '><td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-1"><button class="text-[#424656] hover:text-primary border-0 bg-transparent p-0 leading-none" onclick="toggleSolution(this)" aria-label="展开方案明细"><span class="material-symbols-outlined text-[16px] expand-icon">chevron_right</span></button><a class="text-primary hover:underline font-medium" href="javascript:;">' + application.recordId + '</a></div></td><td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-50 text-amber-700 border border-amber-200">解决方案</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td><td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">' + escapeHtml(application.solution.name) + '</td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td><td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="' + escapeHtml(application.customer) + '">' + escapeHtml(application.customer) + '</span></div></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]"><span class="device-summary" data-full="' + deviceIds + '">' + rows.length + '个设备</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]"><span class="device-summary" data-full="' + sns + '">' + rows.length + '个设备</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">' + sourceLabel + '</td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-08-06 ~ ' + rows[0].endDate + '</td><td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">' + escapeHtml(application.applicant) + '</td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-08-06 10:10</td><td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已授权</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px] record-action-control" data-record-action="view" role="button" tabindex="0" aria-haspopup="dialog">查看</span></div></div></td></tr>';
-            var detail = '<tr class="solution-detail-row" style="display:none;" data-solution-generated-detail="true"><td colspan="14" class="p-0 bg-[#f8f9ff]" style="border-top:2px solid #e5eeff;"><div style="padding:6px 12px 10px;"><div class="solution-expand-wrap"><div class="bg-white rounded border border-[#c2c6d8]/20 overflow-hidden" style="font-size:11.5px;"><table class="w-full"><thead><tr class="border-b border-[#c2c6d8]/30 bg-[#e8eeff]"><th class="py-2 px-3">产品线</th><th class="py-2 px-3">版本号</th><th class="py-2 px-3">设备ID/云图ID</th><th class="py-2 px-3">设备SN</th><th class="py-2 px-3">授权有效期</th><th class="py-2 px-3">授权码</th></tr></thead><tbody>' + rows.map(function(row) { return '<tr><td class="py-2 px-3">' + row.line + '</td><td class="py-2 px-3">' + escapeHtml(row.version) + '</td><td class="py-2 px-3">' + escapeHtml(row.deviceId) + '</td><td class="py-2 px-3">' + row.sn + '</td><td class="py-2 px-3">至 ' + row.endDate + '</td><td class="py-2 px-3">' + row.license + '</td></tr>'; }).join('') + '</tbody></table></div></div></div></td></tr>';
+            var customerBadge = customerType === 'KA'
+                ? '<span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-amber-100 text-amber-800 border border-amber-200">KA</span>'
+                : '<span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border border-slate-200">普通</span>';
+            var recordAttrs = ' data-solution-generated="true" data-solution-id="' + escapeHtml(application.recordId) + '" data-status="已授权"' +
+                (application.region ? ' data-solution-region="' + escapeHtml(application.region) + '"' : '') +
+                (application.email ? ' data-solution-email="' + escapeHtml(application.email) + '"' : '') +
+                (application.contactPhone ? ' data-solution-phone="' + escapeHtml(application.contactPhone) + '"' : '');
+            var record = '<tr class="hover:bg-[#eef3ff]/40 transition-colors solution-parent"' + recordAttrs + '><td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-1"><button class="text-[#424656] hover:text-primary border-0 bg-transparent p-0 leading-none" onclick="toggleSolution(this)" aria-label="展开方案明细"><span class="material-symbols-outlined text-[16px] expand-icon">chevron_right</span></button><a class="text-primary hover:underline font-medium" href="javascript:;">' + application.recordId + '</a></div></td><td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-50 text-amber-700 border border-amber-200">解决方案</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td><td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">' + escapeHtml(solution.name || '') + '</td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td><td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="' + escapeHtml(application.customer) + '">' + escapeHtml(application.customer) + '</span>' + customerBadge + '</div></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]"><span class="device-summary" data-full="' + deviceIds + '">' + deviceSummaryText + '</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]"><span class="device-summary" data-full="' + sns + '">' + snSummaryText + '</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">' + escapeHtml(application.region || '—') + '</td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">' + validity + '</td><td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">' + escapeHtml(application.applicant) + '</td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">' + appliedAt + '</td><td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已授权</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px] record-action-control" data-record-action="view" role="button" tabindex="0" aria-haspopup="dialog">查看</span></div></div></td></tr>';
+            var detailRows = productRows.map(function(row, index) {
+                return '<tr class="hover:bg-[#eef4ff]"><td class="py-2 px-3"><span class="solution-device-name">' + row.line + '</span></td><td class="py-2 px-3 solution-op-col"><a href="javascript:;" class="solution-device-detail" data-solution-device-index="' + index + '">详情</a></td><td class="py-2 px-3">' + escapeHtml(row.version) + '</td><td class="py-2 px-3">' + escapeHtml(row.deviceId) + '</td><td class="py-2 px-3">' + escapeHtml(row.sn) + '</td><td class="py-2 px-3">' + escapeHtml(row.region) + '</td><td class="py-2 px-3">' + row.validity + '</td><td class="py-2 px-3">' + row.licenseCode + '</td></tr>';
+            }).join('');
+            var detail = '<tr class="solution-detail-row" style="display:none;" data-solution-generated-detail="true"><td colspan="14" class="p-0 bg-[#f8f9ff]" style="border-top:2px solid #e5eeff;"><div style="padding:6px 12px 10px;"><div class="solution-expand-wrap"><div class="bg-white rounded border border-[#c2c6d8]/20 overflow-hidden" style="font-size:11.5px;"><table class="w-full"><thead><tr class="border-b border-[#c2c6d8]/30 bg-[#e8eeff]"><th class="py-2 px-3">产品线</th><th class="py-2 px-3 solution-op-col">操作</th><th class="py-2 px-3">版本号</th><th class="py-2 px-3">设备ID/云图ID</th><th class="py-2 px-3">设备SN</th><th class="py-2 px-3">区域</th><th class="py-2 px-3">授权有效期</th><th class="py-2 px-3">授权码</th></tr></thead><tbody>' + detailRows + '</tbody></table></div></div></div></td></tr>';
             tbody.insertAdjacentHTML('afterbegin', record + detail);
+
+            var bizItems = [];
+            if (isDsocSolution()) {
+                var biz = application.biz || {};
+                bizItems = [
+                    { label: '测试主打场景', value: biz.mainScenario || '—' },
+                    { label: '测试驱动力', value: (biz.testDrivers || []).join('；') || '—', full: true },
+                    { label: '客户预期效果', value: (biz.expectedEffects || []).join('；') || '—', full: true },
+                    { label: '平台接入组件说明', value: biz.componentNotes || '—', full: true },
+                    { label: '测试需求调研文档', value: biz.researchDoc || '—' },
+                    { label: '客户原因及后续转销计划说明', value: biz.resalePlan || '—', full: true }
+                ];
+            } else if (isAccelSolution() || isGlobalNetworkSolution()) {
+                var extraBiz = isAccelSolution() ? (application.accelBiz || {}) : (application.networkBiz || {});
+                bizItems = [
+                    { label: '客户需求', value: extraBiz.customerNeed || '—', full: true },
+                    { label: '项目规模', value: extraBiz.projectScale || '—', full: true },
+                    { label: '竞争对手', value: extraBiz.competitor || '—' }
+                ];
+                if (isAccelSolution()) {
+                    bizItems.push({ label: '客户所在省份/国家', value: extraBiz.region || '—' });
+                    if (extraBiz.remark) bizItems.push({ label: '备注', value: extraBiz.remark, full: true });
+                }
+            }
+
+            window.solutionRecordStore = window.solutionRecordStore || {};
+            window.solutionRecordStore[application.recordId] = {
+                applicationNo: application.recordId,
+                solutionCode: solution.code || '—',
+                solutionName: solution.name || '',
+                industry: application.industry || '—',
+                source: sourceLabel,
+                borrowOrder: application.borrow ? application.borrow.number : '',
+                borrowApplicant: application.borrow ? (application.borrow.applicant || '') : '',
+                borrowStatus: application.borrow ? (application.borrow.returned ? '已归还' : (application.borrow.revoked ? '已撤销' : '借测中')) : '—',
+                borrowType: application.borrow ? '硬件借测' : '—',
+                sales: sales,
+                customerType: customerType === 'KA' ? 'KA客户' : '普通客户',
+                contactName: customerObj && customerObj.contactName ? customerObj.contactName : '—',
+                phone: application.contactPhone || '—',
+                email: application.email || '—',
+                cloudTenantId: cloudTenantId,
+                validity: validity,
+                status: '已授权',
+                productLines: productRows,
+                biz: bizItems
+            };
+
+            if (typeof window.refreshRecordsProductOptions === 'function') window.refreshRecordsProductOptions();
             if (typeof window.initRecordsPagination === 'function') window.initRecordsPagination();
+            if (typeof window.updateRecordsStatusSummary === 'function') window.updateRecordsStatusSummary();
+            if (typeof window.initRecordDownloadActions === 'function') window.initRecordDownloadActions();
+            if (typeof window.initRecordActionTips === 'function') window.initRecordActionTips();
         }
 
         function bindEvents() {

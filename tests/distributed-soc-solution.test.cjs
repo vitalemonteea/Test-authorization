@@ -182,7 +182,7 @@ test('分布式安全运营方案：未上传调研文档阻断提交，补全�
     assert.match(detail.textContent, /LOCAL-XDR2\.0\.45及以上版本（XDR\+GPT）/);
     assert.match(detail.textContent, /STA3\.0\.25/);
     assert.match(detail.textContent, /云图ID: YT-10010999/);
-    assert.match(detail.textContent, /LIC-STA-806/);
+    assert.match(detail.textContent, /LIC-STA-\d{3}/);
     assert.deepEqual(errors, []);
   } finally { dom.window.close(); }
 });
