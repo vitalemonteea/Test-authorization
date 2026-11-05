@@ -202,6 +202,70 @@
             background: #e5eeff; color: #0050cb; font-weight: 500; border-left: 2px solid #0050cb; padding-left: 22px;
         }
 
+        /* HCI申请类型：多选下拉 + 自动识别锁定标签 */
+        .hci-apply-type { position: relative; width: 100%; max-width: 578px; }
+        .hci-apply-type-trigger {
+            display: flex; align-items: center; gap: 8px; width: 100%; height: 38px;
+            padding: 0 12px; box-sizing: border-box; background: #fff; border: 1px solid #c2c6d8;
+            border-radius: 8px; cursor: pointer; outline: none;
+            transition: border-color .2s, box-shadow .2s;
+        }
+        .hci-apply-type-trigger:hover { border-color: #0050cb; }
+        .hci-apply-type-trigger:focus-visible,
+        .hci-apply-type.open .hci-apply-type-trigger { border-color: #0050cb; box-shadow: 0 0 0 3px rgba(0,80,203,.12); }
+        .hci-apply-type-placeholder {
+            flex: 1; min-width: 0; color: #8b92a5; font-size: 14px; line-height: 38px;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .hci-apply-type-placeholder[hidden] { display: none; }
+        .hci-apply-type-tags { display: flex; align-items: center; gap: 6px; flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; }
+        .hci-apply-type-tag {
+            display: inline-flex; align-items: center; gap: 4px; max-width: 100%; height: 24px;
+            padding: 0 4px 0 8px; box-sizing: border-box; background: #eef4ff; border: 1px solid #cfe0ff;
+            border-radius: 4px; color: #0050cb; font-size: 12px; line-height: 22px; white-space: nowrap;
+        }
+        .hci-apply-type-tag.is-locked { padding-right: 8px; background: #f2f4f7; border-color: #d8deea; color: #424656; }
+        .hci-apply-type-tag-label { overflow: hidden; text-overflow: ellipsis; }
+        .hci-apply-type-tag-remove {
+            display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px;
+            padding: 0; border: 0; border-radius: 50%; background: transparent; color: #0050cb;
+            font-size: 14px; line-height: 1; cursor: pointer;
+        }
+        .hci-apply-type-tag-remove:hover { background: #0050cb; color: #fff; }
+        .hci-apply-type-tag-lock { font-size: 13px; color: #6b7890; }
+        .hci-apply-type-arrow { flex: 0 0 auto; font-size: 22px; color: #424656; transition: transform .2s, color .2s; }
+        .hci-apply-type.open .hci-apply-type-arrow { transform: rotate(180deg); color: #0050cb; }
+        .hci-apply-type-dropdown {
+            display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 1000;
+            padding: 4px 0; background: #fff; border: 1px solid #c2c6d8; border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,.08);
+        }
+        .hci-apply-type.open .hci-apply-type-dropdown { display: block; }
+        .hci-apply-type-option {
+            display: flex; align-items: center; gap: 8px; min-height: 36px; padding: 6px 12px;
+            box-sizing: border-box; color: #424656; font-size: 14px; cursor: pointer;
+        }
+        .hci-apply-type-option:hover { background: #eff4ff; color: #0050cb; }
+        .hci-apply-type-option.is-locked { cursor: default; background: #f7f9fc; }
+        .hci-apply-type-option.is-locked:hover { background: #f7f9fc; color: #424656; }
+        .hci-apply-type-option input { width: 16px; height: 16px; margin: 0; accent-color: #0050cb; flex: 0 0 auto; }
+        .hci-apply-type-option-label { flex: 1; min-width: 0; }
+        .hci-apply-type-badge {
+            flex: 0 0 auto; padding: 1px 6px; border: 1px solid #b9d0ff; border-radius: 9999px;
+            background: #eef4ff; color: #0050cb; font-size: 11px; line-height: 16px;
+        }
+        .hci-apply-type-badge[hidden] { display: none; }
+        .hci-apply-type-notes { margin-top: 6px; }
+        .hci-apply-type-auto-note,
+        .hci-apply-type-weak-note,
+        .hci-apply-type-error { margin: 0; font-size: 12px; line-height: 18px; }
+        .hci-apply-type-auto-note { color: #0050cb; }
+        .hci-apply-type-weak-note { color: #8b92a5; }
+        .hci-apply-type-error { margin-top: 6px; color: #b42318; }
+        .hci-apply-type-auto-note[hidden],
+        .hci-apply-type-weak-note[hidden],
+        .hci-apply-type-error[hidden] { display: none; }
+
         /* 按钮 */
         .layui-btn { display: inline-flex; align-items: center; justify-content: center; height: 40px; padding: 0 24px; background-color: #0050cb; color: #fff; white-space: nowrap; text-align: center; font-size: 14px; font-weight: 500; border: none; border-radius: 10px; cursor: pointer; transition: all 0.2s; }
         .layui-btn:hover { opacity: 0.9; box-shadow: 0 2px 8px rgba(0,80,203,.25); }
@@ -376,6 +440,7 @@
         #section-basic #planDevTypeRow[hidden] { display: none; }
         #section-basic #authSceneRow[hidden] { display: none; }
         #section-basic #requestContentsRow[hidden] { display: none; }
+        #section-basic #hciApplyTypeRow[hidden] { display: none; }
         #section-basic .layui-form-item { max-width: none; margin: 0 0 18px; clear: none; }
         #section-basic .basic-two-col-row .layui-form-item,
         #section-basic .basic-full-row .layui-form-item,
@@ -801,6 +866,7 @@
             .layui-select { max-width: none; width: 100%; }
             .custom-select { max-width: none; width: 100%; }
             .custom-select-trigger { max-width: none; }
+            .hci-apply-type { max-width: none; }
             .search-select-box { max-width: none; width: 100%; }
             #section-basic .search-select-box { max-width: none; }
             #section-basic .basic-two-col-row,
@@ -2185,6 +2251,45 @@
                                 </div>
                                 <label class="hw-upload-btn" for="overlimitFileInput"><span class="upload-icon">&#8679;</span> 上传文件</label>
                             </div>
+                        </div>
+                    </div>
+                    </div>
+
+                    <!-- HCI申请类型：仅 HCI 产品线展示，位于区域/办事处上方 -->
+                    <div class="basic-full-row" id="hciApplyTypeRow" hidden>
+                    <div class="layui-form-item" id="hciApplyTypeFormItem">
+                        <label class="layui-form-label">HCI申请类型<span class="required-mark">*</span></label>
+                        <div class="layui-input-block">
+                            <div class="hci-apply-type" id="hciApplyType">
+                                <input type="hidden" id="hciApplyTypes" name="hciApplyTypes" value="">
+                                <div class="hci-apply-type-trigger" id="hciApplyTypeTrigger" tabindex="0" role="button" aria-label="HCI申请类型" aria-expanded="false" aria-controls="hciApplyTypeDropdown">
+                                    <span class="hci-apply-type-placeholder" id="hciApplyTypePlaceholder">请选择 HCI 申请类型</span>
+                                    <span class="hci-apply-type-tags" id="hciApplyTypeTags"></span>
+                                    <span class="material-symbols-outlined hci-apply-type-arrow" aria-hidden="true">arrow_drop_down</span>
+                                </div>
+                                <div class="hci-apply-type-dropdown" id="hciApplyTypeDropdown" role="group" aria-label="HCI申请类型选项">
+                                    <label class="hci-apply-type-option" data-value="confidential">
+                                        <input type="checkbox" value="confidential">
+                                        <span class="hci-apply-type-option-label">涉密项目</span>
+                                        <span class="hci-apply-type-badge" data-auto-badge="confidential" hidden>可系统识别</span>
+                                    </label>
+                                    <label class="hci-apply-type-option" data-value="low_latency">
+                                        <input type="checkbox" value="low_latency">
+                                        <span class="hci-apply-type-option-label">低时延项目</span>
+                                        <span class="hci-apply-type-badge" data-auto-badge="low_latency" hidden>可系统识别</span>
+                                    </label>
+                                    <label class="hci-apply-type-option" data-value="renewal">
+                                        <input type="checkbox" value="renewal">
+                                        <span class="hci-apply-type-option-label">已开HCI授权延期</span>
+                                        <span class="hci-apply-type-badge" data-auto-badge="renewal" hidden>可系统识别</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="hci-apply-type-notes">
+                                <p class="hci-apply-type-auto-note" id="hciApplyTypeAutoNote" aria-live="polite" hidden></p>
+                                <p class="hci-apply-type-weak-note" id="hciApplyTypeWeakNote" aria-live="polite" hidden></p>
+                            </div>
+                            <p class="hci-apply-type-error" id="hciApplyTypeError" hidden role="alert"></p>
                         </div>
                     </div>
                     </div>
@@ -6926,10 +7031,19 @@
                 hwFileList.innerHTML = '';
                 return;
             }
+            hwFileInfo.classList.add('has-file');
+            // 单文件直接在摘要行展示文件名，避免摘要与清单重复占两行
+            if (hwFiles.length === 1) {
+                var singleFile = hwFiles[0];
+                hwFileName.textContent = singleFile.name + (singleFile.collectionToken ? '（外部提供）' : '');
+                hwFileName.className = 'hw-file-name';
+                hwFileMeta.textContent = formatFileSize(singleFile.size);
+                hwFileList.innerHTML = '';
+                return;
+            }
             hwFileName.textContent = '已选择 ' + hwFiles.length + ' 个文件';
             hwFileName.className = 'hw-file-name';
             hwFileMeta.textContent = formatFileSize(hwFiles.reduce(function(total, f) { return total + f.size; }, 0));
-            hwFileInfo.classList.add('has-file');
             hwFileList.innerHTML = hwFiles.map(function(f) {
                 return '<div class="hw-file-info has-file"><span class="hw-file-name">' + escapeHtml(f.name) + (f.collectionToken ? '<span class="hw-file-source">外部提供</span>' : '') + '</span><span class="hw-file-meta">' + formatFileSize(f.size) + '</span><span class="hw-file-clear" data-hw-remove="' + escapeHtml(hwFileKeyOf(f)) + '" title="删除文件">&times;</span></div>';
             }).join('');
@@ -7487,6 +7601,7 @@
             }
 
             function openProductSelect() {
+                if (typeof closeHciApplyTypeDropdown === 'function') closeHciApplyTypeDropdown();
                 document.querySelectorAll('.custom-select.open').forEach(function(cs) {
                     if (cs !== container) {
                         cs.classList.remove('open');
@@ -7713,6 +7828,8 @@
             var container = document.querySelector('[data-select-id="cloudVersion"]');
             if (!container || !container._replaceOptions) return;
             container._replaceOptions(productVersionOptions[String(productLineId)] || defaultCloudVersionOptions);
+            // 初始加载时 HCI 状态尚未初始化，由后续 updateHciApplyTypeState 调用统一渲染。
+            if (typeof hciApplyTypeState !== 'undefined' && hciApplyTypeState) updateHciApplyTypeState();
         }
 
         // 全局点击关闭自定义下拉框
@@ -7888,6 +8005,7 @@
             return typeof authorizationRules.getProductStatus === 'function' ?
                 authorizationRules.getProductStatus(productLineId) : 'active';
         }
+
         var applicationState = {
             rawDeviceFacts: [],
             deviceFacts: [],
@@ -8094,9 +8212,13 @@
             } else if (missingOverdueReason) {
                 statusText = '请填写超期申请理由与项目预计发标时间';
             } else if (applicationState.deviceFacts.length > 0) {
-                statusText = '已识别 ' + applicationState.deviceFacts.length + ' 台设备，可以提交';
-                statusIcon = 'check_circle';
-                statusClass = 'is-ready';
+                if (isHciProductLine() && hciApplyTypeState.selected.length === 0) {
+                    statusText = '请选择 HCI 申请类型';
+                } else {
+                    statusText = '已识别 ' + applicationState.deviceFacts.length + ' 台设备，可以提交';
+                    statusIcon = 'check_circle';
+                    statusClass = 'is-ready';
+                }
             }
             standardSubmitButton.disabled = hardConflict || missingOverdueReason;
             standardActionStatus.classList.remove('is-ready', 'has-conflict');
@@ -8554,6 +8676,7 @@
                 authorizationRules.getLookupBlockingReason(facts, plnameSelect.value) : null;
             renderLookupBlocking(blockingReason);
             renderAuthorizationScene(facts, blockingReason);
+            updateHciApplyTypeState();
             recalculateApprovalDecision();
         }
 
@@ -8746,6 +8869,7 @@
                 applicationState.compatibilityIssues = [];
             }
             if (typeof resetExistingAuthSection === 'function') resetExistingAuthSection();
+            updateHciApplyTypeState();
         };
         window.getTrustedDeviceFacts = function() {
             if (isHardwareInfoFileMode()) {
@@ -8864,10 +8988,305 @@
             clearHardwareInfoRecognition();
             applyPlMode();
             refreshModuleNav(plVal);
+            if (plVal === '45') updateHciApplyTypeState();
+            else resetHciApplyTypeState();
         });
         // 初始化时根据默认产品线应用设备识别模式并刷新导航
         applyPlMode();
         refreshModuleNav(plnameSelect.value);
+
+        // ===== HCI申请类型（仅 HCI 产品线，多选 + 自动识别锁定） =====
+        var HCI_APPLY_TYPE_OPTIONS = [
+            { value: 'confidential', label: '涉密项目' },
+            { value: 'low_latency', label: '低时延项目' },
+            { value: 'renewal', label: '已开HCI授权延期' }
+        ];
+        var HCI_APPLY_TYPE_LABELS = HCI_APPLY_TYPE_OPTIONS.reduce(function(map, item) {
+            map[item.value] = item.label;
+            return map;
+        }, {});
+        var hciApplyTypeState = {
+            selected: [],
+            autoLocked: {},
+            manualSelected: {},
+            lookupFailed: false
+        };
+        var hciApplyTypeRow = document.getElementById('hciApplyTypeRow');
+        var hciApplyTypeRoot = document.getElementById('hciApplyType');
+        var hciApplyTypeTrigger = document.getElementById('hciApplyTypeTrigger');
+        var hciApplyTypePlaceholder = document.getElementById('hciApplyTypePlaceholder');
+        var hciApplyTypeTags = document.getElementById('hciApplyTypeTags');
+        var hciApplyTypeDropdown = document.getElementById('hciApplyTypeDropdown');
+        var hciApplyTypeAutoNote = document.getElementById('hciApplyTypeAutoNote');
+        var hciApplyTypeWeakNote = document.getElementById('hciApplyTypeWeakNote');
+        var hciApplyTypeError = document.getElementById('hciApplyTypeError');
+        var hciApplyTypesInput = document.getElementById('hciApplyTypes');
+        var cloudVersionSelect = document.getElementById('cloudVersion');
+
+        function isHciProductLine() {
+            return String(plnameSelect.value) === '45';
+        }
+
+        function getHciApplyTypeValues() {
+            return HCI_APPLY_TYPE_OPTIONS.map(function(option) {
+                return option.value;
+            }).filter(function(value) {
+                return hciApplyTypeState.selected.indexOf(value) !== -1;
+            });
+        }
+
+        function getHciApplyTypeLabels() {
+            return getHciApplyTypeValues().map(function(value) {
+                return HCI_APPLY_TYPE_LABELS[value] || value;
+            }).join('、');
+        }
+
+        function getHciVersionText() {
+            if (!cloudVersionSelect) return '';
+            var option = cloudVersionSelect.options[cloudVersionSelect.selectedIndex];
+            return ((option && option.textContent) || '') + ' ' + (cloudVersionSelect.value || '');
+        }
+
+        function computeHciAutoState() {
+            var locked = { confidential: false, renewal: false };
+            var lookupFailed = false;
+            if (!isHciProductLine()) return { locked: locked, lookupFailed: lookupFailed };
+            if (getHciVersionText().indexOf('涉密') !== -1) locked.confidential = true;
+            var facts = (applicationState.deviceFacts || []).filter(function(fact) {
+                return fact && (!fact.productLineId || String(fact.productLineId) === '45');
+            });
+            lookupFailed = facts.some(function(fact) { return fact.lookupStatus === 'error'; });
+            locked.renewal = facts.some(function(fact) {
+                if (Number(fact.historyMatchedCount || 0) > 0) return true;
+                return (fact.authorizationStatus === 'active' || fact.authorizationStatus === 'expired') &&
+                    (Number(fact.applicationCount || 0) > 0 || !!fact.currentAuthEndDate);
+            });
+            return { locked: locked, lookupFailed: lookupFailed };
+        }
+
+        function renderHciApplyTypeTags() {
+            hciApplyTypeTags.textContent = '';
+            getHciApplyTypeValues().forEach(function(value) {
+                var locked = !!hciApplyTypeState.autoLocked[value];
+                var tag = document.createElement('span');
+                tag.className = 'hci-apply-type-tag' + (locked ? ' is-locked' : '');
+                tag.dataset.value = value;
+                if (locked) {
+                    var lockIcon = document.createElement('span');
+                    lockIcon.className = 'material-symbols-outlined hci-apply-type-tag-lock';
+                    lockIcon.setAttribute('aria-hidden', 'true');
+                    lockIcon.textContent = 'lock';
+                    tag.appendChild(lockIcon);
+                }
+                var label = document.createElement('span');
+                label.className = 'hci-apply-type-tag-label';
+                label.textContent = HCI_APPLY_TYPE_LABELS[value] || value;
+                tag.appendChild(label);
+                if (!locked) {
+                    var remove = document.createElement('button');
+                    remove.type = 'button';
+                    remove.className = 'hci-apply-type-tag-remove';
+                    remove.dataset.remove = value;
+                    remove.setAttribute('aria-label', '移除' + (HCI_APPLY_TYPE_LABELS[value] || value));
+                    remove.textContent = '×';
+                    remove.addEventListener('click', function(event) {
+                        event.stopPropagation();
+                        toggleHciApplyType(value, false, true);
+                    });
+                    tag.appendChild(remove);
+                }
+                hciApplyTypeTags.appendChild(tag);
+            });
+            hciApplyTypePlaceholder.hidden = hciApplyTypeState.selected.length > 0;
+        }
+
+        function renderHciApplyType() {
+            if (!hciApplyTypeRow) return;
+            var visible = isHciProductLine();
+            hciApplyTypeRow.hidden = !visible;
+            if (!visible) {
+                hciApplyTypeRoot.classList.remove('open');
+                hciApplyTypeTrigger.setAttribute('aria-expanded', 'false');
+                hciApplyTypesInput.value = '';
+                hciApplyTypeTags.textContent = '';
+                hciApplyTypeAutoNote.hidden = true;
+                hciApplyTypeAutoNote.textContent = '';
+                hciApplyTypeWeakNote.hidden = true;
+                return;
+            }
+            HCI_APPLY_TYPE_OPTIONS.forEach(function(option) {
+                var optionEl = hciApplyTypeDropdown.querySelector('[data-value="' + option.value + '"]');
+                if (!optionEl) return;
+                var input = optionEl.querySelector('input[type="checkbox"]');
+                var checked = hciApplyTypeState.selected.indexOf(option.value) !== -1;
+                var locked = !!hciApplyTypeState.autoLocked[option.value];
+                if (input) {
+                    input.checked = checked;
+                    input.disabled = locked;
+                }
+                optionEl.classList.toggle('is-locked', locked);
+                var badge = optionEl.querySelector('[data-auto-badge]');
+                if (badge) badge.hidden = !locked;
+            });
+            renderHciApplyTypeTags();
+            var lockedNotes = [];
+            if (hciApplyTypeState.autoLocked.confidential) lockedNotes.push('已根据版本信息自动识别并锁定「涉密项目」');
+            if (hciApplyTypeState.autoLocked.renewal) lockedNotes.push('已根据历史授权记录自动识别并锁定「已开HCI授权延期」');
+            hciApplyTypeAutoNote.hidden = lockedNotes.length === 0;
+            hciApplyTypeAutoNote.textContent = lockedNotes.join('；');
+            hciApplyTypeWeakNote.hidden = !hciApplyTypeState.lookupFailed || hciApplyTypeState.autoLocked.renewal;
+            hciApplyTypeWeakNote.textContent = '历史授权查询失败，可手动选择「已开HCI授权延期」';
+            hciApplyTypesInput.value = getHciApplyTypeLabels();
+            if (hciApplyTypeState.selected.length) hideHciApplyTypeError();
+            // 申请类型变化会影响底部“可以提交”提示，状态栏需同步刷新
+            updateStandardActionReadiness();
+        }
+
+        function syncHciApplyTypeAutoState() {
+            if (!isHciProductLine()) return;
+            var auto = computeHciAutoState();
+            var nextSelected = [];
+            HCI_APPLY_TYPE_OPTIONS.forEach(function(option) {
+                var value = option.value;
+                var wasLocked = !!hciApplyTypeState.autoLocked[value];
+                var nowLocked = !!auto.locked[value];
+                var isSelected = hciApplyTypeState.selected.indexOf(value) !== -1;
+                if (nowLocked && !isSelected) {
+                    isSelected = true;
+                    hciApplyTypeState.manualSelected[value] = false;
+                } else if (!nowLocked && wasLocked && isSelected && !hciApplyTypeState.manualSelected[value]) {
+                    isSelected = false;
+                }
+                if (isSelected) nextSelected.push(value);
+            });
+            hciApplyTypeState.selected = nextSelected;
+            hciApplyTypeState.autoLocked = auto.locked;
+            hciApplyTypeState.lookupFailed = auto.lookupFailed;
+            renderHciApplyType();
+        }
+
+        function updateHciApplyTypeState() {
+            if (!hciApplyTypeRow) return;
+            if (!isHciProductLine()) {
+                renderHciApplyType();
+                return;
+            }
+            syncHciApplyTypeAutoState();
+        }
+
+        function resetHciApplyTypeState() {
+            hciApplyTypeState.selected = [];
+            hciApplyTypeState.autoLocked = {};
+            hciApplyTypeState.manualSelected = {};
+            hciApplyTypeState.lookupFailed = false;
+            hideHciApplyTypeError();
+            renderHciApplyType();
+        }
+
+        function toggleHciApplyType(value, selected, manual) {
+            if (!isHciProductLine()) return;
+            if (!selected && hciApplyTypeState.autoLocked[value]) return;
+            var index = hciApplyTypeState.selected.indexOf(value);
+            if (selected && index === -1) hciApplyTypeState.selected.push(value);
+            if (!selected && index !== -1) hciApplyTypeState.selected.splice(index, 1);
+            if (manual) hciApplyTypeState.manualSelected[value] = selected;
+            renderHciApplyType();
+        }
+
+        function openHciApplyTypeDropdown() {
+            if (!isHciProductLine()) return;
+            document.querySelectorAll('.custom-select.open').forEach(function(cs) {
+                if (cs._closeDropdown) cs._closeDropdown();
+                else cs.classList.remove('open');
+            });
+            hciApplyTypeRoot.classList.add('open');
+            hciApplyTypeTrigger.setAttribute('aria-expanded', 'true');
+        }
+
+        function closeHciApplyTypeDropdown() {
+            hciApplyTypeRoot.classList.remove('open');
+            hciApplyTypeTrigger.setAttribute('aria-expanded', 'false');
+        }
+
+        function showHciApplyTypeError() {
+            if (!hciApplyTypeError || !isHciProductLine()) return;
+            hciApplyTypeError.hidden = false;
+            hciApplyTypeError.textContent = '请选择 HCI 申请类型（涉密项目、低时延项目、已开HCI授权延期至少选择一项）';
+            if (hciApplyTypeRow && typeof hciApplyTypeRow.scrollIntoView === 'function') {
+                try { hciApplyTypeRow.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (_) { hciApplyTypeRow.scrollIntoView(); }
+            }
+        }
+
+        function hideHciApplyTypeError() {
+            if (!hciApplyTypeError) return;
+            hciApplyTypeError.hidden = true;
+            hciApplyTypeError.textContent = '';
+        }
+
+        if (hciApplyTypeTrigger) {
+            hciApplyTypeTrigger.addEventListener('click', function(event) {
+                if (event.target.closest && event.target.closest('.hci-apply-type-tag-remove')) return;
+                event.stopPropagation();
+                if (hciApplyTypeRoot.classList.contains('open')) closeHciApplyTypeDropdown();
+                else openHciApplyTypeDropdown();
+            });
+            hciApplyTypeTrigger.addEventListener('keydown', function(event) {
+                // 标签上的移除按钮也在触发框内，Enter/Space 应留给按钮自身激活
+                if (event.target !== hciApplyTypeTrigger) return;
+                if (event.key === 'Enter' || event.key === ' ' || event.key === 'ArrowDown') {
+                    event.preventDefault();
+                    openHciApplyTypeDropdown();
+                }
+            });
+        }
+        if (hciApplyTypeRoot && hciApplyTypeDropdown) {
+            hciApplyTypeRoot.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    if (!hciApplyTypeRoot.classList.contains('open')) return;
+                    event.preventDefault();
+                    closeHciApplyTypeDropdown();
+                    hciApplyTypeTrigger.focus();
+                    return;
+                }
+                if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+                if (!hciApplyTypeRoot.classList.contains('open')) return;
+                var focusable = Array.prototype.filter.call(hciApplyTypeDropdown.querySelectorAll('input[type="checkbox"]'), function(input) { return !input.disabled; });
+                if (!focusable.length) return;
+                var current = focusable.indexOf(document.activeElement);
+                var next = event.key === 'ArrowDown'
+                    ? (current === -1 ? 0 : (current + 1) % focusable.length)
+                    : (current <= 0 ? focusable.length - 1 : current - 1);
+                event.preventDefault();
+                focusable[next].focus();
+            });
+        }
+        if (hciApplyTypeDropdown) {
+            HCI_APPLY_TYPE_OPTIONS.forEach(function(option) {
+                var optionEl = hciApplyTypeDropdown.querySelector('[data-value="' + option.value + '"]');
+                if (!optionEl) return;
+                var input = optionEl.querySelector('input[type="checkbox"]');
+                if (!input) return;
+                input.addEventListener('change', function() {
+                    if (this.disabled) {
+                        renderHciApplyType();
+                        return;
+                    }
+                    toggleHciApplyType(this.value, this.checked, true);
+                });
+            });
+        }
+        document.addEventListener('click', function(event) {
+            if (hciApplyTypeRoot && !hciApplyTypeRoot.contains(event.target)) closeHciApplyTypeDropdown();
+        });
+        if (cloudVersionSelect) {
+            cloudVersionSelect.addEventListener('change', updateHciApplyTypeState);
+        }
+        window.getHciApplyTypeValues = getHciApplyTypeValues;
+        window.getHciApplyTypeLabels = getHciApplyTypeLabels;
+        window.showHciApplyTypeError = showHciApplyTypeError;
+        // 供外部（如历史授权查询返回后）重新计算自动识别状态
+        window.updateHciApplyTypeState = updateHciApplyTypeState;
+        updateHciApplyTypeState();
 
         function resetApplicationFlow() {
             document.querySelectorAll('.custom-select').forEach(function(cs) {
@@ -8918,6 +9337,7 @@
             applyPlMode();
             refreshRecognizedDeviceFacts(deviceIdChips.get());
             refreshModuleNav(plnameSelect.value);
+            resetHciApplyTypeState();
         }
         window.resetApplicationFlow = resetApplicationFlow;
 
@@ -9079,6 +9499,25 @@
                 }
             }
         }
+        // 客户上传后自动发起时，恢复申请人此前「手动选择」的 HCI申请类型。
+        // 自动识别项不写入快照，恢复时按当前版本/设备事实重新推导，避免旧快照把已解除的锁定项复活成手动项。
+        function restoreHciApplyTypes(values) {
+            if (!isHciProductLine()) return;
+            resetHciApplyTypeState();
+            updateHciApplyTypeState();
+            if (!Array.isArray(values)) return;
+            values.forEach(function(value) {
+                if (!HCI_APPLY_TYPE_LABELS.hasOwnProperty(value)) return;
+                if (hciApplyTypeState.selected.indexOf(value) === -1) {
+                    toggleHciApplyType(value, true, true);
+                } else {
+                    // 快照里的项可能正好被当前自动识别锁定，仍需记为手动项，
+                    // 否则解除锁定（如清空文件）时会把手动选择一并移除。
+                    hciApplyTypeState.manualSelected[value] = true;
+                }
+            });
+            renderHciApplyType();
+        }
         window.InfoCollectionApplication = {
             getContext: function() {
                 return { kind: 'hardware', key: 'hardware:' + plnameSelect.value + ':' + applicationState.customerId,
@@ -9097,13 +9536,15 @@
                 });
                 return { productId: plnameSelect.value, customerId: applicationState.customerId, customer: nameSpan.textContent,
                     customerType: applicationState.customerType, sales: document.getElementById('selectedSales').textContent, fields: fields, modules: modules,
-                    hasDeviceFacts: applicationState.deviceFacts.length > 0, baseScene: applicationState.baseScene, requestContents: applicationState.requestContents.slice() };
+                    hasDeviceFacts: applicationState.deviceFacts.length > 0, baseScene: applicationState.baseScene, requestContents: applicationState.requestContents.slice(),
+                    hciApplyTypes: plnameSelect.value === '45' ? HCI_APPLY_TYPE_OPTIONS.map(function(option) { return option.value; }).filter(function(value) { return !!hciApplyTypeState.manualSelected[value]; }) : [] };
             },
             restore: function(snapshot) {
                 plnameSelect.value = snapshot.productId;
                 plnameSelect.dispatchEvent(new Event('change', { bubbles: true }));
                 selectHardwareCustomer(snapshot.customer, snapshot.customerId, snapshot.customerType, snapshot.sales);
                 restoreCollectionFields(snapshot);
+                restoreHciApplyTypes(snapshot.hciApplyTypes);
                 var hardwareTab = document.querySelector('#navBar [data-tab="hardware"]');
                 if (hardwareTab) hardwareTab.click();
             },
@@ -9122,6 +9563,7 @@
                 rebuildHwFacts();
                 syncDeviceIdChipsFromFacts();
                 restoreCollectionFields(saved);
+                restoreHciApplyTypes(saved && saved.hciApplyTypes);
             },
             getFiles: function() {
                 if (!hwFiles.length) return [];
@@ -9140,7 +9582,9 @@
                     (document.getElementById('authScene') || {}).value &&
                     (document.getElementById('planDevType') || {}).value &&
                     (document.getElementById('unifiedDate') || {}).value &&
-                    (document.getElementById('requestAction') || {}).value);
+                    (document.getElementById('requestAction') || {}).value &&
+                    // HCI 的申请类型是提交硬门槛，未选时不可选择「直接发起」
+                    !(String(plnameSelect.value) === '45' && !getHciApplyTypeValues().length));
             },
             submit: function() { submitStandardForm(); }
         };
@@ -9687,8 +10131,18 @@
         function setCopiedProductVersion(versionLabel) {
             if (!versionLabel || setCopiedSelectByLabel('cloudVersion', versionLabel)) return;
             var select = document.getElementById('cloudVersion');
+            if (!select) return;
+            // 记录里存的是版本值（如 3.0.1），选项文案可能带“涉密”等关键信息；
+            // 按值命中现有选项时必须保留原文案，否则复制后无法重新识别涉密版本。
+            var optionByValue = Array.prototype.find.call(select.options, function(option) { return option.value === versionLabel; });
+            if (optionByValue) {
+                select.value = optionByValue.value;
+                setCustomSelectValue('cloudVersion', optionByValue.value);
+                select.dispatchEvent(new Event('change', { bubbles: true }));
+                return;
+            }
             var container = document.querySelector('[data-select-id="cloudVersion"]');
-            if (!select || !container || !container._replaceOptions) return;
+            if (!container || !container._replaceOptions) return;
             var options = [{ value: versionLabel, label: versionLabel }].concat(
                 Array.prototype.map.call(select.options, function(option) {
                     return { value: option.value, label: option.textContent.trim() };
@@ -9707,6 +10161,11 @@
                 setCustomSelectValue('plname', productOption.value);
                 plnameSelect.dispatchEvent(new Event('change', { bubbles: true }));
                 setCopiedProductVersion(data.version);
+            }
+            if (String(plnameSelect.value) === '45') {
+                // 复制申请不沿用旧表单的 HCI申请类型：清空手动项，仅按复制后的版本重新识别锁定项
+                resetHciApplyTypeState();
+                updateHciApplyTypeState();
             }
 
             var matchedCustomer = customers.find(function(customer) { return customer.name === data.customer; });
@@ -9933,6 +10392,13 @@
         return { productLine: fields.productLine || '', sn: fields.deviceSn || '', clusterId: fields.clusterId || '', deviceId: fields.deviceId || '' };
     }
 
+    // 记录行操作入口（查看/复制/续期）：新增记录与激活后重绘共用，避免两处 markup 漂移
+    function productRecordActionLinks() {
+        return '<span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px] record-action-control" data-record-action="view" role="button" tabindex="0" aria-haspopup="dialog">查看</span>' +
+            '<span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px] record-action-control" data-record-action="copy" role="button" tabindex="0">复制</span>' +
+            '<span class="px-2 py-0.5 bg-primary text-white rounded text-[10px] font-medium cursor-pointer hover:bg-primary/90 record-action-control" data-record-action="renew" role="button" tabindex="0" aria-haspopup="dialog">续期</span>';
+    }
+
     function insertProductRecord(record) {
         function escapeHtml(value) {
             return String(value == null ? '' : value).replace(/[&<>"']/g, function(c) {
@@ -9941,13 +10407,11 @@
         }
         var tbody = document.querySelector('#content-records .table-scroll-wrap > table > tbody');
         if (!tbody) return;
-        var actionLinks = '<span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px] record-action-control" data-record-action="view" role="button" tabindex="0" aria-haspopup="dialog">查看</span>' +
-            '<span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px] record-action-control" data-record-action="copy" role="button" tabindex="0">复制</span>' +
-            '<span class="px-2 py-0.5 bg-primary text-white rounded text-[10px] font-medium cursor-pointer hover:bg-primary/90 record-action-control" data-record-action="renew" role="button" tabindex="0" aria-haspopup="dialog">续期</span>';
+        var actionLinks = productRecordActionLinks();
         var statusCell = record.pending
             ? '<div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-amber-50 text-amber-700 border border-amber-200"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>待激活</span><div class="flex items-center gap-1.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px] record-action-control" data-product-activate="' + record.id + '" role="button" tabindex="0">去激活</span>' + actionLinks + '</div></div>'
             : '<div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已授权</span><div class="flex items-center gap-1.5 ml-auto">' + actionLinks + '</div></div>';
-        var row = '<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-product-record="true" data-product-record-id="' + record.id + '"' + (record.pending ? ' data-product-pending="true"' : '') + '>' +
+        var row = '<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-product-record="true" data-product-record-id="' + record.id + '"' + (record.pending ? ' data-product-pending="true"' : '') + (record.hciApplyTypes ? ' data-hci-apply-types="' + escapeHtml(record.hciApplyTypes) + '"' : '') + '>' +
             '<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">' + record.id + '</a></td>' +
             '<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20">产品授权</span></td>' +
             '<td class="py-3 px-4 whitespace-nowrap text-[#424656]">本平台</td>' +
@@ -10121,7 +10585,7 @@
             row.removeAttribute('data-product-pending');
             row.children[6].textContent = summary.deviceId || (pending.deviceDisplay || '—');
             row.children[7].textContent = summary.sn || '—';
-            row.lastElementChild.innerHTML = '<div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已授权</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span></div></div>';
+            row.lastElementChild.innerHTML = '<div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已授权</span><div class="flex items-center gap-1.5 ml-auto">' + productRecordActionLinks() + '</div></div>';
         }
         var key = [pending.customerId || pending.customer, pending.productName, summary.deviceId || summary.clusterId].join('|');
         var data = {};
@@ -10272,6 +10736,12 @@
             }
         }
 
+        if (productLineId === '45' && (!window.getHciApplyTypeValues || !window.getHciApplyTypeValues().length)) {
+            if (typeof window.showHciApplyTypeError === 'function') window.showHciApplyTypeError();
+            alert('请选择 HCI 申请类型（涉密项目、低时延项目、已开HCI授权延期至少选择一项）');
+            return;
+        }
+
         var lookupBlockingReason = rules.getLookupBlockingReason ?
             rules.getLookupBlockingReason(latestFacts, productLineId) : null;
 
@@ -10390,6 +10860,9 @@
             deviceFacts: latestFacts,
             approvalDecision: currentDecision
         });
+        if (productLineId === '45') {
+            snapshot.hciApplyTypes = window.getHciApplyTypeLabels ? window.getHciApplyTypeLabels() : '';
+        }
         document.getElementById('submissionSnapshot').value = JSON.stringify(snapshot);
 
         var mockId = 'AUTH-' + Date.now().toString().slice(-8);
@@ -10431,7 +10904,8 @@
             endDate: recordEndDate,
             applicant: applicantName,
             time: recordTime,
-            pending: needsActivation
+            pending: needsActivation,
+            hciApplyTypes: productLineId === '45' && window.getHciApplyTypeLabels ? window.getHciApplyTypeLabels() : ''
         });
         if (needsActivation) {
             pendingProductActivations[mockId] = {
@@ -10683,6 +11157,7 @@
             submittedApproval: row._submittedApproval || null,
             office: row.dataset.office || getRecordOffice(regionRaw),
             applicationType: row.dataset.applicationType || getRecordApplicationType(productRaw),
+            hciApplyTypes: row.dataset.hciApplyTypes || '',
             sales: row.dataset.sales || getRecordSales(customerRaw)
         };
     }
@@ -11761,7 +12236,7 @@
                 { label: isXaas ? '申请动作' : '客户名称', value: isXaas ? xaasDetail.action : data.customer }
             ];
         }
-        return [
+        var items = [
             { label: '授权类型', value: data.authorizationType },
             { label: '申请平台', value: data.platform },
             { label: '申请人', value: data.applicant },
@@ -11771,6 +12246,10 @@
             { label: '授权场景', value: productDetail.scene[0].value },
             { label: '申请类型', value: data.applicationType }
         ];
+        if (data.hciApplyTypes) {
+            items.push({ label: 'HCI申请类型', value: data.hciApplyTypes });
+        }
+        return items;
     }
 
     function getRecordCustomerItems(data, xaasDetail, solutionDetail) {

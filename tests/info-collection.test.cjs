@@ -176,6 +176,10 @@ test('申请信息齐全时可选择客户上传后直接发起申请', () => {
     document.getElementById('planDevType').value = '1';
     document.getElementById('unifiedDate').value = '2026-12-31';
     document.getElementById('requestAction').value = 'open';
+    assert.equal(window.InfoCollectionApplication.canAutoSubmit(), false, 'HCI 未选择申请类型时不应允许直接发起');
+    const hciType = document.querySelector('#hciApplyTypeDropdown [data-value="low_latency"] input[type="checkbox"]');
+    hciType.checked = true;
+    fireChange(hciType, window);
     assert.equal(window.InfoCollectionApplication.canAutoSubmit(), true, '信息齐全时应允许直接发起');
     window.InfoCollectionUI.invite('hardware');
     assert.equal(document.querySelector('input[name="infoTriggerMode"][value="auto"]').disabled, false);
@@ -441,7 +445,7 @@ test('客户中间页支持一次选择并提交多个 info 文件', async () =>
 test('触发方式 A：客户上传后自动发起申请并进入授权状态', () => {
   const { dom, document, window } = loadCollectionUi();
   try {
-    window.InfoCollectionApplication.restore({ productId: '45', customerId: 'C100001', customer: '测试客户', customerType: 'normal', fields: [] });
+    window.InfoCollectionApplication.restore({ productId: '45', customerId: 'C100001', customer: '测试客户', customerType: 'normal', fields: [], hciApplyTypes: ['low_latency'] });
     document.getElementById('cloudVersion').value = '6.8.1_1';
     document.getElementById('authScene').value = 'first';
     document.getElementById('planDevType').value = '1';
@@ -461,7 +465,7 @@ test('触发方式 A：客户上传后自动发起申请并进入授权状态', 
 test('触发方式 B：客户上传后停在待确认，确认后发起申请', () => {
   const { dom, document, window } = loadCollectionUi();
   try {
-    window.InfoCollectionApplication.restore({ productId: '45', customerId: 'C100001', customer: '测试客户', customerType: 'normal', fields: [] });
+    window.InfoCollectionApplication.restore({ productId: '45', customerId: 'C100001', customer: '测试客户', customerType: 'normal', fields: [], hciApplyTypes: ['low_latency'] });
     document.getElementById('cloudVersion').value = '6.8.1_1';
     document.getElementById('authScene').value = 'first';
     document.getElementById('planDevType').value = '1';
