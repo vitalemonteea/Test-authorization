@@ -16,6 +16,12 @@ function attachHwInfo(document, window) {
   input.dispatchEvent(new window.Event('change', { bubbles: true }));
 }
 
+function selectHciApplyType(document, window, value = 'low_latency') {
+  const input = document.querySelector('#hciApplyTypeDropdown [data-value="' + value + '"] input[type="checkbox"]');
+  input.checked = true;
+  fireChange(input, window);
+}
+
 function applicationFor(fact, overrides = {}) {
   return {
     deviceFacts: fact,
@@ -242,6 +248,7 @@ test('HCI 仅通过 info 文件识别设备事实并成功提交', () => {
     const scene = document.getElementById('authScene');
     scene.value = '1';
     fireChange(scene, window);
+    selectHciApplyType(document, window);
 
     window.submitStandardForm();
 
@@ -273,6 +280,7 @@ test('提交后保留公共表单并清空设备字段，支持继续申请下�
 
     window.addChip('DEV-NEXT-001');
     attachHwInfo(document, window);
+    selectHciApplyType(document, window);
     window.submitStandardForm();
 
     assert.match(alerts.at(-1), /表单已提交/);
@@ -285,6 +293,12 @@ test('提交后保留公共表单并清空设备字段，支持继续申请下�
     assert.equal(document.querySelectorAll('#chipContainer .chip-item').length, 0, '设备ID应清空');
     assert.equal(document.getElementById('devIdNew').value, '', '设备ID隐藏字段应清空');
     assert.equal(window.applicationState.deviceFacts.length, 0, '设备事实应清空');
+    assert.equal(document.getElementById('hciApplyTypes').value, '低时延项目', 'HCI申请类型应保留');
+    assert.equal(
+      document.querySelector('#hciApplyTypeDropdown [data-value="low_latency"] input[type="checkbox"]').checked,
+      true,
+      '下一台设备应沿用 HCI申请类型'
+    );
     assert.match(document.getElementById('standardActionStatusText').textContent, /表单内容已保留/);
     assert.notEqual(document.getElementById('submissionSnapshot').value, '', '提交快照应保留');
     assert.deepEqual(errors, []);
@@ -309,6 +323,7 @@ test('提交申请（清空模式）提交后重置整个表单', async () => {
     document.querySelector('input[name="aDESKvm3d_cpu_limit"]').value = '32';
     window.addChip('DEV-CLEAR-001');
     attachHwInfo(document, window);
+    selectHciApplyType(document, window);
     window.submitStandardForm({ mode: 'clear' });
 
     assert.match(alerts.at(-1), /表单已提交/);
@@ -323,6 +338,13 @@ test('提交申请（清空模式）提交后重置整个表单', async () => {
     assert.equal(document.querySelectorAll('#chipContainer .chip-item').length, 0, '设备ID应清空');
     assert.equal(window.applicationState.deviceFacts.length, 0, '设备事实应清空');
     assert.equal(document.getElementById('submissionSnapshot').value, '', '提交快照应清空');
+    assert.equal(document.getElementById('hciApplyTypes').value, '', 'HCI申请类型应清空');
+    assert.equal(
+      document.querySelector('#hciApplyTypeDropdown [data-value="low_latency"] input[type="checkbox"]').checked,
+      false,
+      '重置后不应保留上一单的 HCI申请类型'
+    );
+    assert.equal(document.getElementById('hciApplyTypeError').hidden, true);
     assert.match(document.getElementById('standardActionStatusText').textContent, /表单已重置/);
     await new Promise((resolve) => setTimeout(resolve, 20));
     assert.deepEqual(errors, []);
@@ -419,6 +441,7 @@ test('产品授权先提交，缺 .info 时进入待激活，上传文件后完�
     document.getElementById('unifiedDate').value = '2026-12-31';
     document.getElementById('userEmail').value = 'customer@example.com';
     window.addChip('DEV-HCI-001');
+    selectHciApplyType(document, window);
 
     window.submitStandardForm();
     const prompt = document.getElementById('activationPromptOverlay');
@@ -456,6 +479,15 @@ test('产品授权先提交，缺 .info 时进入待激活，上传文件后完�
     const activated = document.querySelector('[data-product-record="true"]');
     assert.match(activated.textContent, /已授权/);
     assert.match(activated.textContent, /DEV-ACT/);
+    assert.ok(activated.querySelector('[data-record-action="view"]'), '激活后仍应保留查看入口');
+    assert.ok(activated.querySelector('[data-record-action="copy"]'), '激活后仍应保留复制入口');
+    assert.ok(activated.querySelector('[data-record-action="renew"]'), '激活后仍应保留续期入口');
+    window.initRecordDetailDrawer();
+    activated.querySelector('[data-record-action="view"]').dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    const drawer = document.getElementById('recordDrawerLayer');
+    assert.equal(drawer.hidden, false, '激活后的记录应可打开详情抽屉');
+    assert.match(drawer.textContent, /HCI申请类型/);
+    assert.match(drawer.textContent, /低时延项目/);
     const store = JSON.parse(window.localStorage.getItem('test-authorization-device-info-v1') || '{}');
     const saved = Object.values(store)[0];
     assert.ok(saved, '激活后应留存设备信息');
@@ -482,6 +514,7 @@ test('激活外链由外部上传后，授权记录自动完成激活', async ()
     document.getElementById('unifiedDate').value = '2026-12-31';
     document.getElementById('userEmail').value = 'customer@example.com';
     window.addChip('DEV-HCI-EXTERNAL');
+    selectHciApplyType(document, window);
 
     window.submitStandardForm();
     const prompt = document.getElementById('activationPromptOverlay');
@@ -527,6 +560,7 @@ test('待激活引导可跳转授权记录并打开对应激活弹窗', async ()
     document.getElementById('unifiedDate').value = '2026-12-31';
     document.getElementById('userEmail').value = 'customer@example.com';
     window.addChip('DEV-HCI-JUMP');
+    selectHciApplyType(document, window);
 
     window.submitStandardForm();
     const prompt = document.getElementById('activationPromptOverlay');
