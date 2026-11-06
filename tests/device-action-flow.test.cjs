@@ -538,7 +538,7 @@ test('已有授权直接映射为模块卡开关、状态和有效期', () => {
     const adCard = document.getElementById('module-AD');
     assert.equal(adCard.dataset.currentlyAuthorized, 'false');
     assert.equal(adCard.querySelector('.toggle-switch').classList.contains('active'), false);
-    assert.equal(adCard.querySelector('.module-status').textContent.trim(), '未授权');
+    assert.equal(adCard.querySelector('.module-status').textContent.trim(), '未选择');
     assert.match(getDeviceFactValue(devicePanel, '最新授权有效期'), /2026-08-31/);
     assert.deepEqual(errors, []);
   } finally {

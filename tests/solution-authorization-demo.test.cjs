@@ -232,10 +232,10 @@ test('产品授权工作区模块以独立开关卡片展示（NGAF/HCI 对齐�
     // toggle 独立开关：关闭 Gateway 不影响其它卡
     const gwToggle = panel.querySelector('[data-solution-module-toggle="Gateway"]');
     gwToggle.click();
-    assert.equal(gwToggle.closest('.module-item').classList.contains('disabled'), true);
-    assert.equal(gwToggle.closest('.module-item').querySelector('.module-status').textContent, '未启用');
+    assert.equal(gwToggle.closest('.module-item').classList.contains('is-off'), true);
+    assert.equal(gwToggle.closest('.module-item').querySelector('.module-status').textContent, '未选择');
     gwToggle.click();
-    assert.equal(gwToggle.closest('.module-item').classList.contains('disabled'), false);
+    assert.equal(gwToggle.closest('.module-item').classList.contains('is-off'), false);
 
     document.querySelector('[data-solution-line="HCI"]').click();
     panel = document.getElementById('solutionProductPanel');

@@ -506,13 +506,17 @@ test('HCI 文件模式同时展示设备ID：上传 info 自动回填，也支�
   } finally { dom.window.close(); }
 });
 
-test('授权模块默认全部展示并展开', () => {
+test('授权模块默认全部展示，未选择模块保持可读且可展开', () => {
   const { dom, document } = loadV2Dom();
   try {
     assert.equal(document.querySelector('#content .module-toolbar').hidden, false, '模块工具栏应默认展示');
     const card = document.getElementById('module-aSV');
     assert.equal(card.hidden, false, '模块卡片应默认展示');
-    assert.equal(card.querySelector('.module-body').classList.contains('hidden'), false, '模块内容应默认展开');
+    assert.equal(card.classList.contains('is-off'), true, '默认未选择模块不应使用禁用态');
+    assert.equal(card.querySelector('.module-status').textContent.trim(), '未选择');
+    assert.equal(card.querySelector('.module-body').classList.contains('hidden'), true, '未选择模块参数区默认收起');
+    card.querySelector('.module-head').click();
+    assert.equal(card.querySelector('.module-body').classList.contains('hidden'), false, '未选择模块点击头部仍可展开参数');
     assert.equal(card.querySelector('.module-chevron').classList.contains('collapsed'), false);
   } finally { dom.window.close(); }
 });
