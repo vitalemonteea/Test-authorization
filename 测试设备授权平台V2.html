@@ -1158,6 +1158,7 @@
         .record-xaas-subscription-status.pending{color:#0050cb;background:#e5eeff}
         .record-xaas-subscription-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 18px}
         .record-xaas-subscription-meta-item{min-width:0}
+        .record-xaas-subscription-meta-item.full{grid-column:1/-1}
         .record-xaas-subscription-meta-label{display:block;margin-bottom:2px;color:#7b8496;font-size:11px;line-height:16px}
         .record-xaas-subscription-meta-value{display:block;color:#424656;font-size:12px;line-height:18px;overflow-wrap:anywhere}
         .record-product-change-list{display:flex;flex-direction:column;border:1px solid #dce3ed;border-radius:6px;overflow:hidden}
@@ -4555,7 +4556,7 @@
 </tr>
 
 <!-- Row 2 -->
-<tr class="hover:bg-[#eef3ff]/40 transition-colors">
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-application-action="首次开通试用">
 <td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260702-015</a></td>
 <td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">XaaS</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">XaaS平台</td>
 
@@ -4570,6 +4571,41 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">李四</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-02 14:20</td>
 <td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-blue-50 text-blue-700 border border-blue-200"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>待审批</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">审核</span><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">撤销</span></div></div></td>
+</tr>
+
+<!-- Row 2-2: NGDR XaaS 多模块示例 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-application-action="首次开通试用">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260912-066</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">XaaS</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">XaaS平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">NGDR</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">NGDR-3.2.0</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="京东集团股份有限公司" title="京东集团股份有限公司">京东集团股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">TENANT-NGDR-JD-066</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">CLA-NGDR-JD-066</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">华南区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-09-12 ~ 2026-12-11</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">周十三</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-09-12 11:05</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-blue-50 text-blue-700 border border-blue-200"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>待审批</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">审核</span><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">撤销</span></div></div></td>
+</tr>
+
+<!-- Row 3: SASE-GA XaaS -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-application-action="首次开通试用">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260629-050</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">XaaS</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">XaaS平台</td>
+
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">SASE-GA</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SASE-3.0.1</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="京东集团股份有限公司" title="京东集团股份有限公司">京东集团股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">TENANT-SASE-JD-050</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">CLA-SASE-JD-050</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">华南区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-29 ~ 2026-09-27</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">刘十一</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-29 14:00</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已授权</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">复制</span><span class="px-2 py-0.5 bg-primary text-white rounded text-[10px] font-medium cursor-pointer hover:bg-primary/90">续期</span></div></div></td>
 </tr>
 
 <!-- Row 3 -->
@@ -4727,24 +4763,6 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-30 09:00</td>
 <td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已授权</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">复制</span><span class="px-2 py-0.5 bg-primary text-white rounded text-[10px] font-medium cursor-pointer hover:bg-primary/90">续期</span></div></div></td>
 </tr>
-<!-- Row 9: SASE-GA -->
-<tr class="hover:bg-[#eef3ff]/40 transition-colors">
-<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260629-050</a></td>
-<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">XaaS</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">XaaS平台</td>
-
-<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">SASE-GA</td>
-<td class="py-3 px-4 whitespace-nowrap text-[#424656]">SASE-3.0.1</td>
-<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="京东集团股份有限公司" title="京东集团股份有限公司">京东集团股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border border-slate-200">普通</span></div></td>
-<td class="py-3 px-4 whitespace-nowrap text-[#424656]">TENANT-SASE-JD-050</td>
-<td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
-<td class="py-3 px-4 whitespace-nowrap text-[#424656]">CLA-SASE-JD-050</td>
-<td class="py-3 px-4 whitespace-nowrap text-[#424656]">华南区</td>
-<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-29 ~ 2026-09-27</td>
-<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">刘十一</td>
-<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-06-29 14:00</td>
-<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>已授权</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">查看</span><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">复制</span><span class="px-2 py-0.5 bg-primary text-white rounded text-[10px] font-medium cursor-pointer hover:bg-primary/90">续期</span></div></div></td>
-</tr>
-
 <!-- Row 10: EDR -->
 <tr class="hover:bg-[#eef3ff]/40 transition-colors">
 <td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20260705-061</a></td>
@@ -11169,6 +11187,7 @@
             overdueExtended: row.dataset && row.dataset.overdueApp === 'true' || null,
             submittedApproval: row._submittedApproval || null,
             office: row.dataset.office || getRecordOffice(regionRaw),
+            applicationAction: row.dataset.applicationAction || '',
             applicationType: row.dataset.applicationType || getRecordApplicationType(productRaw),
             hciApplyTypes: row.dataset.hciApplyTypes || '',
             sales: row.dataset.sales || getRecordSales(customerRaw)
@@ -11707,13 +11726,73 @@
         });
     }
 
+    // 授权有效期按“到期日（起始日 起，共 N 天）”展示，日期口径统一为 YYYY-MM-DD。
+    function getRecordValidityDisplay(validity) {
+        var parts = String(validity || '').split('~');
+        var start = (parts[0] || '').trim();
+        var end = (parts[1] || '').trim();
+        if (!start) return validity || '—';
+        if (!end) end = start;
+        var days = 0;
+        var startTime = Date.parse(start.replace(/-/g, '/'));
+        var endTime = Date.parse(end.replace(/-/g, '/'));
+        if (!isNaN(startTime) && !isNaN(endTime) && endTime >= startTime) {
+            days = Math.round((endTime - startTime) / 86400000) + 1;
+        }
+        return end + (days ? '（' + start + ' 起，共 ' + days + ' 天）' : '');
+    }
+
+    // XaaS 订阅规格按产品 Schema 逐字段展开；版本、模块、数量、有效期均单独成项。
+    function getXaasSubscriptionMeta(product, data, validityText) {
+        var version = data.version || '—';
+        var meta;
+        if (product === 'SaaS-XDR') {
+            meta = [
+                { label: '版本', value: version },
+                { label: '日志接入数量', value: '2 亿条' },
+                { label: '可选测试模块', value: '智能运营GPT、流量检测GPT、SOAR', full: true }
+            ];
+        } else if (product === 'NGDR' || product === 'SaaS-aES') {
+            meta = [
+                { label: '版本', value: product === 'NGDR' ? '基础版' : '探针版' },
+                { label: '授权 PC 数', value: '50 个' }
+            ];
+        } else if (product === 'SASE-GA') {
+            meta = [
+                { label: '版本', value: version },
+                { label: '带宽', value: '10M' }
+            ];
+        } else if (product === 'SASE-XDLA' || product === 'SASE-ZTNA') {
+            meta = [
+                { label: '版本', value: version },
+                { label: '授权用户数', value: '50 个' }
+            ];
+        } else if (product === 'SASE-SWG') {
+            meta = [
+                { label: '版本', value: version },
+                { label: '规格类型', value: '用户版' },
+                { label: '授权用户数', value: '50 个' }
+            ];
+        } else if (product === '钓鱼邮件防护') {
+            meta = [
+                { label: '版本', value: version },
+                { label: '每日邮件数量', value: '10000 封' }
+            ];
+        } else {
+            meta = [{ label: '授权规格', value: '按申请配置' }];
+        }
+        meta.push({ label: '授权有效期', value: validityText, full: true });
+        return meta;
+    }
+
     function getXaasRecordDetail(data) {
         var authorized = data.status === '已授权' || data.status === '已过期';
         var licenseCode = authorized ? 'LIC-' + data.applicationNo.replace(/[^A-Z0-9]/gi, '').slice(-12) : '—';
-        var endDate = (data.validity.split('~')[1] || '').trim() || data.validity;
+        var validityText = getRecordValidityDisplay(data.validity);
+        var action = data.applicationAction || '首次开通试用';
         if (data.product === 'SaaS-XDR') {
             return {
-                action: authorized ? '首次开通试用' : '—',
+                action: action,
                 customer: {
                     contact: '赵敏', phone: '138****5621', email: 'zhao***@alibaba-inc.com',
                     cloudAccount: '阿里云图企业账号', industry: '互联网 / 综合互联网服务'
@@ -11724,10 +11803,7 @@
                     status: authorized ? '已开通' : data.status,
                     specLabel: '日志接入数量(亿)',
                     spec: '2 亿条',
-                    meta: [
-                        { label: '日志接入数量(亿)', value: '2' },
-                        { label: '授权有效期', value: endDate }
-                    ]
+                    meta: getXaasSubscriptionMeta('SaaS-XDR', data, validityText)
                 }],
                 supplement: [
                     { label: '申请理由', value: '还在测试阶段 需要延期', full: true },
@@ -11755,35 +11831,63 @@
                 }
             };
         }
+        var isAesFamily = data.product === 'NGDR' || data.product === 'SaaS-aES';
         var subscriptionName = data.product === 'SASE-GA' ? 'SASE-GA 全球加速'
             : (data.product === 'SASE-SWG' ? '上网安全'
                 : (data.product === 'SASE-ZTNA' ? '零信任接入' : data.product));
         var specLabel = data.product === 'SASE-GA' ? '带宽' : (data.product === 'SASE-ZTNA' ? '授权用户数' : '授权规格');
         var specValue = data.product === 'SASE-GA' ? '10M' : (data.product === 'SASE-ZTNA' ? '50' : '按申请配置');
-        return {
-            action: authorized ? '首次开通试用' : '—',
-            customer: {
-                contact: '王蕾', phone: '186****3098', email: 'wanglei***@jd.com',
-                cloudAccount: '京东集团云图账号', industry: '批发和零售业 / 电子商务'
-            },
-            subscriptions: [{
+        var subscriptions;
+        if (isAesFamily) {
+            subscriptions = [
+                {
+                    family: 'aES 产品族',
+                    name: 'PC 终端',
+                    status: authorized ? '已开通' : data.status,
+                    specLabel: '授权 PC 数',
+                    spec: '50 个',
+                    meta: getXaasSubscriptionMeta(data.product, data, validityText)
+                },
+                {
+                    family: 'aES 产品族',
+                    name: '服务器',
+                    status: authorized ? '已开通' : data.status,
+                    specLabel: '授权服务器数',
+                    spec: '50 个',
+                    meta: [
+                        { label: '授权服务器数', value: '50 个' },
+                        { label: '授权有效期', value: validityText, full: true }
+                    ]
+                }
+            ];
+        } else {
+            subscriptions = [{
                 family: 'SASE 产品族',
                 name: subscriptionName,
                 status: authorized ? '已开通' : data.status,
                 specLabel: specLabel,
                 spec: data.product === 'SASE-GA' ? '带宽 10M' : specValue,
-                meta: [
-                    { label: specLabel, value: specValue },
-                    { label: '授权有效期', value: endDate }
-                ]
-            }],
-            supplement: [
+                meta: getXaasSubscriptionMeta(data.product, data, validityText)
+            }];
+        }
+        return {
+            action: action,
+            customer: {
+                contact: '王蕾', phone: '186****3098', email: 'wanglei***@jd.com',
+                cloudAccount: '京东集团云图账号', industry: '批发和零售业 / 电子商务'
+            },
+            subscriptions: subscriptions,
+            supplement: isAesFamily ? [
+                { label: '客户需求', value: '终端与服务器统一防护，替换现有分散部署的杀毒软件', full: true },
+                { label: '项目规模', value: 'PC 终端 50 台、服务器 50 台', full: true },
+                { label: '竞争对手', value: '已对比国产终端安全厂商，重点验证勒索防护与集中管理能力', full: true }
+            ] : [
                 { label: '客户需求', value: '改善海外办公与国内核心业务系统之间的访问质量', full: true },
                 { label: '项目规模', value: '覆盖 2 个海外区域、约 500 名办公用户', full: true },
                 { label: '竞争对手', value: '已对比传统国际专线方案，重点验证时延与稳定性', full: true }
             ],
             delivery: {
-                tenant: authorized ? 'TENANT-SASE-JD-050' : '待审批通过后生成',
+                tenant: authorized ? (data.device || 'TENANT-SASE-JD-050') : '待审批通过后生成',
                 version: '试用',
                 openedAt: authorized ? data.appliedAt : '—',
                 email: 'wanglei***@jd.com',
@@ -11997,7 +12101,7 @@
             ];
             metaItems.forEach(function(item) {
                 var metaItem = document.createElement('div');
-                metaItem.className = 'record-xaas-subscription-meta-item';
+                metaItem.className = 'record-xaas-subscription-meta-item' + (item.full ? ' full' : '');
                 var label = document.createElement('span');
                 label.className = 'record-xaas-subscription-meta-label';
                 label.textContent = item.label;
@@ -12240,13 +12344,25 @@
         var isProductAuth = Boolean(productDetail);
         if (solutionDetail) return getSolutionRecordApplicationItems(data, solutionDetail);
         if (!isProductAuth) {
+            if (isXaas) {
+                return [
+                    { label: '申请动作', value: xaasDetail.action },
+                    { label: '授权类型', value: data.authorizationType },
+                    { label: '申请平台', value: data.platform },
+                    { label: '授权产品', value: data.product },
+                    { label: '申请人', value: data.applicant },
+                    { label: '区域', value: data.region },
+                    { label: '办事处', value: data.office },
+                    { label: '申请时间', value: data.appliedAt }
+                ];
+            }
             return [
                 { label: '授权类型', value: data.authorizationType },
                 { label: '申请平台', value: data.platform },
                 { label: '申请人', value: data.applicant },
                 { label: '区域', value: data.region },
                 { label: '申请时间', value: data.appliedAt },
-                { label: isXaas ? '申请动作' : '客户名称', value: isXaas ? xaasDetail.action : data.customer }
+                { label: '客户名称', value: data.customer }
             ];
         }
         var items = [
@@ -12274,13 +12390,15 @@
                 { label: '所属销售', value: data.sales }
             ];
         }
+        var industryParts = String(xaasDetail.customer.industry || '').split('/');
         return [
             { label: '客户名称', value: data.customer },
             { label: '所属云图账号', value: xaasDetail.customer.cloudAccount },
+            { label: '行业一级', value: (industryParts[0] || '').trim() || '—' },
+            { label: '行业二级', value: (industryParts[1] || '').trim() || '—' },
             { label: '联系人姓名', value: xaasDetail.customer.contact },
             { label: '联系人手机号', value: xaasDetail.customer.phone },
-            { label: '联系人邮箱', value: xaasDetail.customer.email },
-            { label: '所属行业', value: xaasDetail.customer.industry }
+            { label: '联系人邮箱', value: xaasDetail.customer.email }
         ];
     }
 

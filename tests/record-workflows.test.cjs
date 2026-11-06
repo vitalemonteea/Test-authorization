@@ -128,8 +128,14 @@ test('XaaS 详情展示客户、订阅规格、业务补充信息和开通结果
     assert.equal(document.getElementById('recordCustomerSection').hidden, false);
     assert.match(document.getElementById('recordCustomerGrid').textContent, /联系人姓名/);
     assert.match(document.getElementById('recordCustomerGrid').textContent, /所属云图账号/);
+    assert.match(document.getElementById('recordCustomerGrid').textContent, /行业一级批发和零售业/);
+    assert.match(document.getElementById('recordCustomerGrid').textContent, /行业二级电子商务/);
+    assert.match(document.getElementById('recordApplicationGrid').textContent, /申请动作首次开通试用/);
+    assert.match(document.getElementById('recordApplicationGrid').textContent, /办事处广州办/);
     assert.match(document.getElementById('recordXaasSubscriptionList').textContent, /SASE-GA 全球加速/);
+    assert.match(document.getElementById('recordXaasSubscriptionList').textContent, /版本SASE-3.0.1/);
     assert.match(document.getElementById('recordXaasSubscriptionList').textContent, /带宽10M/);
+    assert.match(document.getElementById('recordXaasSubscriptionList').textContent, /授权有效期2026-09-27（2026-06-29 起，共 91 天）/);
     assert.match(document.getElementById('recordXaasSubscriptionList').textContent, /已开通/);
     assert.doesNotMatch(document.getElementById('recordXaasSubscriptionList').textContent, /2个设备/);
     assert.match(document.getElementById('recordXaasSupplementGrid').textContent, /客户需求/);
@@ -145,6 +151,28 @@ test('XaaS 详情展示客户、订阅规格、业务补充信息和开通结果
     assert.match(document.getElementById('recordApplicationGrid').textContent, /授权场景/);
     assert.match(document.getElementById('recordCustomerGrid').textContent, /客户名称/);
     assert.equal(document.getElementById('recordProductDetailSection').hidden, false);
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('XaaS 多模块订阅逐条展示 PC 终端与服务器规格', () => {
+  const { dom, document, window } = setupRecords();
+  try {
+    const rows = [...document.querySelectorAll('#content-records .table-scroll-wrap > table > tbody > tr:not(.solution-detail-row)')];
+    const ngdrRow = rows.find((row) => row.children[3]?.textContent.trim() === 'NGDR' && row.children[1]?.textContent.trim() === 'XaaS');
+    assert.ok(ngdrRow, '应存在 NGDR XaaS Mock 记录');
+    ngdrRow.querySelector('[data-record-action="approve"]').dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+
+    const subscriptionText = document.getElementById('recordApproveSubscriptionList').textContent;
+    assert.match(subscriptionText, /PC 终端/);
+    assert.match(subscriptionText, /服务器/);
+    assert.match(subscriptionText, /版本基础版/);
+    assert.match(subscriptionText, /授权 PC 数50 个/);
+    assert.match(subscriptionText, /授权服务器数50 个/);
+    assert.match(subscriptionText, /授权有效期2026-12-11（2026-09-12 起，共 91 天）/);
+    assert.match(document.getElementById('recordApproveApplicationGrid').textContent, /授权产品NGDR/);
+    assert.match(document.getElementById('recordApproveCustomerGrid').textContent, /行业一级批发和零售业/);
   } finally {
     dom.window.close();
   }
@@ -364,11 +392,15 @@ test('审核抽屉展示完整判断依据并要求主动选择审批决定', ()
     assert.equal(document.getElementById('recordDrawerLayer').classList.contains('is-approval'), false);
     assert.ok(document.getElementById('recordWorkflowContent').classList.contains('record-approve-content'));
     assert.match(document.getElementById('recordApproveApplicationGrid').textContent, /授权类型XaaS/);
-    assert.match(document.getElementById('recordApproveApplicationGrid').textContent, /申请动作/);
+    assert.match(document.getElementById('recordApproveApplicationGrid').textContent, /申请动作首次开通试用/);
+    assert.match(document.getElementById('recordApproveApplicationGrid').textContent, /办事处深圳办/);
     assert.match(document.getElementById('recordApproveCustomerGrid').textContent, /客户名称阿里巴巴/);
     assert.match(document.getElementById('recordApproveCustomerGrid').textContent, /联系人手机号/);
-    assert.match(document.getElementById('recordApproveCustomerGrid').textContent, /所属行业/);
-    assert.match(document.getElementById('recordApproveSubscriptionList').textContent, /日志接入数量\(亿\)/);
+    assert.match(document.getElementById('recordApproveCustomerGrid').textContent, /行业一级互联网/);
+    assert.match(document.getElementById('recordApproveCustomerGrid').textContent, /行业二级综合互联网服务/);
+    assert.match(document.getElementById('recordApproveSubscriptionList').textContent, /日志接入数量2 亿条/);
+    assert.match(document.getElementById('recordApproveSubscriptionList').textContent, /可选测试模块智能运营GPT/);
+    assert.match(document.getElementById('recordApproveSubscriptionList').textContent, /授权有效期2026-10-01/);
     assert.match(document.getElementById('recordApproveBasisGrid').textContent, /测试驱动力/);
     assert.match(document.getElementById('recordApproveBasisGrid').textContent, /客户信息收集表/);
     assert.equal(document.getElementById('recordApproveRiskGrid'), null);
