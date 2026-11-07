@@ -1153,7 +1153,9 @@
         .record-xaas-subscription{padding:12px 14px;background:#f7f9fc;border:1px solid #e3e8f1;border-radius:6px}
         .record-xaas-subscription-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
         .record-xaas-subscription-family{margin-bottom:2px;color:#6b7890;font-size:11px;line-height:16px}
+        .record-xaas-subscription-name-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
         .record-xaas-subscription-name{color:#0b1c30;font-size:13px;font-weight:600;line-height:20px}
+        .record-xaas-subscription-tag{display:inline-flex;align-items:center;min-height:20px;padding:0 7px;border-radius:9999px;background:#e8f0ff;color:#0050cb;font-size:10px;font-weight:600;white-space:nowrap}
         .record-xaas-subscription-status{display:inline-flex;align-items:center;min-height:22px;padding:0 8px;color:#087a55;background:#e8faf3;border-radius:9999px;font-size:11px;font-weight:600;white-space:nowrap}
         .record-xaas-subscription-status.pending{color:#0050cb;background:#e5eeff}
         .record-xaas-subscription-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 18px}
@@ -1161,6 +1163,21 @@
         .record-xaas-subscription-meta-item.full{grid-column:1/-1}
         .record-xaas-subscription-meta-label{display:block;margin-bottom:2px;color:#7b8496;font-size:11px;line-height:16px}
         .record-xaas-subscription-meta-value{display:block;color:#424656;font-size:12px;line-height:18px;overflow-wrap:anywhere}
+        .record-xaas-subscription-meta-value .target{color:#003f9e;font-weight:600}
+        .record-xaas-subscription-meta-original{margin-left:2px;color:#7b8496;font-weight:400}
+        .record-related-history{border:1px solid #dce3ed;border-radius:6px;background:#fff;overflow:hidden}
+        .record-related-toggle{display:flex;align-items:center;justify-content:space-between;width:100%;padding:10px 12px;border:0;background:#fff;color:#0b1c30;font-size:12px;line-height:18px;font-family:inherit;text-align:left;cursor:pointer}
+        .record-related-toggle:hover{background:#f7f9fc}
+        .record-related-toggle .material-symbols-outlined{font-size:18px;color:#6b7890;transition:transform .2s}
+        .record-related-toggle[aria-expanded="true"] .material-symbols-outlined{transform:rotate(180deg)}
+        .record-related-body{padding-bottom:4px;border-top:1px solid #eef2f7}
+        .record-related-group-head{padding:8px 12px;background:#f7f9fc;border-bottom:1px solid #eef2f7;color:#424656;font-size:12px;font-weight:600;line-height:18px}
+        .record-related-scroll{overflow-x:auto}
+        .record-related-table{width:100%;border-collapse:collapse;font-size:11px;table-layout:fixed}
+        .record-related-table th,.record-related-table td{padding:7px 6px;text-align:left;border-bottom:1px solid #eef2f7;white-space:normal;word-break:keep-all;vertical-align:top}
+        .record-related-table th{background:#fbfcfe;color:#6b7890;font-weight:500}
+        .record-related-table tr:last-child td{border-bottom:0}
+        .record-related-empty{padding:12px;color:#7b8496;font-size:12px}
         .record-product-change-list{display:flex;flex-direction:column;border:1px solid #dce3ed;border-radius:6px;overflow:hidden}
         .record-product-change-head,.record-product-change-row{display:grid;grid-template-columns:84px minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:start}
         .record-product-change-head{padding:8px 12px;color:#6b7890;background:#f4f7fb;border-bottom:1px solid #dce3ed;font-size:11px;font-weight:600;line-height:18px}
@@ -4570,6 +4587,23 @@
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-02 ~ 2026-10-01</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">李四</td>
 <td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-07-02 14:20</td>
+<td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-blue-50 text-blue-700 border border-blue-200"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>待审批</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">审核</span><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">撤销</span></div></div></td>
+</tr>
+
+<!-- Row 2-3: 变更/延期对比示例 -->
+<tr class="hover:bg-[#eef3ff]/40 transition-colors" data-application-action="变更 / 延期试用">
+<td class="sticky-left sticky-left-0 py-3 px-4 whitespace-nowrap"><a class="text-primary hover:underline font-medium" href="javascript:;">AUTH-20261105-018</a></td>
+<td class="sticky-left sticky-left-1 py-3 px-4 whitespace-nowrap"><span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">XaaS</span></td><td class="py-3 px-4 whitespace-nowrap text-[#424656]">XaaS平台</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">SaaS-XDR</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">XDR-2.1.0</td>
+<td class="py-3 px-4 whitespace-nowrap"><div class="cust-cell"><span class="cust-name" data-full="京东集团股份有限公司" title="京东集团股份有限公司">京东集团股份有限公司</span><span class="cust-badge inline-flex items-center px-1 py-0.5 rounded text-[9px] font-medium bg-slate-100 text-slate-600 border border-slate-200">普通</span></div></td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">TENANT-XDR-JD-018</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">—</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">CLA-XDR-JD-018</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">华南区</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-11-05 ~ 2027-03-31</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#0b1c30]">王蕾</td>
+<td class="py-3 px-4 whitespace-nowrap text-[#424656]">2026-11-05 10:24</td>
 <td class="sticky-right py-3 px-4 whitespace-nowrap"><div class="flex items-center gap-3"><span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-medium bg-blue-50 text-blue-700 border border-blue-200"><span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>待审批</span><div class="flex items-center gap-0.5 ml-auto"><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">审核</span><span class="text-primary hover:bg-primary/10 px-1.5 py-0.5 rounded cursor-pointer text-[11px]">撤销</span></div></div></td>
 </tr>
 
@@ -11785,11 +11819,67 @@
         return meta;
     }
 
+    // 变更 / 延期申请的对比数据：新值在前，原值括注；关联记录按订阅分组。
+    function getXaasChangeRecordDetail(data, authorized, licenseCode) {
+        return {
+            action: '变更 / 延期试用',
+            customer: {
+                contact: '王蕾', phone: '186****3098', email: 'wanglei***@jd.com',
+                cloudAccount: '京东集团云图账号', industry: '批发和零售业 / 电子商务'
+            },
+            subscriptions: [
+                {
+                    family: 'SaaS-XDR 产品族',
+                    name: '平台基本授权',
+                    status: '已开通',
+                    meta: [
+                        { label: '版本', value: data.version || 'XDR-2.1.0' },
+                        { label: '日志接入数量', value: '2 亿条', original: '1.5 亿条' },
+                        { label: '授权有效期', value: '2027-03-31', original: '2026-12-31', originalLabel: '原到期时间', full: true },
+                        { label: '测试场景', value: '新建安全运营场景', full: true }
+                    ]
+                },
+                {
+                    family: 'SASE 产品族',
+                    name: 'SASE-GA 全球加速',
+                    status: '待开通',
+                    tag: '新增模块',
+                    meta: [
+                        { label: '带宽', value: '10M', original: '未开通' }
+                    ]
+                }
+            ],
+            relatedHistory: [{
+                family: 'SaaS-XDR 产品族',
+                name: '平台基本授权',
+                records: [
+                    { applicant: '王蕾', region: '华南区', appliedAt: '2026-07-01 10:20', product: 'SaaS-XDR', module: '平台基本授权', spec: '日志接入 1 亿条', endDate: '2026-09-30' },
+                    { applicant: '王蕾', region: '华南区', appliedAt: '2026-09-12 16:40', product: 'SaaS-XDR', module: '平台基本授权', spec: '日志接入 1.5 亿条', endDate: '2026-12-31' }
+                ]
+            }],
+            supplement: [
+                { label: '申请理由', value: '测试周期延长，日志接入量需要扩容。', full: true },
+                { label: '测试场景', value: '新建安全运营场景' },
+                { label: '测试驱动力', value: '各类安全设备告警量大且误报多，威胁运营效率低', full: true }
+            ],
+            delivery: {
+                tenant: authorized ? (data.device || '待审批通过后生成') : '待审批通过后生成',
+                version: '试用',
+                openedAt: authorized ? data.appliedAt : '—',
+                email: 'wanglei***@jd.com',
+                licenseCode: authorized ? licenseCode : '—'
+            }
+        };
+    }
+
     function getXaasRecordDetail(data) {
         var authorized = data.status === '已授权' || data.status === '已过期';
         var licenseCode = authorized ? 'LIC-' + data.applicationNo.replace(/[^A-Z0-9]/gi, '').slice(-12) : '—';
         var validityText = getRecordValidityDisplay(data.validity);
         var action = data.applicationAction || '首次开通试用';
+        if (data.applicationAction === '变更 / 延期试用' && data.product === 'SaaS-XDR') {
+            return getXaasChangeRecordDetail(data, authorized, licenseCode);
+        }
         if (data.product === 'SaaS-XDR') {
             return {
                 action: action,
@@ -12078,9 +12168,18 @@
             var family = document.createElement('div');
             family.className = 'record-xaas-subscription-family';
             family.textContent = subscription.family;
+            var nameRow = document.createElement('div');
+            nameRow.className = 'record-xaas-subscription-name-row';
             var name = document.createElement('div');
             name.className = 'record-xaas-subscription-name';
             name.textContent = subscription.name;
+            nameRow.appendChild(name);
+            if (subscription.tag) {
+                var tag = document.createElement('span');
+                tag.className = 'record-xaas-subscription-tag';
+                tag.textContent = subscription.tag;
+                nameRow.appendChild(tag);
+            }
             var status = null;
             if (subscription.status) {
                 status = document.createElement('span');
@@ -12088,7 +12187,7 @@
                 status.textContent = subscription.status;
             }
             heading.appendChild(family);
-            heading.appendChild(name);
+            heading.appendChild(nameRow);
             head.appendChild(heading);
             if (status) head.appendChild(status);
             card.appendChild(head);
@@ -12107,7 +12206,16 @@
                 label.textContent = item.label;
                 var value = document.createElement('span');
                 value.className = 'record-xaas-subscription-meta-value';
-                value.textContent = item.value || '—';
+                var newValue = document.createElement('span');
+                if (item.original) newValue.className = 'target';
+                newValue.textContent = item.value || '—';
+                value.appendChild(newValue);
+                if (item.original) {
+                    var originalValue = document.createElement('span');
+                    originalValue.className = 'record-xaas-subscription-meta-original';
+                    originalValue.textContent = '（' + (item.originalLabel || '原') + '：' + item.original + '）';
+                    value.appendChild(originalValue);
+                }
                 metaItem.appendChild(label);
                 metaItem.appendChild(value);
                 meta.appendChild(metaItem);
@@ -12707,6 +12815,72 @@
         return section;
     }
 
+    function renderXaasRelatedHistory(container, groups) {
+        var section = createApproveSection(container, '关联此前申请记录', 'history');
+        section.id = 'recordApproveRelatedSection';
+        var wrapper = createRecordWorkflowElement('div', 'record-related-history');
+        var toggle = createRecordWorkflowElement('button', 'record-related-toggle');
+        toggle.type = 'button';
+        toggle.setAttribute('aria-expanded', 'false');
+        toggle.appendChild(createRecordWorkflowElement('span', '', '查看关联此前申请记录'));
+        var icon = createRecordWorkflowElement('span', 'material-symbols-outlined', 'expand_more');
+        icon.setAttribute('aria-hidden', 'true');
+        toggle.appendChild(icon);
+
+        var body = createRecordWorkflowElement('div', 'record-related-body');
+        body.hidden = true;
+        groups.forEach(function(group) {
+            body.appendChild(createRecordWorkflowElement('div', 'record-related-group-head', group.family + ' / ' + group.name));
+            if (!group.records || !group.records.length) {
+                body.appendChild(createRecordWorkflowElement('div', 'record-related-empty', '暂无关联申请记录'));
+                return;
+            }
+            var scroll = createRecordWorkflowElement('div', 'record-related-scroll');
+            var table = document.createElement('table');
+            table.className = 'record-related-table';
+            var colgroup = document.createElement('colgroup');
+            [11, 9, 20, 13, 14, 19, 14].forEach(function(width) {
+                var col = document.createElement('col');
+                col.style.width = width + '%';
+                colgroup.appendChild(col);
+            });
+            table.appendChild(colgroup);
+            var thead = document.createElement('thead');
+            var headRow = document.createElement('tr');
+            ['申请人', '区域', '申请时间', '授权产品', '模块', '参数规格', '到期时间'].forEach(function(textValue) {
+                var th = document.createElement('th');
+                th.textContent = textValue;
+                headRow.appendChild(th);
+            });
+            thead.appendChild(headRow);
+            table.appendChild(thead);
+            var tbody = document.createElement('tbody');
+            group.records.forEach(function(record) {
+                var row = document.createElement('tr');
+                [record.applicant, record.region, record.appliedAt, record.product, record.module, record.spec, record.endDate].forEach(function(textValue) {
+                    var cell = document.createElement('td');
+                    cell.textContent = textValue || '—';
+                    row.appendChild(cell);
+                });
+                tbody.appendChild(row);
+            });
+            table.appendChild(tbody);
+            scroll.appendChild(table);
+            body.appendChild(scroll);
+        });
+
+        toggle.addEventListener('click', function() {
+            var expanded = toggle.getAttribute('aria-expanded') === 'true';
+            toggle.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+            body.hidden = expanded;
+        });
+
+        wrapper.appendChild(toggle);
+        wrapper.appendChild(body);
+        section.appendChild(wrapper);
+        return section;
+    }
+
     function renderApproveWorkflow(container, data) {
         var isXaas = data.authorizationType === 'XaaS';
         var isProductAuth = data.authorizationType === '产品授权';
@@ -12727,6 +12901,9 @@
             subscriptionList.id = 'recordApproveSubscriptionList';
             renderXaasSubscriptions(subscriptionList, xaasDetail.subscriptions);
             subscriptionSection.appendChild(subscriptionList);
+            if (xaasDetail.relatedHistory && xaasDetail.relatedHistory.length) {
+                renderXaasRelatedHistory(container, xaasDetail.relatedHistory);
+            }
             appendApproveDetailSection(container, '业务补充信息', 'fact_check', 'recordApproveBasisGrid', xaasDetail.supplement);
         } else if (isProductAuth) {
             appendApproveDetailSection(container, '客户信息', 'contact_page', 'recordApproveCustomerGrid', getRecordCustomerItems(data, null));

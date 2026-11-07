@@ -178,6 +178,42 @@ test('XaaS 多模块订阅逐条展示 PC 终端与服务器规格', () => {
   }
 });
 
+test('变更/延期申请展示新值原值对比和关联此前申请记录', () => {
+  const { dom, document, window } = setupRecords();
+  try {
+    const rows = [...document.querySelectorAll('#content-records .table-scroll-wrap > table > tbody > tr:not(.solution-detail-row)')];
+    const changeRow = rows.find((row) => row.children[0]?.textContent.includes('AUTH-20261105-018'));
+    assert.ok(changeRow, '应存在变更/延期 XaaS Mock 记录');
+    changeRow.querySelector('[data-record-action="approve"]').dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+
+    assert.match(document.getElementById('recordApproveApplicationGrid').textContent, /申请动作变更 \/ 延期试用/);
+    assert.match(document.getElementById('recordApproveApplicationGrid').textContent, /授权产品SaaS-XDR/);
+    const subscriptionText = document.getElementById('recordApproveSubscriptionList').textContent;
+    assert.match(subscriptionText, /日志接入数量2 亿条（原：1.5 亿条）/);
+    assert.match(subscriptionText, /授权有效期2027-03-31（原到期时间：2026-12-31）/);
+    assert.match(subscriptionText, /新增模块/);
+    assert.match(subscriptionText, /带宽10M（原：未开通）/);
+    assert.ok(document.querySelectorAll('#recordApproveSubscriptionList .target').length >= 3, '变更字段新值应使用 .target 高亮');
+
+    const related = document.getElementById('recordApproveRelatedSection');
+    assert.ok(related, '变更/延期申请应展示关联此前申请记录');
+    const toggle = related.querySelector('.record-related-toggle');
+    assert.ok(toggle, '关联记录应提供展开入口');
+    assert.equal(toggle.getAttribute('aria-expanded'), 'false', '关联记录默认收起');
+    toggle.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    assert.equal(toggle.getAttribute('aria-expanded'), 'true', '点击后关联记录展开');
+    assert.match(related.textContent, /SaaS-XDR 产品族 \/ 平台基本授权/);
+    assert.match(related.textContent, /2026-07-01 10:20/);
+    assert.match(related.textContent, /日志接入 1 亿条/);
+    assert.match(related.textContent, /2026-09-12 16:40/);
+    assert.match(related.textContent, /日志接入 1.5 亿条/);
+    assert.match(related.textContent, /2026-09-30/);
+    assert.match(related.textContent, /2026-12-31/);
+  } finally {
+    dom.window.close();
+  }
+});
+
 test('超期产品提示升级审批，解决方案使用方案专属详情', () => {
   const { dom, document, window } = setupRecords();
   try {
