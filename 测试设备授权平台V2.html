@@ -1153,9 +1153,7 @@
         .record-xaas-subscription{padding:12px 14px;background:#f7f9fc;border:1px solid #e3e8f1;border-radius:6px}
         .record-xaas-subscription-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:10px}
         .record-xaas-subscription-family{margin-bottom:2px;color:#6b7890;font-size:11px;line-height:16px}
-        .record-xaas-subscription-name-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
         .record-xaas-subscription-name{color:#0b1c30;font-size:13px;font-weight:600;line-height:20px}
-        .record-xaas-subscription-tag{display:inline-flex;align-items:center;min-height:20px;padding:0 7px;border-radius:9999px;background:#e8f0ff;color:#0050cb;font-size:10px;font-weight:600;white-space:nowrap}
         .record-xaas-subscription-status{display:inline-flex;align-items:center;min-height:22px;padding:0 8px;color:#087a55;background:#e8faf3;border-radius:9999px;font-size:11px;font-weight:600;white-space:nowrap}
         .record-xaas-subscription-status.pending{color:#0050cb;background:#e5eeff}
         .record-xaas-subscription-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 18px}
@@ -1163,8 +1161,6 @@
         .record-xaas-subscription-meta-item.full{grid-column:1/-1}
         .record-xaas-subscription-meta-label{display:block;margin-bottom:2px;color:#7b8496;font-size:11px;line-height:16px}
         .record-xaas-subscription-meta-value{display:block;color:#424656;font-size:12px;line-height:18px;overflow-wrap:anywhere}
-        .record-xaas-subscription-meta-value .target{color:#003f9e;font-weight:600}
-        .record-xaas-subscription-meta-original{margin-left:2px;color:#7b8496;font-weight:400}
         .record-related-history{border:1px solid #dce3ed;border-radius:6px;background:#fff;overflow:hidden}
         .record-related-toggle{display:flex;align-items:center;justify-content:space-between;width:100%;padding:10px 12px;border:0;background:#fff;color:#0b1c30;font-size:12px;line-height:18px;font-family:inherit;text-align:left;cursor:pointer}
         .record-related-toggle:hover{background:#f7f9fc}
@@ -1193,6 +1189,7 @@
         .record-product-change-label{color:#6b7890;font-size:12px;line-height:20px}
         .record-product-change-value{color:#424656;font-size:12px;line-height:20px;overflow-wrap:anywhere}
         .record-product-change-value.target{color:#003f9e;font-weight:600}
+        .record-xaas-subscriptions[hidden],.record-product-change-list[hidden]{display:none}
         .record-approval-timeline{margin-top:16px}
         .record-approval-step{position:relative;display:grid;grid-template-columns:18px minmax(0,1fr);gap:10px;padding-bottom:18px}
         .record-approval-step:last-child{padding-bottom:0}
@@ -5585,6 +5582,8 @@
                     <section class="record-detail-section record-xaas-only" id="recordXaasSubscriptionSection" hidden>
                         <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">subscriptions</span>订阅授权明细</h3>
                         <div class="record-xaas-subscriptions" id="recordXaasSubscriptionList"></div>
+                        <h4 class="record-detail-subsection-title" id="recordXaasChangeTitle" hidden>配置变更</h4>
+                        <div class="record-product-change-list" id="recordXaasChangeList" hidden></div>
                     </section>
                     <section class="record-detail-section record-xaas-only" id="recordXaasSupplementSection" hidden>
                         <h3 class="record-detail-section-title"><span class="material-symbols-outlined" aria-hidden="true">fact_check</span>业务补充信息</h3>
@@ -11651,6 +11650,9 @@
         appendRecordDetailItems(document.getElementById('recordApplicationGrid'), getSolutionDeviceApplicationItems(data, detail, device, isXaas));
         if (isXaas) {
             appendRecordDetailItems(document.getElementById('recordCustomerGrid'), getSolutionXaasCustomerItems(data, detail));
+            document.getElementById('recordXaasSubscriptionList').hidden = false;
+            document.getElementById('recordXaasChangeTitle').hidden = true;
+            document.getElementById('recordXaasChangeList').hidden = true;
             renderXaasSubscriptions(document.getElementById('recordXaasSubscriptionList'), [getSolutionXaasSubscription(detail, device)]);
             appendRecordDetailItems(document.getElementById('recordXaasDeliveryGrid'), getSolutionXaasDeliveryItems(data, detail, device));
         } else {
@@ -11819,7 +11821,23 @@
         return meta;
     }
 
-    // 变更 / 延期申请的对比数据：新值在前，原值括注；关联记录按订阅分组。
+    // 首次开通的 XaaS 记录同样按「配置变更」展示：变更前为未开通/—，模块按订阅分组。
+    function getXaasFirstOpenChanges(subscriptions, validity) {
+        var endDate = (String(validity || '').split('~')[1] || '').trim() || '—';
+        return [{ label: '授权有效期', before: '未开通', after: validity }].concat(
+            subscriptions.map(function(subscription) {
+                var items = [{ label: '模块状态', before: '未开通', after: '已开通' }];
+                (subscription.meta || []).forEach(function(metaItem) {
+                    if (metaItem.label === '授权有效期') return;
+                    items.push({ label: metaItem.label, before: '—', after: metaItem.value });
+                });
+                items.push({ label: '授权至', before: '—', after: endDate });
+                return { module: subscription.name, items: items };
+            })
+        );
+    }
+
+    // 变更 / 延期申请：订阅级与模块级参数统一按「配置变更」表格展示，复用产品授权的变更组件。
     function getXaasChangeRecordDetail(data, authorized, licenseCode) {
         return {
             action: '变更 / 延期试用',
@@ -11827,25 +11845,21 @@
                 contact: '王蕾', phone: '186****3098', email: 'wanglei***@jd.com',
                 cloudAccount: '京东集团云图账号', industry: '批发和零售业 / 电子商务'
             },
-            subscriptions: [
+            changes: [
+                { label: '授权有效期', before: '2026-12-31', after: '2027-03-31' },
                 {
-                    family: 'SaaS-XDR 产品族',
-                    name: '平台基本授权',
-                    status: '已开通',
-                    meta: [
-                        { label: '版本', value: data.version || 'XDR-2.1.0' },
-                        { label: '日志接入数量', value: '2 亿条', original: '1.5 亿条' },
-                        { label: '授权有效期', value: '2027-03-31', original: '2026-12-31', originalLabel: '原到期时间', full: true },
-                        { label: '测试场景', value: '新建安全运营场景', full: true }
+                    module: '平台基本授权',
+                    items: [
+                        { label: '日志接入数量', before: '1.5 亿条', after: '2 亿条' },
+                        { label: '授权至', before: '2026-12-31', after: '2027-03-31' }
                     ]
                 },
                 {
-                    family: 'SASE 产品族',
-                    name: 'SASE-GA 全球加速',
-                    status: '待开通',
-                    tag: '新增模块',
-                    meta: [
-                        { label: '带宽', value: '10M', original: '未开通' }
+                    module: 'SASE-GA 全球加速',
+                    items: [
+                        { label: '模块状态', before: '未开通', after: '已开通' },
+                        { label: '带宽', before: '未开通', after: '10M' },
+                        { label: '授权至', before: '未开通', after: '2027-03-31' }
                     ]
                 }
             ],
@@ -11881,7 +11895,7 @@
             return getXaasChangeRecordDetail(data, authorized, licenseCode);
         }
         if (data.product === 'SaaS-XDR') {
-            return {
+            var xdrDetail = {
                 action: action,
                 customer: {
                     contact: '赵敏', phone: '138****5621', email: 'zhao***@alibaba-inc.com',
@@ -11920,6 +11934,8 @@
                     licenseCode: licenseCode
                 }
             };
+            xdrDetail.changes = getXaasFirstOpenChanges(xdrDetail.subscriptions, data.validity);
+            return xdrDetail;
         }
         var isAesFamily = data.product === 'NGDR' || data.product === 'SaaS-aES';
         var subscriptionName = data.product === 'SASE-GA' ? 'SASE-GA 全球加速'
@@ -11960,7 +11976,7 @@
                 meta: getXaasSubscriptionMeta(data.product, data, validityText)
             }];
         }
-        return {
+        var xaasDetail = {
             action: action,
             customer: {
                 contact: '王蕾', phone: '186****3098', email: 'wanglei***@jd.com',
@@ -11984,6 +12000,8 @@
                 licenseCode: licenseCode
             }
         };
+        xaasDetail.changes = getXaasFirstOpenChanges(xaasDetail.subscriptions, data.validity);
+        return xaasDetail;
     }
 
     function getProductRecordDetail(data) {
@@ -12168,18 +12186,9 @@
             var family = document.createElement('div');
             family.className = 'record-xaas-subscription-family';
             family.textContent = subscription.family;
-            var nameRow = document.createElement('div');
-            nameRow.className = 'record-xaas-subscription-name-row';
             var name = document.createElement('div');
             name.className = 'record-xaas-subscription-name';
             name.textContent = subscription.name;
-            nameRow.appendChild(name);
-            if (subscription.tag) {
-                var tag = document.createElement('span');
-                tag.className = 'record-xaas-subscription-tag';
-                tag.textContent = subscription.tag;
-                nameRow.appendChild(tag);
-            }
             var status = null;
             if (subscription.status) {
                 status = document.createElement('span');
@@ -12187,7 +12196,7 @@
                 status.textContent = subscription.status;
             }
             heading.appendChild(family);
-            heading.appendChild(nameRow);
+            heading.appendChild(name);
             head.appendChild(heading);
             if (status) head.appendChild(status);
             card.appendChild(head);
@@ -12206,16 +12215,7 @@
                 label.textContent = item.label;
                 var value = document.createElement('span');
                 value.className = 'record-xaas-subscription-meta-value';
-                var newValue = document.createElement('span');
-                if (item.original) newValue.className = 'target';
-                newValue.textContent = item.value || '—';
-                value.appendChild(newValue);
-                if (item.original) {
-                    var originalValue = document.createElement('span');
-                    originalValue.className = 'record-xaas-subscription-meta-original';
-                    originalValue.textContent = '（' + (item.originalLabel || '原') + '：' + item.original + '）';
-                    value.appendChild(originalValue);
-                }
+                value.textContent = item.value || '—';
                 metaItem.appendChild(label);
                 metaItem.appendChild(value);
                 meta.appendChild(metaItem);
@@ -12549,7 +12549,19 @@
         });
         if (isXaas) {
             appendRecordDetailItems(document.getElementById('recordCustomerGrid'), getRecordCustomerItems(data, xaasDetail));
-            renderXaasSubscriptions(document.getElementById('recordXaasSubscriptionList'), xaasDetail.subscriptions);
+            var xaasChangeList = document.getElementById('recordXaasChangeList');
+            var hasXaasChanges = !!(xaasDetail.changes && xaasDetail.changes.length);
+            var xaasSubscriptionList = document.getElementById('recordXaasSubscriptionList');
+            document.getElementById('recordXaasChangeTitle').hidden = !hasXaasChanges;
+            xaasChangeList.hidden = !hasXaasChanges;
+            xaasSubscriptionList.hidden = hasXaasChanges;
+            if (hasXaasChanges) {
+                xaasSubscriptionList.textContent = '';
+                renderProductChanges(xaasChangeList, xaasDetail.changes);
+            } else {
+                xaasChangeList.textContent = '';
+                renderXaasSubscriptions(xaasSubscriptionList, xaasDetail.subscriptions);
+            }
             appendRecordDetailItems(document.getElementById('recordXaasSupplementGrid'), xaasDetail.supplement);
             appendRecordDetailItems(document.getElementById('recordXaasDeliveryGrid'), [
                 { label: '租户/实例标识', value: xaasDetail.delivery.tenant, code: true },
@@ -12897,10 +12909,18 @@
         if (isXaas) {
             appendApproveDetailSection(container, '客户信息', 'contact_page', 'recordApproveCustomerGrid', getRecordCustomerItems(data, xaasDetail));
             var subscriptionSection = createApproveSection(container, '订阅授权明细', 'subscriptions');
-            var subscriptionList = createRecordWorkflowElement('div', 'record-xaas-subscriptions');
-            subscriptionList.id = 'recordApproveSubscriptionList';
-            renderXaasSubscriptions(subscriptionList, xaasDetail.subscriptions);
-            subscriptionSection.appendChild(subscriptionList);
+            if (xaasDetail.changes && xaasDetail.changes.length) {
+                subscriptionSection.appendChild(createRecordWorkflowElement('h4', 'record-detail-subsection-title', '配置变更'));
+                var changeList = createRecordWorkflowElement('div', 'record-product-change-list');
+                changeList.id = 'recordApproveChangeList';
+                renderProductChanges(changeList, xaasDetail.changes);
+                subscriptionSection.appendChild(changeList);
+            } else {
+                var subscriptionList = createRecordWorkflowElement('div', 'record-xaas-subscriptions');
+                subscriptionList.id = 'recordApproveSubscriptionList';
+                renderXaasSubscriptions(subscriptionList, xaasDetail.subscriptions);
+                subscriptionSection.appendChild(subscriptionList);
+            }
             if (xaasDetail.relatedHistory && xaasDetail.relatedHistory.length) {
                 renderXaasRelatedHistory(container, xaasDetail.relatedHistory);
             }
