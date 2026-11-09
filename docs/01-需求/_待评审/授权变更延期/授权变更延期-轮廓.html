@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>授权变更 / 延期申请 — 功能轮廓</title>
+  <style>
+    :root { color-scheme: light; }
+    body {
+      margin: 0;
+      padding: 32px;
+      background: #f8fafc;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: #0f172a;
+    }
+    h1 { font-size: 20px; margin: 0 0 6px; letter-spacing: .01em; }
+    p.sub { margin: 0 0 24px; color: #64748b; font-size: 13px; }
+    .card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+      overflow: auto;
+    }
+    .mermaid { display: flex; justify-content: center; min-width: 720px; }
+  </style>
+</head>
+<body>
+  <h1>授权变更 / 延期申请（变更可视化）— 功能轮廓</h1>
+  <p class="sub">v1.2 决策版 · 仅覆盖 XaaS 订阅记录</p>
+  <div class="card">
+    <pre class="mermaid">
+flowchart TB
+    A{"申请动作<br/>只读申请动作，不读审批场景"}
+    A -->|"变更 / 延期试用"| B["审批页：变更可视化"]
+    A -->|"首次申请 / 新购"| X["不触发<br/>按原样展示"]
+
+    B --> C
+    B --> D
+
+    subgraph F1["Feature 1.1 变更点高亮"]
+        C["按 XaaS 订阅逐条对比"]
+        C --> C1["到期时间<br/>2026-12-31（原到期时间：2026-06-30）"]
+        C --> C2["规格参数<br/>日志接入数量：2 亿条（原：1 亿条）"]
+        C --> C3["模块 / 参数增删<br/>单独标注"]
+        C --> C4["值级高亮<br/>新值 .target 深蓝加粗<br/>原值灰色括注"]
+    end
+
+    subgraph F2["Feature 1.2 关联此前申请记录"]
+        D["默认收起<br/>入口：查看关联此前申请记录"]
+        D --> D1["按订阅分组<br/>组头 = 产品族 + 订阅名称"]
+        D1 --> D2["字段：申请人 / 区域 / 申请时间 /<br/>授权产品 / 模块 / 参数规格 / 到期时间"]
+        D1 --> D3["规则：同一订阅 ID、本次之前、<br/>正序全部；延期不特殊"]
+    end
+
+    subgraph BASE["原值基准与边界"]
+        E["严格已生效"]
+        E --> E1["未生效：不算 + 提示"]
+        E --> E2["驳回：不算"]
+        E --> E3["过期：历史到期日 + 已过期 N 天"]
+        E --> E4["已终止：提交入口拦截"]
+    end
+
+    C4 --> E
+
+    N["范围：仅 XaaS 订阅记录<br/>产品授权 / 解决方案 / 设备授权不在本次范围"]
+    N -.-> B
+    </pre>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'base',
+      themeVariables: {
+        primaryColor: '#eff6ff',
+        primaryBorderColor: '#3b82f6',
+        primaryTextColor: '#0f172a',
+        lineColor: '#94a3b8',
+        fontFamily: '-apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif',
+        fontSize: '13px'
+      },
+      flowchart: {
+        htmlLabels: true,
+        curve: 'basis',
+        nodeSpacing: 28,
+        rankSpacing: 40
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>授权变更 / 延期申请 · 审批页页面轮廓</title>
+  <style>
+    :root {
+      --ink: #0b1c30;
+      --muted: #6b7890;
+      --line: #e5eaf2;
+      --soft: #f7f9fc;
+      --primary: #0050cb;
+      --target: #003f9e;
+      --green: #067647;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 28px 32px 36px;
+      background: #eef2f7;
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: var(--ink);
+      -webkit-font-smoothing: antialiased;
+    }
+    .doc-head { max-width: 1440px; margin: 0 auto 16px; }
+    .doc-head h1 { margin: 0 0 4px; font-size: 20px; letter-spacing: .01em; }
+    .doc-head p { margin: 0; font-size: 13px; color: var(--muted); }
+
+    .canvas {
+      position: relative;
+      max-width: 1440px;
+      height: 1210px;
+      margin: 0 auto;
+      background: #fff;
+      border: 1px solid #dbe3ee;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(11, 28, 48, .08);
+    }
+
+    /* 背景：授权记录列表（示意） */
+    .list-bg { position: absolute; inset: 0; padding: 22px 26px; opacity: .5; }
+    .list-title { font-size: 15px; font-weight: 600; margin-bottom: 14px; }
+    .list-toolbar {
+      display: flex; gap: 8px; margin-bottom: 12px;
+    }
+    .list-toolbar span {
+      height: 28px; padding: 0 12px; border: 1px solid #dbe3ee; border-radius: 6px;
+      display: inline-flex; align-items: center; font-size: 12px; color: var(--muted); background: #fff;
+    }
+    .list-row {
+      display: grid; grid-template-columns: 170px 1fr 110px 90px;
+      gap: 12px; align-items: center; height: 42px; padding: 0 12px;
+      border-bottom: 1px solid #eef2f7; font-size: 12px;
+    }
+    .list-row.head { background: #f7f9fc; color: var(--muted); font-weight: 500; border-radius: 6px 6px 0 0; }
+    .list-row .status { color: var(--green); }
+
+    .backdrop { position: absolute; inset: 0; background: rgba(11, 28, 48, .16); }
+
+    /* 审批抽屉 */
+    .drawer {
+      position: absolute; top: 0; right: 0; bottom: 0; width: 560px;
+      background: #fff; border-left: 1px solid var(--line);
+      box-shadow: -12px 0 32px rgba(11, 28, 48, .16);
+      display: flex; flex-direction: column;
+    }
+    .drawer-head {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 14px 20px 12px; border-bottom: 1px solid var(--line);
+    }
+    .drawer-head h2 { margin: 0; font-size: 17px; font-weight: 600; line-height: 24px; }
+    .drawer-head .sub { margin-top: 3px; font-size: 12px; color: var(--muted); }
+    .close {
+      margin-left: auto; width: 32px; height: 32px; border: 0; border-radius: 6px;
+      background: transparent; color: var(--muted); font-size: 20px; line-height: 1; cursor: default;
+    }
+    .summary {
+      display: flex; align-items: center; gap: 28px;
+      padding: 10px 20px; background: var(--soft); border-bottom: 1px solid var(--line);
+      font-size: 12px; color: var(--muted);
+    }
+    .summary b { display: block; margin-top: 2px; color: var(--ink); font-size: 14px; font-weight: 600; }
+    .body { flex: 1; padding: 16px 20px 20px; }
+
+    .section { margin-bottom: 18px; }
+    .section h3 {
+      display: flex; align-items: center; gap: 7px;
+      margin: 0 0 8px; font-size: 13px; font-weight: 600; line-height: 20px;
+    }
+    .section h3::before {
+      content: ""; width: 3px; height: 14px; background: var(--primary); border-radius: 2px;
+    }
+
+    .grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      background: #fbfcfe; border: 1px solid #e3e8f1; border-radius: 6px; overflow: hidden;
+    }
+    .item {
+      display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 8px;
+      padding: 9px 12px; border-bottom: 1px solid #e8edf4; font-size: 12px;
+    }
+    .item label { color: var(--muted); }
+    .item.full { grid-column: 1 / -1; }
+
+    .sub-card { border: 1px solid #e3e8f1; border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
+    .sub-head {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 12px; background: var(--soft); border-bottom: 1px solid #e8edf4; font-size: 12px;
+    }
+    .sub-head strong { font-size: 13px; }
+    .tag { padding: 2px 7px; border-radius: 999px; background: #eef4ff; color: var(--primary); font-size: 11px; }
+    .tag.new { background: #ecfdf3; color: var(--green); }
+    .sub-status { margin-left: auto; color: var(--green); font-size: 11px; }
+
+    .param {
+      display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 10px;
+      padding: 9px 12px; border-bottom: 1px solid #eef2f7; font-size: 12px;
+    }
+    .param:last-child { border-bottom: 0; }
+    .param label { color: var(--muted); }
+    .changed { background: #f5f9ff; }
+    .new-value { color: var(--target); font-weight: 600; }
+    .old-value { color: var(--muted); }
+
+    .collapse {
+      display: flex; align-items: center; justify-content: space-between; width: 100%;
+      padding: 10px 12px; border: 1px dashed #b9c6d8; border-radius: 6px;
+      background: #fff; color: var(--ink); font-size: 12px; cursor: default;
+    }
+    .collapse span { color: var(--muted); }
+    .expand-hint { margin: 8px 0 4px; font-size: 11px; color: var(--muted); }
+    .expanded { margin-top: 4px; border: 1px solid #e3e8f1; border-radius: 6px; overflow: hidden; }
+    .expanded .group {
+      padding: 8px 10px; background: var(--soft); font-size: 12px; font-weight: 600;
+      border-bottom: 1px solid #e8edf4;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 11px; }
+    th, td {
+      padding: 7px 8px; text-align: left; border-bottom: 1px solid #eef2f7; white-space: nowrap;
+    }
+    th { background: #fbfcfe; color: var(--muted); font-weight: 500; }
+    tr:last-child td { border-bottom: 0; }
+
+    .timeline { margin-left: 6px; padding-left: 14px; border-left: 2px solid #dbe3ee; font-size: 12px; }
+    .timeline .step { position: relative; padding-bottom: 12px; }
+    .timeline .step:last-child { padding-bottom: 0; }
+    .timeline .step::before {
+      content: ""; position: absolute; left: -21px; top: 3px;
+      width: 9px; height: 9px; border-radius: 50%; background: #c8d3e3; border: 2px solid #fff;
+    }
+    .timeline .step.done::before { background: var(--primary); }
+    .timeline b { display: block; font-size: 12px; font-weight: 600; }
+    .timeline span { color: var(--muted); font-size: 11px; }
+
+    textarea {
+      width: 100%; min-height: 64px; padding: 9px 10px;
+      border: 1px solid #d7dfeb; border-radius: 6px; font: inherit; font-size: 12px; resize: none;
+      color: var(--ink);
+    }
+    textarea::placeholder { color: #9aa6b8; }
+    .upload {
+      margin-top: 8px; padding: 10px; border: 1px dashed #c8d3e3; border-radius: 6px;
+      text-align: center; color: var(--muted); font-size: 11px;
+    }
+    .actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; }
+    .btn {
+      min-width: 64px; height: 32px; padding: 0 14px; border: 1px solid #c8d1e0; border-radius: 6px;
+      background: #fff; color: var(--ink); font-size: 12px; cursor: default;
+    }
+    .btn.primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .btn.danger { color: #d92d20; border-color: #f2c7c3; }
+
+    .badge-inline {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 18px; height: 18px; border-radius: 50%;
+      border: 1px solid var(--primary); color: var(--primary);
+      font-size: 10px; font-weight: 700; flex: 0 0 18px;
+    }
+
+    .legend {
+      max-width: 1440px; margin: 14px auto 0;
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 24px;
+      font-size: 12px; color: #334155;
+    }
+    .legend div { display: flex; gap: 8px; align-items: flex-start; line-height: 18px; }
+    .legend .n {
+      flex: 0 0 20px; width: 20px; height: 20px; border-radius: 50%;
+      border: 1px solid var(--primary); color: var(--primary);
+      font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="doc-head">
+    <h1>授权变更 / 延期申请 · 审批页页面轮廓</h1>
+    <p>v1.2 决策版 · 审批抽屉（560px）· 仅覆盖 XaaS 订阅记录</p>
+  </div>
+
+  <div class="canvas">
+    <!-- 背景：授权记录列表（示意） -->
+    <div class="list-bg">
+      <div class="list-title">测试授权平台 / 授权记录</div>
+      <div class="list-toolbar">
+        <span>全部</span><span>待审批</span><span>已通过</span><span>已驳回</span>
+      </div>
+      <div class="list-row head"><span>申请编号</span><span>客户</span><span>授权类型</span><span>状态</span></div>
+      <div class="list-row"><span>AUTH-20261105-018</span><span>京东集团</span><span>XaaS</span><span class="status">待审批</span></div>
+      <div class="list-row"><span>AUTH-20261104-012</span><span>阿里云图</span><span>产品授权</span><span>已通过</span></div>
+      <div class="list-row"><span>AUTH-20261103-009</span><span>招商银行</span><span>解决方案</span><span>已通过</span></div>
+      <div class="list-row"><span>AUTH-20261102-006</span><span>平安科技</span><span>XaaS</span><span>已驳回</span></div>
+      <div class="list-row"><span>AUTH-20261101-003</span><span>字节跳动</span><span>XaaS</span><span>已通过</span></div>
+      <div class="list-row"><span>AUTH-20261031-021</span><span>腾讯云</span><span>产品授权</span><span>已通过</span></div>
+      <div class="list-row"><span>AUTH-20261030-018</span><span>美团</span><span>XaaS</span><span>已通过</span></div>
+    </div>
+    <div class="backdrop"></div>
+
+    <!-- 审批抽屉 -->
+    <aside class="drawer">
+      <div class="drawer-head">
+        <div>
+          <h2>审批 · 授权变更 / 延期申请</h2>
+          <div class="sub">AUTH-20261105-018 · 京东集团</div>
+        </div>
+        <button class="close">×</button>
+      </div>
+
+      <div class="summary">
+        <div>申请动作<b>变更 / 延期试用 <span class="badge-inline">1</span></b></div>
+        <div>当前状态<b>待审批</b></div>
+      </div>
+
+      <div class="body">
+        <section class="section">
+          <h3>申请信息</h3>
+          <div class="grid">
+            <div class="item"><label>申请人</label><span>王蕾</span></div>
+            <div class="item"><label>区域</label><span>华南区</span></div>
+            <div class="item"><label>申请时间</label><span>2026-11-05 10:24</span></div>
+            <div class="item"><label>授权产品</label><span>SaaS-XDR</span></div>
+            <div class="item full"><label>申请理由</label><span>测试周期延长，日志接入量需要扩容。</span></div>
+          </div>
+        </section>
+
+        <section class="section">
+          <h3>授权信息（XaaS 订阅）<span class="badge-inline">2</span></h3>
+
+          <div class="sub-card">
+            <div class="sub-head">
+              <strong>SaaS-XDR 产品族</strong>
+              <span class="tag">平台基本授权</span>
+              <span class="sub-status">已开通</span>
+            </div>
+            <div class="param changed">
+              <label>日志接入数量 <span class="badge-inline">3</span></label>
+              <span><span class="new-value">2 亿条</span> <span class="old-value">（原：1 亿条）</span></span>
+            </div>
+            <div class="param changed">
+              <label>授权至</label>
+              <span><span class="new-value">2027-03-31</span> <span class="old-value">（原到期时间：2026-12-31）</span></span>
+            </div>
+            <div class="param">
+              <label>测试场景</label>
+              <span>新建安全运营场景</span>
+            </div>
+          </div>
+
+          <div class="sub-card">
+            <div class="sub-head">
+              <strong>SASE 产品族</strong>
+              <span class="tag">SASE-GA 全球加速</span>
+              <span class="tag new" style="margin-left:auto;">新增模块</span>
+            </div>
+            <div class="param">
+              <label>带宽</label>
+              <span><span class="new-value">10M</span> <span class="old-value">（原：未开通）</span></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <h3>关联此前申请记录 <span class="badge-inline">4</span></h3>
+          <button class="collapse">查看关联此前申请记录 <span>▾</span></button>
+          <div class="expand-hint">展开态示意</div>
+
+          <div class="expanded">
+            <div class="group">SaaS-XDR 产品族 / 平台基本授权</div>
+            <table>
+              <thead>
+                <tr><th>申请人</th><th>申请时间</th><th>授权产品</th><th>模块</th><th>参数规格</th><th>到期时间</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>王蕾</td><td>2026-07-01</td><td>SaaS-XDR</td><td>平台基本授权</td><td>日志接入 1 亿条</td><td>2026-09-30</td></tr>
+                <tr><td>王蕾</td><td>2026-09-12</td><td>SaaS-XDR</td><td>平台基本授权</td><td>日志接入 1.5 亿条</td><td>2026-12-31</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="section">
+          <h3>已有审批记录</h3>
+          <div class="timeline">
+            <div class="step done"><b>提交申请</b><span>王蕾 · 2026-11-05 10:24</span></div>
+            <div class="step"><b>区域安全运营专员审批</b><span>待处理</span></div>
+            <div class="step"><b>技服专员审批</b><span>待处理</span></div>
+          </div>
+        </section>
+
+        <section class="section">
+          <h3>审批决定 <span class="badge-inline">5</span></h3>
+          <textarea placeholder="请填写审批意见"></textarea>
+          <div class="upload">审批附件（可选）· 点击或拖拽上传</div>
+          <div class="actions">
+            <button class="btn">转签</button>
+            <button class="btn danger">驳回</button>
+            <button class="btn primary">通过</button>
+          </div>
+        </section>
+      </div>
+    </aside>
+  </div>
+
+  <div class="legend">
+    <div><span class="n">1</span><span>申请动作是唯一触发条件；首次申请 / 新购不触发高亮。</span></div>
+    <div><span class="n">2</span><span>授权信息按订阅逐条成组，组头 = 产品族 + 订阅名称。</span></div>
+    <div><span class="n">3</span><span>变更字段：新值深蓝加粗（.target），原值灰色括注。</span></div>
+    <div><span class="n">4</span><span>关联记录默认收起；展开后按订阅分组、按时间正序。</span></div>
+    <div><span class="n">5</span><span>审批决定放在抽屉底部，可见性由审批页权限控制。</span></div>
+  </div>
+</body>
+</html>

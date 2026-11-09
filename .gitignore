@@ -1,5 +1,5 @@
 *.png
-!docs/flowcharts/*.png
+!docs/01-需求/REQ-V2_测试设备授权平台/assets/flowcharts/*.png
 *.jpg
 *.jpeg
 *.gif
@@ -12,3 +12,10 @@ todo.md
 docs/测试授权申请审批规则与审批流.xlsx
 .DS_Store
 .claude/
+
+# AI 临时工作区：可整目录删除，不入库
+工作区/
+
+# Python 缓存
+__pycache__/
+*.pyc

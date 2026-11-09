@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Rebuild docs/解决方案型测试授权需求方案.docx by strictly mirroring 
+Rebuild docs/01-需求/REQ-SOL_解决方案型授权/导出/解决方案型测试授权需求方案.docx by strictly mirroring
 '/Users/qianjincheng/Library/Mobile Documents/com~apple~CloudDocs/Sangfor/原型/采购取消/需求文档/采购转单需求文档（终稿）.docx'
 1-to-1 in styling, fonts, tables, heading hierarchy, footers, and margins.
 
@@ -23,9 +23,10 @@ from docx.oxml import OxmlElement, parse_xml
 from docx.oxml.ns import qn, nsdecls
 
 TEMPLATE_PATH = "/Users/qianjincheng/Library/Mobile Documents/com~apple~CloudDocs/Sangfor/原型/采购取消/需求文档/采购转单需求文档（终稿）.docx"
-OUTPUT_DOCX_PATH = Path(__file__).resolve().parents[1] / "docs" / "解决方案型测试授权需求方案.docx"
-OUTPUT_MD_PATH = Path(__file__).resolve().parents[1] / "docs" / "解决方案型测试授权需求方案.md"
-OUTPUT_HTML_PATH = Path(__file__).resolve().parents[1] / "docs" / "企微文档更新对照与一键复制.html"
+DOCS_DIR = Path(__file__).resolve().parents[1] / "docs" / "01-需求" / "REQ-SOL_解决方案型授权"
+OUTPUT_DOCX_PATH = DOCS_DIR / "导出" / "解决方案型测试授权需求方案.docx"
+OUTPUT_MD_PATH = DOCS_DIR / "解决方案型测试授权需求方案.md"
+OUTPUT_HTML_PATH = DOCS_DIR / "导出" / "企微文档更新对照与一键复制.html"
 
 RED_COLOR_HEX = "DC2626"
 
@@ -604,6 +605,7 @@ def main():
     add_body_p(doc, "6. 确认业务申请信息自由配置字段的持久化存储 Schema 与数据版本管理规范。")
     add_body_p(doc, "[[RED:7. 【已确认并落地】统一授权时间超限审核提示与时间选择窗口优化（对齐规模优化交互）：日历 Popover 清晰展示免审绿底与需审批浅橙底双色区分与图例、去除多余预设按键与占位横幅、日期提示单一无重复（超过 90 天需审批）、全模块同步与审批流实时联动人工审核已全部落地。]]")
 
+    OUTPUT_DOCX_PATH.parent.mkdir(parents=True, exist_ok=True)
     print(f"Saving exact rebuild docx to {OUTPUT_DOCX_PATH}...")
     doc.save(str(OUTPUT_DOCX_PATH))
     print(f"Success! Rebuilt docx size: {os.path.getsize(OUTPUT_DOCX_PATH)} bytes")
@@ -997,6 +999,7 @@ def main():
 6. 确认业务申请信息自由配置字段的持久化存储 Schema 与数据版本管理规范。
 <span style="color: #dc2626; font-weight: bold;">7. 【已确认并落地】统一授权时间超限审核提示与时间选择窗口优化（对齐规模优化交互）：日历 Popover 清晰展示免审绿底与需审批浅橙底双色区分与图例、去除多余预设按键与占位横幅、日期提示单一无重复（超过 90 天需审批）、全模块同步与审批流实时联动人工审核已全部落地。</span>
 """
+    OUTPUT_MD_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_MD_PATH.write_text(md_content, encoding="utf-8")
     print(f"Success! Updated markdown size: {os.path.getsize(OUTPUT_MD_PATH)} bytes")
 
@@ -1367,6 +1370,7 @@ def main():
 </body>
 </html>
 """
+    OUTPUT_HTML_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_HTML_PATH.write_text(html_content, encoding="utf-8")
     print(f"Success! Generated WeChat Work sync helper HTML at {OUTPUT_HTML_PATH}")
 
