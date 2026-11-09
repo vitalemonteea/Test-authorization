@@ -20,9 +20,9 @@ const fs = require('fs');
 const path = require('path');
 const { JSDOM, VirtualConsole } = require('jsdom');
 
-const htmlPath = path.join(__dirname, '..', '测试设备授权平台V2.html');
+const htmlPath = path.join(__dirname, '..', '02-原型', 'app', '测试设备授权平台V2.html');
 const html = fs.readFileSync(htmlPath, 'utf8');
-const authorizationRules = require(path.join(__dirname, '..', 'authorization-application-rules.js'));
+const authorizationRules = require(path.join(__dirname, '..', '02-原型', 'app', 'authorization-application-rules.js'));
 
 function loadDom() {
   const vc = new VirtualConsole();

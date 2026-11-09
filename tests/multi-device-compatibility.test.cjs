@@ -7,7 +7,7 @@ const fs = require('fs');
 const { loadV2Dom, fireChange } = require('./helpers/load-v2-dom.cjs');
 const fixtures = require('./fixtures/authorization-fixtures.cjs');
 
-const rules = require(path.join(__dirname, '..', 'authorization-application-rules.js'));
+const rules = require(path.join(__dirname, '..', '02-原型', 'app', 'authorization-application-rules.js'));
 
 function attachHwInfo(document, window) {
   const input = document.getElementById('hwFileInput');
@@ -429,7 +429,7 @@ test('表单重置彻底清理旧流程状态并重新应用默认 HCI 模式', 
 test('产品授权先提交，缺 .info 时进入待激活，上传文件后完成激活并留存设备信息', async () => {
   const { dom, document, window, alerts, errors } = loadV2Dom();
   try {
-    window.eval(fs.readFileSync(path.join(__dirname, '..', 'info-collection-model.js'), 'utf8'));
+    window.eval(fs.readFileSync(path.join(__dirname, '..', '02-原型', 'app', 'info-collection-model.js'), 'utf8'));
     const search = document.getElementById('customerSearchInput');
     search.value = 'C100001';
     search.dispatchEvent(new window.Event('input', { bubbles: true }));
@@ -502,7 +502,7 @@ test('产品授权先提交，缺 .info 时进入待激活，上传文件后完�
 test('激活外链由外部上传后，授权记录自动完成激活', async () => {
   const { dom, document, window, errors } = loadV2Dom();
   try {
-    window.eval(fs.readFileSync(path.join(__dirname, '..', 'info-collection-model.js'), 'utf8'));
+    window.eval(fs.readFileSync(path.join(__dirname, '..', '02-原型', 'app', 'info-collection-model.js'), 'utf8'));
     const search = document.getElementById('customerSearchInput');
     search.value = 'C100001';
     search.dispatchEvent(new window.Event('input', { bubbles: true }));
@@ -548,7 +548,7 @@ test('激活外链由外部上传后，授权记录自动完成激活', async ()
 test('待激活引导可跳转授权记录并打开对应激活弹窗', async () => {
   const { dom, document, window, errors } = loadV2Dom();
   try {
-    window.eval(fs.readFileSync(path.join(__dirname, '..', 'info-collection-model.js'), 'utf8'));
+    window.eval(fs.readFileSync(path.join(__dirname, '..', '02-原型', 'app', 'info-collection-model.js'), 'utf8'));
     const search = document.getElementById('customerSearchInput');
     search.value = 'C100001';
     search.dispatchEvent(new window.Event('input', { bubbles: true }));

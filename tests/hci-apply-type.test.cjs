@@ -20,7 +20,7 @@ const fs = require('fs');
 const path = require('path');
 const { loadV2Dom, fireChange } = require('./helpers/load-v2-dom.cjs');
 
-const htmlPath = path.join(__dirname, '..', '测试设备授权平台V2.html');
+const htmlPath = path.join(__dirname, '..', '02-原型', 'app', '测试设备授权平台V2.html');
 const html = fs.readFileSync(htmlPath, 'utf8');
 const cssText = Array.from(html.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi))
   .map((match) => match[1])

@@ -4,7 +4,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const path = require('path');
 
-const rules = require(path.join(__dirname, '..', 'authorization-application-rules.js'));
+const rules = require(path.join(__dirname, '..', '02-原型', 'app', 'authorization-application-rules.js'));
 
 test('产品规则显式区分历史范围、标识类型和时长阈值', () => {
   const generic = rules.getProductRule('22');

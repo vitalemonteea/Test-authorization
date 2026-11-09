@@ -248,7 +248,7 @@ def add_title(doc):
     p2.paragraph_format.space_after = Pt(8)
     r2 = p2.add_run('W3 测试授权平台字段填写与审批操作说明')
     set_run_font(r2, size=13, color=MID_GRAY)
-    add_para(doc, '版本：V2 字段填写版　适用页面：测试设备授权平台V2.html　更新日期：2026 年 9 月 15 日', size=9.5, color=MID_GRAY, first_indent=False, after=9)
+    add_para(doc, '版本：V2 字段填写版　适用页面：02-原型/app/测试设备授权平台V2.html　更新日期：2026 年 9 月 15 日', size=9.5, color=MID_GRAY, first_indent=False, after=9)
     add_note(doc, '本手册解决什么问题：', '帮助一线销售、售前、实施和测试人员在 W3 中完成方案型授权申请，明确每个字段的选择范围、填写方式、必填条件和提交后的处理结果。')
     add_note(doc, '使用边界：', '字段名称和选项以当前 V2 原型页面为准；页面中的日期、客户、借测单和授权编码是 Mock 数据，只用于演示，不代表生产业务数据。审批节点和人员映射如未在页面或已确认规则中落地，本手册会明确标注为待确认。')
     add_para(doc, '方案型授权按整套方案提交。一张申请单可以同时包含设备产品线和 XaaS 产品线，方案及产品线范围由借测单或启用配置确定，申请人只补充授权所需参数。审批通过后，所有产品线一起执行授权，全部成功后在授权记录中生成一条解决方案主记录。', first_indent=True, after=8)
@@ -587,10 +587,10 @@ def chapter_nine(doc):
     ], widths=[1.25, 2.9, 3.9], font_size=8.8)
     add_heading(doc, '9.5 HCI 和 SCP 文件 Mock', 2)
     add_table(doc, ['文件', '用途', '页面识别结果'], [
-        ['mock-data/HCI-device-demo.info', 'HCI 首次场景', '无历史授权，按首次识别。'],
-        ['mock-data/HCI-active-demo.info', 'HCI 有效期内调整', '识别有效授权、集群 CLUSTER-HCI-ACTIVE、容量 16。'],
-        ['mock-data/HCI-expired-demo.info', 'HCI 重新开通', '识别过期授权、集群 CLUSTER-HCI-EXPIRED、容量 12。'],
-        ['mock-data/SCP-device-demo.info', 'SCP 首次场景', '无历史授权，按首次识别。'],
+        ['02-原型/app/mock-data/HCI-device-demo.info', 'HCI 首次场景', '无历史授权，按首次识别。'],
+        ['02-原型/app/mock-data/HCI-active-demo.info', 'HCI 有效期内调整', '识别有效授权、集群 CLUSTER-HCI-ACTIVE、容量 16。'],
+        ['02-原型/app/mock-data/HCI-expired-demo.info', 'HCI 重新开通', '识别过期授权、集群 CLUSTER-HCI-EXPIRED、容量 12。'],
+        ['02-原型/app/mock-data/SCP-device-demo.info', 'SCP 首次场景', '无历史授权，按首次识别。'],
     ], widths=[2.5, 2.1, 3.45], font_size=9)
     add_note(doc, 'Mock 文件说明：', '当前原型主要按文件名识别演示变体，不能据此判断生产系统会解析同样内容。')
 
@@ -627,7 +627,7 @@ def chapter_ten(doc):
         ['7', '可选产品线开关状态正确，关闭的产品线不应出现在本次授权明细中。'],
         ['8', '点击提交后查看状态；授权成功后到授权记录展开 SOL 主记录。'],
     ], widths=[0.65, 7.4], font_size=9.2)
-    add_para(doc, '本手册对应的页面源文件为项目内“测试设备授权平台V2.html”。如页面字段、选项或方案配置发生变化，应以最新页面和已确认业务规则为准，并同步修订本手册。', size=9.5, color=MID_GRAY, first_indent=False, before=9, after=0)
+    add_para(doc, '本手册对应的页面源文件为项目内“02-原型/app/测试设备授权平台V2.html”。如页面字段、选项或方案配置发生变化，应以最新页面和已确认业务规则为准，并同步修订本手册。', size=9.5, color=MID_GRAY, first_indent=False, before=9, after=0)
 
 
 def build():

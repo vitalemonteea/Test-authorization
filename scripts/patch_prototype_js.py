@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Patch 测试设备授权平台V2.html with:
+Patch 02-原型/app/测试设备授权平台V2.html with:
 1. solutionBorrowGlobalCloud and solutionLocalGlobalCloud spans.
 2. Complete JavaScript implementation for:
    - Dynamic biz fields free configuration engine in solutionConfigModal
@@ -13,7 +13,7 @@ Patch 测试设备授权平台V2.html with:
 from pathlib import Path
 import re
 
-HTML_PATH = Path(__file__).resolve().parents[1] / "测试设备授权平台V2.html"
+HTML_PATH = Path(__file__).resolve().parents[1] / "02-原型" / "app" / "测试设备授权平台V2.html"
 
 def patch():
     content = HTML_PATH.read_text(encoding="utf-8")
@@ -1320,7 +1320,7 @@ def patch():
 
     updated_content = content[:js_start] + new_js + content[js_end:]
     HTML_PATH.write_text(updated_content, encoding="utf-8")
-    print("Successfully patched 测试设备授权平台V2.html!")
+    print("Successfully patched 02-原型/app/测试设备授权平台V2.html!")
 
 if __name__ == "__main__":
     patch()

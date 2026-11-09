@@ -6,7 +6,7 @@ const path = require('path');
 const { loadV2Dom, fireChange } = require('./helpers/load-v2-dom.cjs');
 const fixtures = require('./fixtures/authorization-fixtures.cjs');
 
-const rules = require(path.join(__dirname, '..', 'authorization-application-rules.js'));
+const rules = require(path.join(__dirname, '..', '02-原型', 'app', 'authorization-application-rules.js'));
 
 function getDeviceFactValue(panel, label) {
   const item = Array.from(panel.querySelectorAll('.device-fact-item')).find((candidate) =>

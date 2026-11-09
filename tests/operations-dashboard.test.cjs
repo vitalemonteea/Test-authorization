@@ -5,8 +5,8 @@ const fs=require('node:fs');
 const path=require('node:path');
 const {JSDOM}=require('jsdom');
 const {loadV2Dom}=require('./helpers/load-v2-dom.cjs');
-const model=require('../operations-dashboard-model.js');
-const root=path.join(__dirname,'..');
+const model=require('../02-原型/app/operations-dashboard-model.js');
+const root=path.join(__dirname,'..','02-原型','app');
 function load(options={}) {
   const dom=new JSDOM(fs.readFileSync(path.join(root,'operations-dashboard.html'),'utf8'),{runScripts:'outside-only',pretendToBeVisual:true,url:'http://localhost/operations-dashboard.html'});
   const w=dom.window,d=w.document,errors=[];
@@ -172,7 +172,7 @@ test('records remain available from host navigation without a duplicate dashboar
 });
 
 test('mock cohorts, event logs and date grains reconcile without using confirmed inputs',()=>{
-  const mock=require('../operations-dashboard-mock.js'),s='2026-09-08',e='2026-10-11',c=mock.aggregate(s,e);
+  const mock=require('../02-原型/app/operations-dashboard-mock.js'),s='2026-09-08',e='2026-10-11',c=mock.aggregate(s,e);
   assert.equal(mock.mock,true);assert.ok(c.stats.count>0);assert.notEqual(c.stats.count,model.sum(s,e));
   assert.equal(c.stats.count,c.stats.product+c.stats.xaas);
   assert.equal(c.stats.count,c.stats.rejected+c.approvalPending+c.passed);

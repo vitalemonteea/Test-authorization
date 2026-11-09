@@ -9,9 +9,9 @@
 
 一句话：**一个可运行的单页原型（测试设备授权平台 V2），加上围绕它的需求、调研、规则和交付物。**
 
-- 原型入口：[`测试设备授权平台V2.html`](测试设备授权平台V2.html)（`index.html` 是指向它的软链接）
+- 原型入口：[`02-原型/app/测试设备授权平台V2.html`](02-原型/app/测试设备授权平台V2.html)（`index.html` 是指向它的软链接）
 - 当前需求基线：V2 需求明细 V2.6（2026-11-06）
-- 当前测试基线：`npm test` → **269 个用例全部通过**
+- 当前测试基线：`npm test` → **271 个用例全部通过**
 
 ---
 
@@ -22,10 +22,10 @@
 | 30 秒了解项目 | 本文件 | [`handoff.md`](handoff.md) 最新状态 |
 | 查 V2 页面需求 | [`docs/01-需求/REQ-V2_测试设备授权平台/测试设备授权平台V2需求概述.md`](docs/01-需求/REQ-V2_测试设备授权平台/测试设备授权平台V2需求概述.md) | [`docs/01-需求/REQ-V2_测试设备授权平台/测试设备授权平台V2需求明细.md`](docs/01-需求/REQ-V2_测试设备授权平台/测试设备授权平台V2需求明细.md)（**权威**） |
 | 查解决方案型需求 | [`docs/01-需求/REQ-SOL_解决方案型授权/解决方案型测试授权需求方案.md`](docs/01-需求/REQ-SOL_解决方案型授权/解决方案型测试授权需求方案.md) | 同名 `.docx` 是交付版 |
-| 改原型页面 | [`测试设备授权平台V2.html`](测试设备授权平台V2.html) | [`tests/`](tests/) 对应测试 |
-| 改业务规则 | [`authorization-application-rules.js`](authorization-application-rules.js) | [`tests/authorization-rule-model.test.cjs`](tests/authorization-rule-model.test.cjs) |
-| 改设备信息收集 / 上传链接 | [`info-collection-ui.js`](info-collection-ui.js)、[`info-upload.html`](info-upload.html) | [`docs/01-需求/REQ-V2_测试设备授权平台/设计/授权文件上传中间页-流程图.md`](docs/01-需求/REQ-V2_测试设备授权平台/设计/授权文件上传中间页-流程图.md) |
-| 改运营看板（产品内） | [`operations-dashboard.html`](operations-dashboard.html) | [`docs/01-需求/REQ-OPS_运营看板/测试授权运营看板需求文档.md`](docs/01-需求/REQ-OPS_运营看板/测试授权运营看板需求文档.md) |
+| 改原型页面 | [`02-原型/app/测试设备授权平台V2.html`](02-原型/app/测试设备授权平台V2.html) | [`tests/`](tests/) 对应测试 |
+| 改业务规则 | [`02-原型/app/authorization-application-rules.js`](02-原型/app/authorization-application-rules.js) | [`tests/authorization-rule-model.test.cjs`](tests/authorization-rule-model.test.cjs) |
+| 改设备信息收集 / 上传链接 | [`02-原型/app/info-collection-ui.js`](02-原型/app/info-collection-ui.js)、[`02-原型/app/info-upload.html`](02-原型/app/info-upload.html) | [`docs/01-需求/REQ-V2_测试设备授权平台/设计/授权文件上传中间页-流程图.md`](docs/01-需求/REQ-V2_测试设备授权平台/设计/授权文件上传中间页-流程图.md) |
+| 改运营看板（产品内） | [`02-原型/app/operations-dashboard.html`](02-原型/app/operations-dashboard.html) | [`docs/01-需求/REQ-OPS_运营看板/测试授权运营看板需求文档.md`](docs/01-需求/REQ-OPS_运营看板/测试授权运营看板需求文档.md) |
 | 改人工汇报页 | [`运营看板/index.html`](运营看板/index.html) | [`运营看板/真实数据补充清单.md`](运营看板/真实数据补充清单.md) |
 | 找调研依据 | [`docs/02-证据/调研/测试授权专项 阶段性调研结论与基础数据.xlsx`](docs/02-证据/调研/测试授权专项%20阶段性调研结论与基础数据.xlsx) | VOC、规则 xlsx |
 | 写操作手册 | [`docs/03-交付/操作手册/测试设备授权平台操作手册.docx`](docs/03-交付/操作手册/测试设备授权平台操作手册.docx) | [`docs/03-交付/操作手册/截图/`](docs/03-交付/操作手册/截图/) |
@@ -33,7 +33,7 @@
 | 交接给 AI / 新人 | [`AGENTS.md`](AGENTS.md) | [`docs/00-索引/项目文件地图.md`](docs/00-索引/项目文件地图.md) |
 
 > 完整的文件清单、版本关系、过期清单见 **[docs/00-索引/项目文件地图.md](docs/00-索引/项目文件地图.md)**。
-> 目录怎么重构、下一步怎么搬，见 **[docs/00-索引/目录规范建议.md](docs/00-索引/目录规范建议.md)**。
+> 目录为什么这样分层、已经走过哪些迁移，见 **[docs/00-索引/目录规范建议.md](docs/00-索引/目录规范建议.md)**。
 
 ---
 
@@ -41,20 +41,20 @@
 
 ```text
 测试授权-解决方案型/
-├── 测试设备授权平台V2.html      # 原型唯一源文件（16k 行）
-├── index.html                  # → V2.html 的符号链接
-├── info-collection-*.js/css    # 设备信息收集共享组件
-├── info-upload.html/js/css     # 客户免登录上传页
-├── authorization-application-rules.js  # 业务规则引擎
-├── operations-dashboard.*      # 产品内运营看板（V2 iframe）
-├── logo.jpg / mock-data/       # 静态资源与 4 个演示 .info
-├── tests/                      # 25 个测试文件，269 用例
-├── scripts/                    # 构建脚本 + 文档生成脚本
-├── vendor/                     # Vue 3.5.44 + Element Plus 2.14.7
-├── dist/                       # npm run build 产物（2026-11-09 已重建）
-├── docs/                       # 00-索引 / 01-需求 / 02-证据 / 03-交付 / 99-归档
-├── 运营看板/                    # 独立人工汇报页（另一套实现）
-└── 工作区/                      # AI 临时区（gitignore，可整目录删除）
+├── 02-原型/app/                 # 运行区：唯一可运行原型
+│   ├── 测试设备授权平台V2.html  # 原型唯一源文件（16k 行）
+│   ├── authorization-application-rules.js  # 业务规则引擎
+│   ├── info-collection-* / info-upload.*   # 设备信息收集与免登录上传
+│   ├── operations-dashboard.*   # 产品内运营看板（V2 iframe）
+│   ├── logo.jpg / mock-data/    # 静态资源与 4 个演示 .info
+│   └── vendor/                  # Vue 3.5.44 + Element Plus 2.14.7
+├── index.html                   # → 02-原型/app/测试设备授权平台V2.html
+├── tests/                       # 25 个测试文件，271 用例
+├── scripts/                     # 构建脚本 + 文档生成脚本
+├── dist/                        # npm run build 产物（2026-11-09 已重建）
+├── docs/                        # 00-索引 / 01-需求 / 02-证据 / 03-交付 / 99-归档
+├── 运营看板/                     # 独立人工汇报页（另一套实现）
+└── 工作区/                       # AI 临时区（gitignore，可整目录删除）
 ```
 
 ---
@@ -89,11 +89,11 @@ node 运营看板/build-dashboard.cjs
 
 ## 五个容易踩的坑
 
-1. **根目录 6 个 zip 都早于当前源码**；`dist/` 已于 2026-11-09 重新构建，但打包/部署前仍应重跑 `npm run build`，不要直接拿旧 zip。
+1. **`docs/03-交付/部署包/` 里的 6 个 zip 都早于当前源码**；`dist/` 已于 2026-11-09 重新构建，但打包/部署前仍应重跑 `npm run build`，不要直接拿旧 zip。
 2. **`.claude/worktrees/record-page-fields` 有 2 个未合并提交**（记录页字段，2026-11-06/07）。不要当废弃目录删除，先合并或开 PR。
 3. **约 30 份文档未纳入 Git**（Phase 1/2 归位的草稿、证据 xlsx/eml、归档导出、操作手册，以及 4 份导航文档；含终稿 docx、授权变更延期、VDC、VOC、调研结论、info 解密接口等），另有 2 张设计稿 PNG 被 `.gitignore` 忽略。换机/清理前先备份或提交。
 4. **`docs/99-归档/2026-10-运营看板旧版/运营看板Demo说明.md` 和 `handoff.md` 的看板章节描述的是 10-16 四栏版**，当前代码是三栏版且没有 CSV 导出；以 `docs/01-需求/REQ-OPS_运营看板/测试授权运营看板需求文档.md` V1.3 为准。
-5. **`HCI.info` 是真实加密样本**，已移入 `工作区/原始样本/`，不要提交；演示请用 `mock-data/` 下的 4 个夹具（原型按**文件名**识别场景）。
+5. **`HCI.info` 是真实加密样本**，已移入 `工作区/原始样本/`，不要提交；演示请用 `02-原型/app/mock-data/` 下的 4 个夹具（原型按**文件名**识别场景）。
 
 ---
 

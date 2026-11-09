@@ -2,13 +2,14 @@
 
 ## 最新状态（2026-11-09）
 
-- 2026-11-03 需求文档更新（仅文档，未改代码），见下方条目；代码状态截至 2026-10-21。
-- 当前分支：`codex/solution-authorization-demo`，合并提交 `a3678bf`，已 push 到 origin。
+- 2026-11-03 需求文档更新（仅文档，未改代码），见下方条目；代码状态截至 2026-11-09（Phase 3 仅迁移目录，无功能改动）。
+- 当前分支：`codex/solution-authorization-demo`，最近提交 `726f981`；Phase 3 目录迁移在本地工作区，尚未提交。
 - 最新功能：授权文件上传中间页双通道收集与交付，详见文末 §11 的 2026-10-19 条目；本轮将设备信息收集入口重做无模式化（字段内动作并存、状态由数据推导），详见下方 2026-10-20 条目。
-- 入口与验证：`npm test` 269/269 通过（2026-11-09 实测）；`npm run build` 成功。
+- 入口与验证：`npm test` 271/271 通过（2026-11-09 实测）；`npm run build` 成功。
 - 接手优先阅读：`README.md`、`docs/00-索引/项目文件地图.md`、`docs/01-需求/REQ-V2_测试设备授权平台/设计/授权文件上传中间页-流程图.md`、`docs/01-需求/REQ-V2_测试设备授权平台/设计/flowcharts-readable.html`、`tests/info-collection.test.cjs`。
-- 历史章节中的旧文件名保留原样（仅作追溯）；当前有效文件以 `README.md`、`docs/00-索引/项目文件地图.md` 和 `docs/README.md` 为准。
+- 运行区已于 2026-11-09 迁至 `02-原型/app/`，文中运行文件路径已同步；历史章节其余旧文件名保留原样。当前有效文件以 `README.md`、`docs/00-索引/项目文件地图.md` 和 `docs/README.md` 为准。
 - 2026-11-09 文档目录 Phase 2 完成：33 个 `docs/` 内文档 + 7 个根目录文档已用 `git mv` 迁入 `00-索引/`、`01-需求/`、`02-证据/`、`99-归档/`；入口、索引、脚本与文档间引用已同步。
+- 2026-11-09 Phase 3 完成：V2、上传页、运营看板、共享 js/css、logo、vendor、mock-data 已整体迁入 `02-原型/app/`；构建脚本、12 个测试、根 `index.html` 软链与相关文档引用已同步，271/271 测试通过、构建成功。
 - 下文 §0 为 2026-10-16 的运营看板交接记录，保留作历史参考。
 
 ### 2026-11-03 需求文档更新（仅文档）
@@ -23,15 +24,15 @@
 
 最终改动：
 
-- `测试设备授权平台V2.html`
+- `02-原型/app/测试设备授权平台V2.html`
   - 产品授权页：硬件信息文件去掉必填红星与提前的「邀请客户上传」入口；提交时若无 `.info` 文件，弹出引导而不是提交。
   - **修复提交绕过**：原先只要手工填了设备 ID 就能不传文件提交，现已改为设备 ID 仅用于识别，不能替代 `.info`；HCI 等强制文件产品必须真的拿到文件（申请人上传或客户上传回传）。
   - 解决方案页：HCI 设备信息同样去掉红星与字段内发送入口；`validateApplication` 仍要求文件 + 集群标识，缺文件时弹同一个引导。
   - **修复借测单假数据**：借测单原先预填 `infoFile = 硬件信息-<设备ID>.xlsx`，导致什么都没传也能提交；现在只带入设备 ID/集群标识，文件必须真实上传。
   - 新增 `showDeviceInfoGuide(kind)` 统一引导弹窗：「我自己上传」「发送链接让客户上传」「继续填写」；发送后字段原地转为等待客户上传任务卡。
   - `refreshSolutionDeviceUI` 只按任务状态切换上传面板/任务卡，不再有 `solutionDeviceModeChoice` 瞬态状态与相关竞态补丁。
-- `info-collection-ui.js`：公开 `invite(kind)` 供提交引导调用；发送成功弹窗保留「继续填写申请」。
-- `info-collection.css`：新增提交引导所用弹窗复用 `.ic-*` 样式；清理模式单选与状态行样式。
+- `02-原型/app/info-collection-ui.js`：公开 `invite(kind)` 供提交引导调用；发送成功弹窗保留「继续填写申请」。
+- `02-原型/app/info-collection.css`：新增提交引导所用弹窗复用 `.ic-*` 样式；清理模式单选与状态行样式。
 - 2026-10-21 补充字段提示文案：产品授权页与解决方案页统一把提示放在输入框内，单行文案为“未选文件；可先填其他信息，再发链接由外部上传（多选 .info）”，不额外增加字段下方说明。上传方统一称为“外部”，不使用“客户”。解决方案页上传按钮同步简化为“上传文件（可多选）”，与产品授权页一致并为提示文字留出宽度。
 - 2026-10-21 统一设备信息收集文案并新增“复制文案”：提交引导、发送链接弹窗、发送结果弹窗、状态卡、待办列表中的上传方统一由“客户”改为“外部”（客户选择等业务实体表述保留）；发送结果弹窗与等待任务卡新增「复制文案」，一键复制包含名称、产品/方案、上传链接和有效期的转发文案；外部上传页标题改为“设备信息收集”。
 - 测试：`tests/info-collection.test.cjs` 改为断言“非必填 + 提交弹引导 + 发链接后转任务卡”；`solution-authorization-demo` / `solution-phone-device-filter` 在借测单提交用例中改为先真实上传 HCI 文件；`multi-device-compatibility` 增加文件后提交。全量 234/234 通过。
@@ -46,7 +47,7 @@
 
 - 当前工作目录：`/Users/qianjincheng/Library/Mobile Documents/com~apple~CloudDocs/Sangfor/原型/测试授权-解决方案型`。
 - 本次检查所在分支（历史）：`codex/info-collection-demo`；当前主分支已合并为 `codex/solution-authorization-demo`（`a3678bf`，已 push）。工作区有用户既有修改和未跟踪文件，不要重置、清理或整体覆盖。
-- 产品入口：`测试设备授权平台V2.html?tab=operations`，由 iframe 加载 `operations-dashboard.html`；也可单独打开后者。
+- 产品入口：`02-原型/app/测试设备授权平台V2.html?tab=operations`，由 iframe 加载 `02-原型/app/operations-dashboard.html`；也可单独打开后者。
 - 本产品看板只能读取授权平台内数据，不展示企微申请量、跨渠道承接率或迁移效果。`运营看板/` 下的人工汇报页面为本地文件，当前未纳入仓库，不随产品看板一起修改。
 - 接手优先阅读 `docs/99-归档/2026-10-运营看板旧版/运营看板Demo说明.md`、`docs/01-需求/REQ-OPS_运营看板/运营看板方案覆盖与待确认项.md` 和 `tests/operations-dashboard.test.cjs`；原运营方案见 `docs/02-证据/运营与埋点/测试设备授权平台运营监控与数据分析方案.docx`，补充参考 `docs/02-证据/运营与埋点/运营计划（含埋点方案）.md`。
 
@@ -58,7 +59,7 @@
 - 趋势保留折线图，支持指标选择与日/周/月粒度；缺失数据断线，不补零。非完整周期用空心点及相邻虚线提示。
 - 埋点事件提供事件汇总与逐条日志，随顶部日期联动；日志每页 20 条，切换日期回到第一页，导出包含所选范围的全部日志。
 - 业务单据仍通过平台侧栏“授权记录”查询，不在看板重复放申请明细或授权记录快捷按钮。
-- 用户要求优先使用 Element 组件。当前 Tab、表格、空状态及日志分页已使用真实 Element Plus；Vue 3.5.44、Element Plus 2.14.7 锁定依赖并保存在本地 `vendor/`，包含许可证，不依赖在线 CDN。原有日期及部分控件尚未整体迁移；折线图、指标卡等保留现有实现，不能宣称所有控件均已迁移。
+- 用户要求优先使用 Element 组件。当前 Tab、表格、空状态及日志分页已使用真实 Element Plus；Vue 3.5.44、Element Plus 2.14.7 锁定依赖并保存在本地 `02-原型/app/vendor/`，包含许可证，不依赖在线 CDN。原有日期及部分控件尚未整体迁移；折线图、指标卡等保留现有实现，不能宣称所有控件均已迁移。
 
 不要恢复用户已删除的内容：大型标题说明区、生产埋点快照切换、全局维度筛选、申请明细、数据接入状态模块、上一等长区间对比表、历史排查资料、本期观察、页底来源和日期备注。开发说明留在文档，不重新放回产品界面。
 
@@ -66,10 +67,10 @@
 
 用户最新明确允许运营看板使用 Mock，以查看完整展示效果；这覆盖此前对演示页缺失数据一律留空的要求，但不授权伪造真实统计。
 
-- `operations-dashboard-model.js`：保留已确认真实周表，未用模拟数覆盖。真实数据覆盖 2026-09-08—10-11，共 7366 条（产品授权 7331、XaaS 35，二者是授权类别，不是产品线）。具体来源、样本边界和旧截图冲突见 Demo 说明。
-- `operations-dashboard-mock.js`：默认模拟模型；浏览器把原模型保留为 `window.ConfirmedOperationsModel`，以 Mock 提供 `window.OperationsModel`。模拟从实际上线日 2026-09-08 至浏览器上海当天生成，同一日期刷新数值不变，不生成上线前申请。
-- `operations-mock-view.js`：渲染模拟指标、原因、审批节点及耗时分布，并提供指标详情和导出数据。
-- `operations-dashboard.js`：日期查询、趋势、口径弹窗及 CSV 导出联动；`operations-events.js`：Element Tab、事件汇总、日志和分页；样式见 `operations-dashboard.css`。
+- `02-原型/app/operations-dashboard-model.js`：保留已确认真实周表，未用模拟数覆盖。真实数据覆盖 2026-09-08—10-11，共 7366 条（产品授权 7331、XaaS 35，二者是授权类别，不是产品线）。具体来源、样本边界和旧截图冲突见 Demo 说明。
+- `02-原型/app/operations-dashboard-mock.js`：默认模拟模型；浏览器把原模型保留为 `window.ConfirmedOperationsModel`，以 Mock 提供 `window.OperationsModel`。模拟从实际上线日 2026-09-08 至浏览器上海当天生成，同一日期刷新数值不变，不生成上线前申请。
+- `02-原型/app/operations-mock-view.js`：渲染模拟指标、原因、审批节点及耗时分布，并提供指标详情和导出数据。
+- `02-原型/app/operations-dashboard.js`：日期查询、趋势、口径弹窗及 CSV 导出联动；`02-原型/app/operations-events.js`：Element Tab、事件汇总、日志和分页；样式见 `02-原型/app/operations-dashboard.css`。
 - 数量由同一套模拟申请及事件推导，类别/产品线合计与申请量一致，审批、生成、激活状态闭合，事件汇总可核对逐条日志。模拟单号以 `MOCK` 开头，用户为“演示用户”等，审批节点为“演示节点”。
 - 页面标注“模拟数据”，CSV 标注“模拟数据（非生产统计）”。不混入真实周表、旧埋点截图或企微数据；不新增数据源切换按钮。
 - `scripts/build-static.cjs` 已补入看板、Mock、事件及本地组件资源清单，但本轮没有重新构建部署包。
@@ -109,9 +110,9 @@
 
 1. `AGENTS.md`
 2. `docs/01-需求/REQ-SOL_解决方案型授权/解决方案型测试授权需求方案.md`（V2.2 终稿），作为解决方案申请流程的业务规则依据；运营看板按 §0 所列文档及最新业务确认执行
-3. `测试设备授权平台V2.html`，作为页面、组件和交互能力基线
+3. `02-原型/app/测试设备授权平台V2.html`，作为页面、组件和交互能力基线
 4. `docs/01-需求/REQ-V2_测试设备授权平台/测试设备授权平台V2需求明细.md` §3「授权记录页面」，了解解决方案授权记录的结构（原独立原型已删除，功能已并入 V2）
-5. `tests/record-workflows.test.cjs` 和 `authorization-application-rules.js`
+5. `tests/record-workflows.test.cjs` 和 `02-原型/app/authorization-application-rules.js`
 
 不要沿用旧文档或旧讨论中的“资产审批后发消息给 W3、W3 自动生成授权记录”方案，该方案已经废弃。
 
@@ -188,7 +189,7 @@
 
 ### 5.3 授权记录
 
-- 复用 `测试设备授权平台V2.html` 中 `.solution-parent` + `.solution-detail-row` 结构。
+- 复用 `02-原型/app/测试设备授权平台V2.html` 中 `.solution-parent` + `.solution-detail-row` 结构。
 - 保留类型筛选“解决方案”。
 - 新申请成功后应能在记录区看到一条解决方案记录并展开查看产品明细。
 
@@ -216,16 +217,16 @@
 
 ## 8. 关键文件与现有能力
 
-- `测试设备授权平台V2.html`：主 Demo，包含申请页、审批/记录相关交互。
-- `authorization-application-rules.js`：授权申请规则模型。
-- `测试设备授权平台V2.html` 的「授权记录」页：原独立原型 `prototype-授权记录列表.html` 已删除，功能已并入 V2；需求见明细 §3。
+- `02-原型/app/测试设备授权平台V2.html`：主 Demo，包含申请页、审批/记录相关交互。
+- `02-原型/app/authorization-application-rules.js`：授权申请规则模型。
+- `02-原型/app/测试设备授权平台V2.html` 的「授权记录」页：原独立原型 `prototype-授权记录列表.html` 已删除，功能已并入 V2；需求见明细 §3。
 - `tests/record-workflows.test.cjs`：授权记录和操作流程测试。
 - `测试授权V2.md`：仅用于理解基线能力，不作为本需求业务规则来源。
 - `docs/01-需求/REQ-SOL_解决方案型授权/解决方案型测试授权需求方案.md`：本需求业务规则来源（原「申请概要方案」已删除）。
 
 现有解决方案记录定位参考：
 
-- `测试设备授权平台V2.html` 中搜索 `solution-parent`、`solution-detail-row`、`SOL-202607`。
+- `02-原型/app/测试设备授权平台V2.html` 中搜索 `solution-parent`、`solution-detail-row`、`SOL-202607`。
 - `tests/record-workflows.test.cjs` 中已有解决方案 Mock 记录断言。
 
 ## 9. 实施约束
@@ -282,9 +283,9 @@ git diff --check
 
 ### 2026-10-20 客户设备信息上传页改为 Vue 3 + Element Plus
 
-- `info-upload.html` / `info-upload.js` / `info-upload.css`：客户免登录上传页重写为 Vue 3 + Element Plus，使用本地 `vendor/` 资源，不依赖在线 CDN。
+- `02-原型/app/info-upload.html` / `02-原型/app/info-upload.js` / `02-原型/app/info-upload.css`：客户免登录上传页重写为 Vue 3 + Element Plus，使用本地 `02-原型/app/vendor/` 资源，不依赖在线 CDN。
 - 保留原有能力：多文件选择/拖拽、逐文件校验、进度时间线、催办、授权文件下载；新增邀请信息侧栏、步骤条与 Element Plus 组件交互。
-- `scripts/build-static.cjs`：构建产物加入 `info-upload.css`。
+- `scripts/build-static.cjs`：构建产物加入 `02-原型/app/info-upload.css`。
 - `tests/info-collection.test.cjs`：加载本地 Vue/Element Plus 运行时，并适配异步渲染。
 - 后续微调：简化页头文案，文件列表头部统一为“已选择 N 个文件”，补充上传表单布局与响应式样式。
 - 验证：`npm test` 234/234 通过；`npm run build` 成功；浏览器实测 2 个文件上传、校验与提交正常。
@@ -308,7 +309,7 @@ git diff --check
 
 改动：
 
-- 新增 `info-upload.html` / `info-upload.js` / `info-collection-model.js` / `info-collection-ui.js` / `info-collection.css`：客户免登录上传中间页，支持多文件、逐文件校验、进度、催办与授权文件下载。
+- 新增 `02-原型/app/info-upload.html` / `02-原型/app/info-upload.js` / `02-原型/app/info-collection-model.js` / `02-原型/app/info-collection-ui.js` / `02-原型/app/info-collection.css`：客户免登录上传中间页，支持多文件、逐文件校验、进度、催办与授权文件下载。
 - 发送链接改为弹窗填写客户邮箱，并选择触发方式：A 客户上传校验通过后直接发起；B 客户上传后由申请人确认（默认）。仅邮件发送，不接入企微。
 - 新增「我的待办」与页头通知铃铛（待我审批 / 我的待办），串联等待上传、客户已上传、待确认、自动发起失败等状态。
 - 在线与线下互斥：申请人手工上传后，原客户上传链接立即失效；客户文件不回填 file 控件，用内存对象承接。
@@ -334,7 +335,7 @@ Demo 边界：邮件发送为模拟；客户与平台通过同浏览器 `localSt
 
 改动（PR #3，3 个提交）：
 
-- `测试设备授权平台V2.html`
+- `02-原型/app/测试设备授权平台V2.html`
   - 模拟资产系统读取 payload：废弃的 `authEndDate`（恒为空串）→ `authDays`（`Number(item.authDays) || 0`）。
   - `application` 初始对象与 `resetApplication` 补充 `authDays: 0` 清理。
   - 模块导航遮挡修复：导航直接挂在 body 下（z-index 2100），抽屉嵌在内容区堆叠上下文内（声明 5600 但被封顶）压不住；改为 `body:has(#solutionConfigDrawer:not([hidden])) .module-nav` 与 `#solutionConfigModal` 同理，抽屉/弹窗打开时直接隐藏导航，关闭自动恢复。
@@ -350,7 +351,7 @@ Demo 边界：邮件发送为模拟；客户与平台通过同浏览器 `localSt
 
 改动：
 
-- `测试设备授权平台V2.html`
+- `02-原型/app/测试设备授权平台V2.html`
   - `configs` 中 `SOL-CLOUD-001 企业云一体化方案` 的 `productLines` 加入 `'SaaS-XDR'`（现 6 行：HCI/AC/NGAF/AD/WOC + SaaS-XDR）。
   - `borrowOrders` 中 `BOR-202608-001` 的 `productLines` 同步加入 `'SaaS-XDR'`，并补 `cloud: { account: 'huadong-admin', tenantId: 'YT-10010101' }`（保持一致的原 5 台设备不变）。
   - `solutionBorrowCustomers` 中 `C100101 华东智造集团有限公司` 补 `cloud: { account: 'huadong-admin', tenantId: 'YT-10010101' }`（单云图账号自动关联，行为与 C100106 一致）。

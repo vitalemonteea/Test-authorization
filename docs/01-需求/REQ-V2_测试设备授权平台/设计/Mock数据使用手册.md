@@ -1,7 +1,7 @@
 # 测试授权 V2 Mock 数据使用手册
 
 > 更新时间：2026-07-27
-> 适用页面：`测试设备授权平台V2.html`  
+> 适用页面：`02-原型/app/测试设备授权平台V2.html`<br>
 > 默认客户：`C100001 / 深圳市腾讯计算机系统有限公司`。
 
 **使用前先看“复现客户”列。** 授权历史会按规则中的客户口径重新查询；同一个设备可以被不同客户、不同批次重复使用，因此搭配不同客户时结果可能不同。表中的客户只用于稳定复现指定历史场景，不代表设备固定归属于该客户。
@@ -19,10 +19,10 @@
 | 销售设备首次开通 | `C100001` | aTrust | 纯软测试 | `SALES-ATRUST-FIRST` | 首次开通，显示“销售设备”标签 |
 | 销售设备重新开通 | `C100001` | aTrust | 纯软测试 | `SALES-ATRUST-REOPEN` | 重新开通，显示“销售设备”标签 |
 | 销售设备有效期内调整 | `C100001` | aTrust | 纯软测试 | `SALES-ATRUST-001` | 可组合延期、增开模块、扩大容量 |
-| HCI 首次开通 | 任意客户 | HCI | 上传硬件信息文件 | `mock-data/HCI-device-demo.info` | 按客户 + 产品线 + 集群标识查询，匹配 0 条历史 |
-| HCI 有效期内调整 | `C100001` | HCI | 上传硬件信息文件 | `mock-data/HCI-active-demo.info` | 匹配有效授权，当前容量 16，模块含分布式存储 |
-| HCI 重新开通 | `C100001` | HCI | 上传硬件信息文件 | `mock-data/HCI-expired-demo.info` | 匹配 1 条已结束集群授权 |
-| SCP 首次开通 | 任意客户 | SCP | 上传硬件信息文件 | `mock-data/SCP-device-demo.info` | 按客户 + 产品线 + 集群标识查询，匹配 0 条历史 |
+| HCI 首次开通 | 任意客户 | HCI | 上传硬件信息文件 | `02-原型/app/mock-data/HCI-device-demo.info` | 按客户 + 产品线 + 集群标识查询，匹配 0 条历史 |
+| HCI 有效期内调整 | `C100001` | HCI | 上传硬件信息文件 | `02-原型/app/mock-data/HCI-active-demo.info` | 匹配有效授权，当前容量 16，模块含分布式存储 |
+| HCI 重新开通 | `C100001` | HCI | 上传硬件信息文件 | `02-原型/app/mock-data/HCI-expired-demo.info` | 匹配 1 条已结束集群授权 |
+| SCP 首次开通 | 任意客户 | SCP | 上传硬件信息文件 | `02-原型/app/mock-data/SCP-device-demo.info` | 按客户 + 产品线 + 集群标识查询，匹配 0 条历史 |
 | 查询超时 | 任意客户 | NGAF | 任意申请类型 | `ERR-TIMEOUT-001` | 显示查询失败，可重试或保存草稿，阻断提交 |
 | 硬件未知设备 | 任意客户 | NGAF | 硬件借测 | `UNKNOWN-BORROWED-001` | 未匹配借测资产，直接阻断，不进入人工确认 |
 | 纯软未知标识 | 任意客户 | NGAF | 纯软测试 | `UNKNOWN-001` | 不校验资产有效性，无历史时按首次开通 |
@@ -81,10 +81,10 @@
 
 | 文件 | 产品 | 集群标识 | 预期场景 | 历史详情 |
 | --- | --- | --- | --- | --- |
-| `mock-data/HCI-device-demo.info` | HCI | 自动生成首次集群标识 | 首次开通 | 无历史 |
-| `mock-data/HCI-active-demo.info` | HCI | `CLUSTER-HCI-ACTIVE` | 调整当前授权 | 90 天；到期 `2026-10-31`；容量 16；计算虚拟化、分布式存储 |
-| `mock-data/HCI-expired-demo.info` | HCI | `CLUSTER-HCI-EXPIRED` | 重新开通 | 90 天；到期 `2026-01-31`；容量 12；计算虚拟化 |
-| `mock-data/SCP-device-demo.info` | SCP | 自动生成首次集群标识 | 首次开通 | 无历史 |
+| `02-原型/app/mock-data/HCI-device-demo.info` | HCI | 自动生成首次集群标识 | 首次开通 | 无历史 |
+| `02-原型/app/mock-data/HCI-active-demo.info` | HCI | `CLUSTER-HCI-ACTIVE` | 调整当前授权 | 90 天；到期 `2026-10-31`；容量 16；计算虚拟化、分布式存储 |
+| `02-原型/app/mock-data/HCI-expired-demo.info` | HCI | `CLUSTER-HCI-EXPIRED` | 重新开通 | 90 天；到期 `2026-01-31`；容量 12；计算虚拟化 |
+| `02-原型/app/mock-data/SCP-device-demo.info` | SCP | 自动生成首次集群标识 | 首次开通 | 无历史 |
 
 文件名包含 `ACTIVE` 时识别为有效授权变体，包含 `EXPIRED` 时识别为过期授权变体，其他文件名识别为首次变体。
 

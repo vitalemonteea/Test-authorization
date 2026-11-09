@@ -2,6 +2,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const root = path.resolve(__dirname, '..');
+const appRoot = path.join(root, '02-原型', 'app');
 const dist = path.join(root, 'dist');
 const files = [
   ['测试设备授权平台V2.html', 'index.html'],
@@ -31,9 +32,9 @@ fs.rmSync(dist, { recursive: true, force: true });
 fs.mkdirSync(dist, { recursive: true });
 
 for (const [sourceName, targetName] of files) {
-  const source = path.join(root, sourceName);
+  const source = path.join(appRoot, sourceName);
   if (!fs.existsSync(source)) {
-    throw new Error(`Missing build input: ${sourceName}`);
+    throw new Error(`Missing build input: 02-原型/app/${sourceName}`);
   }
   const target = path.join(dist, targetName);
   fs.mkdirSync(path.dirname(target), { recursive: true });

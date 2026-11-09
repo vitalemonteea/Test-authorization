@@ -5,8 +5,9 @@ const path = require('path');
 const { JSDOM, VirtualConsole } = require('jsdom');
 
 const workspaceRoot = path.join(__dirname, '..', '..');
-const htmlPath = path.join(workspaceRoot, '测试设备授权平台V2.html');
-const rulesPath = path.join(workspaceRoot, 'authorization-application-rules.js');
+const appRoot = path.join(workspaceRoot, '02-原型', 'app');
+const htmlPath = path.join(appRoot, '测试设备授权平台V2.html');
+const rulesPath = path.join(appRoot, 'authorization-application-rules.js');
 
 function loadRules() {
   if (!fs.existsSync(rulesPath)) return {};

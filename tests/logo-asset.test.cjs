@@ -6,7 +6,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { JSDOM } = require('jsdom');
 
-const root = path.join(__dirname, '..');
+const root = path.join(__dirname, '..', '02-原型', 'app');
 const htmlPath = path.join(root, '测试设备授权平台V2.html');
 
 test('V2 侧边栏引用项目内可用的 JPEG Logo', () => {
