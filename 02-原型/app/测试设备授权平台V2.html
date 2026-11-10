@@ -1162,17 +1162,23 @@
         .record-xaas-subscription-meta-label{display:block;margin-bottom:2px;color:#7b8496;font-size:11px;line-height:16px}
         .record-xaas-subscription-meta-value{display:block;color:#424656;font-size:12px;line-height:18px;overflow-wrap:anywhere}
         .record-related-history{border:1px solid #dce3ed;border-radius:6px;background:#fff;overflow:hidden}
-        .record-related-toggle{display:flex;align-items:center;justify-content:space-between;width:100%;padding:10px 12px;border:0;background:#fff;color:#0b1c30;font-size:12px;line-height:18px;font-family:inherit;text-align:left;cursor:pointer}
-        .record-related-toggle:hover{background:#f7f9fc}
-        .record-related-toggle .material-symbols-outlined{font-size:18px;color:#6b7890;transition:transform .2s}
-        .record-related-toggle[aria-expanded="true"] .material-symbols-outlined{transform:rotate(180deg)}
-        .record-related-body{padding-bottom:4px;border-top:1px solid #eef2f7}
-        .record-related-group-head{padding:8px 12px;background:#f7f9fc;border-bottom:1px solid #eef2f7;color:#424656;font-size:12px;font-weight:600;line-height:18px}
+        .record-related-body{padding-bottom:4px}
+        .record-related-group-body[hidden]{display:none}
+        .record-related-group-head{display:flex;align-items:center;justify-content:space-between;width:100%;padding:8px 12px;border:0;background:#f7f9fc;border-bottom:1px solid #eef2f7;color:#424656;font:inherit;font-size:12px;font-weight:600;line-height:18px;text-align:left;cursor:pointer}
+        .record-related-group-head:hover{background:#f0f4fa}
+        .record-related-group-head .material-symbols-outlined{font-size:18px;color:#6b7890;transition:transform .2s}
+        .record-related-group-head[aria-expanded="true"] .material-symbols-outlined{transform:rotate(180deg)}
         .record-related-scroll{overflow-x:auto}
         .record-related-table{width:100%;border-collapse:collapse;font-size:11px;table-layout:fixed}
         .record-related-table th,.record-related-table td{padding:7px 6px;text-align:left;border-bottom:1px solid #eef2f7;white-space:normal;word-break:keep-all;vertical-align:top}
         .record-related-table th{background:#fbfcfe;color:#6b7890;font-weight:500}
+        .record-related-table td{white-space:nowrap}
         .record-related-table tr:last-child td{border-bottom:0}
+        .record-related-table .record-related-appno{white-space:nowrap;color:#003f9e;font-family:Consolas,"SFMono-Regular",monospace}
+        .record-related-table .record-related-date{white-space:nowrap}
+        .record-related-link{display:inline-flex;align-items:center;justify-content:center;min-height:22px;padding:0 8px;border:1px solid #cfe0ff;border-radius:4px;background:#f5f8ff;color:#0050cb;font:inherit;font-size:11px;line-height:16px;cursor:pointer}
+        .record-related-link:hover{background:#e8f0ff;border-color:#b9d3ff}
+        .record-related-link:disabled{cursor:not-allowed;color:#9aa6b8;background:#f5f7fa;border-color:#e1e6ef}
         .record-related-empty{padding:12px;color:#7b8496;font-size:12px}
         .record-product-change-list{display:flex;flex-direction:column;border:1px solid #dce3ed;border-radius:6px;overflow:hidden}
         .record-product-change-head,.record-product-change-row{display:grid;grid-template-columns:84px minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:start}
@@ -11141,6 +11147,29 @@
     var activeRecordWorkflow = null;
     var activeRecordRevoke = null;
     var activeSolutionDeviceContext = null;
+    var activeRelatedHistoryContext = null;
+    var recordDrawerInertSelectors = ['.layui-layout', '#moduleNav'];
+
+    function setRecordDrawerBackgroundInert(inert) {
+        recordDrawerInertSelectors.forEach(function(selector) {
+            var element = document.querySelector(selector);
+            if (!element) return;
+            if (inert) element.setAttribute('inert', '');
+            else element.removeAttribute('inert');
+        });
+    }
+
+    function getRecordDrawerFocusableElements() {
+        var layer = document.getElementById('recordDrawerLayer');
+        if (!layer || layer.hidden) return [];
+        var selector = 'button:not(:disabled), a[href], input:not(:disabled), select:not(:disabled), textarea:not(:disabled), [tabindex]:not([tabindex="-1"])';
+        return Array.prototype.slice.call(layer.querySelectorAll(selector)).filter(function(element) {
+            if (element.closest('[hidden]')) return false;
+            if (element.getAttribute('aria-hidden') === 'true') return false;
+            var style = window.getComputedStyle(element);
+            return style.display !== 'none' && style.visibility !== 'hidden';
+        });
+    }
 
     function resetSolutionDeviceMode() {
         activeSolutionDeviceContext = null;
@@ -11622,7 +11651,10 @@
         var layer = document.getElementById('recordDrawerLayer');
         lastRecordDrawerTrigger = trigger || null;
         activeRecordWorkflow = null;
+        activeRelatedHistoryContext = null;
         activeSolutionDeviceContext = { row: solutionRow, index: index };
+        var backButton = document.getElementById('recordDrawerBack');
+        backButton.textContent = '返回方案详情';
         setRecordDrawerMode('view');
         document.getElementById('recordDrawerTitle').textContent = '设备授权详情';
         document.getElementById('recordDrawerSubtitle').textContent = detail.solutionName + ' · ' + device.line + ' · ' + device.deviceId;
@@ -11671,6 +11703,7 @@
         }
 
         document.getElementById('recordDrawerBack').hidden = false;
+        setRecordDrawerBackgroundInert(true);
         layer.hidden = false;
         layer.setAttribute('aria-hidden', 'false');
         var drawerBody = layer.querySelector('.record-drawer-body');
@@ -11785,7 +11818,7 @@
         if (product === 'SaaS-XDR') {
             meta = [
                 { label: '版本', value: version },
-                { label: '日志接入数量', value: '2 亿条' },
+                { label: '日志接入数量', value: data.spec || '2 亿条' },
                 { label: '可选测试模块', value: '智能运营GPT、流量检测GPT、SOAR', full: true }
             ];
         } else if (product === 'NGDR' || product === 'SaaS-aES') {
@@ -11867,8 +11900,44 @@
                 family: 'SaaS-XDR 产品族',
                 name: '平台基本授权',
                 records: [
-                    { applicant: '王蕾', region: '华南区', appliedAt: '2026-07-01 10:20', product: 'SaaS-XDR', module: '平台基本授权', spec: '日志接入 1 亿条', endDate: '2026-09-30' },
-                    { applicant: '王蕾', region: '华南区', appliedAt: '2026-09-12 16:40', product: 'SaaS-XDR', module: '平台基本授权', spec: '日志接入 1.5 亿条', endDate: '2026-12-31' }
+                    {
+                        applicationNo: 'AUTH-20260701-101',
+                        applicant: '王蕾', region: '华南区', appliedAt: '2026-07-01 10:20',
+                        product: 'SaaS-XDR', version: 'XDR-2.1.0',
+                        customer: '京东集团股份有限公司', customerType: '普通客户',
+                        device: 'TENANT-XDR-JD-018', cloudAuthId: 'CLA-XDR-JD-018',
+                        validity: '2026-07-01 ~ 2026-09-30', endDate: '2026-09-30',
+                        status: '已过期', applicationAction: '首次开通试用', applicationType: '纯软测试',
+                        spec: '1 亿条',
+                        customerInfo: {
+                            contact: '王蕾', phone: '186****3098', email: 'wanglei***@jd.com',
+                            cloudAccount: '京东集团云图账号', industry: '批发和零售业 / 电子商务'
+                        }
+                    },
+                    {
+                        applicationNo: 'AUTH-20260912-102',
+                        applicant: '王蕾', region: '华南区', appliedAt: '2026-09-12 16:40',
+                        product: 'SaaS-XDR', version: 'XDR-2.1.0',
+                        customer: '京东集团股份有限公司', customerType: '普通客户',
+                        device: 'TENANT-XDR-JD-018', cloudAuthId: 'CLA-XDR-JD-018',
+                        validity: '2026-09-12 ~ 2026-12-31', endDate: '2026-12-31',
+                        status: '已授权', applicationAction: '变更 / 延期试用', applicationType: '纯软测试',
+                        spec: '1.5 亿条',
+                        customerInfo: {
+                            contact: '王蕾', phone: '186****3098', email: 'wanglei***@jd.com',
+                            cloudAccount: '京东集团云图账号', industry: '批发和零售业 / 电子商务'
+                        },
+                        changes: [
+                            { label: '授权有效期', before: '2026-09-30', after: '2026-12-31' },
+                            {
+                                module: '平台基本授权',
+                                items: [
+                                    { label: '日志接入数量', before: '1 亿条', after: '1.5 亿条' },
+                                    { label: '授权至', before: '2026-09-30', after: '2026-12-31' }
+                                ]
+                            }
+                        ]
+                    }
                 ]
             }],
             supplement: [
@@ -11892,12 +11961,14 @@
         var validityText = getRecordValidityDisplay(data.validity);
         var action = data.applicationAction || '首次开通试用';
         if (data.applicationAction === '变更 / 延期试用' && data.product === 'SaaS-XDR') {
-            return getXaasChangeRecordDetail(data, authorized, licenseCode);
+            var changeDetail = getXaasChangeRecordDetail(data, authorized, licenseCode);
+            if (data.changes && data.changes.length) changeDetail.changes = data.changes;
+            return changeDetail;
         }
         if (data.product === 'SaaS-XDR') {
             var xdrDetail = {
                 action: action,
-                customer: {
+                customer: data.customerInfo || {
                     contact: '赵敏', phone: '138****5621', email: 'zhao***@alibaba-inc.com',
                     cloudAccount: '阿里云图企业账号', industry: '互联网 / 综合互联网服务'
                 },
@@ -11906,7 +11977,7 @@
                     name: '平台基本授权',
                     status: authorized ? '已开通' : data.status,
                     specLabel: '日志接入数量(亿)',
-                    spec: '2 亿条',
+                    spec: data.spec || '2 亿条',
                     meta: getXaasSubscriptionMeta('SaaS-XDR', data, validityText)
                 }],
                 supplement: [
@@ -12510,12 +12581,13 @@
         ];
     }
 
-    function openRecordDetailDrawer(row, trigger) {
-        var data = getRecordRowData(row);
+    function openRecordDetailDrawer(row, trigger, dataOverride) {
+        var data = dataOverride || getRecordRowData(row);
         var meta = getRecordApprovalMeta(data.status);
         var layer = document.getElementById('recordDrawerLayer');
         lastRecordDrawerTrigger = trigger || null;
         activeRecordWorkflow = null;
+        activeRelatedHistoryContext = null;
         resetSolutionDeviceMode();
         setRecordDrawerMode('view');
         var applicationTitle = document.getElementById('recordApplicationTitle');
@@ -12589,7 +12661,7 @@
             appendRecordDetailItems(document.getElementById('recordSolutionDeliveryGrid'), getSolutionRecordDeliveryItems(solutionDetail));
         } else {
             var hasAuthorization = data.status === '已授权' || data.status === '已过期';
-            var solutionEmail = row.getAttribute('data-solution-email') || ((typeof application !== 'undefined' && application.email) ? application.email : 'license-recipient@sangfor.com.cn');
+            var solutionEmail = (row && row.getAttribute('data-solution-email')) || ((typeof application !== 'undefined' && application.email) ? application.email : 'license-recipient@sangfor.com.cn');
             appendRecordDetailItems(document.getElementById('recordAuthorizationGrid'), [
                 { label: '产品线/方案', value: data.product },
                 { label: '版本号', value: data.version },
@@ -12606,6 +12678,7 @@
             { label: '当前节点', value: meta.current }
         ]);
         renderRecordApprovalTimeline(document.getElementById('recordApprovalTimeline'), buildRecordApprovalSteps(data));
+        setRecordDrawerBackgroundInert(true);
         layer.hidden = false;
         layer.setAttribute('aria-hidden', 'false');
         var drawerBody = layer.querySelector('.record-drawer-body');
@@ -12827,67 +12900,181 @@
         return section;
     }
 
+    function captureApprovalDrawerState() {
+        var layer = document.getElementById('recordDrawerLayer');
+        var hidden = {};
+        ['recordDrawerPrimary', 'recordDrawerSecondary', 'recordDrawerReject', 'recordDrawerTransfer', 'recordMobileApprovalComposer', 'recordWorkflowError', 'recordMobileAttachmentStatus'].forEach(function(id) {
+            hidden[id] = document.getElementById(id).hidden;
+        });
+        return {
+            workflow: activeRecordWorkflow,
+            trigger: lastRecordDrawerTrigger,
+            title: document.getElementById('recordDrawerTitle').textContent,
+            subtitle: document.getElementById('recordDrawerSubtitle').textContent,
+            subtitleHidden: document.getElementById('recordDrawerSubtitle').hidden,
+            workflowAction: layer.getAttribute('data-record-workflow-action'),
+            primaryText: document.getElementById('recordDrawerPrimary').textContent,
+            secondaryText: document.getElementById('recordDrawerSecondary').textContent,
+            mobileOpinion: document.getElementById('recordMobileApprovalOpinion').value,
+            scrollTop: (layer.querySelector('.record-drawer-body') || {}).scrollTop || 0,
+            footerHidden: hidden
+        };
+    }
+
+    function restoreApprovalDrawerState() {
+        var context = activeRelatedHistoryContext;
+        if (!context) return false;
+        activeRelatedHistoryContext = null;
+        var layer = document.getElementById('recordDrawerLayer');
+        activeRecordWorkflow = context.workflow;
+        document.getElementById('recordDrawerView').hidden = true;
+        document.getElementById('recordDrawerWorkflow').hidden = false;
+        document.getElementById('recordDrawerTitle').textContent = context.title;
+        var subtitle = document.getElementById('recordDrawerSubtitle');
+        subtitle.textContent = context.subtitle;
+        subtitle.hidden = context.subtitleHidden;
+        document.getElementById('recordDrawerPrimary').textContent = context.primaryText;
+        document.getElementById('recordDrawerSecondary').textContent = context.secondaryText;
+        document.getElementById('recordMobileApprovalOpinion').value = context.mobileOpinion;
+        Object.keys(context.footerHidden).forEach(function(id) {
+            document.getElementById(id).hidden = context.footerHidden[id];
+        });
+        if (context.workflowAction) layer.setAttribute('data-record-workflow-action', context.workflowAction);
+        else layer.removeAttribute('data-record-workflow-action');
+        lastRecordDrawerTrigger = context.trigger;
+        var back = document.getElementById('recordDrawerBack');
+        back.hidden = true;
+        back.textContent = '返回方案详情';
+        var drawerBody = layer.querySelector('.record-drawer-body');
+        if (drawerBody) drawerBody.scrollTop = context.scrollTop;
+        var title = document.getElementById('recordDrawerTitle');
+        title.setAttribute('tabindex', '-1');
+        title.focus({ preventScroll: true });
+        return true;
+    }
+
+    function openRelatedRecordDetail(record, trigger) {
+        if (!record || !record.applicationNo) {
+            showRecordActionToast('该申请缺少申请编号，无法查看。');
+            return;
+        }
+        var approvalState = activeRelatedHistoryContext ||
+            (activeRecordWorkflow && activeRecordWorkflow.action === 'approve' ? captureApprovalDrawerState() : null);
+        openRecordDetailDrawer(null, trigger, {
+            applicationNo: record.applicationNo,
+            authorizationType: 'XaaS',
+            platform: 'XaaS平台',
+            product: record.product || 'SaaS-XDR',
+            version: record.version || 'XDR-2.1.0',
+            customer: record.customer || '京东集团股份有限公司',
+            customerType: record.customerType || '普通客户',
+            device: record.device || 'TENANT-XDR-JD-018',
+            deviceSn: record.deviceSn || '—',
+            cloudAuthId: record.cloudAuthId || 'CLA-XDR-JD-018',
+            region: record.region || '',
+            validity: record.validity || '',
+            applicant: record.applicant || '',
+            appliedAt: record.appliedAt || '',
+            status: record.status || '已授权',
+            applicationAction: record.applicationAction || '首次开通试用',
+            applicationType: record.applicationType || '纯软测试',
+            sales: record.sales || '钱金城',
+            office: record.office || getRecordOffice(record.region || ''),
+            spec: record.spec,
+            customerInfo: record.customerInfo,
+            changes: record.changes
+        });
+        if (approvalState) {
+            activeRelatedHistoryContext = approvalState;
+            var back = document.getElementById('recordDrawerBack');
+            back.textContent = '返回审核申请';
+            back.hidden = false;
+            document.getElementById('recordDrawerTitle').textContent = '历史申请详情';
+        }
+    }
+
     function renderXaasRelatedHistory(container, groups) {
         var section = createApproveSection(container, '关联此前申请记录', 'history');
         section.id = 'recordApproveRelatedSection';
         var wrapper = createRecordWorkflowElement('div', 'record-related-history');
-        var toggle = createRecordWorkflowElement('button', 'record-related-toggle');
-        toggle.type = 'button';
-        toggle.setAttribute('aria-expanded', 'false');
-        toggle.appendChild(createRecordWorkflowElement('span', '', '查看关联此前申请记录'));
-        var icon = createRecordWorkflowElement('span', 'material-symbols-outlined', 'expand_more');
-        icon.setAttribute('aria-hidden', 'true');
-        toggle.appendChild(icon);
-
         var body = createRecordWorkflowElement('div', 'record-related-body');
-        body.hidden = true;
+
         groups.forEach(function(group) {
-            body.appendChild(createRecordWorkflowElement('div', 'record-related-group-head', group.family + ' / ' + group.name));
+            var groupWrap = createRecordWorkflowElement('div', 'record-related-group');
+            var groupToggle = createRecordWorkflowElement('button', 'record-related-group-head');
+            groupToggle.type = 'button';
+            groupToggle.setAttribute('aria-expanded', 'true');
+            groupToggle.appendChild(document.createTextNode(group.family + ' / ' + group.name));
+            var icon = createRecordWorkflowElement('span', 'material-symbols-outlined', 'expand_more');
+            icon.setAttribute('aria-hidden', 'true');
+            groupToggle.appendChild(icon);
+
+            var groupBody = createRecordWorkflowElement('div', 'record-related-group-body');
             if (!group.records || !group.records.length) {
-                body.appendChild(createRecordWorkflowElement('div', 'record-related-empty', '暂无关联申请记录'));
-                return;
-            }
-            var scroll = createRecordWorkflowElement('div', 'record-related-scroll');
-            var table = document.createElement('table');
-            table.className = 'record-related-table';
-            var colgroup = document.createElement('colgroup');
-            [11, 9, 20, 13, 14, 19, 14].forEach(function(width) {
-                var col = document.createElement('col');
-                col.style.width = width + '%';
-                colgroup.appendChild(col);
-            });
-            table.appendChild(colgroup);
-            var thead = document.createElement('thead');
-            var headRow = document.createElement('tr');
-            ['申请人', '区域', '申请时间', '授权产品', '模块', '参数规格', '到期时间'].forEach(function(textValue) {
-                var th = document.createElement('th');
-                th.textContent = textValue;
-                headRow.appendChild(th);
-            });
-            thead.appendChild(headRow);
-            table.appendChild(thead);
-            var tbody = document.createElement('tbody');
-            group.records.forEach(function(record) {
-                var row = document.createElement('tr');
-                [record.applicant, record.region, record.appliedAt, record.product, record.module, record.spec, record.endDate].forEach(function(textValue) {
-                    var cell = document.createElement('td');
-                    cell.textContent = textValue || '—';
-                    row.appendChild(cell);
+                groupBody.appendChild(createRecordWorkflowElement('div', 'record-related-empty', '暂无关联申请记录'));
+            } else {
+                var scroll = createRecordWorkflowElement('div', 'record-related-scroll');
+                var table = document.createElement('table');
+                table.className = 'record-related-table';
+                var colgroup = document.createElement('colgroup');
+                [22, 7, 7, 20, 15, 14, 15].forEach(function(width) {
+                    var col = document.createElement('col');
+                    col.style.width = width + '%';
+                    colgroup.appendChild(col);
                 });
-                tbody.appendChild(row);
+                table.appendChild(colgroup);
+                var thead = document.createElement('thead');
+                var headRow = document.createElement('tr');
+                ['申请编号', '申请人', '区域', '申请时间', '授权产品', '到期时间', '操作'].forEach(function(textValue) {
+                    var th = document.createElement('th');
+                    th.textContent = textValue;
+                    headRow.appendChild(th);
+                });
+                thead.appendChild(headRow);
+                table.appendChild(thead);
+                var tbody = document.createElement('tbody');
+                group.records.forEach(function(record) {
+                    var row = document.createElement('tr');
+                    [record.applicationNo, record.applicant, record.region, record.appliedAt, record.product, record.endDate].forEach(function(textValue, index) {
+                        var cell = document.createElement('td');
+                        if (index === 0) cell.className = 'record-related-appno';
+                        else if (index === 3 || index === 5) cell.className = 'record-related-date';
+                        cell.textContent = textValue || '—';
+                        row.appendChild(cell);
+                    });
+                    var actionCell = document.createElement('td');
+                    var actionButton = createRecordWorkflowElement('button', 'record-related-link', '查看');
+                    actionButton.type = 'button';
+                    actionButton.setAttribute('data-related-record-no', record.applicationNo || '');
+                    actionButton.setAttribute('aria-label', '查看申请 ' + (record.applicationNo || ''));
+                    if (!record.applicationNo) {
+                        actionButton.disabled = true;
+                        actionButton.title = '缺少申请编号，无法查看';
+                        actionButton.setAttribute('aria-label', '缺少申请编号，无法查看');
+                    }
+                    actionButton.addEventListener('click', function() {
+                        openRelatedRecordDetail(record, actionButton);
+                    });
+                    actionCell.appendChild(actionButton);
+                    row.appendChild(actionCell);
+                    tbody.appendChild(row);
+                });
+                table.appendChild(tbody);
+                scroll.appendChild(table);
+                groupBody.appendChild(scroll);
+            }
+
+            groupToggle.addEventListener('click', function() {
+                var expanded = groupToggle.getAttribute('aria-expanded') === 'true';
+                groupToggle.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+                groupBody.hidden = expanded;
             });
-            table.appendChild(tbody);
-            scroll.appendChild(table);
-            body.appendChild(scroll);
+
+            groupWrap.appendChild(groupToggle);
+            groupWrap.appendChild(groupBody);
+            body.appendChild(groupWrap);
         });
 
-        toggle.addEventListener('click', function() {
-            var expanded = toggle.getAttribute('aria-expanded') === 'true';
-            toggle.setAttribute('aria-expanded', expanded ? 'false' : 'true');
-            body.hidden = expanded;
-        });
-
-        wrapper.appendChild(toggle);
         wrapper.appendChild(body);
         section.appendChild(wrapper);
         return section;
@@ -13014,6 +13201,10 @@
         var content = document.getElementById('recordWorkflowContent');
         lastRecordDrawerTrigger = trigger || null;
         activeRecordWorkflow = { action: action, row: row, data: data };
+        activeRelatedHistoryContext = null;
+        var back = document.getElementById('recordDrawerBack');
+        back.hidden = true;
+        back.textContent = '返回方案详情';
         setRecordDrawerMode(action);
         document.getElementById('recordDrawerTitle').textContent = config.title;
         document.getElementById('recordDrawerSubtitle').textContent = config.subtitle;
@@ -13040,6 +13231,7 @@
         transfer.hidden = !isMobileApproval;
         reject.hidden = !isMobileApproval;
         mobileComposer.hidden = !isMobileApproval;
+        setRecordDrawerBackgroundInert(true);
         layer.hidden = false;
         layer.setAttribute('aria-hidden', 'false');
         var drawerBody = layer.querySelector('.record-drawer-body');
@@ -13176,8 +13368,14 @@
         if (layer.hidden) return;
         layer.hidden = true;
         layer.setAttribute('aria-hidden', 'true');
+        setRecordDrawerBackgroundInert(false);
         activeRecordWorkflow = null;
-        if (lastRecordDrawerTrigger && typeof lastRecordDrawerTrigger.focus === 'function') lastRecordDrawerTrigger.focus();
+        var focusTarget = (activeRelatedHistoryContext && activeRelatedHistoryContext.trigger) || lastRecordDrawerTrigger;
+        activeRelatedHistoryContext = null;
+        var back = document.getElementById('recordDrawerBack');
+        back.hidden = true;
+        back.textContent = '返回方案详情';
+        if (focusTarget && typeof focusTarget.focus === 'function') focusTarget.focus();
         lastRecordDrawerTrigger = null;
     }
 
@@ -13231,11 +13429,33 @@
                 closeRecordRevokeDialog();
             }
         });
+        document.getElementById('recordDrawerLayer').addEventListener('keydown', function(event) {
+            if (event.key !== 'Tab') return;
+            var focusable = getRecordDrawerFocusableElements();
+            if (!focusable.length) {
+                event.preventDefault();
+                return;
+            }
+            var first = focusable[0];
+            var last = focusable[focusable.length - 1];
+            var index = focusable.indexOf(document.activeElement);
+            if (index === -1) {
+                event.preventDefault();
+                (event.shiftKey ? last : first).focus();
+            } else if (event.shiftKey && index === 0) {
+                event.preventDefault();
+                last.focus();
+            } else if (!event.shiftKey && index === focusable.length - 1) {
+                event.preventDefault();
+                first.focus();
+            }
+        });
         document.getElementById('recordDrawerPrimary').addEventListener('click', function() {
             var mobileApprove = activeRecordWorkflow && activeRecordWorkflow.action === 'approve' && !document.getElementById('recordMobileApprovalComposer').hidden;
             submitRecordWorkflow(mobileApprove ? 'approve' : null);
         });
         document.getElementById('recordDrawerBack').addEventListener('click', function() {
+            if (restoreApprovalDrawerState()) return;
             if (!activeSolutionDeviceContext) return;
             var context = activeSolutionDeviceContext;
             openRecordDetailDrawer(context.row, context.row.querySelector('a'));

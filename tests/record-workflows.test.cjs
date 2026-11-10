@@ -187,7 +187,7 @@ test('XaaS 多模块按配置变更分组展示 PC 终端与服务器规格', ()
 });
 
 test('变更/延期申请复用配置变更组件展示前后对比和关联此前申请记录', () => {
-  const { dom, document, window } = setupRecords();
+  const { dom, document, window, errors } = setupRecords();
   try {
     const rows = [...document.querySelectorAll('#content-records .table-scroll-wrap > table > tbody > tr:not(.solution-detail-row)')];
     const changeRow = rows.find((row) => row.children[0]?.textContent.includes('AUTH-20261105-018'));
@@ -220,18 +220,213 @@ test('变更/延期申请复用配置变更组件展示前后对比和关联此�
 
     const related = document.getElementById('recordApproveRelatedSection');
     assert.ok(related, '变更/延期申请应展示关联此前申请记录');
-    const toggle = related.querySelector('.record-related-toggle');
-    assert.ok(toggle, '关联记录应提供展开入口');
-    assert.equal(toggle.getAttribute('aria-expanded'), 'false', '关联记录默认收起');
-    toggle.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
-    assert.equal(toggle.getAttribute('aria-expanded'), 'true', '点击后关联记录展开');
+    assert.equal(related.querySelector('.record-related-toggle'), null, '不再展示独立的关联记录展开入口');
+    const relatedGroup = related.querySelector('.record-related-group-head');
+    assert.ok(relatedGroup, '关联记录应以订阅组头作为展开入口');
+    assert.equal(relatedGroup.getAttribute('aria-expanded'), 'true', '关联记录默认展开');
+    const relatedGroupBody = related.querySelector('.record-related-group-body');
+    assert.equal(relatedGroupBody.hidden, false, '关联记录表格默认可见');
+    relatedGroup.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    assert.equal(relatedGroup.getAttribute('aria-expanded'), 'false', '点击组头收起关联记录');
+    assert.equal(relatedGroupBody.hidden, true, '收起后关联记录表格隐藏');
+    relatedGroup.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    assert.equal(relatedGroup.getAttribute('aria-expanded'), 'true', '再次点击组头展开关联记录');
+    assert.equal(relatedGroupBody.hidden, false, '再次展开后关联记录表格可见');
     assert.match(related.textContent, /SaaS-XDR 产品族 \/ 平台基本授权/);
+    assert.match(related.textContent, /申请编号/);
+    assert.match(related.textContent, /AUTH-20260701-101/);
     assert.match(related.textContent, /2026-07-01 10:20/);
-    assert.match(related.textContent, /日志接入 1 亿条/);
+    assert.match(related.textContent, /AUTH-20260912-102/);
     assert.match(related.textContent, /2026-09-12 16:40/);
-    assert.match(related.textContent, /日志接入 1.5 亿条/);
     assert.match(related.textContent, /2026-09-30/);
     assert.match(related.textContent, /2026-12-31/);
+    assert.doesNotMatch(related.textContent, /参数规格/);
+    assert.doesNotMatch(related.textContent, /模块/);
+    const relatedHeaders = [...related.querySelectorAll('thead th')].map((th) => th.textContent);
+    assert.deepEqual(relatedHeaders, ['申请编号', '申请人', '区域', '申请时间', '授权产品', '到期时间', '操作']);
+    const relatedButtons = [...related.querySelectorAll('.record-related-link')];
+    assert.equal(relatedButtons.length, 2, '每条关联记录应提供查看按钮');
+    assert.deepEqual(relatedButtons.map((button) => button.dataset.relatedRecordNo), ['AUTH-20260701-101', 'AUTH-20260912-102']);
+
+    const approvalOpinion = document.getElementById('recordApprovalOpinion');
+    approvalOpinion.value = '同意，配置变更已核对。';
+    const approveDecision = document.querySelector('input[name="recordApprovalDecision"][value="approve"]');
+    approveDecision.checked = true;
+    const relatedGroupBodyBefore = related.querySelector('.record-related-group-body');
+    assert.equal(relatedGroupBodyBefore.hidden, false, '关联记录组默认展开');
+    const drawerBody = document.querySelector('#recordDrawerLayer .record-drawer-body');
+    drawerBody.scrollTop = 240;
+
+    relatedButtons[0].dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    assert.equal(document.getElementById('recordDrawerLayer').hidden, false, '点击查看应打开历史申请详情');
+    assert.equal(document.getElementById('recordDrawerTitle').textContent, '历史申请详情');
+    assert.equal(document.getElementById('recordDrawerView').hidden, false);
+    assert.equal(document.getElementById('recordDrawerWorkflow').hidden, true, '查看历史记录时隐藏审批内容');
+    const backToApproval = document.getElementById('recordDrawerBack');
+    assert.equal(backToApproval.hidden, false, '历史申请详情应提供返回审核入口');
+    assert.equal(backToApproval.textContent, '返回审核申请');
+    assert.equal(document.getElementById('recordDrawerSecondary').textContent, '关闭');
+    assert.equal(document.getElementById('recordDetailApplicationNo').textContent, 'AUTH-20260701-101');
+    assert.match(document.getElementById('recordApplicationGrid').textContent, /王蕾/);
+    assert.match(document.getElementById('recordApplicationGrid').textContent, /2026-07-01 10:20/);
+    assert.match(document.getElementById('recordXaasChangeList').textContent, /日志接入数量—1 亿条/);
+
+    backToApproval.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    assert.equal(document.getElementById('recordDrawerView').hidden, true, '返回后隐藏历史记录详情');
+    assert.equal(document.getElementById('recordDrawerWorkflow').hidden, false, '返回后恢复审批内容');
+    assert.equal(document.getElementById('recordDrawerTitle').textContent, '审核申请');
+    assert.equal(document.getElementById('recordDrawerSecondary').textContent, '取消', '返回后恢复审批页脚按钮文案');
+    assert.equal(document.getElementById('recordDrawerSecondary').hidden, false);
+    assert.equal(document.getElementById('recordDrawerPrimary').hidden, false);
+    assert.equal(document.getElementById('recordDrawerPrimary').textContent, '提交审批');
+    assert.equal(document.getElementById('recordDrawerSubtitle').hidden, false, '返回后恢复审批页副标题');
+    assert.equal(document.getElementById('recordDrawerSubtitle').textContent, '核对申请与授权信息并完成当前审批节点');
+    assert.equal(document.getElementById('recordDrawerLayer').getAttribute('data-record-workflow-action'), 'approve', '返回后恢复审批模式');
+    assert.equal(backToApproval.hidden, true, '返回后隐藏返回入口');
+    assert.equal(approvalOpinion.value, '同意，配置变更已核对。', '返回后保留已填写的审批意见');
+    assert.equal(approveDecision.checked, true, '返回后保留已选择的审批决定');
+    assert.equal(relatedGroupBodyBefore.hidden, false, '返回后保留关联记录展开状态');
+    assert.equal(related.querySelector('.record-related-group-head').getAttribute('aria-expanded'), 'true');
+    assert.equal(drawerBody.scrollTop, 240, '返回后保留审批页滚动位置');
+
+    relatedButtons[0].dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    relatedButtons[1].dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    assert.equal(document.getElementById('recordDrawerTitle').textContent, '历史申请详情', '重复查看历史记录仍保留返回入口');
+    assert.equal(document.getElementById('recordDetailApplicationNo').textContent, 'AUTH-20260912-102');
+    assert.equal(document.getElementById('recordDrawerBack').hidden, false);
+    document.getElementById('recordDrawerBack').dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    assert.equal(document.getElementById('recordDrawerWorkflow').hidden, false, '重复查看后仍可返回审批');
+    assert.equal(document.getElementById('recordDrawerTitle').textContent, '审核申请');
+
+    relatedButtons[1].dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    assert.equal(document.getElementById('recordDetailApplicationNo').textContent, 'AUTH-20260912-102');
+    assert.match(document.getElementById('recordXaasChangeList').textContent, /授权有效期2026-09-302026-12-31/);
+    assert.match(document.getElementById('recordXaasChangeList').textContent, /日志接入数量1 亿条1.5 亿条/);
+    document.getElementById('recordDrawerBack').dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    assert.equal(document.getElementById('recordDrawerWorkflow').hidden, false, '第二次查看历史记录后同样可以返回审批');
+    assert.deepEqual(errors, []);
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('移动端查看历史申请后返回保留审批页脚与移动审批意见', () => {
+  const { dom, document, window, errors } = setupMobileRecords();
+  try {
+    const rows = [...document.querySelectorAll('#content-records .table-scroll-wrap > table > tbody > tr:not(.solution-detail-row)')];
+    const changeRow = rows.find((row) => row.children[0]?.textContent.includes('AUTH-20261105-018'));
+    changeRow.querySelector('[data-record-action="approve"]').dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    const layer = document.getElementById('recordDrawerLayer');
+    assert.equal(layer.dataset.recordWorkflowAction, 'approve');
+
+    document.getElementById('recordMobileApprovalOpinion').value = '移动端同意，配置已核对。';
+    document.querySelector('input[name="recordApprovalDecision"][value="approve"]').checked = true;
+
+    const related = document.getElementById('recordApproveRelatedSection');
+    related.querySelector('.record-related-link').dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    const back = document.getElementById('recordDrawerBack');
+    assert.equal(back.hidden, false);
+    assert.equal(back.textContent, '返回审核申请');
+
+    back.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    assert.equal(document.getElementById('recordDrawerWorkflow').hidden, false);
+    assert.equal(document.getElementById('recordDrawerView').hidden, true);
+    assert.equal(back.hidden, true);
+    assert.equal(document.getElementById('recordDrawerPrimary').hidden, false);
+    assert.equal(document.getElementById('recordDrawerPrimary').textContent, '通过');
+    assert.equal(document.getElementById('recordDrawerSecondary').hidden, true);
+    assert.equal(document.getElementById('recordDrawerTransfer').hidden, false);
+    assert.equal(document.getElementById('recordDrawerReject').hidden, false);
+    assert.equal(document.getElementById('recordMobileApprovalComposer').hidden, false);
+    assert.equal(document.getElementById('recordDrawerSubtitle').hidden, false);
+    assert.equal(layer.getAttribute('data-record-workflow-action'), 'approve');
+    assert.equal(document.getElementById('recordMobileApprovalOpinion').value, '移动端同意，配置已核对。', '返回后保留移动端审批意见');
+    assert.deepEqual(errors, []);
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('返回按钮在历史详情与方案设备详情之间不残留状态', () => {
+  const { dom, document, window, errors } = setupRecords();
+  try {
+    const rows = [...document.querySelectorAll('#content-records .table-scroll-wrap > table > tbody > tr:not(.solution-detail-row)')];
+    const changeRow = rows.find((row) => row.children[0]?.textContent.includes('AUTH-20261105-018'));
+    const solutionRow = rows.find((row) => row.children[1]?.textContent.trim() === '解决方案');
+    assert.ok(solutionRow, '应存在解决方案 Mock 记录');
+
+    changeRow.querySelector('[data-record-action="approve"]').dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    const related = document.getElementById('recordApproveRelatedSection');
+    related.querySelector('.record-related-link').dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    assert.equal(document.getElementById('recordDrawerBack').textContent, '返回审核申请');
+
+    solutionRow.querySelector('td button').dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    const deviceLink = solutionRow.nextElementSibling.querySelector('.solution-device-detail');
+    assert.ok(deviceLink, '方案明细行应提供设备详情入口');
+    deviceLink.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+
+    const back = document.getElementById('recordDrawerBack');
+    assert.equal(back.textContent, '返回方案详情', '设备详情不应沿用历史详情的返回文案');
+    back.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    assert.equal(document.getElementById('recordDrawerTitle').textContent, '授权记录详情', '返回目标应为设备所属方案记录');
+    assert.equal(document.getElementById('recordDrawerWorkflow').hidden, true);
+
+    document.getElementById('recordDrawerSecondary').dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    assert.equal(document.getElementById('recordDrawerLayer').hidden, true);
+    assert.equal(back.hidden, true);
+    assert.equal(back.textContent, '返回方案详情', '关闭抽屉后应复位返回文案');
+
+    changeRow.querySelector('[data-record-action="approve"]').dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    document.getElementById('recordApproveRelatedSection').querySelector('.record-related-link').dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    assert.equal(back.textContent, '返回审核申请');
+    document.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    assert.equal(document.getElementById('recordDrawerLayer').hidden, true);
+    assert.equal(back.hidden, true);
+    assert.equal(back.textContent, '返回方案详情');
+    assert.deepEqual(errors, []);
+  } finally {
+    dom.window.close();
+  }
+});
+
+test('记录抽屉将键盘焦点限制在抽屉内并禁用背景交互', () => {
+  const { dom, document, window, errors } = setupRecords();
+  try {
+    const rows = [...document.querySelectorAll('#content-records .table-scroll-wrap > table > tbody > tr:not(.solution-detail-row)')];
+    const changeRow = rows.find((row) => row.children[0]?.textContent.includes('AUTH-20261105-018'));
+    changeRow.querySelector('[data-record-action="approve"]').dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+
+    const appLayout = document.querySelector('.layui-layout');
+    const moduleNav = document.getElementById('moduleNav');
+    assert.equal(appLayout.hasAttribute('inert'), true, '抽屉打开后背景内容应不可交互');
+    assert.equal(moduleNav.hasAttribute('inert'), true, '抽屉打开后模块导航应不可交互');
+
+    const related = document.getElementById('recordApproveRelatedSection');
+    related.querySelector('.record-related-link').dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    const layer = document.getElementById('recordDrawerLayer');
+    const close = layer.querySelector('.record-drawer-close');
+    const secondary = document.getElementById('recordDrawerSecondary');
+
+    close.focus();
+    assert.equal(document.activeElement, close);
+    close.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Tab', shiftKey: true, bubbles: true }));
+    assert.equal(document.activeElement, secondary, 'Shift+Tab 从首个焦点循环到抽屉末尾');
+    assert.equal(layer.contains(document.activeElement), true, '焦点不应逃逸到抽屉外');
+
+    secondary.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Tab', bubbles: true }));
+    assert.equal(document.activeElement, close, 'Tab 从末尾循环到抽屉首个焦点');
+
+    const title = document.getElementById('recordDrawerTitle');
+    title.setAttribute('tabindex', '-1');
+    title.focus();
+    title.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Tab', bubbles: true }));
+    assert.equal(document.activeElement, close, '焦点落在非 Tab 序列元素时回到抽屉首个焦点');
+
+    secondary.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    assert.equal(layer.hidden, true);
+    assert.equal(appLayout.hasAttribute('inert'), false, '关闭抽屉后恢复背景交互');
+    assert.equal(moduleNav.hasAttribute('inert'), false, '关闭抽屉后恢复模块导航交互');
+    assert.deepEqual(errors, []);
   } finally {
     dom.window.close();
   }
